@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alexandra Kallitsopoulou — Detector Physicist</title>
+<meta name="description" content="Alexandra Kallitsopoulou, postdoctoral researcher at CEA Saclay (IRFU) working on gaseous detectors, Micromegas and precise-timing detectors.">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+  /* ---- page-local styles ------------------------------------------------ */
+  .hero { display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: center; padding: 1rem 0 2.5rem; }
+  .hero h1 { font-size: 2.4rem; margin: 0 0 .3rem; }
+  .hero .role { font-size: 1.15rem; color: var(--fg-muted); margin: 0 0 1rem; }
+  .hero .links { display: flex; gap: .6rem 1.2rem; flex-wrap: wrap; font-size: .95rem; }
+  .avatar {
+    width: 148px; height: 148px; border-radius: 50%; object-fit: cover;
+    border: 3px solid var(--bg-elev); box-shadow: var(--shadow); background: var(--accent-soft);
+    display: grid; place-items: center; font-size: 3rem; color: var(--accent); font-weight: 700;
+  }
+  section { padding: 1.6rem 0; border-top: 1px solid var(--border); }
+  section h2 { margin-top: 0; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem 3rem; }
+  .pubs li, .talks li { margin-bottom: .8rem; }
+  .pubs .t { font-weight: 600; }
+  .pubs .v { color: var(--fg-muted); }
+  .timeline { list-style: none; padding: 0; margin: 0; }
+  .timeline li { display: grid; grid-template-columns: 7.5rem 1fr; gap: 1rem; padding: .35rem 0; }
+  .timeline .when { color: var(--fg-muted); font-variant-numeric: tabular-nums; font-size: .95rem; }
+  .card h3 { margin: 0 0 .35rem; font-size: 1.05rem; }
+  .card p { margin: 0; color: var(--fg-muted); font-size: .95rem; }
+  .card .pill { margin-top: .6rem; }
+  .contact dl { display: grid; grid-template-columns: max-content 1fr; gap: .3rem 1.2rem; margin: 0; }
+  .contact dt { color: var(--fg-muted); }
+  .contact dd { margin: 0; }
+  #latest-notes li { margin: .3rem 0; }
+  @media (max-width: 680px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero .avatar { order: -1; width: 110px; height: 110px; font-size: 2.2rem; }
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="./">Alexandra Kallitsopoulou</a>
+  <nav class="nav">
+    <a href="#about">About</a>
+    <a href="#research">Research</a>
+    <a href="#publications">Publications</a>
+    <a href="#talks">Talks</a>
+    <a href="#cv">CV</a>
+    <a href="notes/">Notes</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</div></header>
+
+<main class="wrap">
+
+  <!-- ===================================================================== HERO -->
+  <div class="hero">
+    <div>
+      <h1>Alexandra Kallitsopoulou</h1>
+      <p class="role">Postdoctoral researcher · CEA Saclay, IRFU — gaseous detectors &amp; precise timing</p>
+      <p>
+        I build and characterise micro-pattern gaseous detectors — Micromegas, PICOSEC-style timing
+        detectors — from simulation (Garfield++, FEM) through prototyping to test-beam analysis.
+        <!-- TEMPLATE: replace with your own two-sentence pitch. -->
+      </p>
+      <div class="links">
+        <a href="mailto:alexandra.kallitsopoulou@cern.ch">✉ Email</a>
+        <a href="https://orcid.org/0000-0000-0000-0000">ORCID</a>
+        <a href="https://inspirehep.net/authors/">INSPIRE</a>
+        <a href="https://github.com/akallitss">GitHub</a>
+        <a href="assets/cv.pdf">CV (PDF)</a>
+      </div>
+    </div>
+    <!-- Replace the initials block with <img class="avatar" src="assets/photo.jpg" alt="Alexandra Kallitsopoulou"> -->
+    <div class="avatar" aria-hidden="true">AK</div>
+  </div>
+
+  <!-- ===================================================================== ABOUT -->
+  <section id="about">
+    <h2>About</h2>
+    <div class="two-col">
+      <div>
+        <p>
+          I am a postdoctoral researcher in the detector group at IRFU, CEA Saclay. My work sits at the
+          interface of detector physics, instrumentation and data analysis: understanding how charge is
+          created, amplified and read out in gaseous detectors, and pushing their time and position
+          resolution for future collider and beam-line experiments.
+        </p>
+        <p>
+          Before Saclay I did my PhD on <em>[thesis topic]</em> at <em>[university / lab]</em>, working
+          within <em>[experiment / collaboration]</em>.
+          <!-- TEMPLATE: 2–3 sentences of background. -->
+        </p>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Interests</h3>
+        <ul>
+          <li>Micro-pattern gaseous detectors (Micromegas, resistive structures)</li>
+          <li>Precise-timing detectors (PICOSEC), fast electronics &amp; waveform analysis</li>
+          <li>Detector simulation: Garfield++, COMSOL/ANSYS FEM, Geant4</li>
+          <li>Test-beam campaigns and detector characterisation</li>
+          <li>Open, reproducible analysis workflows (Python, ROOT, C++)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== RESEARCH -->
+  <section id="research">
+    <h2>Research</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Micromegas with pillars — FEM &amp; simulation</h3>
+        <p>Field maps and gain studies of pillar-supported amplification gaps; comparison of FEM
+           geometries with measurements. See the
+           <a href="notes/">simulation report</a> in Notes.</p>
+        <span class="pill">Detector R&amp;D</span>
+      </div>
+      <div class="card">
+        <h3>PICOSEC timing</h3>
+        <p>Cherenkov radiator + photocathode + Micromegas for tens-of-picosecond timing.
+           Prototype characterisation and signal-shape analysis.</p>
+        <span class="pill">Timing</span>
+      </div>
+      <div class="card">
+        <h3>Test-beam analysis</h3>
+        <p>Tracking, efficiency and resolution studies from beam tests; calibration and
+           reconstruction software.</p>
+        <span class="pill">Analysis</span>
+      </div>
+      <div class="card">
+        <h3>[Fourth topic]</h3>
+        <p>Short description of another project, collaboration or service task.</p>
+        <span class="pill">Placeholder</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== PUBLICATIONS -->
+  <section id="publications">
+    <h2>Selected publications</h2>
+    <ol class="pubs">
+      <li><span class="t">[Title of paper one]</span><br>
+          <span class="v">A. Kallitsopoulou <em>et al.</em>, <em>Journal</em> <b>vol</b> (year) pages ·
+          <a href="#">DOI</a> · <a href="#">arXiv</a></span></li>
+      <li><span class="t">[Title of paper two]</span><br>
+          <span class="v">Authors, <em>Nucl. Instrum. Meth. A</em> (year) · <a href="#">DOI</a></span></li>
+      <li><span class="t">[Conference proceedings]</span><br>
+          <span class="v">Authors, <em>Proceedings of …</em> (year) · <a href="#">link</a></span></li>
+    </ol>
+    <p class="small"><a href="https://inspirehep.net/authors/">Full list on INSPIRE →</a></p>
+  </section>
+
+  <!-- ===================================================================== TALKS -->
+  <section id="talks">
+    <h2>Talks &amp; posters</h2>
+    <ul class="timeline talks">
+      <li><span class="when">2026-06</span><span><b>[Talk title]</b> — [Conference / workshop, city]. <a href="#">slides</a></span></li>
+      <li><span class="when">2025-11</span><span><b>[Poster title]</b> — [Meeting]. <a href="#">poster</a></span></li>
+      <li><span class="when">2025-03</span><span><b>[Seminar title]</b> — [Institute seminar]</span></li>
+    </ul>
+  </section>
+
+  <!-- ===================================================================== CV -->
+  <section id="cv">
+    <h2>CV</h2>
+    <div class="two-col">
+      <div>
+        <h3 style="margin-top:0">Positions</h3>
+        <ul class="timeline">
+          <li><span class="when">2025 – now</span><span>Postdoctoral researcher, IRFU / CEA Saclay</span></li>
+          <li><span class="when">[years]</span><span>PhD researcher, [university], [experiment]</span></li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Education</h3>
+        <ul class="timeline">
+          <li><span class="when">[year]</span><span>PhD in Physics, [university]</span></li>
+          <li><span class="when">[year]</span><span>MSc / Diploma in Physics, [university]</span></li>
+        </ul>
+      </div>
+    </div>
+    <p><a class="btn" href="assets/cv.pdf">Download full CV (PDF)</a></p>
+  </section>
+
+  <!-- ===================================================================== NOTES -->
+  <section id="notes">
+    <h2>Notes</h2>
+    <p class="muted">Write-ups, reports and how-tos I keep as HTML pages. The <a href="notes/">notes hub</a>
+       lists them all with categories and dates.</p>
+    <ul id="latest-notes"><li class="faint">Loading latest notes…</li></ul>
+  </section>
+
+  <!-- ===================================================================== CONTACT -->
+  <section id="contact" class="contact">
+    <h2>Contact</h2>
+    <dl>
+      <dt>Email</dt><dd><a href="mailto:alexandra.kallitsopoulou@cern.ch">alexandra.kallitsopoulou@cern.ch</a></dd>
+      <dt>Office</dt><dd>IRFU / DEDIP, CEA Saclay, Bât. [xxx], 91191 Gif-sur-Yvette, France</dd>
+      <dt>CERN</dt><dd>[Building / office], Meyrin</dd>
+    </dl>
+  </section>
+
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <span>© <span id="year">2026</span> Alexandra Kallitsopoulou</span>
+  <span>Hosted on CERN Web Services · <a href="notes/">Notes</a></span>
+</div></footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+  // Pull the 5 most recent notes from the generated manifest (falls back silently if not reachable).
+  fetch('notes/notes.json').then(r => r.json()).then(m => {
+    const ul = document.getElementById('latest-notes'); ul.innerHTML = '';
+    m.notes.slice(0, 5).forEach(n => {
+      const li = document.createElement('li');
+      li.innerHTML = '<span class="faint small" style="font-variant-numeric:tabular-nums">' + n.date + '</span> &nbsp; ' +
+        '<a href="notes/' + encodeURI(n.path) + '"></a> <span class="pill"></span>';
+      li.querySelector('a').textContent = n.title;
+      li.querySelector('.pill').textContent = n.category;
+      ul.appendChild(li);
+    });
+    if (!m.notes.length) ul.innerHTML = '<li class="faint">No notes yet.</li>';
+  }).catch(() => { document.getElementById('latest-notes').innerHTML = '<li><a href="notes/">Open the notes hub →</a></li>'; });
+</script>
+</body>
+</html>

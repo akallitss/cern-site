@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Notes — Alexandra Kallitsopoulou</title>
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+  .hub-head { display:flex; align-items:baseline; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+  .search { width:100%; padding:.7em .9em; font:inherit; border:1px solid var(--border); border-radius:8px; background:var(--bg-elev); color:var(--fg); margin:1rem 0 .8rem; }
+  .search:focus { outline:2px solid var(--accent-soft); border-color:var(--accent); }
+  .chips { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1.2rem; }
+  .chip { font:inherit; font-size:.85rem; padding:.35em .8em; border-radius:999px; border:1px solid var(--border); background:var(--bg-elev); color:var(--fg-muted); cursor:pointer; }
+  .chip .cnt { color:var(--fg-faint); margin-left:.25em; }
+  .chip:hover { border-color:var(--accent); color:var(--accent); }
+  .chip.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .chip.active .cnt { color:rgba(255,255,255,.75); }
+  .notes { list-style:none; padding:0; margin:0; }
+  .note { display:flex; gap:1rem; justify-content:space-between; align-items:flex-start; padding:1rem 0; border-bottom:1px solid var(--border); }
+  .note.hidden { display:none; }
+  .note-title { font-weight:600; font-size:1.05rem; }
+  .note-desc { margin:.25rem 0 .4rem; color:var(--fg-muted); font-size:.95rem; }
+  .note-date { white-space:nowrap; color:var(--fg-muted); font-size:.9rem; font-variant-numeric:tabular-nums; text-align:right; padding-top:.2rem; }
+  .note-date .faint { display:block; }
+  .cat-h { margin:2rem 0 .2rem; font-size:1rem; text-transform:uppercase; letter-spacing:.06em; color:var(--fg-muted); }
+  .empty { padding:2rem 0; color:var(--fg-muted); display:none; }
+  .toolbar { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; font-size:.9rem; color:var(--fg-muted); }
+  .toolbar label { cursor:pointer; }
+  @media (max-width:560px) { .note { flex-direction:column; gap:.3rem; } .note-date { text-align:left; } }
+</style>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="../">Alexandra Kallitsopoulou</a>
+  <nav class="nav"><a href="../">Home</a><a class="active" href="index.html">Notes</a></nav>
+</div></header>
+
+<main class="wrap">
+  <div class="hub-head">
+    <h1>Notes</h1>
+    <span class="muted small">2 notes · 2 categories · built 2026-08-16 00:45</span>
+  </div>
+  <p class="muted">Everything I have written up as an HTML page, newest first. Filter by category or search by title, tag or text.</p>
+
+  <input class="search" id="q" type="search" placeholder="Search notes…" autocomplete="off">
+  <div class="chips" id="chips"><button class="chip active" data-cat="*">All <span class="cnt">2</span></button><button class="chip" data-cat="Detector R&amp;D">Detector R&amp;D <span class="cnt">1</span></button><button class="chip" data-cat="How-to">How-to <span class="cnt">1</span></button></div>
+  <div class="toolbar">
+    <label><input type="checkbox" id="grouped" checked> group by category</label>
+    <span id="shown"></span>
+  </div>
+
+  <ul class="notes" id="list">
+      <li class="note" data-cat="How-to" data-search="welcome to the notes hub how this notes system works: metadata, categories, unlisted pages, and the publish workflow. how-to meta howto site 2026-08-16-welcome-to-the-notes-hub.html" data-date="2026-08-16">
+        <div class="note-main">
+          <a class="note-title" href="2026-08-16-welcome-to-the-notes-hub.html">Welcome to the notes hub</a>
+          <p class="note-desc">How this notes system works: metadata, categories, unlisted pages, and the publish workflow.</p>
+          <div class="meta-row small">
+            <span class="pill">How-to</span><span class="pill gray">meta</span><span class="pill gray">howto</span><span class="pill gray">site</span>
+            <span class="faint">2026-08-16-welcome-to-the-notes-hub.html · 4.7 kB</span>
+          </div>
+        </div>
+        <time class="note-date" datetime="2026-08-16">2026-08-16<span class="faint small"></span></time>
+      </li>
+      <li class="note" data-cat="Detector R&amp;D" data-search="p2 basket bulk micromegas — fem technical report fem technical report: field and gain studies of the p2 basket bulk micromegas with pillars (interactive plotly figures). detector r&amp;d micromegas fem pillars simulation plotly detector/p2_micromegas_fem_with_pilars_simulation_repots.html" data-date="2026-05-10">
+        <div class="note-main">
+          <a class="note-title" href="detector/P2_Micromegas_FEM_with_Pilars_simulation_repots.html">P2 Basket Bulk Micromegas — FEM Technical Report</a>
+          <p class="note-desc">FEM technical report: field and gain studies of the P2 basket bulk Micromegas with pillars (interactive Plotly figures).</p>
+          <div class="meta-row small">
+            <span class="pill">Detector R&amp;D</span><span class="pill gray">micromegas</span><span class="pill gray">fem</span><span class="pill gray">pillars</span><span class="pill gray">simulation</span><span class="pill gray">plotly</span>
+            <span class="faint">detector/P2_Micromegas_FEM_with_Pilars_simulation_repots.html · 7.4 MB</span>
+          </div>
+        </div>
+        <time class="note-date" datetime="2026-05-10">2026-05-10<span class="faint small"></span></time>
+      </li>
+  </ul>
+  <p class="empty" id="empty">No notes match.</p>
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <span>Generated by <code>scripts/build_hub.py</code></span>
+  <span><a href="notes.json">notes.json</a></span>
+</div></footer>
+
+<script>
+(function () {
+  const q = document.getElementById('q'), list = document.getElementById('list'),
+        chips = document.getElementById('chips'), grouped = document.getElementById('grouped'),
+        empty = document.getElementById('empty'), shown = document.getElementById('shown');
+  const notes = Array.from(list.querySelectorAll('.note'));
+  let cat = '*';
+
+  function apply() {
+    const needle = q.value.trim().toLowerCase();
+    let n = 0;
+    notes.forEach(el => {
+      const ok = (cat === '*' || el.dataset.cat === cat) && (!needle || el.dataset.search.includes(needle));
+      el.classList.toggle('hidden', !ok); if (ok) n++;
+    });
+    empty.style.display = n ? 'none' : 'block';
+    shown.textContent = n === notes.length ? '' : n + ' shown';
+    layout();
+  }
+  function layout() {
+    list.querySelectorAll('.cat-h').forEach(h => h.remove());
+    if (!grouped.checked || cat !== '*') return;
+    const seen = new Set();
+    // group: move visible notes under headers, keeping date order inside each group
+    const byCat = {};
+    notes.forEach(el => { (byCat[el.dataset.cat] ||= []).push(el); });
+    const order = Object.keys(byCat).sort((a, b) => byCat[b].length - byCat[a].length || a.localeCompare(b));
+    order.forEach(c => {
+      const vis = byCat[c].filter(el => !el.classList.contains('hidden'));
+      if (!vis.length) return;
+      const h = document.createElement('li'); h.className = 'cat-h'; h.textContent = c + ' (' + vis.length + ')';
+      list.appendChild(h); byCat[c].forEach(el => list.appendChild(el));
+    });
+  }
+  function ungroupOrder() { notes.forEach(el => list.appendChild(el)); }
+  chips.addEventListener('click', e => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    chips.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    b.classList.add('active'); cat = b.dataset.cat; ungroupOrder(); apply();
+  });
+  grouped.addEventListener('change', () => { ungroupOrder(); apply(); });
+  q.addEventListener('input', apply);
+  if (location.hash.length > 1) { q.value = decodeURIComponent(location.hash.slice(1)); }
+  apply();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "site_name": "Alexandra Kallitsopoulou",
+  "site_url": "https://akallits.web.cern.ch",
+  "deploy": {
+    "host": "lxplus",
+    "path": "/eos/user/a/akallits/Post_Doc_Saclay/MyWebsite/"
+  },
+  "notes_dir": "notes",
+  "unlisted_subdir": "unlisted",
+  "private_hub": "notes/hub-all-7c1e9a4d.html",
+  "categories": [
+    { "name": "Detector R&D",  "keywords": ["micromegas", "picosec", "detector", "gem", "rpc", "gas", "drift", "amplification", "pillar", "mesh", "fem", "simulation", "garfield", "comsol", "ansys"] },
+    { "name": "Analysis",      "keywords": ["analysis", "fit", "resolution", "efficiency", "root", "histogram", "calibration", "test beam", "testbeam", "beam test", "waveform", "timing"] },
+    { "name": "Software",      "keywords": ["python", "c++", "code", "script", "git", "software", "install", "docker", "cmake", "package", "notebook", "jupyter"] },
+    { "name": "Talks & Papers","keywords": ["talk", "slides", "presentation", "conference", "paper", "proceedings", "abstract", "poster", "seminar"] },
+    { "name": "Meetings",      "keywords": ["meeting", "minutes", "agenda", "action items", "weekly", "status"] },
+    { "name": "How-to",        "keywords": ["how to", "howto", "tutorial", "guide", "setup", "recipe", "cheat sheet", "cheatsheet"] },
+    { "name": "Personal",      "keywords": ["personal", "travel", "recipe", "diary", "journal", "family", "photo"] }
+  ],
+  "default_category": "Miscellaneous"
+}

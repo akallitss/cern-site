@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>{{TITLE}}</title>
+<meta name="description" content="{{DESCRIPTION}}">
+<meta name="category" content="{{CATEGORY}}">
+<meta name="keywords" content="{{TAGS}}">
+<meta name="date" content="{{DATE}}">
+<meta name="updated" content="{{DATE}}">
+<meta name="visibility" content="{{VISIBILITY}}">
+<!-- ======================================================================= -->
+<link rel="stylesheet" href="{{CSS_REL}}assets/site.css">
+<style>
+  /* note-local styles go here */
+</style>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="{{CSS_REL}}">{{SITE_NAME}}</a>
+  <nav class="nav"><a href="{{CSS_REL}}">Home</a><a href="{{CSS_REL}}notes/">Notes</a></nav>
+</div></header>
+
+<main class="wrap">
+  <article>
+    <header class="note-header">
+      <h1>{{TITLE}}</h1>
+      <p class="muted">{{DESCRIPTION}}</p>
+      <div class="meta-row">
+        <span class="pill">{{CATEGORY}}</span>
+        <time datetime="{{DATE}}">{{DATE}}</time>
+        <span class="faint">{{TAGS}}</span>
+      </div>
+    </header>
+
+    <div class="note-body">
+      <p>Write the note here. Plain semantic HTML: <code>&lt;h2&gt;</code>, <code>&lt;p&gt;</code>,
+      <code>&lt;ul&gt;</code>, <code>&lt;pre&gt;&lt;code&gt;</code>, <code>&lt;table&gt;</code>,
+      <code>&lt;figure&gt;</code>. Use <code>.callout</code> for asides and <code>&lt;details&gt;</code> for long dumps.</p>
+    </div>
+  </article>
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <span>{{SITE_NAME}}</span>
+  <span><a href="{{CSS_REL}}notes/">← all notes</a></span>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,42 @@
+{
+  "generated": "2026-08-16T00:45:32",
+  "count": 2,
+  "notes": [
+    {
+      "title": "Welcome to the notes hub",
+      "description": "How this notes system works: metadata, categories, unlisted pages, and the publish workflow.",
+      "category": "How-to",
+      "tags": [
+        "meta",
+        "howto",
+        "site"
+      ],
+      "date": "2026-08-16",
+      "updated": "2026-08-16",
+      "unlisted": false,
+      "path": "2026-08-16-welcome-to-the-notes-hub.html",
+      "url": "/notes/2026-08-16-welcome-to-the-notes-hub.html",
+      "size": 4811,
+      "size_h": "4.7 kB"
+    },
+    {
+      "title": "P2 Basket Bulk Micromegas — FEM Technical Report",
+      "description": "FEM technical report: field and gain studies of the P2 basket bulk Micromegas with pillars (interactive Plotly figures).",
+      "category": "Detector R&D",
+      "tags": [
+        "micromegas",
+        "fem",
+        "pillars",
+        "simulation",
+        "plotly"
+      ],
+      "date": "2026-05-10",
+      "updated": "2026-05-10",
+      "unlisted": false,
+      "path": "detector/P2_Micromegas_FEM_with_Pilars_simulation_repots.html",
+      "url": "/notes/detector/P2_Micromegas_FEM_with_Pilars_simulation_repots.html",
+      "size": 7721628,
+      "size_h": "7.4 MB"
+    }
+  ]
+}
