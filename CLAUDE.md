@@ -1,6 +1,6 @@
 # cern-site — working notes for Claude
 
-Static personal site deployed to CERN EOS (`lxplus:/eos/user/a/akallits/Post_Doc_Saclay/MyWebsite/`).
+Static personal site at https://alexandra-kallitsopoulou.web.cern.ch/, deployed to CERN EOS (`lxplus:/eos/user/a/akallits/Post_Doc_Saclay/MyWebsite/`).
 See README.md for layout. Key rules:
 
 - `notes/index.html`, `notes/notes.json`, `notes/unlisted/index.html` and the `private_hub` file are
@@ -10,3 +10,4 @@ See README.md for layout. Key rules:
 - Deploy: `scripts/deploy.sh` (rsync, add/update only; `--delete` is opt-in and asks). Needs Kerberos or a password.
 - The remote link to lxplus is slow (~15 kB/s at times) — run large uploads in the background.
 - Treat the private hub URL and `notes/unlisted/` as unlisted, not secret.
+- Adding a note = drop/scaffold an HTML file under `notes/` → `make hub` → commit → `scripts/deploy.sh` → `git push`.

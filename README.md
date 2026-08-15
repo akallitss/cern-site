@@ -47,9 +47,29 @@ Or in Claude Code: `/publish-note Test-beam summary of the June PICOSEC run, --u
 Big exports (Plotly / JSROOT / notebook HTML) can be dropped into `notes/` untouched — the builder
 reads only the first 200 kB for metadata and never modifies note files.
 
+## URLs
+
+| what | URL |
+|---|---|
+| front page | https://alexandra-kallitsopoulou.web.cern.ch/ |
+| public notes hub | https://alexandra-kallitsopoulou.web.cern.ch/notes/ |
+| manifest | https://alexandra-kallitsopoulou.web.cern.ch/notes/notes.json |
+| a note | `https://alexandra-kallitsopoulou.web.cern.ch/notes/<path-under-notes>` |
+| private hub (everything, incl. unlisted) | `/notes/<private_hub file from site.config.json>` — not linked anywhere; treat as unlisted, not secret |
+
+To rotate the private-hub URL: change `private_hub` in `site.config.json`, `make hub`, delete the old
+file locally, and run `scripts/deploy.sh --delete` (or `rm` it on lxplus) so the old URL dies.
+
 ## Deploy details
 
 `scripts/deploy.sh` rsyncs the tree minus tooling (`scripts/`, `templates/`, `.claude/`, `.git/`,
 `Makefile`, `README.md`, `site.config.json`) with world-readable permissions. It **adds/updates only**;
 `scripts/deploy.sh --delete` removes remote files that are not in the repo (asks first).
 `--dry-run` shows what would change.
+
+## History
+
+- 2026-08-16 — repo created; front-page template, hub builder, `/publish-note` skill, deploy script.
+  The pre-existing FEM report (`P2_Micromegas_FEM_with_Pilars_simulation_repots.html`) was moved from
+  the site root into `notes/detector/` (meta tags prepended, body unchanged); the root copy was deleted
+  from EOS, so its old URL is gone. Site confirmed live at alexandra-kallitsopoulou.web.cern.ch.
