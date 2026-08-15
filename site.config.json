@@ -1,6 +1,6 @@
 {
   "site_name": "Alexandra Kallitsopoulou",
-  "site_url": "https://akallits.web.cern.ch",
+  "site_url": "https://alexandra-kallitsopoulou.web.cern.ch",
   "deploy": {
     "host": "lxplus",
     "path": "/eos/user/a/akallits/Post_Doc_Saclay/MyWebsite/"

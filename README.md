@@ -1,6 +1,6 @@
 # cern-site
 
-Source for my CERN personal website (EOS-hosted at
+Source for my CERN personal website (https://alexandra-kallitsopoulou.web.cern.ch — EOS-hosted at
 `lxplus:/eos/user/a/akallits/Post_Doc_Saclay/MyWebsite/`). Static HTML only.
 
 ```

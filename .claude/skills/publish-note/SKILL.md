@@ -71,4 +71,4 @@ note live; GitHub is only the backup/organizer.
 ## 4. Report
 
 Reply with: the note path, its category/date as printed by the build, the public URL
-(`<site_url>/notes/<file>`) and whether it is listed or unlisted, and whether it was deployed.
+(`https://alexandra-kallitsopoulou.web.cern.ch/notes/<file>`) and whether it is listed or unlisted, and whether it was deployed.
