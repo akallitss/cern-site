@@ -189,7 +189,7 @@ def render_hub(notes: list[dict], *, title: str, private: bool, base_rel: str) -
         cats.setdefault(n["category"], []).append(n)
     cat_names = sorted(cats, key=lambda c: (-len(cats[c]), c))
     esc = html.escape
-    now = dt.datetime.now().strftime("%Y-%m-%d %H:%M")
+    latest = max((n["updated"] for n in notes), default="—")  # deterministic: no wall-clock, so rebuilds don't churn git
 
     chips = ['<button class="chip active" data-cat="*">All <span class="cnt">%d</span></button>' % len(notes)]
     chips += ['<button class="chip" data-cat="%s">%s <span class="cnt">%d</span></button>' % (esc(c), esc(c), len(cats[c])) for c in cat_names]
@@ -256,7 +256,7 @@ def render_hub(notes: list[dict], *, title: str, private: bool, base_rel: str) -
 <main class="wrap">
   <div class="hub-head">
     <h1>{esc(title)}</h1>
-    <span class="muted small">{len(notes)} notes · {len(cats)} categories · built {now}</span>
+    <span class="muted small">{len(notes)} notes · {len(cats)} categories · last update {esc(latest)}</span>
   </div>
   <p class="muted">Everything I have written up as an HTML page, newest first. Filter by category or search by title, tag or text.</p>
 
@@ -341,7 +341,8 @@ def main() -> int:
     listed = [n for n in notes if not n["unlisted"]]
 
     (NOTES_DIR / "index.html").write_text(render_hub(listed, title="Notes", private=False, base_rel=""), encoding="utf-8")
-    manifest = {"generated": dt.datetime.now().isoformat(timespec="seconds"), "count": len(listed), "notes": listed}
+    latest = max((n["updated"] for n in listed), default="")
+    manifest = {"latest_update": latest, "count": len(listed), "notes": listed}
     (NOTES_DIR / "notes.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
     private_hub = CONFIG.get("private_hub")
