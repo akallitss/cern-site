@@ -37,7 +37,7 @@ rsync -rltvz $DRY $DELETE \
   --chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r \
   --exclude '.git/' --exclude '.gitignore' --exclude '.claude/' \
   --exclude 'scripts/' --exclude 'templates/' --exclude 'Makefile' \
-  --exclude 'README.md' --exclude 'site.config.json' \
+  --exclude 'README.md' --exclude 'CLAUDE.md' --exclude 'site.config.json' \
   --exclude '__pycache__/' --exclude '.DS_Store' \
   ./ "$HOST:$DEST"
 
