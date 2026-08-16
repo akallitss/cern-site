@@ -1,6 +1,6 @@
 {
   "latest_update": "2026-08-16",
-  "count": 5,
+  "count": 4,
   "notes": [
     {
       "title": "Welcome to the notes hub",
@@ -18,27 +18,6 @@
       "url": "/notes/2026-08-16-welcome-to-the-notes-hub.html",
       "size": 4811,
       "size_h": "4.7 kB"
-    },
-    {
-      "title": "SPS H4 QA — runs, processing, matching, efficiency",
-      "description": "Interactive QA for the July–August 2026 SPS H4 beam test: what was recorded, what is processed, how the VMM and DREAM streams matched spill by spill, and the uRWELL-track-referenced VMM efficiency.",
-      "category": "Analysis",
-      "tags": [
-        "micromegas",
-        "sps",
-        "beam test",
-        "qa",
-        "efficiency",
-        "vmm",
-        "dream"
-      ],
-      "date": "2026-08-16",
-      "updated": "2026-08-16",
-      "unlisted": false,
-      "path": "2026-08-16-sps-qa.html",
-      "url": "/notes/2026-08-16-sps-qa.html",
-      "size": 3621469,
-      "size_h": "3.5 MB"
     },
     {
       "title": "P2 @ SPS H4 — full preliminary analysis for MPGD26",
