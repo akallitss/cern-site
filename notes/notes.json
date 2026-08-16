@@ -1,6 +1,6 @@
 {
   "latest_update": "2026-08-16",
-  "count": 2,
+  "count": 4,
   "notes": [
     {
       "title": "Welcome to the notes hub",
@@ -18,6 +18,44 @@
       "url": "/notes/2026-08-16-welcome-to-the-notes-hub.html",
       "size": 4811,
       "size_h": "4.7 kB"
+    },
+    {
+      "title": "P2 @ SPS H4 — full preliminary analysis for MPGD26",
+      "description": "Full preliminary analysis of the July–August 2026 SPS H4 beam test: efficiency, timing, stability, gas change and the VMM arm.",
+      "category": "Analysis",
+      "tags": [
+        "micromegas",
+        "sps",
+        "mpgd26",
+        "efficiency",
+        "timing",
+        "beam test"
+      ],
+      "date": "2026-08-16",
+      "updated": "2026-08-16",
+      "unlisted": false,
+      "path": "2026-08-16-mpgd26-sps-beam-report.html",
+      "url": "/notes/2026-08-16-mpgd26-sps-beam-report.html",
+      "size": 33759,
+      "size_h": "33.0 kB"
+    },
+    {
+      "title": "MPGD26 slide options — P2 @ SPS H4",
+      "description": "Options deck: candidate slides for the MPGD26 talk, one option per slide with recommendations.",
+      "category": "Talks & Papers",
+      "tags": [
+        "mpgd26",
+        "slides",
+        "talk",
+        "sps"
+      ],
+      "date": "2026-08-16",
+      "updated": "2026-08-16",
+      "unlisted": false,
+      "path": "2026-08-16-mpgd26-slide-options.html",
+      "url": "/notes/2026-08-16-mpgd26-slide-options.html",
+      "size": 18906,
+      "size_h": "18.5 kB"
     },
     {
       "title": "P2 Basket Bulk Micromegas — FEM Technical Report",
