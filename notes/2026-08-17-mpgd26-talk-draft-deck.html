@@ -1,0 +1,2239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>MPGD26 talk — draft deck</title>
+<meta name="description" content="Draft slide deck for the MPGD2026 talk (4 Sep 2026): the P2 experiment and BASKET, pad-Micromegas design and manufacturing, cosmic characterisation at Saclay, and the July 2026 SPS H4 beam test.">
+<meta name="category" content="Talks &amp; Papers">
+<meta name="keywords" content="MPGD26,P2,BASKET,Micromegas,VMM3a,DREAM,SPS,talk,slides">
+<meta name="date" content="2026-08-17">
+<meta name="updated" content="2026-08-17">
+<meta name="visibility" content="public">
+<!-- ======================================================================= -->
+<style>
+  :root { --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --grid:#d9d8d4;
+          --in:#2a78d6; --mid:#eb6834; --out:#1baf7a; --vio:#4a3aa7;
+          --acc:#8a1f1f; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#e8e7e3; color:var(--ink);
+         font:17px/1.45 "Segoe UI", system-ui, sans-serif; }
+  .slide { width:min(1180px, 96vw); min-height:640px; margin:26px auto;
+           background:var(--surface); border-radius:10px;
+           box-shadow:0 2px 10px rgba(0,0,0,.10);
+           padding:34px 46px 44px; position:relative; }
+  .slide h1 { font-size:1.9em; margin:0.2em 0; }
+  .slide h2 { font-size:1.42em; margin:0 0 4px; padding-right:150px; }
+  .slide h3 { font-size:1.02em; margin:14px 0 4px; color:var(--ink2);
+              text-transform:uppercase; letter-spacing:.04em; }
+  .sub { color:var(--ink2); font-size:.95em; margin:0 0 12px; }
+  .tag { position:absolute; top:20px; right:26px; font-size:.76em;
+         font-weight:700; padding:3px 12px; border-radius:20px;
+         letter-spacing:.03em; }
+  .core { background:#e3edda; color:#2c5e1a; }
+  .opt  { background:#e8e4f5; color:#41338f; }
+  .bkup { background:#f3e9dc; color:#7a5218; }
+  .meta { background:#e8e8e8; color:#444; }
+  .newres { background:#fde4e4; color:#8a1f1f; }
+  .slide img { max-width:100%; max-height:452px; display:block;
+               margin:10px auto; border:1px solid var(--grid);
+               border-radius:6px; }
+  .slide img.tall { max-height:520px; }
+  .msg { background:#f4f3f0; border-left:4px solid var(--vio);
+         padding:9px 14px; margin:10px 0; font-size:.95em; }
+  .msg.warn { border-left-color:#b8860b; background:#fbf7ee; }
+  .msg.hit  { border-left-color:#2c5e1a; background:#f2f7ee; }
+  .notes { margin-top:14px; border-top:1px dashed var(--grid);
+           padding-top:9px; font-size:.88em; color:var(--ink2); }
+  .notes b { color:var(--acc); }
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:18px;
+          align-items:start; }
+  .cols.wide-l { grid-template-columns:1.45fr 1fr; }
+  .cols.wide-r { grid-template-columns:1fr 1.45fr; }
+  .cols img { max-height:400px; }
+  ul, ol { margin:8px 0; padding-left:22px; }
+  li { margin:5px 0; }
+  li li { margin:2px 0; font-size:.95em; }
+  table { border-collapse:collapse; margin:10px auto; font-size:.88em;
+          width:100%; }
+  th,td { border:1px solid var(--grid); padding:4px 9px; text-align:right; }
+  th { background:#f2f1ee; }
+  td:first-child, th:first-child { text-align:left; }
+  tbody tr.hl { background:#f2f7ee; font-weight:600; }
+  .num { font-size:.8em; color:var(--ink2); position:absolute;
+         bottom:14px; right:22px; }
+  .act { background:#2b2b2b; color:#f4f4f2; text-align:center;
+         display:flex; flex-direction:column; justify-content:center; }
+  .act h1 { font-size:2.5em; margin:.1em 0; }
+  .act .sub { color:#c9c8c4; font-size:1.15em; }
+  .act .tag { background:#4a4a4a; color:#eee; }
+  .foot { text-align:center; color:var(--ink2); font-size:.85em;
+          padding:20px 0 46px; }
+  .in{color:var(--in);font-weight:600} .mid{color:var(--mid);font-weight:600}
+  .out{color:var(--out);font-weight:600}
+  .big { font-size:2.1em; font-weight:700; line-height:1.1; }
+  .big small { font-size:.42em; font-weight:400; color:var(--ink2);
+               display:block; margin-top:4px; }
+  .kpi { display:grid; grid-template-columns:repeat(3,1fr); gap:14px;
+         margin:14px 0; }
+  .kpi div { background:#f4f3f0; border-radius:8px; padding:12px 14px;
+             text-align:center; }
+  .kpi .v { font-size:1.75em; font-weight:700; }
+  .kpi .l { font-size:.82em; color:var(--ink2); }
+  code { background:#f0efec; padding:1px 5px; border-radius:3px;
+         font-size:.9em; }
+  a { color:#1b4f8f; }
+  .toclist { columns:2; column-gap:34px; font-size:.94em; }
+  .toclist li { break-inside:avoid; }
+  svg { display:block; margin:14px auto; max-width:100%; height:auto; }
+</style>
+</head>
+<body>
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag meta">DECK GUIDE</span>
+<h1>MPGD26 — draft deck</h1>
+<p class="sub">Pad-Micromegas trackers for the P2 experiment: from electronics
+optimisation to a three-plane telescope in the P2 geometry.
+<b>15 min + 5 questions, talk 4 Sep 2026.</b></p>
+
+<p class="msg"><b>How to use this.</b> This is a <b>superset</b>: 44 slides
+plus backup, so the talk can be cut down rather than padded out. Each slide
+carries a tag —
+<span class="tag core" style="position:static">CORE</span> the ~17 slides that
+make the 15 minutes,
+<span class="tag opt" style="position:static">OPTIONAL</span> strong if time
+allows,
+<span class="tag bkup" style="position:static">BACKUP</span> hold for questions,
+<span class="tag newres" style="position:static">NEW</span> a result that did
+not exist when the roadmap was written. Every slide has a
+<b>speaker note</b> under the rule: the one sentence that must be said.</p>
+
+<div class="cols">
+<div>
+<h3>Proposed 15-minute path (CORE only)</h3>
+<ol class="toclist">
+<li>Title</li>
+<li>P2: the measurement</li>
+<li>Why tracking, and where BASKET sits</li>
+<li>The detector: metallic wedge pad-Micromegas</li>
+<li>Making them: the baking problem</li>
+<li>Two readouts on purpose</li>
+<li>Nov 2025: the SNR optimum</li>
+<li>The Saclay cosmic bench</li>
+<li>Bench efficiency and the pillar budget</li>
+<li>Four detectors, one method</li>
+<li>July 2026: the P2 telescope at H4</li>
+<li>The absolute measurement</li>
+<li>One muon, five chambers (3D)</li>
+<li>96–97 %, and where the rest goes</li>
+<li>ε(HV): the bench predicted the beam</li>
+<li>Timing: the 20 ns goal</li>
+<li>DREAM vs VMM3a on the same chambers</li>
+<li>Synthesis + outlook</li>
+</ol>
+</div>
+<div>
+<h3>Time budget</h3>
+<table>
+<thead><tr><th>Block</th><th>Slides</th><th>min</th></tr></thead>
+<tbody>
+<tr><td>P2 physics + BASKET</td><td>2</td><td>2.0</td></tr>
+<tr><td>Detector design + manufacturing</td><td>3</td><td>2.5</td></tr>
+<tr><td>Act 1 — Nov 2025 electronics</td><td>1</td><td>1.0</td></tr>
+<tr><td>Act 2 — cosmic bench</td><td>3</td><td>3.0</td></tr>
+<tr class="hl"><td>Act 3 — SPS July 2026</td><td>6</td><td>5.0</td></tr>
+<tr><td>Synthesis + outlook</td><td>1</td><td>1.0</td></tr>
+<tr><td>Title / spare</td><td>1</td><td>0.5</td></tr>
+<tr class="hl"><td>total</td><td>17</td><td>15.0</td></tr>
+</tbody>
+</table>
+<p class="sub" style="margin-top:8px">Act 3 gets a third of the talk — it is
+the punchline. Act 1 is compressed to a single slide, as the task plan
+recommends.</p>
+</div>
+</div>
+
+<div class="msg warn"><b>Three things to settle before this is frozen.</b>
+(1) <b>Clearance</b> — no refereed BASKET paper exists; the specs come from
+collaboration notes. Ask now.
+(2) <b>Which efficiency number</b> goes on the slide: initial 96–97 % or
+settled ≈96/95 %. The deck quotes both with the charging figure as evidence;
+pick one form of words.
+(3) <b>Two citations still marked ⚠</b> in the roadmap: the canonical VMM3a
+reference, and anything BASKET-specific beyond the design report.</p>
+
+<p class="notes"><b>Sources.</b> Every number here is traceable:
+<code>reports/mpgd26_sps_beam_2026-08/</code> (beam),
+<code>data/Cosmic_Bench/Analysis/DET*_EFFICIENCY.md</code> +
+<code>CHARGING_UP.md</code> (bench, Aug-2026 reprocessing),
+<code>sps_beam_analysis/vmm_dream_matching/</code> (VMM),
+<code>gas_studies/</code> (Magboltz), <code>FreeCAD/</code> (FEM),
+and the EOS tree <code>/eos/experiment/ntof/data/x17/p2_sps_july</code>.</p>
+<span class="num">0</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h1>Pad-Micromegas trackers for the P2 experiment</h1>
+<p class="sub" style="font-size:1.1em">Electronics optimisation, cosmic
+characterisation, and a three-plane telescope in the P2 geometry at the CERN SPS</p>
+
+<div style="margin:34px 0 10px">
+<p class="big" style="font-size:1.5em">A. Kallitsopoulou
+<small>CEA Saclay / IRFU — on behalf of the P2 BASKET group</small></p>
+</div>
+
+<div class="kpi" style="margin-top:40px">
+<div><div class="v">96–97 %</div><div class="l">absolute efficiency,
+three planes, uRWELL-referenced</div></div>
+<div><div class="v">3.46 mm</div><div class="l">spatial residual = 12 mm/√12,
+binary pad response</div></div>
+<div><div class="v">15.5 ns</div><div class="l">best-station time resolution,
+against a 20 ns goal</div></div>
+</div>
+
+<p class="msg">MPGD2026 · 31 Aug – 4 Sep 2026 · talk 4 September</p>
+
+<p class="notes"><b>Say:</b> "We are building the pad-Micromegas trackers for
+the backward-angle spectrometer of the P2 experiment. I will show you the
+electronics optimisation, the bench characterisation, and then a dress
+rehearsal of the P2 tracker itself on a beam."</p>
+<span class="num">1</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide act"><span class="tag meta">ACT 0</span>
+<h1>Why P2 needs these detectors</h1>
+<p class="sub">The measurement, the spectrometer, and what tracking buys</p>
+</section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>P2 at MESA: the weak mixing angle to 0.14 %</h2>
+<p class="sub">Design report: D. Becker <i>et al.</i>, Eur. Phys. J. A
+<b>54</b> (2018) 208 — <a href="https://arxiv.org/abs/1802.04759">arXiv:1802.04759</a></p>
+
+<div class="cols wide-l">
+<div>
+<h3>The observable</h3>
+<p>Parity-violating asymmetry in elastic <i>e</i>–<i>p</i> scattering gives the
+proton's weak charge, and from it sin²θ<sub>W</sub>:</p>
+<table>
+<tbody>
+<tr><td>A<sub>PV</sub></td><td>−39.94 ppb</td></tr>
+<tr class="hl"><td>target ΔA<sub>PV</sub></td><td>0.56 ppb  (1.4 %)</td></tr>
+<tr><td>⟨Q²⟩</td><td>4.5 × 10⁻³ GeV²</td></tr>
+<tr><td>beam</td><td>155 MeV, 150 µA polarised CW</td></tr>
+<tr><td>target</td><td>60 cm LH₂</td></tr>
+<tr><td>running time</td><td>10 000 h</td></tr>
+<tr class="hl"><td>elastic electron rate</td><td>~0.1 THz</td></tr>
+</tbody>
+</table>
+<p>→ <b>sin²θ<sub>W</sub> to 0.14 % relative</b>, sensitive to BSM mass scales
+of order <b>50 TeV</b>.</p>
+</div>
+<div>
+<h3>What that demands of a detector</h3>
+<ul>
+<li><b>Rate.</b> 0.1 THz total elastic rate is the environment. This is why the
+readout question is not cosmetic.</li>
+<li><b>Q² knowledge.</b> An integrating asymmetry measurement only becomes
+physics if you know Q². That is a <b>tracking</b> job — the forward tracker
+must deliver ⟨Q²⟩ to <b>1 %</b>.</li>
+<li><b>Robustness.</b> 10 000 h of running means gain stability and spark
+behaviour are first-class specifications, not afterthoughts.</li>
+</ul>
+<div class="msg">Two trackers, two technologies: the <b>forward</b> Q² tracker
+is HV-MAPS; the <b>backward</b> spectrometer — <b>BASKET</b> — is Micromegas.
+This talk is about BASKET.</div>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "0.14 % on sin²θ<sub>W</sub> is the headline, but
+the number that shapes my detector is 0.1 THz — and the fact that an
+integrating measurement needs tracking to know Q² at all."</p>
+<span class="num">2</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>BASKET: the backward-angle Micromegas spectrometer</h2>
+<p class="sub">Three planes, ≈20 000 channels, inside the 0.6 T solenoid —
+the configuration measured in July 2026</p>
+
+<div class="cols">
+<div>
+<h3>Why go backward at all</h3>
+<p>The dominant hadronic uncertainties in extracting sin²θ<sub>W</sub> are
+nucleon form factors. Backward-angle running measures them directly:</p>
+<table>
+<thead><tr><th>quantity</th><th>uncertainty improves by</th></tr></thead>
+<tbody>
+<tr><td>strange electric form factor G<sub>E</sub><sup>s</sup></td><td>× 4</td></tr>
+<tr><td>strange magnetic G<sub>M</sub><sup>s</sup></td><td>× 12</td></tr>
+<tr><td>effective axial G<sub>A</sub></td><td>× 10</td></tr>
+</tbody>
+</table>
+<p class="sub">Design report Sec. 7. So BASKET is not a monitor — it removes
+the leading systematic on the main result.</p>
+</div>
+<div>
+<h3>The apparatus</h3>
+<ul>
+<li><b>≈20 000 Micromegas channels</b> in <b>three detector planes</b> at large
+backward angles.</li>
+<li>The three planes reconstruct electron tracks inside the <b>0.6 T</b>
+solenoid field.</li>
+<li>Pad readout: each channel carries a full 2-D position, so there is no
+strip ambiguity and no micro-TPC reconstruction.</li>
+</ul>
+<div class="msg hit"><b>This is the shape of the talk.</b> Three planes, in a
+row, in the P2 geometry, is exactly what we put on the H4 beam in July 2026 —
+same plane spacings, same mechanics, same electronics chain.</div>
+<p class="sub"><b>⚠ Not yet published for BASKET:</b> the spatial-resolution
+spec, per-plane rate density, timing requirement, and the pad-vs-strip
+rationale. Those come from collaboration internal notes — hence the clearance
+question.</p>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "Three planes in a 0.6 T field. Remember that
+number — three — because the last third of this talk is three of these
+detectors in a row on a beam."</p>
+<span class="num">3</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>The detector: a metallic, non-resistive bulk Micromegas with a wedge pad anode</h2>
+
+<div class="cols wide-r">
+<div>
+<h3>Geometry</h3>
+<table>
+<tbody>
+<tr><td>anode</td><td><b>1280 pads</b>, fan / wedge sector</td></tr>
+<tr><td>segmentation</td><td>10 FPC sectors × 128 pads</td></tr>
+<tr><td>typical pad</td><td>≈ 12 × 12 mm²</td></tr>
+<tr><td>amplification gap</td><td>150 µm</td></tr>
+<tr><td>drift gap</td><td>3.0 mm</td></tr>
+<tr><td>mesh</td><td>SS316L, 18 µm wire, 45 µm pitch</td></tr>
+<tr><td>mesh supports</td><td>≈11 700 small (⌀0.8 mm) on a 4 mm grid
+    + 5 large (⌀6 mm)</td></tr>
+<tr class="hl"><td>pillar area</td><td>3.43 % of the active area</td></tr>
+</tbody>
+</table>
+<h3>Two consequences to keep in mind</h3>
+<ul>
+<li><b>Metallic, non-resistive</b> mesh: no resistive-strip spark damping — so
+discharge behaviour has to be characterised, not assumed.</li>
+<li><b>Pads, not strips</b>: the position resolution is set by the pad, not by
+charge sharing. We will measure exactly that.</li>
+</ul>
+<p class="sub">Pad centres, polar coordinates and areas are taken directly from
+the production Gerber of the readout PCB — the same map feeds every analysis in
+this talk.</p>
+</div>
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/pad_sector_layout.png"
+     alt="P2 BASKET pad layout: 1280 pads in a fan sector, coloured by the 10 FPC connectors" class="tall">
+<p class="sub" style="text-align:center">Colour = one of the 10 FPC
+connectors. Each connector half (64 pads) feeds one 64-channel front-end
+connector.</p>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "Wedge-shaped because it has to tile a
+backward-angle cone. 1280 pads of about 12 by 12 millimetres — and that pad
+size is going to come back as the spatial resolution."</p>
+<span class="num">4</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>Making them was the hard part: the mesh buckles during baking</h2>
+<p class="sub">Why there were no working large detectors until this summer</p>
+
+<div class="cols">
+<div>
+<h3>The mechanism</h3>
+<p>Manufacturing requires a <b>146 °C bake</b> (ΔT = 121 °C from room
+temperature) to cure the adhesive. The steel mesh and the PCB do not expand
+equally:</p>
+<ul>
+<li>SS316L: <b>16 × 10⁻⁶ /°C</b> — well known</li>
+<li>PCB (Shengyi S1000-2M): <b>≈14 × 10⁻⁶ /°C</b> — <b>not published</b></li>
+</ul>
+<p>The PCB holds the mesh at the pillars and the wall frame, so the mismatch
+puts the mesh into <b>compression</b>. Pre-tension resists it:</p>
+<p class="msg" style="text-align:center;font-size:1.05em">
+λ = T<sub>pre</sub> / (K<sub>mesh</sub> · Δα · ΔT)<br>
+<span style="font-size:.85em">λ &gt; 1 → survives flat · λ &lt; 1 → buckles at
+≈ 25 °C + λ × 121 °C</span></p>
+<h3>What the shop floor sees</h3>
+<ul>
+<li>≥ <b>10 N/cm</b>: no visible waves after baking</li>
+<li>&lt; 10 N/cm: waves appear; at 7 N/cm they are narrow</li>
+<li>At low tension, waves start as early as <b>60 °C</b></li>
+<li>Wave scale ≈ the <b>3 mm pillar pitch</b> — they form between pillars</li>
+</ul>
+</div>
+<div>
+<h3>Where we got to</h3>
+<p>An FEM model (FreeCAD + CalculiX, ~100 k nodes) was built, but the bundled
+CalculiX cannot use a thermal load as the reference load of a buckling step —
+so the working prediction is the analytical λ above, calibrated on the
+observation that 10 N/cm is the threshold:</p>
+<p class="msg hit">Combined stiffness × CTE mismatch ≈ <b>8.3 N/m per °C</b>,
+i.e. ≈1000 N/m of compression at full bake — which is exactly the tension at
+which waves stop appearing.</p>
+<h3>The four levers</h3>
+<ol>
+<li><b>Raise pre-tension</b> to 12–15 N/cm (margin over threshold) —
+mechanically harder to hold during gluing</li>
+<li><b>Lower the bake temperature</b> — constrained by the adhesive cure</li>
+<li><b>PCB with CTE closer to 16 × 10⁻⁶</b> — removes the driver entirely</li>
+<li><b>Tighter pillar pitch</b> — constrained by field uniformity</li>
+</ol>
+<div class="msg warn"><b>Still missing, and worth asking this audience:</b>
+the in-plane CTE of S1000-2M; the effective membrane stiffness E·t of a woven
+45 µm / 18 µm SS mesh (vibration method); and the T<sub>g</sub> of cured
+Dynamask.</div>
+<p><b>Outcome:</b> raising the pre-tension above threshold gave us the first
+batch of flat, working large-area detectors — the four characterised next.</p>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "This is a two-millionths-per-degree CTE mismatch
+that decides whether you have a detector. Higher pre-tension fixed it — and
+that is why the detectors in the rest of this talk only exist from this
+summer." <b>Also a genuine ask:</b> flag the three missing material numbers —
+someone in the room may have them.</p>
+<span class="num">5</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>Two front-end readouts, on purpose</h2>
+<p class="sub">DREAM to understand the detector, VMM3a to operate it</p>
+
+<div class="cols">
+<div>
+<h3>DREAM</h3>
+<p class="sub">CLAS12 MVT, NIM A <b>957</b> (2020) 163423</p>
+<ul>
+<li>64 channels; CSA + shaper + <b>512-cell analog memory</b></li>
+<li><b>Full waveform</b> per hit — we record 16 samples at 60 ns</li>
+<li>Peaking time 50–900 ns, 16 settings</li>
+<li><b>Externally triggered</b>, dead-timeless to 20 kHz</li>
+</ul>
+<div class="msg">→ The <b>understanding</b> readout. Waveforms let you fit the
+clock phase and correct time-walk, so a timing number means something. This is
+what every efficiency number in this talk is measured with.</div>
+</div>
+<div>
+<h3>VMM3a</h3>
+<p class="sub">ATLAS NSW / RD51 — ⚠ canonical citation to confirm</p>
+<ul>
+<li>64 channels; <b>self-triggered, sparse</b> readout</li>
+<li>Per-hit <b>peak ADC + TDC</b>, no waveform</li>
+<li>Peaking time 25 / 50 / 100 / 200 ns; gain 0.5–16 mV/fC</li>
+<li>Per-channel discriminator with a per-chip threshold DAC</li>
+</ul>
+<div class="msg">→ The <b>operating</b> readout. Self-triggered and sparse is
+what survives 0.1 THz. But a discriminator throws away the information that
+lets you diagnose the chamber — which is precisely the story of the last act.</div>
+</div>
+</div>
+
+<div class="msg hit"><b>The strategy this justifies:</b> characterise on DREAM
+where you can see everything, then qualify the VMM against that reference on
+the <i>same</i> chambers. The July 2026 campaign did exactly this — and it is
+why we can say what the VMM's limitation is instead of guessing.</div>
+
+<p class="sub"><b>Where this goes next:</b> the SALSA MPGD readout ASIC
+(<a href="https://arxiv.org/abs/2501.10237">arXiv:2501.10237</a>) is the
+longer-term target.</p>
+
+<p class="notes"><b>Say:</b> "One readout tells you what the detector is doing.
+The other is what you can actually afford to run at P2. We deliberately carried
+both, and that decision is what makes the last slides possible."</p>
+<span class="num">6</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide act"><span class="tag meta">ACT 1</span>
+<h1>SPS, November 2025</h1>
+<p class="sub">Finding the electronics working point</p>
+</section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>Nov 2025: the VMM3a shaping optimum</h2>
+<p class="sub">Two pad geometries in the same beam, full gain × peaking-time scan</p>
+
+<div class="cols wide-l">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/snr_matrix.png"
+     alt="SNR grid vs VMM3a gain and peaking time for three pad geometries">
+</div>
+<div>
+<h3>Method</h3>
+<p>Each configuration is a <b>run pair</b>, using the VMM's own neighbour
+triggering to define its noise:</p>
+<ul>
+<li><b>signal</b> run: neighbour trigger off → hits where the hardware
+discriminator fired</li>
+<li><b>noise</b> run: neighbour trigger on → sub-threshold hits</li>
+</ul>
+<p>Noise width from the <b>MAD</b> (σ = 1.4826 × MAD, robust against the ADC
+floor); signal from the <b>Landau MPV</b> of the same channels.
+SNR = MPV / σ<sub>noise</sub>, computed per VMM <i>and</i> per channel.</p>
+<h3>Result</h3>
+<ul>
+<li><b>100 ns peaking wins on all three geometries.</b></li>
+<li>The gain choice sits inside the VMM-to-VMM spread; the plurality vote over
+all 8 VMMs, with VMM- and channel-level agreeing on 6 of 8, is
+<b>gain 3.0 mV/fC / 100 ns</b>.</li>
+<li>The two geometries behave the same — the pad size does not change the
+electronics optimum.</li>
+</ul>
+<div class="msg warn"><b>Keep this in mind for later.</b> This is the
+<i>SNR</i> optimum. In July 2026 the <i>efficiency</i> optimum came out at
+gain 4.5 and 200 ns instead — not a contradiction, and the reason is the
+punchline of Act 3.</div>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "100 nanoseconds, on both geometries. Note that
+25 ns was never taken here — we only scanned it the following summer. And hold
+on to the fact that this is the signal-to-noise optimum, not the efficiency
+optimum."</p>
+<span class="num">7</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag opt">OPTIONAL</span>
+<h2>Act 1, the rest of what exists</h2>
+<p class="sub">One slide to acknowledge, or drop entirely for time</p>
+
+<div class="cols">
+<div>
+<h3>Taken and analysed</h3>
+<ul>
+<li><b>Two geometries simultaneously</b> under VMM3a readout: the P2 Large
+fan-pad detector (256 pads, VMMs 12–15) and two compact P2 Small detectors
+(VMMs 8–11).</li>
+<li><b>Rate points</b> at ~5 kHz and ~15 kHz muon rate at matched
+configurations, plus spill-structure and occupancy analysis.</li>
+<li><b>Trigger-based efficiency</b> with accidental subtraction (Δt peak fit +
+sideband) and per-pad maps on the true Gerber geometry.</li>
+</ul>
+</div>
+<div>
+<h3>Taken and not analysed</h3>
+<ul>
+<li><b>Pion runs</b> — localised, much higher rate density. Zero analysis
+code exists; deliberately cut (task plan §5). One outlook line, and it belongs
+in the paper.</li>
+<li><b>ε vs rate</b> across the 5/15 kHz registries — not run.</li>
+</ul>
+<div class="msg warn"><b>Honest framing if asked:</b> the November campaign's
+job was to find the electronics working point, and it did. The rate story is
+now carried by the July telescope with real tracks, which is a better
+measurement than the one this campaign was going to provide.</div>
+</div>
+</div>
+
+<p class="notes"><b>Say only if asked:</b> "The pion data exists. It has no
+analysis yet, and I would rather show you tracks than promise you pions."</p>
+<span class="num">8</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide act"><span class="tag meta">ACT 2</span>
+<h1>Cosmic bench at Saclay</h1>
+<p class="sub">Four new detectors, external tracking, and everything you can
+only learn before a beam</p>
+</section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>The Saclay cosmic bench: a vertical tower with its own telescope</h2>
+
+<div class="cols wide-r">
+<div>
+<h3>Setup</h3>
+<ul>
+<li><b>M3 reference telescope</b>: four double-coordinate (X/Y strip) resistive
+Micromegas planes, two below and two above the detectors under test.</li>
+<li>The P2 detectors sit <b>between</b> the telescope stations, so every track
+is measured on both sides — geometry-resolved, not just triggered.</li>
+<li>Gas Ar/iC₄H₁₀ 95/5. Two HV channels per detector (mesh, drift).</li>
+<li><b>DREAM was the only readout available on the bench</b> — which is exactly
+why the beam test had to carry both electronics.</li>
+</ul>
+<h3>Two efficiency observables, kept separate</h3>
+<table>
+<tbody>
+<tr><td><code>has_any</code></td><td>M3 track in the active area and
+<b>any</b> pad fired → the detector's <b>detection</b> efficiency (the ceiling)</td></tr>
+<tr><td><code>eff_reco</code></td><td>…and the pad centroid lands within
+<i>R</i> of the track → detection <b>and</b> reconstruction (what you may quote
+as tracking efficiency)</td></tr>
+</tbody>
+</table>
+<p class="sub">The gap between them is reconstruction, not detector. Both are
+quoted throughout.</p>
+</div>
+<div>
+<svg viewBox="0 0 420 580" role="img"
+     aria-label="Cosmic bench tower: four M3 telescope planes at z = 24, 144, 1185, 1302 mm with the P2 detectors under test at z = 232 and 712 mm">
+  <defs>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5"
+            orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#52514e"/></marker>
+  </defs>
+  <!-- cosmic ray -->
+  <line x1="205" y1="30" x2="240" y2="560" stroke="#b8860b"
+        stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ar)"/>
+  <text x="252" y="44" font-size="13" fill="#b8860b" font-weight="600">cosmic µ</text>
+  <!-- planes: y = 540 - z*0.36 -->
+  <!-- m3_top_top z=1302 -->
+  <rect x="60" y="66" width="300" height="10" fill="#c9d6e8" stroke="#5a7ca8"/>
+  <text x="368" y="75" font-size="12" fill="#52514e">M3  z = 1302</text>
+  <!-- m3_top_bot z=1185 -->
+  <rect x="60" y="108" width="300" height="10" fill="#c9d6e8" stroke="#5a7ca8"/>
+  <text x="368" y="117" font-size="12" fill="#52514e">M3  z = 1185</text>
+  <!-- P2 plane z=712 -->
+  <rect x="80" y="279" width="260" height="16" fill="#f6d7c4" stroke="#eb6834"
+        stroke-width="2"/>
+  <text x="348" y="291" font-size="12.5" fill="#c1521f" font-weight="700">P2 plane
+    z = 712</text>
+  <!-- P1 plane z=232 -->
+  <rect x="80" y="451" width="260" height="16" fill="#f6d7c4" stroke="#eb6834"
+        stroke-width="2"/>
+  <text x="348" y="463" font-size="12.5" fill="#c1521f" font-weight="700">P1 plane
+    z = 232</text>
+  <!-- m3_bot_top z=144 -->
+  <rect x="60" y="483" width="300" height="10" fill="#c9d6e8" stroke="#5a7ca8"/>
+  <text x="368" y="492" font-size="12" fill="#52514e">M3  z = 144</text>
+  <!-- m3_bot_bot z=24 -->
+  <rect x="60" y="526" width="300" height="10" fill="#c9d6e8" stroke="#5a7ca8"/>
+  <text x="368" y="535" font-size="12" fill="#52514e">M3  z = 24</text>
+  <!-- axis -->
+  <line x1="42" y1="560" x2="42" y2="60" stroke="#52514e" stroke-width="1.4"
+        marker-end="url(#ar)"/>
+  <text x="20" y="300" font-size="12" fill="#52514e"
+        transform="rotate(-90 20 300)">z  [mm]</text>
+  <text x="60" y="24" font-size="13" fill="#0b0b0b" font-weight="700">
+    M3 telescope brackets the devices under test</text>
+</svg>
+<p class="sub" style="text-align:center">Positions from the run configuration;
+the P2 plane height is refitted from the data (712 mm rather than the nominal
+702).</p>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "The point of the bench is not that it has cosmics
+— it is that it has an external telescope. That turns 'the detector fired' into
+'the detector fired where the track went', which is what lets you separate a
+dead pad from a support pillar."</p>
+<span class="num">9</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>Bench efficiency, and where the missing few percent actually is</h2>
+<p class="sub">det1, 18.3 h at mesh 415 / drift 615 — <code>eff_reco</code> =
+93.4 %, <code>has_any</code> = 96.8 %</p>
+
+<div class="cols">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/01_det1_efficiency_map.png"
+     alt="det1 sliding-window efficiency map over the pad footprint">
+<p class="sub" style="text-align:center">Sliding-window efficiency over the
+true pad footprint.</p>
+</div>
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/11_pillar_accounting.png"
+     alt="Measured no-hit fraction against the Gerber pillar area">
+<p class="sub" style="text-align:center">Measured no-hit fraction vs the
+pillar area counted from the insulation-mask Gerber.</p>
+</div>
+</div>
+
+<div class="cols">
+<div>
+<h3>Loss budget</h3>
+<table>
+<tbody>
+<tr class="hl"><td>reconstructed</td><td>93.4 %</td></tr>
+<tr><td>fired, centroid outside <i>R</i></td><td>3.4 %</td></tr>
+<tr><td>no hit at all</td><td>3.2 %</td></tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Both terms are understood</h3>
+<ul>
+<li><b>The 3.2 % no-hit is the mesh pillars.</b> Counting the Gerber pillars
+inside the live area gives <b>3.43 %</b> of the active area against a measured
+<b>3.17 %</b> — agreement to 8 % <b>with no fitted parameter</b>. Confirmed
+directly on the five resolvable large pillars: efficiency falls to 59 % at the
+pillar centre and recovers over ~10 mm (the recovery scale is the 4.7 mm
+position resolution, not the 3 mm pillar).</li>
+<li><b>The 3.4 % is the position estimator, and it is recoverable.</b>
+Nearest-fired-pad instead of charge-weighted centroid gives 96.2 % — so ~2.8
+points is software, not detector.</li>
+</ul>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "This is the slide I would defend hardest. The
+inefficiency is not mysterious: three points of it is a geometric feature of a
+bulk Micromegas that we can count off the Gerber and predict without a free
+parameter, and three more points is my own centroid algorithm."</p>
+<span class="num">10</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>Four detectors, one method — and the honesty that method forces</h2>
+<p class="sub">August-2026 reprocessing, charged-up values where a run contains
+charging-up</p>
+
+<div class="cols wide-l">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/05_all_efficiency.png"
+     alt="Efficiency of all four bench detectors, charged-up values">
+</div>
+<div>
+<table>
+<thead><tr><th>det</th><th>run</th><th>h</th>
+<th><code>eff_reco</code></th><th><code>has_any</code></th></tr></thead>
+<tbody>
+<tr class="hl"><td>det1</td><td>415/615</td><td>18.3</td><td>93.4 %</td><td>96.8 %</td></tr>
+<tr><td>det2</td><td>430/600</td><td>10.0</td><td>90.3 %</td><td>93.1 %</td></tr>
+<tr><td>det3</td><td>420/820</td><td>2.0</td><td colspan="2"><b>degrading —
+    no single value</b></td></tr>
+<tr class="hl"><td>det4</td><td>410/610</td><td>10.4</td><td>92.3 %</td><td>94.8 %</td></tr>
+</tbody>
+</table>
+<h3>Three conventions that change the number</h3>
+<ul>
+<li><b>Charging-up.</b> det4 rises <b>74.7 % → 92.3 %</b> over the run and
+flattens after ~4 h; its rate climbs by a factor 9. The run average, 88.3 %,
+<b>understates the detector by 4 points</b>. det1 gains 3.4, det2 gains
+nothing — charging-up is not automatic even within one detector family.</li>
+<li><b>Degradation is not charging-up.</b> det3 <i>falls</i> 90.6 → 81.0 %
+inside two hours at fixed clean HV. Averaging that produces 86 %, which is not
+a measurement of anything. It is shown, and marked.</li>
+<li><b>Masking matters.</b> Before automatic hot-pad masking, 6 pads carried
+69 % of all hits on det1 and pinned the centroid — <code>eff_reco</code> read
+24.6 %. Eight pads masked, and it reads 93.4 %.</li>
+</ul>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "Same analysis, four detectors, and I will not
+average a dying detector into a performance plot. det4 is the important one to
+look at — quoting its run average would have cost me four points of a perfectly
+good detector."</p>
+<span class="num">11</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag opt">OPTIONAL</span>
+<h2>Bench HV scans: the working point is on a plateau</h2>
+
+<div class="cols">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/02_det1_mesh_scan.png"
+     alt="det1 efficiency vs mesh voltage, 16 points">
+<p class="sub" style="text-align:center"><b>Gain scan, 16 points.</b> Clean
+turn-on; plateau from ~400 V at 93.7–94.6 %. The 415 V operating point sits on
+it.</p>
+</div>
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/03_det1_drift_scan.png"
+     alt="det1 efficiency vs drift voltage, 12 points, including the zero-field null test">
+<p class="sub" style="text-align:center"><b>Drift scan, 12 points.</b> Flat at
+~94 % from 565 V. The lowest point is drift = mesh = 415 V, i.e.
+<b>zero drift field</b> — efficiency collapses to 18 %, exactly where physics
+says it must. A free null test.</p>
+</div>
+</div>
+
+<div class="msg hit">Two things worth saying out loud: the bench reached a
+<b>plateau</b>, and the bench contains a point where the answer is known in
+advance and the analysis gets it right. Both are why the beam numbers on the
+next act are credible.</div>
+
+<p class="notes"><b>Say:</b> "The zero-drift-field point is not a failure, it
+is a calibration of my own analysis — if that point had not collapsed I would
+not trust the rest of the curve."</p>
+<span class="num">12</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>What the bench caught before these detectors ever saw a beam</h2>
+<p class="sub">Framed as methodology: this is the value of characterising
+first</p>
+
+<div class="cols wide-l">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/lifetime_master.png"
+     alt="Lifetime master plot: efficiency, rate, arrival time and amplitude over the life of a failing detector">
+</div>
+<div>
+<h3>Two distinct pathologies, each diagnosed to a cause</h3>
+<ul>
+<li><b>det3 — drift-foil HV decoupling.</b> The dying detector retraces the
+healthy detector's <i>drift-voltage</i> ladder in peak time, amplitude and
+efficiency simultaneously; the effective drift voltage walks 400 → 130 → 45 → 0
+V. Magboltz rules out gas contamination: every plausible contaminant makes the
+drift <i>faster</i>, and this got slower.</li>
+<li><b>det1 — mesh-contact arcing.</b> Not a monotonic decline but
+<b>intermittency</b>: <code>has_any</code> goes 64.5 % → <b>96.1 %</b> → 25.5 %
+→ 10.8 % across four dates. Arrival times in the dead phases are <i>early</i>,
+death and revival are simultaneous across the plane, and the mesh current
+spikes at the moment of death.</li>
+</ul>
+<div class="msg hit"><b>The methodological point.</b> Neither of these looks
+like anything in an integrated efficiency number. Both were found because the
+bench measures efficiency <i>versus time</i>, <i>versus position</i> and
+<i>versus arrival time</i> at once. Two detectors were kept out of the beam
+because of it.</div>
+<p class="sub">Written up in <code>reports/det_lifetime_autopsy_2026-07</code>
+and <code>reports/p2_efficiency_intermittency_2026-07</code>.</p>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "I am showing you two detectors that failed,
+deliberately. The point is not that they failed — it is that the bench told us
+<i>why</i>, in time, and neither of them wasted beam time."</p>
+<span class="num">13</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag opt">OPTIONAL</span>
+<h2>Bench timing — and one hypothesis killed by simulation</h2>
+
+<div class="cols">
+<div>
+<h3>Where the bench got to</h3>
+<ul>
+<li>Time of arrival recomputed from the DREAM waveforms, with a validated
+fine-timestamp correction and slewing correction.</li>
+<li><b>σ ≈ 32 ns</b> on the amplitude plateau; <b>28.8 ns</b> under best
+conditions (vertical tracks, amplitude &gt; 600 ADC, single pad, per-channel
+t₀ equalised).</li>
+<li>Garfield++/HEED says the <b>physics floor is 3–7 ns</b> — so the 20 ns goal
+was never physics-limited.</li>
+<li>The trigger was <b>exonerated</b> by decoding the M3 telescope's own FEU:
+correlation 0.03, contribution ≲7 ns.</li>
+<li>A real <b>per-pad</b> structure exists: coherent diagonal bands of
+±10–15 ns, verified by splitting each pad's events into independent even/odd
+halves (r = 0.88).</li>
+</ul>
+<div class="msg warn"><b>State plainly:</b> the bench was
+<b>drift-geometry limited</b> — cosmics arrive at all angles through a 3 mm
+gap. The beam removes that, and the beam numbers are much better.</div>
+</div>
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/13_fem_planarity_vs_timing.png"
+     alt="FEM mesh planarity compared with the measured per-pad timing structure: no correlation">
+<div class="msg hit"><b>Was the per-pad timing structure mechanical?</b> The
+obvious suspect was mesh sag from the same buckling physics as slide 5. The FEM
+prediction converted at v<sub>d</sub> = 28 µm/ns gives <b>0.13 ns rms</b>
+against <b>7.7 ns measured</b> — a factor 57 short, with correlation r = +0.06.
+<b>It is not mechanical.</b> The conclusion is scale-invariant, so it holds at
+every pre-tension in the sweep.</div>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "I had a nice story that the mesh flatness was
+limiting the timing. The simulation says it is off by a factor of 57, so the
+story is wrong — and it is worth showing because it closes the loop back to the
+manufacturing slide."</p>
+<span class="num">14</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide act"><span class="tag meta">ACT 3</span>
+<h1>SPS H4, July 2026</h1>
+<p class="sub">Three detectors in the P2 geometry, bracketed by an independent
+tracker</p>
+</section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>The P2 telescope at H4 — a dress rehearsal of the tracker itself</h2>
+<p class="sub">TB_July2026_H4, 23 Jul – 3 Aug 2026, muon beam</p>
+
+<svg viewBox="0 0 1000 300" role="img"
+     aria-label="Five-plane beam test layout: uRWELL front at z=0, P2_IN 320, P2_MID 630, P2_OUT 940, MX17 1155, uRWELL back 1370 mm">
+  <defs>
+    <marker id="ab" markerWidth="10" markerHeight="10" refX="8" refY="5"
+            orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#b8860b"/></marker>
+  </defs>
+  <!-- beam -->
+  <line x1="20" y1="150" x2="975" y2="150" stroke="#b8860b" stroke-width="2.5"
+        marker-end="url(#ab)"/>
+  <text x="24" y="140" font-size="14" fill="#b8860b" font-weight="700">
+    H4 muons</text>
+  <!-- planes: x = 40 + z*0.62 -->
+  <!-- uRW front z=0 -->
+  <rect x="34" y="72" width="13" height="156" fill="#d9d3ee" stroke="#4a3aa7"
+        stroke-width="2"/>
+  <text x="40" y="62" font-size="12.5" fill="#4a3aa7" text-anchor="middle"
+        font-weight="700">uRWELL</text>
+  <text x="40" y="248" font-size="12" fill="#52514e" text-anchor="middle">0</text>
+  <!-- P2_IN z=320 -->
+  <rect x="231" y="90" width="15" height="120" fill="#cfe0f2" stroke="#2a78d6"
+        stroke-width="2.5"/>
+  <text x="238" y="80" font-size="13" fill="#2a78d6" text-anchor="middle"
+        font-weight="700">P2_IN</text>
+  <text x="238" y="248" font-size="12" fill="#52514e" text-anchor="middle">320</text>
+  <!-- P2_MID z=630 -->
+  <rect x="423" y="90" width="15" height="120" fill="#fbdcca" stroke="#eb6834"
+        stroke-width="2.5"/>
+  <text x="430" y="80" font-size="13" fill="#eb6834" text-anchor="middle"
+        font-weight="700">P2_MID</text>
+  <text x="430" y="248" font-size="12" fill="#52514e" text-anchor="middle">630</text>
+  <!-- P2_OUT z=940 -->
+  <rect x="616" y="90" width="15" height="120" fill="#cdeee0" stroke="#1baf7a"
+        stroke-width="2.5"/>
+  <text x="623" y="80" font-size="13" fill="#1baf7a" text-anchor="middle"
+        font-weight="700">P2_OUT</text>
+  <text x="623" y="248" font-size="12" fill="#52514e" text-anchor="middle">940</text>
+  <!-- MX17 z=1155 -->
+  <rect x="751" y="102" width="11" height="96" fill="#eeeeea" stroke="#999"
+        stroke-dasharray="4 3"/>
+  <text x="757" y="92" font-size="11.5" fill="#777" text-anchor="middle">MX17</text>
+  <text x="757" y="248" font-size="12" fill="#999" text-anchor="middle">1155</text>
+  <!-- uRW back z=1370 -->
+  <rect x="884" y="72" width="13" height="156" fill="#d9d3ee" stroke="#4a3aa7"
+        stroke-width="2"/>
+  <text x="890" y="62" font-size="12.5" fill="#4a3aa7" text-anchor="middle"
+        font-weight="700">uRWELL</text>
+  <text x="890" y="248" font-size="12" fill="#52514e" text-anchor="middle">1370</text>
+  <!-- lever arm -->
+  <line x1="40" y1="272" x2="890" y2="272" stroke="#4a3aa7" stroke-width="1.2"/>
+  <line x1="40" y1="266" x2="40" y2="278" stroke="#4a3aa7"/>
+  <line x1="890" y1="266" x2="890" y2="278" stroke="#4a3aa7"/>
+  <text x="465" y="288" font-size="12.5" fill="#4a3aa7" text-anchor="middle"
+        font-weight="600">1370 mm lever arm — the reference telescope</text>
+  <!-- P2 spacing -->
+  <text x="430" y="30" font-size="13" fill="#0b0b0b" text-anchor="middle"
+        font-weight="700">the three P2 stations at their P2 plane spacing (310 mm)</text>
+  <text x="500" y="222" font-size="11.5" fill="#52514e" text-anchor="middle">
+    z [mm]</text>
+</svg>
+
+<div class="cols">
+<div>
+<h3>What makes this different from Act 1</h3>
+<ul>
+<li><b>Three P2 detectors in a row, mounted as they will be installed</b> —
+same plane-to-plane distances, same mechanics, same electronics chain.</li>
+<li><b>Two external EIC uRWELL reference planes</b> bracket them over a
+1370 mm lever arm. This is what turns every efficiency from
+<i>relative</i> into <b>absolute</b>.</li>
+<li><b>Both readouts on the same chambers</b>: DREAM (23–29 Jul), then the P2
+pads recabled to VMM3a/SRS (30 Jul – 3 Aug) with DREAM keeping the uRWELLs
+alive as reference throughout.</li>
+</ul>
+</div>
+<div>
+<h3>Scale of the campaign</h3>
+<table>
+<tbody>
+<tr><td>DREAM phase</td><td>23 named runs, 23–29 Jul</td></tr>
+<tr><td>VMM phase</td><td>runs 21–72, ~3 400 captures, ~400 GB</td></tr>
+<tr><td>scans</td><td>mesh 330–450 V, drift 450–900 V, two 7×7 (mesh, drift) grids</td></tr>
+<tr class="hl"><td>tracks at the working point</td><td>1.15 M per station in one sub-run</td></tr>
+<tr><td>trigger</td><td>external scintillator / TCM</td></tr>
+<tr><td>gas</td><td>Ar/CO₂/iC₄H₁₀ 93/5/2, then CF₄ mix from 1 Aug</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "This is the slide that makes the claim. Three P2
+detectors at their real spacing, and — the part we did not plan for — two
+independent reference planes around them. That second ingredient is why I can
+quote an absolute efficiency rather than a relative one."</p>
+<span class="num">15</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>The absolute measurement, in one figure</h2>
+<p class="sub">P2_MID at the working point (mesh 450 / drift 700) — 1 155 012
+uRWELL tracks in the fiducial</p>
+
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/urw_panels_P2_MID.png"
+     alt="Eight-panel uRWELL-referenced efficiency summary for P2_MID">
+
+<div class="cols">
+<div>
+<h3>Method, and the hygiene that makes it defensible</h3>
+<ul>
+<li>Two-point tracks from the front/back uRWELLs (residual spread ≤0.66 mm),
+projected to each P2 plane through a <b>freely fitted affine frame</b> — which
+comes out as a proper rotation of <b>−60°</b> with unit singular values and no
+shear, at every station and every scan point.</li>
+<li><b>Denominator hygiene:</b> triggers the probe FEU never recorded are
+removed from the count, HV-settle and spark-veto windows are removed by time,
+and tracks must land in the pad fiducial (9 mm).</li>
+<li>Efficiency = a P2 cluster within 15 mm. The probe-radius scan plateaus by
+10 mm with an accidental slope of 7 × 10⁻⁴ per 10 mm → <b>±0.3 % systematic</b>.</li>
+</ul>
+</div>
+<div>
+<h3>What falls out for free</h3>
+<div class="kpi" style="grid-template-columns:1fr 1fr">
+<div><div class="v">3.46 mm</div><div class="l">residual rms, all three
+stations = 12 mm/√12</div></div>
+<div><div class="v">1.05–1.08</div><div class="l">pads per cluster</div></div>
+</div>
+<p><b>That equals binary pad response with no charge sharing</b> — the
+resolution is the pad, exactly as designed, and it is the number any Q²
+statement rests on.</p>
+<div class="msg">Deliberately mis-setting the channel map moves the efficiency
+to 60 %. Useful rule for the collaboration: <b>if efficiency reads far below
+90 %, suspect the mapping before the detector.</b></div>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "The residual is 3.4 mm on all three stations, and
+12 millimetres over root twelve is 3.46. That is not a fit — it is the pad
+size. So the detector is doing exactly what a binary pad readout should do."</p>
+<span class="num">16</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>One muon, five chambers</h2>
+<span class="tag newres" style="right:120px">NEW</span>
+
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/coincidence_side.png"
+     alt="3D rendering of the SPS setup: two EIC uRWELL references and three P2 BASKET fans on the rail, with a single measured muon track passing through all five and its hit marked on each plane"
+     class="tall">
+
+<div class="cols">
+<div>
+<div class="msg hit">A <b>measured</b> muon, drawn through the real geometry:
+the two uRWELL references at z = 0 and 1370 mm, the three P2 BASKET fans at
+320 / 630 / 940 mm, on the H4 rail. The marker on each plane is where that muon
+was recorded.</div>
+<p class="sub">The scene is built from the run configs, not drawn by hand: all
+1280 pads are placed as their true rotated rectangles from the Gerber map, the
+fan is the real annulus sector (r = 150.7 → 635.0 mm), and the instrumented
+sectors 3–6 are the bright ones. MX17 is absent because it was only installed
+on 1 August — this event is from 25 July.</p>
+</div>
+<div>
+<p>The same muon crosses <b>the same pad number, 590, on all three
+stations</b> — which is what a beam parallel to better than 0.5 mrad through
+three planes aligned to under 2 mm must do, and a nice sanity check that the
+three independent channel maps agree.</p>
+<div class="msg warn"><b>Provenance, to keep straight.</b> The uRWELL track is
+measured — two-point, from clusters in all four uRWELL views, and only written
+after reproducing the published front→back alignment. In <i>this</i> render the
+three P2 pads are the pads that track crosses, from the published alignment;
+the version requiring a <b>confirmed P2 cluster in all three stations for the
+same event</b> is extracted separately
+(<code>tools/extract_coincident_event.py</code>). Say "the muon the uRWELLs
+measured, through the pads it crossed" until that lands.</div>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "This is the P2 tracker. Two reference planes, three
+P2 fans at their real spacing, and one muon through all five. Same pad number on
+all three stations, because the beam is parallel to half a milliradian."</p>
+<span class="num">17</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag opt">OPTIONAL</span>
+<h2>The same event, two other ways to look at it</h2>
+
+<div class="cols">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/coincidence_hero.png"
+     alt="Three-quarter view of the same five-chamber coincidence, showing the pad structure of the fans">
+<p class="sub" style="text-align:center">Three-quarter view — the fan pad
+structure and the instrumented sectors are visible.</p>
+</div>
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/event_display.png"
+     alt="Three single-cluster muon events on the true P2 pad geometry across the three stations, plus a leading-pad versus z track view">
+<p class="sub" style="text-align:center">The pad-level 2D version: three
+single-cluster events on the true fan layout, hit pads sized by amplitude, and
+leading-pad position against z.</p>
+</div>
+</div>
+
+<div class="msg">Keep whichever suits the room. The 3D render sells "this is the
+P2 tracker in its final configuration"; the 2D display is the one that shows
+<b>one pad per plane per muon</b>, which is the cluster-size and
+spatial-resolution story on slide 16.</div>
+
+<p class="notes"><b>Say:</b> "Same physics, two framings — the render for what
+it is, the pad display for what it measures."</p>
+<span class="num">18</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>96–97 % absolute efficiency — and a full account of the rest</h2>
+
+<div class="kpi">
+<div><div class="v in">96.5 %</div><div class="l">P2_IN, z = 320 mm</div></div>
+<div><div class="v mid">97.1 %</div><div class="l">P2_MID, z = 630 mm</div></div>
+<div><div class="v out">96.0 %</div><div class="l">P2_OUT, z = 940 mm</div></div>
+</div>
+<p class="sub" style="text-align:center">Working point, <code>highstat_eff_1</code>,
+~1.15 M uRWELL tracks per station, <b>±0.3 % systematic</b>, statistical error
+negligible</p>
+
+<div class="cols wide-r">
+<div>
+<h3>Loss budget [percentage points]</h3>
+<table>
+<thead><tr><th>mechanism</th><th>IN</th><th>MID</th><th>OUT</th></tr></thead>
+<tbody>
+<tr class="hl"><td>total inefficiency</td><td>3.5</td><td>2.9</td><td>4.0</td></tr>
+<tr><td>— no P2 cluster anywhere</td><td>2.9</td><td>2.4</td><td>3.3</td></tr>
+<tr><td>— cluster present, &gt;15 mm away</td><td>0.6</td><td>0.5</td><td>0.6</td></tr>
+<tr><td>localised cold pads</td><td>2.9*</td><td>0.1</td><td>0.1</td></tr>
+<tr><td>drift across the run</td><td>0.4</td><td>1.3</td><td>1.4</td></tr>
+<tr><td>spark-veto dead time <i>(live time, not ε)</i></td><td>0.5</td><td>0.2</td><td>4.1</td></tr>
+</tbody>
+</table>
+<p class="sub">Per-pad uniformity in the beam core: median 0.957 / 0.961 /
+0.918. P2_OUT's whole distribution sits ~4 points low — a uniform gain deficit,
+not damage.</p>
+<div class="msg"><b>83 % of all misses are "the station recorded nothing for
+this trigger."</b> So the deficit is a uniform <b>gain/threshold floor</b>, not
+mis-reconstruction, not misalignment and not geometry. More voltage — or the
+faster gas at equal gain — attacks it directly.</div>
+</div>
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/padmap_working_point.png"
+     alt="Per-pad efficiency maps in the beam core for the three stations">
+<h3>The two localised features, named</h3>
+<ul>
+<li><b>*P2_IN connector 11</b> reads <b>0.72</b> in-beam where the same
+channels give 0.955 on MID and 0.922 on OUT; connector 14 is dead on the
+fringe. This is a channel-block effect — a genuine cabling/FEU suspect, unique
+to P2_IN, and an action item before installation.</li>
+<li>The pale pads that repeat at the <b>same coordinates on all three
+stations</b> are the known support pillars. They cost only <b>0.07 pp</b> in
+this beam spot.</li>
+</ul>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "96 to 97 percent on all three planes against an
+independent tracker. And I can tell you where the missing three percent is:
+eighty-three percent of the misses are the detector not responding at all,
+which is a threshold floor — plus exactly one real hardware fault, on one
+connector of one station."</p>
+<span class="num">19</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>ε(HV): the bench predicted the beam</h2>
+<span class="tag newres" style="right:120px">NEW</span>
+
+<div class="cols wide-l">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/bench_beam_mesh.png"
+     alt="Efficiency vs mesh voltage for the cosmic bench detectors and the beam stations on one axis">
+</div>
+<div>
+<h3>The claim, stated carefully</h3>
+<p>These are <b>not the same detectors</b> and <b>not the same gas</b>. So the
+defensible statement is:</p>
+<div class="msg hit"><b>The bench reproduces the shape of the turn-on and
+predicts the working point.</b> It does not predict the value, and I am not
+claiming it does.</div>
+<h3>What both halves agree on</h3>
+<ul>
+<li>A clean, monotonic gain turn-on over ~50 V.</li>
+<li>The knee in the same place, and the operating point above it.</li>
+<li><b>On the beam, no station has reached a plateau by the HV ceiling</b> —
+and that ceiling is the working point. The bench, at lower gain demand, did
+plateau.</li>
+</ul>
+<h3>And on the drift side</h3>
+<ul>
+<li>Beam: 0.157 at <b>zero drift field</b> → 0.896 by 500 V → flattening above
+~850 V near <b>0.974</b>.</li>
+<li>A separate transparency run pushed to gap 510 V: occupancy falls only 2–3 %
+with <b>no turnover knee</b> — mesh transparency is still fine past our HV
+ceiling.</li>
+</ul>
+<p class="sub">Both halves existed for a month before anyone put them on one
+axis. This figure is new for this talk.</p>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "This is the slide that validates the whole bench
+programme. Different chambers, different gas — but the shape and the working
+point transfer. That is what a bench is <i>for</i>." <b>Do not</b> claim the
+values agree; a reviewer will catch it.</p>
+<span class="num">20</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>Timing: the 20 ns goal is met on two of three stations</h2>
+<span class="tag newres" style="right:120px">NEW</span>
+
+<div class="cols">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/timing_campaigns.png"
+     alt="Time resolution across all three campaigns against the 20 ns P2 goal">
+</div>
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/timing_vs_drift_magboltz.png"
+     alt="Sigma versus drift voltage compared with the Magboltz gas floor plus a fitted electronics term">
+</div>
+</div>
+
+<div class="cols">
+<div>
+<h3>The measurement</h3>
+<ul>
+<li>Waveform TOA, corrected in two stages: <b>clock phase</b> (fitted
+<i>per FEU</i> — the slopes are −9.6 / −6.6 / −5.5 ns per unit, so never assume
+a common phase) then <b>time-walk</b>.</li>
+<li>Station vs trigger: <b>P2_MID 15.5, P2_OUT 18.4, P2_IN 22.4 ns</b>, stable
+to &lt;0.5 ns over 4.5 h.</li>
+<li>σ vs drift <b>plateaus at 750–800 V</b>; the 700 V working point is within
+0.5 ns of optimum. σ vs mesh improves monotonically with <b>no plateau</b> at
+the ceiling.</li>
+</ul>
+</div>
+<div>
+<h3>The decomposition, and the way down</h3>
+<ul>
+<li>The drift curve is reproduced by the <b>Magboltz gas floor ⊕ a fitted
+13.2 ns non-gas term</b> — so the budget is now split into a gas part we can
+change and an electronics/walk part we cannot, yet.</li>
+<li>The new gas (next slide) drops the gas floor 8.8 → <b>3.3 ns</b>, which
+predicts ≈<b>13.5 ns</b> at P2_MID: the next campaign will be
+<b>electronics-limited, not gas-limited</b>.</li>
+<li>Garfield++ physics floor is 3–7 ns, so there is a long way to go before
+physics is the obstacle.</li>
+</ul>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "Twenty nanoseconds is the goal; we are at 15.5 on
+the best station. And the reason I can promise further improvement rather than
+hope for it is that the drift curve decomposes into a gas term and a 13
+nanosecond electronics term — and we have already changed the gas."</p>
+<span class="num">21</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>DREAM vs VMM3a on the same chambers</h2>
+<span class="tag newres" style="right:120px">NEW</span>
+<p class="sub">Same detectors, same uRWELL tracks, same cuts — the comparison
+the dual-electronics strategy exists to make</p>
+
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/dream_vs_vmm.png"
+     alt="DREAM and VMM efficiency per station on the same uRWELL reference, plus the VMM configuration ladder">
+
+<div class="cols">
+<div>
+<h3>Why this is now a fair comparison</h3>
+<p>Until August this could not be drawn. The VMM number was a whole-station
+scalar over <i>every</i> trigger while only 3 of ~10 connectors carried VMM
+hybrids — a different denominator, so the two <b>could not share an axis</b>.</p>
+<p>It has since been re-derived <b>against the same uRWELL tracks, in the same
+fiducial, with the same probe radius</b>, over 78 sub-runs. Now they can.</p>
+<div class="msg hit">And the geometry checks out independently: the freely
+fitted uRWELL→pad transform gives the same <b>−60°</b> proper rotation, the
+residual is the same <b>3.4 mm</b>, and <b>the VMM finds the same dead pad as
+DREAM</b> — pad 635 at (411, 237) mm, two completely different electronics
+chains, same defect, same coordinates.</div>
+</div>
+<div>
+<h3>The result</h3>
+<table>
+<thead><tr><th>station</th><th>DREAM</th><th>VMM, best config</th></tr></thead>
+<tbody>
+<tr><td>P2_IN</td><td>0.965</td><td>0.155 <span class="sub">(lower bound)</span></td></tr>
+<tr class="hl"><td>P2_MID</td><td>0.971</td><td>0.669</td></tr>
+<tr class="hl"><td>P2_OUT</td><td>0.960</td><td><b>0.854</b></td></tr>
+</tbody>
+</table>
+<ul>
+<li><b>P2_OUT is the clean case</b> and the honest headline: 85 % where DREAM
+gives 96 %, on the same chamber.</li>
+<li><b>P2_IN is a lower bound, not a detector statement</b>: three of six chips
+at raised thresholds, and a residual of 4.7 mm against 3.4 mm elsewhere with a
+20–30 mm shoulder — the signature of a partly wrong channel→pad map, on the
+plane with the known mapping trouble.</li>
+<li>Cluster size: VMM 1.11–1.18 pads vs DREAM 1.05–1.08.</li>
+</ul>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "Same chambers, same tracks, same cuts — 85 % on
+the VMM against 96 % on DREAM. That gap is the interesting result of the
+campaign, and the next slide is why it is an electronics number, not a detector
+number."</p>
+<span class="num">22</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>That gap is the discriminator threshold — three independent handles</h2>
+<span class="tag newres" style="right:120px">NEW</span>
+
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/vmm_threshold.png"
+     alt="Three panels: Landau survival model fitting the mesh scan and the gain step; the threshold-DAC-only comparison; per-pad efficiency versus pulse height">
+
+<div class="cols">
+<div>
+<h3>The decisive arguments</h3>
+<ol>
+<li><b>The threshold DAC alone moves it.</b> The <i>same configuration file</i>
+36 minutes apart, with the per-chip threshold lines set or commented out:
+P2_OUT 0.486 → 0.822. Nothing else changed — same gain, peaking time, HV, gas,
+beam. Every such pair in the campaign does this.</li>
+<li><b>Amplifier gain moves it, and gain cannot change a detector.</b>
+3.0 → 4.5 mV/fC at fixed HV: 0.723 → 0.822.</li>
+<li><b>Pad by pad, efficiency tracks pulse height</b> (r = +0.55 over 69
+illuminated pads). A selection effect would run the <i>other</i> way: a channel
+with a high threshold records only its big pulses, so it would show a high
+median with a <i>low</i> efficiency.</li>
+<li><b>One curve fits both.</b> A Landau swept past a fixed threshold fits the
+11-point mesh scan and is <i>required</i> to pass through the ×1.5 gain point;
+it returns a gain e-folding of <b>V₀ = 22.4 V</b> — the physical
+bulk-Micromegas value, and not an input to the fit. The discriminator sits at
+<b>0.68 × the most probable signal</b>.</li>
+</ol>
+</div>
+<div>
+<h3>The clincher</h3>
+<div class="msg hit"><b>The best individual VMM pads already read 0.962,
+0.957, 0.954.</b> DREAM measured 0.9604 on that same plane.
+<br><br>A detector cannot be 96 % efficient on some pads and 60 % on others
+under one uniform beam. A readout with <b>one global threshold per chip and no
+per-channel trim</b> can — and the VMM's per-channel trim DACs were never
+used.</div>
+<h3>Excluded by measurement, not by argument</h3>
+<p class="sub">Tracks outside the active area (all 837 338 are inside) ·
+geometry and channel map on MID/OUT · the coincidence window (3σ→20σ moves it
+0.0039) · position matching and clustering (95.7 % of misses have nothing
+within 15 mm at <i>any</i> time in ±10 µs) · rate, dead time and pile-up (flat
+against spill time, trigger multiplicity and time since the previous trigger) ·
+the track sample · missing captures (100 % coverage) · charge sharing at pad
+boundaries · a common-mode DAQ loss (MID and OUT miss almost independently:
+52.1 % joint against 50.5 % predicted).</p>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "The detector is fine. The threshold sits at
+roughly the most probable signal, so a few percent of gain is worth ten points
+of efficiency — and the pads that happen to see the biggest pulses already give
+me the DREAM number in the very same run." <b>This is the strongest single
+result of the VMM arm — do not rush it.</b></p>
+<span class="num">23</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag core">CORE</span>
+<h2>Synthesis: detector generation × electronics × environment</h2>
+
+<table style="font-size:.83em">
+<thead><tr><th>campaign</th><th>detectors</th><th>readout</th><th>reference</th>
+<th>efficiency</th><th>σ<sub>t</sub></th><th>spatial</th><th>what it settled</th></tr></thead>
+<tbody>
+<tr><td>SPS Nov 2025</td><td>P2 Large + 2 Small</td><td>VMM3a</td>
+<td>beam trigger</td><td>—</td><td>—</td><td>per-pad maps</td>
+<td>electronics working point: <b>100 ns</b>, gain 3.0</td></tr>
+<tr><td>Saclay bench 2026</td><td>det1–det4</td><td>DREAM</td>
+<td>M3 telescope</td><td>93.4 / 90.3 / — / 92.3 %</td><td>32 ns plateau,
+28.8 ns best</td><td>σ 4.6–5.6 mm core</td>
+<td>pillar budget, charging-up, two pathologies caught</td></tr>
+<tr class="hl"><td>SPS Jul 2026</td><td>P2_IN / MID / OUT</td><td>DREAM</td>
+<td><b>uRWELL, absolute</b></td><td><b>96.5 / 97.1 / 96.0 %</b></td>
+<td><b>22.4 / 15.5 / 18.4 ns</b></td><td>3.46 mm = pad/√12</td>
+<td>the P2 tracker works in its own geometry</td></tr>
+<tr class="hl"><td>SPS Jul 2026</td><td>same three</td><td>VMM3a</td>
+<td>uRWELL, absolute</td><td>0.155* / 0.669 / <b>0.854</b></td>
+<td>22.5 ns (BCID-limited)</td><td>3.4 mm, same as DREAM</td>
+<td>the VMM deficit is the threshold, not the chamber</td></tr>
+</tbody>
+</table>
+
+<div class="cols">
+<div>
+<h3>What is established</h3>
+<ul>
+<li>A <b>three-plane P2-geometry telescope</b> runs at <b>96–97 %</b> absolute
+efficiency against an independent reference, settling to ≈96/95 % after ~1 h of
+beam.</li>
+<li><b>Spatial resolution is the pad</b>, 3.46 mm, identical on all three
+stations — binary response, no charge sharing.</li>
+<li><b>The 20 ns timing goal is met</b> at two of three stations, and the
+remaining budget is decomposed.</li>
+<li>The <b>bench method transfers</b>: it predicted the working point and it
+caught two hardware pathologies before beam time was spent.</li>
+<li>Both readouts see the <b>same geometry and the same defects</b> — three
+independent chains agreed on one flipped ribbon.</li>
+</ul>
+</div>
+<div>
+<h3>What remains before installation in P2</h3>
+<ul>
+<li><b>VMM per-channel threshold trim + time calibration.</b> This is the
+single highest-value item: the trim DACs were never used, and σ is pinned at
+the 22.5 ns BCID bin for want of calibration runs.</li>
+<li><b>Confirm the CF₄ gas timing directly</b> — one short DREAM run on the new
+gas turns a validated prediction into a measurement.</li>
+<li><b>Fix P2_IN connector 11/14</b> and re-derive its channel map.</li>
+<li><b>P2_OUT</b>: uniform ~4-point gain deficit plus spark propensity — a
+gain-calibration and HV-contact candidate.</li>
+<li><b>Push the HV ceiling</b>: no station has plateaued in mesh voltage, and
+mesh transparency is still fine past 900 V.</li>
+<li>Pion / high-rate-density analysis; the untouched MX17 dataset.</li>
+</ul>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "If you photograph one slide, photograph this one.
+Four rows: two campaigns, two readouts, one detector generation — and the last
+column is what each one actually settled." <b>Then close on the trim DACs:</b>
+"the most valuable thing we can do next costs no beam time at all."</p>
+<span class="num">24</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide act"><span class="tag meta">OPTIONAL</span>
+<h1>Optional slides</h1>
+<p class="sub">Strong material, in priority order — promote if the dry run
+comes in short</p>
+</section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag opt">OPTIONAL</span>
+<h2>ε(HV) on the beam, on its own axes</h2>
+<p class="sub">The uRWELL-referenced curves without the bench overlay — use
+these if slide 19 is cut, or as the backup to it</p>
+<div class="cols">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/eff_vs_mesh_urw.png"
+     alt="Absolute efficiency versus mesh voltage for the three stations">
+<p class="sub" style="text-align:center"><b>vs mesh.</b>
+<span class="mid">MID</span> 0.81→0.96 and <span class="out">OUT</span>
+0.86→0.95 over 390→445 V; the CERN-era <span class="in">IN</span> 0.31→0.90 over
+370→425 V. <b>No station plateaus by the HV ceiling</b> — and the ceiling is the
+working point.</p>
+</div>
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/eff_vs_drift_urw.png"
+     alt="Absolute efficiency versus drift voltage at mesh 450 V">
+<p class="sub" style="text-align:center"><b>vs drift, at mesh 450 V.</b> The
+450 V point is <b>zero drift field</b> (prompt conversions only, ~16 %); the
+curve rises to 0.90 by 500 V and flattens above ~850 V near <b>0.974</b>.</p>
+</div>
+</div>
+<div class="msg">The zero-drift-field point is the same free null test the bench
+gave (slide 12): the efficiency collapses exactly where physics says it must, on
+two independent setups. A separate transparency run pushed to gap 510 V and saw
+occupancy fall only 2–3 % with no turnover — mesh transparency is fine past our
+ceiling.</div>
+<p class="notes"><b>Say:</b> "Efficiency is mesh-dominated and we never reached
+the plateau — so the 96–97 % is a lower bound on what these chambers can do,
+limited by how much voltage we were willing to put on them."</p>
+<span class="num">25</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag opt">OPTIONAL</span>
+<h2>How the timing number is actually made</h2>
+<div class="cols">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/timing_ladder.png"
+     alt="The timing correction ladder: raw time of arrival, clock-phase corrected, walk corrected">
+<p class="sub" style="text-align:center">Raw → <code>ftst</code> clock phase →
+time-walk, at the working point.</p>
+</div>
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/timing_vs_mesh_bothruns.png"
+     alt="Time resolution versus mesh voltage, both scan campaigns, before and after the P2_IN chamber swap">
+<p class="sub" style="text-align:center">σ vs mesh, <b>both</b> scan campaigns
+(dashed = after the P2_IN chamber swap). MID 21.8→16.2 ns, OUT 24.3→19.2 ns over
+390→450 V.</p>
+</div>
+</div>
+<div class="msg warn"><b>The one methodological point worth making out loud:</b>
+the <code>ftst</code> clock-phase slope is fitted <b>per FEU</b> — −9.6, −6.6
+and −5.5 ns per unit. Assuming a common clock phase across the three stations
+would have put tens of nanoseconds of pure bookkeeping into the answer. Best
+algorithms: <code>frac30</code> for MID/OUT, <code>dCFD</code> for IN.</div>
+<p class="notes"><b>Say:</b> "Two corrections, both fitted from the data, and the
+clock phase is different on every front-end unit. Without that the timing number
+is meaningless — with it, it is stable to under half a nanosecond over four and a
+half hours."</p>
+<span class="num">26</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag opt">OPTIONAL</span>
+<h2>The campaign in one picture</h2>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/hv_campaign_timeline.png"
+     alt="Mesh voltage and maximum mesh current for all three stations over the twelve days of the campaign" class="tall">
+<div class="msg">Mesh voltage readback (top) and 30 s maximum mesh current
+(bottom) for all three stations across the 12 days. The staircases are the HV
+scans; the shaded window is the gas exchange (P2 HV off overnight 1→2 Aug); the
+P2_IN chamber swap on 28 Jul is marked.</div>
+<p class="notes"><b>Say:</b> "Twelve days, three stations, every scan visible.
+This is also the slide that proves the HV was where I say it was — the
+efficiency analysis reads its live time from this monitor, not from the run
+configuration."</p>
+<span class="num">27</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag opt">OPTIONAL</span>
+<h2>Charging-up, caught in the act</h2>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/eff_vs_time_highstat_eff_1.png"
+     alt="Efficiency in two-minute bins through the high-statistics run, showing decay and reset over the beam pause">
+<div class="cols">
+<div>
+<h3>The result</h3>
+<ul>
+<li>Efficiency in <b>2-minute bins</b> at constant HV and 4.6 kHz.
+<span class="mid">MID</span> and <span class="out">OUT</span> decay smoothly
+with a <b>30–40 min time constant</b>, <b>reset over the beam pause</b>, then
+re-decay at 30 % lower rate. <span class="in">IN</span> is flat.</li>
+<li>Initial → settled: 0.976 → 0.958 (MID), 0.974 → 0.945 (OUT).</li>
+</ul>
+</div>
+<div>
+<h3>Why it matters for the headline</h3>
+<div class="msg hit">The decay <b>re-arms during beam-off</b> — that is the
+signature of a <b>charging</b> process, not beam drift, rate loading or DAQ
+drift. P2_IN's flatness says it is chamber-specific, not environmental.</div>
+<p><b>Recommended wording:</b> "96–97 % initially, settling to ≈96 % / 95 %
+after about an hour of beam at 4.6 kHz." Quoting a single number without this
+figure is the one thing a careful reviewer would object to.</p>
+</div>
+</div>
+<p class="notes"><b>Say:</b> "The reason I can call this charging-up rather
+than a rate effect is the gap in the middle — the efficiency comes back up over
+the beam pause and then decays again."</p>
+<span class="num">28</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag opt">OPTIONAL</span>
+<h2>The gas change — predicted, then observed</h2>
+<div class="cols">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/vmm_turnon_gasAB.png"
+     alt="VMM mesh turn-on measured on both gases, showing the shift to higher voltage">
+<p class="sub" style="text-align:center">The same VMM mesh scan on both gases,
+31 Jul vs 2 Aug.</p>
+</div>
+<div>
+<h3>The prediction (Magboltz, 1 Aug, 5 mixtures)</h3>
+<p>Chosen mixture <b>Ar/CF₄/iC₄H₁₀ 88/10/2</b>:</p>
+<table>
+<tbody>
+<tr><td>drift velocity</td><td>4.42 → <b>10.65</b> cm/µs (×2.4)</td></tr>
+<tr><td>full-gap drift time</td><td>67.9 → <b>28.2</b> ns</td></tr>
+<tr class="hl"><td>gas timing floor</td><td>8.8 → <b>3.3</b> ns</td></tr>
+<tr><td>mesh for equal gain</td><td>410 → <b>426</b> V (only +16 V)</td></tr>
+<tr><td>primary clusters</td><td>26.7 → 28.8 /cm</td></tr>
+</tbody>
+</table>
+<p class="sub">40 % CF₄ mixtures were rejected: they need +125 to +179 V.</p>
+<h3>Observed in data</h3>
+<ul>
+<li>The turn-on shifts right by <b>≈20–25 V</b> — direction and rough size of
+the equal-gain prediction.</li>
+<li>The drift latency handle <b>shortens</b>: gas-B points sit ~30 ns earlier
+at gap 150, and the low-field excess over plateau shrinks 73 → 42 ns.</li>
+<li><b>No spark penalty</b> from CF₄ in its 11 hours — a standing worry about
+CF₄ mixtures, so far absent.</li>
+</ul>
+<div class="msg warn"><b>What this cannot yet say:</b> the σ improvement is a
+prediction validated <i>in shape</i>. The DREAM waveform timing only exists for
+gas A, because by then the P2 pads were on the VMM. Measuring it directly is
+the strongest argument for one short DREAM run next time.</div>
+</div>
+</div>
+<p class="notes"><b>Say:</b> "We predicted a 2.4× faster gas needing only
+16 volts more, we changed the bottle mid-campaign, and both the turn-on shift
+and the drift latency moved the way the prediction said."</p>
+<span class="num">29</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag opt">OPTIONAL</span>
+<h2>The full (mesh, drift) efficiency surface</h2>
+<div class="cols">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/eff_2d_drift_mesh_2d_2.png"
+     alt="Tag-probe efficiency over the full 7x7 mesh and drift grid">
+<p class="sub" style="text-align:center">Efficiency over a 7×7 (mesh,
+drift−mesh) grid.</p>
+</div>
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/timing_2d_drift_mesh_2d_2.png"
+     alt="Time resolution over the same mesh and drift grid">
+<p class="sub" style="text-align:center">σ over the same grid — the timing
+companion.</p>
+</div>
+</div>
+<div class="msg">Efficiency is <b>mesh-dominated</b>; the drift dependence is
+mild above gap ≈200 V. The timing optimum is a ridge at high mesh and
+gap ≈300–450 V, and at low drift field the drift-time spread explodes past
+100 ns. P2_IN's lower gain shows up as the whole surface shifted one column
+right.</div>
+<p class="notes"><b>Say:</b> "Two 7-by-7 grids, so the working point is not a
+guess. Efficiency wants mesh; timing wants a bit of drift field as well — and
+they do not fight each other."</p>
+<span class="num">30</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag opt">OPTIONAL</span>
+<h2>Three methods, one answer</h2>
+<div class="cols wide-l">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/eff_methods_comparison.png"
+     alt="uRWELL-referenced, tag-and-probe and raw-stream efficiency on the same scan">
+</div>
+<div>
+<h3>Why they differ, and by how much</h3>
+<table>
+<thead><tr><th>station</th><th>tag-probe</th><th>uRWELL</th><th>bias</th></tr></thead>
+<tbody>
+<tr><td>P2_IN</td><td>0.925</td><td>0.965</td><td>−4.0 pp</td></tr>
+<tr class="hl"><td>P2_MID</td><td>0.963</td><td>0.971</td><td>−0.7 pp</td></tr>
+<tr><td>P2_OUT</td><td>0.925</td><td>0.960</td><td>−3.5 pp</td></tr>
+</tbody>
+</table>
+<p>The tag-probe numbers are biased <b>low</b> because the tag position is
+built from the other two stations' <b>12 mm pad</b> centroids, so the prediction
+is smeared by several mm. The bias is smallest for <b>MID</b>, which is
+<i>interpolated</i>, and largest for the outer stations, which require
+<i>extrapolation</i>.</p>
+<div class="msg hit"><b>That gap is the clearest demonstration of what the
+external reference buys.</b> The n_tag-weighted mean of the per-pad map
+reproduces the station scalar to 0.1–0.2 pp, so the tag-probe analysis is
+internally consistent — it is simply limited by its own tagging planes.</div>
+<p class="sub">The third curve is a clustering-free per-channel threshold count
+from the raw zero-suppressed stream: a shape check, not an efficiency.</p>
+</div>
+</div>
+<p class="notes"><b>Say:</b> "Before we had the uRWELLs we would have quoted
+92.5 percent. The external reference is worth four points on the outer
+stations — and knowing that is worth more than the four points."</p>
+<span class="num">31</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag opt">OPTIONAL</span>
+<h2>Sparks and HV health across twelve days</h2>
+<div class="cols wide-l">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/spark_summary.png"
+     alt="Spark totals per station and P2_OUT spark rate versus mesh voltage">
+</div>
+<div>
+<table>
+<thead><tr><th>period</th><th>h@HV</th><th>IN</th><th>MID</th><th>OUT</th></tr></thead>
+<tbody>
+<tr><td>DREAM phase, gas A</td><td>49–60</td><td>0.3</td><td>0.2</td><td><b>1.3</b></td></tr>
+<tr><td>VMM phase, gas A</td><td>35</td><td>1.6</td><td>0.5</td><td>0.1</td></tr>
+<tr><td>VMM phase, gas B</td><td>11</td><td>1.4</td><td>0.2</td><td>0.3</td></tr>
+</tbody>
+</table>
+<p class="sub">Sparks per hour. Counted as 30 s windows with mesh
+I<sub>mon</sub> &gt; 2 µA while at voltage.</p>
+<h3>Three separate stories</h3>
+<ul>
+<li><b>P2_OUT was the July offender</b>: 69 sparks, up to 11 % dead time in a
+single sub-run, and current excursions that grow with drift field
+(0.20 → 0.47 µA up to gap 500) — then it <b>conditioned quiet</b> by August.</li>
+<li>The <b>new P2_IN chamber</b> sparks at ~1.5/h through the whole VMM phase:
+normal conditioning for a fresh chamber, worth watching.</li>
+<li><b>No CF₄ spark penalty</b> in 11 hours. Zero HV trips after 25 Jul.</li>
+</ul>
+<div class="msg">Important bookkeeping: spark-veto windows are removed from the
+<b>denominator</b>, so this costs DAQ live time, <b>not</b> detector
+efficiency.</div>
+</div>
+</div>
+<p class="notes"><b>Say:</b> "This is a metallic, non-resistive mesh, so sparks
+are the thing you have to prove you can live with. One station was noisy and
+conditioned itself quiet, and CF₄ did not make it worse."</p>
+<span class="num">32</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag opt">OPTIONAL</span>
+<h2>Two P2_IN chambers, one beam — including the CERN-built one</h2>
+<div class="cols wide-l">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/eff_p2in_swap.png"
+     alt="Efficiency turn-on curves for the two successive P2_IN chambers">
+</div>
+<div>
+<h3>What happened</h3>
+<ul>
+<li><b>23–27 Jul:</b> P2_IN was the <b>CERN bulk chamber</b>. Repaired 26 Jul,
+then pulled on 27 Jul at 15:00 after its amplitude visibly declined through a
+run.</li>
+<li><b>28 Jul onward:</b> replaced by a <b>new metallic-mesh Micromegas</b>,
+commissioned from scratch that morning. The entire VMM campaign ran with this
+chamber.</li>
+</ul>
+<h3>Both have full curves</h3>
+<ul>
+<li>The replacement turns on <b>10–15 V above</b> the CERN chamber and reaches
+<b>0.93 at mesh 450</b> — and unlike the CERN one, it was scanned <b>into its
+plateau region</b>.</li>
+<li>In the timing scan repeated after the swap, the new chamber <b>tracks
+MID/OUT</b>, where the CERN chamber sat flat at ~32 ns below 385 V
+(amplitude-limited).</li>
+</ul>
+<div class="msg">Useful for the collaboration: a chamber that is declining
+shows it in <b>amplitude and efficiency-vs-time together</b>, which is exactly
+the bench signature from Act 2 — the same diagnostic worked on the beam.</div>
+</div>
+</div>
+<p class="notes"><b>Say:</b> "We swapped a chamber mid-campaign and got full
+turn-on curves for both. The replacement is better, and it is the one every VMM
+number in this talk was taken with."</p>
+<span class="num">33</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag opt">OPTIONAL</span>
+<h2>The VMM configuration scan — what to actually set</h2>
+<div class="cols">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/vmm_config_scan.png"
+     alt="VMM efficiency and coincidence width versus peaking time and gain">
+</div>
+<div>
+<h3>Result</h3>
+<ul>
+<li>Efficiency rises steadily with peaking time; the best settings are
+<b>gain 4.5 mV/fC with 100–200 ns</b>.</li>
+<li>Timing improves ~7 ns from 25 → 200 ns peaking but stays
+<b>BCID-dominated</b> at the 22.5 ns quantisation.</li>
+</ul>
+<div class="msg hit"><b>The Act 1 / Act 3 tension, resolved.</b> November 2025
+said gain 3.0 / 100 ns; July 2026 says 4.5 / 200 ns. Both are right, because
+they optimise different things:
+<ul>
+<li><b>SNR</b> asks how far the signal sits above the noise <i>width</i> —
+longer shaping filters noise, and more gain amplifies both equally, so gain
+barely matters.</li>
+<li><b>Efficiency</b> asks how much signal clears a <b>fixed discriminator</b>
+— and there, more gain is pure profit.</li>
+</ul>
+So the honest recommendation for P2 is: <b>set the gain high and trim the
+thresholds per channel</b>, rather than choosing gain from an SNR table.</div>
+<p class="sub"><b>State, do not fix:</b> VMM σ is pinned at the BCID bin
+because no time-calibration runs exist. That is an outlook item, not a defect.</p>
+</div>
+</div>
+<p class="notes"><b>Say:</b> "These two campaigns look like they disagree about
+the gain. They do not — one is optimising signal-to-noise and the other is
+optimising signal-over-threshold, and for P2 it is the second one that pays."</p>
+<span class="num">34</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag opt">OPTIONAL</span>
+<h2>Bench detail: all four detectors, every scan</h2>
+<div class="cols">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/07_all_mesh_scans.png"
+     alt="Mesh scans of all bench detectors overlaid">
+<p class="sub" style="text-align:center">Gain scans overlaid — det1 plateaus by
+400 V; det2 is still rising at the top of its range.</p>
+</div>
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/08_all_drift_scans.png"
+     alt="Drift scans of all bench detectors overlaid">
+<p class="sub" style="text-align:center">Drift scans — det4 stays flat because
+no drift field was established in that run. Shown, and labelled as such.</p>
+</div>
+</div>
+<div class="cols">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/06_coverage_table.png"
+     alt="Which measurement exists for which detector">
+</div>
+<div>
+<h3>Why show the coverage table</h3>
+<p>Not every detector has every measurement — det2 never got a drift scan, det3
+collapsed before it could be scanned properly, det4's early scan had no drift
+field. Showing the coverage explicitly is what keeps the four-detector
+comparison honest.</p>
+<div class="msg">Convention applied throughout: timing points from too few
+events are drawn <b>hollow</b> and never quoted as a resolution.</div>
+</div>
+</div>
+<p class="notes"><b>Say:</b> "Four detectors is a small sample and the coverage
+is uneven. I would rather show you the holes than let you assume there are
+none."</p>
+<span class="num">35</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide act"><span class="tag meta">BACKUP</span>
+<h1>Backup</h1>
+<p class="sub">For questions — methodology, systematics, and the open items</p>
+</section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag bkup">BACKUP</span>
+<h2>Q: "How do you know your channel mapping is right?"</h2>
+<div class="cols">
+<div>
+<h3>Four independent validations</h3>
+<ol>
+<li><b>Against the M3 telescope on the bench.</b> The within-connector pad
+ordering was determined from track–hit correlation, not from the connector
+drawing (r = 0.93 / 0.88), and it came out <b>reversed</b> relative to the
+naive reading — a real 2-pin gap in the connector.</li>
+<li><b>P2 planes against each other</b> on the beam found a flipped
+<code>c_5_top</code> ribbon on P2_IN.</li>
+<li><b>The uRWELL reference confirmed it</b> independently.</li>
+<li><b>The VMM readout confirmed it again</b>, through completely different
+electronics.</li>
+</ol>
+<div class="msg hit"><b>Three chains, same answer.</b> And the freely fitted
+uRWELL→pad transform returns a <b>proper</b> rotation (unit singular values,
+det = +1) of −60° at every station and every scan point — a wrong map would not
+do that.</div>
+</div>
+<div>
+<h3>Two sanity checks worth quoting</h3>
+<ul>
+<li><b>Deliberately mis-setting the map</b> moves the efficiency from 96 % to
+<b>60 %</b>. Hence the rule: if efficiency reads far below 90 %, suspect the
+mapping before the detector.</li>
+<li><b>The VMM finds the same dead pad as DREAM</b> — pad 635 (VMM 17 ch 4) at
+(411, 237) mm, matching the dark square at (410, 237) in the DREAM map. Two
+electronics chains, same defect, same coordinates.</li>
+</ul>
+<h3>Where it is still open</h3>
+<p><b>P2_IN under VMM readout.</b> Residual 4.7 mm against 3.4 mm elsewhere,
+with a shoulder at 20–30 mm in the matching distance — a partly wrong
+channel→pad map on the plane that already had mapping trouble. The uRWELL
+tracks now make re-deriving that map possible, which is the fix.</p>
+</div>
+</div>
+<span class="num">36</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag bkup">BACKUP</span>
+<h2>Q: "Is the reference telescope good enough?"</h2>
+<div class="cols">
+<div>
+<h3>The uRWELL reference, characterised</h3>
+<ul>
+<li>Two EIC uRWELL strip planes, ~1 mm pitch, over a <b>1370 mm lever arm</b>.</li>
+<li>Front–back residual spread <b>≤0.66 mm</b>, no rotation between them.</li>
+<li>Beam divergence understood as a virtual source ~40 m upstream.</li>
+<li><b>Rock-stable all campaign</b> at 620/420 V. The fitted frame moves
+&lt;0.02° over 4.5 h and across all 23 scan points, with no shear
+(&lt;0.0013).</li>
+<li>1.15 M tracks per station in a single sub-run.</li>
+</ul>
+<div class="msg">Sub-millimetre pointing against a 12 mm pad: the reference
+contributes nothing to the residual, which is why the measured 3.46 mm is pure
+pad quantisation.</div>
+</div>
+<div>
+<h3>Systematics, and how they were bounded</h3>
+<ul>
+<li><b>Probe radius.</b> Efficiency is flat from 8–10 mm out to 40 mm (e.g.
+96.05 % at 8 mm → 96.66 % at 40 mm), with an accidental slope of only
+<b>7 × 10⁻⁴ per 10 mm</b>. → ±0.3 %.</li>
+<li><b>Denominator.</b> Triggers the probe FEU never recorded are removed using
+the DAQ's own record; HV-settle and spark windows are removed by time.</li>
+<li><b>Fiducial.</b> Tracks must land within 9 mm of an instrumented pad; the
+efficiency is on the active-area plateau.</li>
+<li><b>Reference features are visible and identified</b> — a ~5×5 mm hole in
+the uRWELL appears at the same place in all three stations' maps <i>in the
+uRWELL frame</i>, which is how we know it belongs to the reference and not to
+the detectors.</li>
+</ul>
+</div>
+</div>
+<span class="num">37</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag bkup">BACKUP</span>
+<h2>Q: "What about the reference run that disagrees?" — data-quality register</h2>
+<div class="cols">
+<div>
+<h3>Known and stated</h3>
+<ul>
+<li><b>The 27 Jul level shift.</b> <code>eff_nominal_1</code> reads 3–5 points
+lower than 25 Jul in <i>both</i> methods, with the station order rearranged
+(OUT 0.955, MID 0.91, IN 0.88). P2_IN's decline there is the CERN chamber's
+documented last morning. The MID/OUT shift is <b>open</b> — candidates are
+charging history, beam steering into a weaker pad region, and the drift
+700 → 750 V change. <b>The talk quotes the 25 Jul high-statistics run.</b></li>
+<li><b>Two gas-A drift scans taken two days apart</b> at identical setpoints
+differ by ~27 ns in plateau latency: the drift looked ~30 % slower on 1 Aug.
+Same direction as an earlier "slow bottle" suspicion on the bench.
+Temperature/pressure/flow logs would settle it.</li>
+</ul>
+</div>
+<div>
+<h3>Holes in the dataset, stated not hidden</h3>
+<ul>
+<li><b>7 FEU files</b> sit as intact <code>*.fdf.hang</code> from decoder
+hangs; re-decoding needs the DREAM decoder binary and the DAQ machines are
+off.</li>
+<li><b>VMM gaps:</b> run_59 recorded no data (its scan was retaken as run_61);
+run_62 captured 2 of 6 drift points; gas-B VMM drift is therefore <b>2
+points</b>.</li>
+<li><code>drift_mesh_2d_1</code> was killed by a P2_MID trip and is superseded
+by <code>_2</code>.</li>
+<li><code>drift_450</code> of the drift scan is <b>zero drift field</b> — never
+fit as a normal point.</li>
+<li><b>Chunked sub-runs.</b> Any analysis globbing one file per sub-run
+silently loses up to <b>57 %</b> of the data. All numbers here sum chunks.</li>
+<li><b>Gas labels were wrong in the DAQ configs</b> for the whole campaign
+(they all said Ar/Iso 95/5). 136 configs corrected on EOS; the changeover is
+independently confirmed in the data.</li>
+</ul>
+</div>
+</div>
+<div class="msg warn">Worth saying if pressed: the honest version of "96–97 %"
+is <b>"96.5 / 97.1 / 96.0 % at the working point on 25 July, settling to ≈96 /
+95 % after an hour of beam."</b> Everything above is why that is the sentence.</div>
+<span class="num">38</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag bkup">BACKUP</span>
+<h2>Q: "Why is your bench timing so much worse than your beam timing?"</h2>
+<div class="cols wide-l">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/04_det1_timing_vs_drift.png"
+     alt="Bench time resolution versus drift field">
+</div>
+<div>
+<h3>Because they are different measurements</h3>
+<ul>
+<li><b>Bench:</b> cosmics arrive at <b>all angles</b> through a 3 mm gap, so
+the drift path length varies event to event. That is a geometric spread, not a
+detector limitation. Result: ~32 ns plateau, 28.8 ns best conditions.</li>
+<li><b>Beam:</b> muons arrive collimated and normal, so the geometric term
+largely vanishes. Result: 15.5–22.4 ns per station.</li>
+</ul>
+<h3>Things ruled out on the bench, by measurement</h3>
+<ul>
+<li><b>The trigger</b> — decoding the M3 telescope's own FEU gives correlation
+0.03 and a ≲7 ns contribution.</li>
+<li><b>Mesh planarity</b> — the FEM prediction is a factor 57 too small
+(r = +0.06). Not mechanical.</li>
+<li><b>The gas table</b> — cross-checked against an independent Magboltz run
+for the same mixture, agreeing to <b>0.1–0.3 %</b> at every shared field point.</li>
+</ul>
+<div class="msg warn"><b>One honest correction to make if it comes up.</b> The
+bench drift-scan CSV carries an apparent drift velocity 20–30 % above
+Magboltz. That is <b>not</b> a measurement: it is the measured time spread
+multiplied by an assumed geometry factor of 0.8, and the data require 0.63 ±
+0.03 — stable across a field range over which the Magboltz velocity itself
+changes by 7 %. Re-fitting it would make it agree by construction. The right
+thing is to report the <b>measured time spread</b> against the Magboltz
+prediction, with no free parameter.</div>
+</div>
+</div>
+<span class="num">39</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag bkup">BACKUP</span>
+<h2>Q: "How do you know the inefficiency isn't the gas?"</h2>
+<div class="cols">
+<div>
+<h3>Ruled out numerically</h3>
+<p>Ar/isobutane 95/5 gives ~31 primary clusters/cm, so a 5 mm drift gap sees
+~15 clusters:</p>
+<p class="msg" style="text-align:center;font-size:1.15em">
+P(0 clusters) = e<sup>−15</sup> ≈ 2 × 10⁻⁷</p>
+<p>Three to four orders of magnitude too small to matter, and it survives any
+plausible gap — even at 3 mm it is 0.02 %.</p>
+<h3>Everything else that was excluded</h3>
+<table>
+<tbody>
+<tr><td>dead connectors</td><td>removed from numerator <i>and</i> denominator</td></tr>
+<tr><td>dead pads</td><td>0 with local ε &lt; 15 % after removing connector 2</td></tr>
+<tr><td>hot / oscillating pads</td><td>8 masked automatically; before masking,
+6 pads carried 69 % of hits</td></tr>
+<tr><td>sparks</td><td>2.5 % dead time vetoed; products kept both ways</td></tr>
+<tr><td>match radius <i>R</i></td><td>on plateau; tracks ideal Gaussian
+containment for σ = 4.7 mm</td></tr>
+<tr><td>active-area radius</td><td>on plateau, anchored to the 11.8 mm pad
+pitch (half-diagonal 8.4 mm)</td></tr>
+<tr><td>M3 projection quality</td><td>only ~24 % worse at the near plane —
+cannot explain a 94 → 54 % difference</td></tr>
+</tbody>
+</table>
+</div>
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/10_det1_loss_budget.png"
+     alt="det1 loss budget: reconstructed, fired-not-reconstructed, no-hit">
+<div class="msg hit">And on the beam the same question has a cleaner answer:
+<b>83 % of all misses have no cluster anywhere in the event</b>. That is a
+gain/threshold floor, and the VMM analysis then showed exactly what a threshold
+floor looks like when you can move the threshold.</div>
+</div>
+</div>
+<span class="num">40</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag bkup">BACKUP</span>
+<h2>Q: "Two bugs you found in your own analysis?"</h2>
+<p class="sub">Worth volunteering — it is the reason the VMM numbers changed
+between August drafts</p>
+
+<div class="cols">
+<div>
+<h3>1. The hot-channel mask was deleting the beam</h3>
+<p>The rule flagged any channel above <b>8× its own chip's median</b>
+occupancy. On a chip whose threshold has been raised, the noise disappears, the
+median collapses, and the <i>illuminated</i> pads stand 30–50× above it — so
+they were masked.</p>
+<ul>
+<li>On P2_MID this removed <b>64 630 hits arriving exactly at the +115 ns
+trigger latency</b>. The pads it killed measure <b>61 %</b> with the mask off
+and <b>1 %</b> with it on. VMM 9 was not dead; it was masked.</li>
+<li>Flagging on out-of-time occupancy does not fix it either: the beam delivers
+particles at tens of kHz while the matched trigger runs at ~1.4 kHz, so most of
+a beam pad's hits <i>are</i> out of time with a matched trigger.</li>
+<li><b>New rule: an absolute rate.</b> A 12×12 mm pad in this beam takes a few
+kHz; the pathological channels sit at 10⁵ Hz. Two decades of clear air between
+them.</li>
+</ul>
+<table>
+<thead><tr><th>station</th><th>ratio rule</th><th>absolute rate</th></tr></thead>
+<tbody>
+<tr><td>P2_IN</td><td>0.154</td><td>0.155</td></tr>
+<tr class="hl"><td>P2_MID</td><td>0.592</td><td><b>0.669</b></td></tr>
+<tr><td>P2_OUT</td><td>0.854</td><td>0.854</td></tr>
+</tbody>
+</table>
+<p class="sub">P2_OUT — the headline station — is untouched, so the headline
+number stands.</p>
+</div>
+<div>
+<h3>2. Capture spans started at t = 0</h3>
+<p>A few hits per capture carry <code>srs_timestamp = 0</code>. Taking each
+capture's span as (min, max) of its hit times stretched every capture back to
+zero. Unioned, that made the "was the VMM recording?" cut accept everything and
+made the live time come out <b>25× too long</b>. Both now use quantiles.</p>
+<div class="msg hit"><b>Why volunteer this.</b> It is a good answer to "how
+much should I trust these numbers": the failure mode of a masking rule is that
+it deletes signal, and the way it was caught was that the deleted hits sat
+<i>exactly</i> at the known trigger latency. That is the kind of cross-check
+the uRWELL reference makes possible.</div>
+<h3>Also worth knowing</h3>
+<ul>
+<li>The SRS tick is <b>22.5 ns</b>, not 25 — which is why VMM σ is pinned
+there.</li>
+<li>The trigger fan-out to the VMM only exists from 30 July (run_31), so
+earlier VMM runs have no matched trigger.</li>
+<li>DREAM and VMM DAQs number runs independently and drift apart after run_58 —
+VMM data must be labelled from its own config, never from the DREAM one.</li>
+</ul>
+</div>
+</div>
+<span class="num">41</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag bkup">BACKUP</span>
+<h2>Reference: the gas study behind the mixture choice</h2>
+<div class="cols">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/gas_drift_velocity.png"
+     alt="Magboltz drift velocity versus drift voltage for the candidate mixtures">
+</div>
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/gas_timing_floor.png"
+     alt="Gas-limited timing floor versus drift voltage for the candidate mixtures">
+</div>
+</div>
+<div style="overflow-x:auto">
+<table>
+<thead><tr><th>mixture</th><th>n<sub>cl</sub> /cm</th><th>v<sub>d</sub>
+[cm/µs]</th><th>t<sub>drift</sub> [ns]</th><th>σ<sub>gas</sub> [ns]</th>
+<th>mesh for equal gain</th></tr></thead>
+<tbody>
+<tr><td>Ar/CO₂/iC₄H₁₀ 93/5/2 <i>(baseline)</i></td><td>26.7</td><td>4.42</td>
+<td>67.9</td><td>8.8</td><td>410 V</td></tr>
+<tr><td>Ar/iC₄H₁₀ 95/5 <i>(bench gas)</i></td><td>27.9</td><td>3.23</td>
+<td>92.8</td><td>11.7</td><td>390 V</td></tr>
+<tr class="hl"><td>Ar/CF₄/iC₄H₁₀ 88/10/2 <i>(chosen)</i></td><td>28.8</td>
+<td><b>10.65</b></td><td><b>28.2</b></td><td><b>3.3</b></td><td>426 V
+<i>(+16)</i></td></tr>
+<tr><td>Ar/CF₄/iC₄H₁₀ 58/40/2</td><td>36.6</td><td>9.81</td><td>30.6</td>
+<td>2.8</td><td>535 V <i>(+125)</i></td></tr>
+<tr><td>Ar/CF₄/CO₂ 45/40/15</td><td>37.0</td><td>2.70</td><td>111</td>
+<td>10.3</td><td>589 V <i>(+179)</i></td></tr>
+</tbody>
+</table>
+</div>
+<div class="msg">Magboltz, 150 µm amplification gap, 3 mm drift gap, drift
+ΔV = 200 V. The 88/10/2 mixture wins because it buys <b>2.4× the drift
+velocity and the flattest v<sub>d</sub> plateau for only +16 V of mesh</b>. The
+40 % CF₄ mixtures are marginally faster but cost 125–179 V, which pushes the
+chamber well past where it sparks.</div>
+<span class="num">42</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag bkup">BACKUP</span>
+<h2>Reference: the det3 autopsy in one figure</h2>
+<div class="cols wide-l">
+<div>
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/drift_ladder_trajectory.png"
+     alt="The dying detector retraces the healthy detector's drift-voltage ladder">
+</div>
+<div>
+<h3>The argument</h3>
+<p>det3 died over ~12 hours at <b>fixed, clean HV with zero sparks</b>
+(76.6 → 68.7 → 42.9 → 0.5 % over 10 h). Two hypotheses: gas, or a drift-foil HV
+problem.</p>
+<h3>The test that separated them</h3>
+<ul>
+<li>As it died, det3 <b>retraced the healthy detector's drift-voltage ladder</b>
+— in peak time, amplitude <i>and</i> efficiency simultaneously. The effective
+drift voltage walks 400 → 130 → 45 → 0 V.</li>
+<li><b>Magboltz kills the gas hypothesis:</b> every plausible contaminant makes
+the drift <i>faster</i>. This got slower.</li>
+<li>The failure front moves <b>patchwise from the inlet corner</b> — consistent
+with metallisation progressively decoupling from the HV contact.</li>
+</ul>
+<div class="msg hit"><b>Verdict: drift-foil HV decoupling.</b> Distinct from
+det1, whose signature is intermittency, early arrival times in the dead phases,
+simultaneous death and revival across the plane, and mesh-current spikes at the
+moment of death — <b>mesh-contact arcing</b>.</div>
+<p class="sub">Two different diseases, separated by measurement, both diagnosed
+before either detector reached a beam. Proposed next step: an induced-pulse lab
+test.</p>
+</div>
+</div>
+<span class="num">43</span></section>
+
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag meta">DECK NOTES</span>
+<h2>What is new here, and what is still open</h2>
+
+<div class="cols">
+<div>
+<h3>New for this deck (not in any earlier report)</h3>
+<ul>
+<li><b>bench ↔ beam ε(mesh) overlay</b> (slide 19) — roadmap WP-C, both halves
+existed but had never been put on one axis.</li>
+<li><b>DREAM vs VMM on one axis</b> (slide 21) — roadmap WP-B, which the
+roadmap and task plan both list as <i>blocked</i>. It is no longer blocked: the
+VMM efficiency has been re-derived against the same uRWELL tracks over 78
+sub-runs, so the two are directly comparable. <b>This supersedes the
+"never put these on one axis" caveat slide in the August options deck.</b></li>
+<li><b>the threshold evidence panel</b> (slide 22) — the Landau-survival model,
+the threshold-DAC-only pairs and the per-pad pulse-height correlation, drawn
+from the run_46 autopsy.</li>
+<li><b>the cross-campaign timing ladder</b> (slide 20) — roadmap WP-G.</li>
+<li><b>the Nov-2025 SNR grid</b> (slide 7) — roadmap WP-E, redrawn as a grid
+with the untaken cells marked rather than as lines through a sparse scan.</li>
+<li><b>the manufacturing slide</b> (slide 5) — the baking-buckling study had
+never been put in a talk.</li>
+<li><b>the 3D five-chamber coincidence</b> (slides 17–18) — rendered from the
+<code>nTof_x17/mpgd26</code> setup model with a real measured uRWELL muon
+threaded through it. New machinery:
+<code>make_coincidence.py</code>,
+<code>tools/extract_coincident_event.py</code> (five-fold coincidences on
+lxplus) and <code>tools/check_track_pad_frames.py</code>, which exists because
+composing the published uRWELL→pad alignment with the renderer's beam's-eye pad
+mirror is a <i>reflection</i> — x agrees to 0.1 mm and y silently flips. The
+track is therefore drawn through the same pad-frame→lab composition as the
+pads; the check script prints the residual (0.4–1.3 mm, the station-to-station
+spread of the fit itself).</li>
+</ul>
+</div>
+<div>
+<h3>Still open, and worth a decision</h3>
+<ol>
+<li><b>Clearance for the July material.</b> No refereed BASKET paper exists;
+specs come from internal notes. Ask the collaboration now.</li>
+<li><b>Two ⚠ citations:</b> the canonical VMM3a reference, and anything
+BASKET-specific beyond the design report.</li>
+<li><b>Which efficiency form of words.</b> The deck uses "96.5 / 97.1 / 96.0 %
+at the working point, settling to ≈96 / 95 %". Confirm.</li>
+<li><b>The 27 Jul level shift</b> is unexplained (slide 35). It is in backup;
+decide whether to volunteer it.</li>
+<li><b>P2_IN under VMM</b> is a lower bound pending a re-derived channel map.
+The tracks now make that possible — worth doing before the talk if there is
+time, since it would remove the one asterisk on slide 21.</li>
+<li><b>Bench timing number.</b> The deck quotes <b>32 ns plateau / 28.8 ns best
+conditions</b> from the dedicated waveform study. Note that the roadmap's
+"46 ns" and stage 19's "20.8 ns per-pad median" are different estimators of
+different things — do not mix them in one sentence.</li>
+</ol>
+<div class="msg warn"><b>Cut first if the dry run overruns:</b> slide 8 (Act 1
+remainder), slide 18 (the alternative event views), slide 35 (bench coverage
+detail), slide 30 (2D surfaces), slide 33 (chamber swap).
+<b>Protect:</b> 15–23 — that block is the talk.</div>
+</div>
+</div>
+<span class="num">44</span></section>
+
+
+<p class="foot">
+Draft deck, 17 Aug 2026 · figures regenerated from
+<code>reports/mpgd26_sps_beam_2026-08/</code>,
+<code>data/Cosmic_Bench/Analysis/conference/</code>,
+<code>gas_studies/</code> and <code>mpgd2026/make_talk_figs.py</code> ·
+companion documents:
+<a href="2026-08-16-mpgd26-sps-beam-report.html">full beam-test report</a> ·
+<a href="2026-08-16-vmm-efficiency-autopsy.html">VMM efficiency autopsy</a> ·
+<a href="2026-08-16-mpgd26-slide-options.html">August options deck</a><br>
+<a href="./">← all notes</a>
+</p>
+
+</body>
+</html>
