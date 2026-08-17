@@ -1031,35 +1031,49 @@ size. So the detector is doing exactly what a binary pad readout should do."</p>
 
 <div class="cols">
 <div>
-<div class="msg hit">A <b>measured</b> muon, drawn through the real geometry:
-the two uRWELL references at z = 0 and 1370 mm, the three P2 BASKET fans at
-320 / 630 / 940 mm, on the H4 rail. The marker on each plane is where that muon
-was recorded.</div>
+<div class="msg hit"><b>A genuine five-fold coincidence</b>, drawn through the
+real geometry: <code>highstat_eff_1 / beam_commissioning_00</code>, geventId
+230000168979. Two uRWELL references at z = 0 and 1370 mm, the three P2 BASKET
+fans at 320 / 630 / 940 mm, on the H4 rail. Every marker is a
+<b>recorded hit</b> — the uRWELL track has one cluster in each of its four
+views, and each P2 station fired <b>exactly one pad</b>.</div>
+<table>
+<thead><tr><th>plane</th><th>pad</th><th>amplitude</th><th>pads fired</th>
+<th>track → pad</th></tr></thead>
+<tbody>
+<tr><td>P2_IN</td><td>627</td><td>212</td><td>1</td><td>1.48 mm</td></tr>
+<tr class="hl"><td>P2_MID</td><td>627</td><td>1330</td><td>1</td><td>1.30 mm</td></tr>
+<tr><td>P2_OUT</td><td>627</td><td>1219</td><td>1</td><td>1.07 mm</td></tr>
+</tbody>
+</table>
+<p class="sub">Selected from <b>476 five-detector coincidences</b> (76 % of the
+tracked events in the window) as the one with the tightest track-to-pad
+distances. The population's mean residual is 4.81 mm, which is the published
+<i>rigid</i>-fit RMSE (4.83–4.87 mm) — the 3.46 mm pad quantisation is the
+affine-fit number quoted on slide 16.</p>
+</div>
+<div>
+<p>The same muon fires <b>the same pad number, 627, on all three
+stations</b> — which is what a beam parallel to better than 0.5 mrad through
+three planes aligned to under 2 mm must do. It is also a free cross-check that
+the three independent channel→pad maps agree, including P2_IN's flipped
+<code>c_5_top</code> ribbon.</p>
 <p class="sub">The scene is built from the run configs, not drawn by hand: all
 1280 pads are placed as their true rotated rectangles from the Gerber map, the
 fan is the real annulus sector (r = 150.7 → 635.0 mm), and the instrumented
-sectors 3–6 are the bright ones. MX17 is absent because it was only installed
-on 1 August — this event is from 25 July.</p>
-</div>
-<div>
-<p>The same muon crosses <b>the same pad number, 590, on all three
-stations</b> — which is what a beam parallel to better than 0.5 mrad through
-three planes aligned to under 2 mm must do, and a nice sanity check that the
-three independent channel maps agree.</p>
-<div class="msg warn"><b>Provenance, to keep straight.</b> The uRWELL track is
-measured — two-point, from clusters in all four uRWELL views, and only written
-after reproducing the published front→back alignment. In <i>this</i> render the
-three P2 pads are the pads that track crosses, from the published alignment;
-the version requiring a <b>confirmed P2 cluster in all three stations for the
-same event</b> is extracted separately
-(<code>tools/extract_coincident_event.py</code>). Say "the muon the uRWELLs
-measured, through the pads it crossed" until that lands.</div>
+sectors 3–6 are the bright ones. MX17 is absent because it was only installed on
+1 August — this event is from 25 July.</p>
+<div class="msg"><b>Note the amplitudes:</b> 212 ADC on P2_IN against 1330 and
+1219 on MID and OUT. P2_IN ran at lower gain throughout, which is the same fact
+that explains its shifted turn-on (slide 24) and its low VMM efficiency
+(slide 22) — visible in a single event.</div>
 </div>
 </div>
 
 <p class="notes"><b>Say:</b> "This is the P2 tracker. Two reference planes, three
-P2 fans at their real spacing, and one muon through all five. Same pad number on
-all three stations, because the beam is parallel to half a milliradian."</p>
+P2 fans at their real spacing, and one muon recorded by all five — one pad per
+plane, the same pad number on all three, because the beam is parallel to half a
+milliradian."</p>
 <span class="num">17</span></section>
 
 
@@ -1085,8 +1099,9 @@ leading-pad position against z.</p>
 
 <div class="msg">Keep whichever suits the room. The 3D render sells "this is the
 P2 tracker in its final configuration"; the 2D display is the one that shows
-<b>one pad per plane per muon</b>, which is the cluster-size and
-spatial-resolution story on slide 16.</div>
+<b>one pad per plane per muon</b> across several events, which is the
+cluster-size and spatial-resolution story on slide 16. Both are measured
+five-fold coincidences from the same run.</div>
 
 <p class="notes"><b>Say:</b> "Same physics, two framings — the render for what
 it is, the pad display for what it measures."</p>
@@ -2184,10 +2199,12 @@ with the untaken cells marked rather than as lines through a sparse scan.</li>
 never been put in a talk.</li>
 <li><b>the 3D five-chamber coincidence</b> (slides 17–18) — rendered from the
 <code>nTof_x17/mpgd26</code> setup model with a real measured uRWELL muon
-threaded through it. New machinery:
-<code>make_coincidence.py</code>,
-<code>tools/extract_coincident_event.py</code> (five-fold coincidences on
-lxplus) and <code>tools/check_track_pad_frames.py</code>, which exists because
+threaded through it — <b>476 five-fold coincidences extracted</b> from
+<code>highstat_eff_1</code> on lxplus, of which the deck draws the cleanest.
+New machinery: <code>make_coincidence.py</code>,
+<code>tools/extract_coincident_event.py</code> (which refuses to write unless it
+reproduces the published uRWELL front→back alignment) and
+<code>tools/check_track_pad_frames.py</code>, which exists because
 composing the published uRWELL→pad alignment with the renderer's beam's-eye pad
 mirror is a <i>reflection</i> — x agrees to 0.1 mm and y silently flips. The
 track is therefore drawn through the same pad-frame→lab composition as the
