@@ -1,7 +1,27 @@
 {
-  "latest_update": "2026-08-17",
-  "count": 5,
+  "latest_update": "2026-08-18",
+  "count": 6,
   "notes": [
+    {
+      "title": "MPGD26 analysis index — every figure, its producer and its data",
+      "description": "Where each roadmap 5a/5b item lives: figure, the script that makes it, and the product behind it, for the MPGD2026 talk.",
+      "category": "Analysis",
+      "tags": [
+        "MPGD26",
+        "P2",
+        "BASKET",
+        "SPS",
+        "analysis",
+        "index"
+      ],
+      "date": "2026-08-18",
+      "updated": "2026-08-18",
+      "unlisted": false,
+      "path": "2026-08-18-mpgd26-analysis-index-every-figure-its-producer-and-its-data.html",
+      "url": "/notes/2026-08-18-mpgd26-analysis-index-every-figure-its-producer-and-its-data.html",
+      "size": 11390,
+      "size_h": "11.1 kB"
+    },
     {
       "title": "MPGD26 talk — draft deck",
       "description": "Draft slide deck for the MPGD2026 talk (4 Sep 2026): the P2 experiment and BASKET, pad-Micromegas design and manufacturing, cosmic characterisation at Saclay, and the July 2026 SPS H4 beam test.",
@@ -18,12 +38,32 @@
         "slides"
       ],
       "date": "2026-08-17",
-      "updated": "2026-08-17",
+      "updated": "2026-08-18",
       "unlisted": false,
       "path": "2026-08-17-mpgd26-talk-draft-deck.html",
       "url": "/notes/2026-08-17-mpgd26-talk-draft-deck.html",
-      "size": 106046,
-      "size_h": "103.6 kB"
+      "size": 116371,
+      "size_h": "113.6 kB"
+    },
+    {
+      "title": "P2 @ SPS H4 — full preliminary analysis for MPGD26",
+      "description": "Full preliminary analysis of the July–August 2026 SPS H4 beam test: efficiency, timing, stability, gas change and the VMM arm.",
+      "category": "Analysis",
+      "tags": [
+        "micromegas",
+        "sps",
+        "mpgd26",
+        "efficiency",
+        "timing",
+        "beam test"
+      ],
+      "date": "2026-08-16",
+      "updated": "2026-08-18",
+      "unlisted": false,
+      "path": "2026-08-16-mpgd26-sps-beam-report.html",
+      "url": "/notes/2026-08-16-mpgd26-sps-beam-report.html",
+      "size": 33759,
+      "size_h": "33.0 kB"
     },
     {
       "title": "Welcome to the notes hub",
@@ -41,26 +81,6 @@
       "url": "/notes/2026-08-16-welcome-to-the-notes-hub.html",
       "size": 4811,
       "size_h": "4.7 kB"
-    },
-    {
-      "title": "P2 @ SPS H4 — full preliminary analysis for MPGD26",
-      "description": "Full preliminary analysis of the July–August 2026 SPS H4 beam test: efficiency, timing, stability, gas change and the VMM arm.",
-      "category": "Analysis",
-      "tags": [
-        "micromegas",
-        "sps",
-        "mpgd26",
-        "efficiency",
-        "timing",
-        "beam test"
-      ],
-      "date": "2026-08-16",
-      "updated": "2026-08-16",
-      "unlisted": false,
-      "path": "2026-08-16-mpgd26-sps-beam-report.html",
-      "url": "/notes/2026-08-16-mpgd26-sps-beam-report.html",
-      "size": 33759,
-      "size_h": "33.0 kB"
     },
     {
       "title": "MPGD26 slide options — P2 @ SPS H4",

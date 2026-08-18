@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>MPGD26 analysis index — every figure, its producer and its data</title>
+<meta name="description" content="Where each roadmap 5a/5b item lives: figure, the script that makes it, and the product behind it, for the MPGD2026 talk.">
+<meta name="category" content="Analysis">
+<meta name="keywords" content="MPGD26,P2,BASKET,SPS,analysis,index">
+<meta name="date" content="2026-08-18">
+<meta name="updated" content="2026-08-18">
+<meta name="visibility" content="public">
+<!-- ======================================================================= -->
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+  /* note-local styles go here */
+</style>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="../">Alexandra Kallitsopoulou</a>
+  <nav class="nav"><a href="../">Home</a><a href="../notes/">Notes</a></nav>
+</div></header>
+
+<main class="wrap">
+  <article>
+    <header class="note-header">
+      <h1>MPGD26 analysis index — every figure, its producer and its data</h1>
+      <p class="muted">Where each roadmap 5a/5b item lives: figure, the script that makes it, and the product behind it, for the MPGD2026 talk.</p>
+      <div class="meta-row">
+        <span class="pill">Analysis</span>
+        <time datetime="2026-08-18">2026-08-18</time>
+        <span class="faint">MPGD26,P2,BASKET,SPS,analysis,index</span>
+      </div>
+    </header>
+
+    <div class="note-body">
+<p>Everything the MPGD2026 talk shows is regenerable. This page is the index:
+for each item of the conference roadmap's §5 wish list — the comparison
+measurements (5a) and the telescope/physics measurements (5b) — it names the
+figure, the script that produces it, and the data product underneath.</p>
+
+<div class="callout">
+<p><b>Three trees, and which is authoritative.</b></p>
+<ul>
+<li><b>Figure producers</b> — <code>P2_basket_analysis/mpgd2026/make_talk_figs.py</code>
+(cross-campaign), <code>sps_beam_analysis/mpgd26_figs/fig_*.py</code> (beam),
+<code>cosmic_bench_analysis/22_conference_figures.py</code> (bench),
+<code>nTof_x17/mpgd26/make_coincidence.py</code> (3D scenes).</li>
+<li><b>Stage products</b> — EOS
+<code>/eos/experiment/ntof/data/x17/p2_sps_july/analysis/</code>, mirrored into
+the figure workspace by <code>mpgd26_figs/fetch_from_eos.sh</code>. <b>EOS, not
+the LaCie copy</b>: the LaCie tree predates the condor re-processing.</li>
+<li><b>uRWELL-referenced results</b> —
+<code>TB_July2026_H4/analysis/urw_referenced_efficiency/&lt;run&gt;/urw_p2_efficiency_&lt;run&gt;.csv</code>.</li>
+</ul>
+<p>Gathered copies of every talk figure, named by deck slide, live in
+<code>P2_basket_analysis/conference/figures/</code>; the manifest that puts them
+there is <code>conference/gather_figures.py</code>.</p>
+</div>
+
+<h2>Which chamber was where</h2>
+
+<p>The DAQ <code>run_config.json</code> descriptions contradict each other
+between runs and were never updated on a swap, so the <b>hardware logbook</b> is
+the record to trust. The full table is
+<code>sps_beam_analysis/chamber_history.py</code>.</p>
+
+<div style="overflow-x:auto">
+<table>
+<thead><tr><th>station</th><th>chamber</th><th>note</th></tr></thead>
+<tbody>
+<tr><td><b>P2_MID</b></td><td><b>det1</b></td><td>unchanged for the whole beam test — the same chamber the cosmic bench used as its worked example</td></tr>
+<tr><td><b>P2_OUT</b></td><td><b>det3</b></td><td>unchanged for the whole beam test</td></tr>
+<tr><td rowspan="4">P2_IN</td><td>det2</td><td>22–23 Jul; ~20× low signal on the first beam day, a drift HV contact problem</td></tr>
+<tr><td>det4</td><td>24–25 Jul; leaky drift frame. This is the chamber in <code>drift_mesh_scan_1</code> and <code>highstat_eff_1</code></td></tr>
+<tr><td>det2</td><td>26–27 Jul, contact believed repaired; pulled 27 Jul ~15:00</td></tr>
+<tr><td><b>CERN-built</b></td><td>from 28 Jul to the end; its drift frame needs modification for the old HV connection</td></tr>
+</tbody>
+</table>
+</div>
+
+<p class="muted">Consequence: the bench↔beam efficiency comparisons are
+<b>same-chamber</b> comparisons (det1 ↔ P2_MID, det3 ↔ P2_OUT), with only the
+gas and the track reference differing.</p>
+
+<h2>5a — comparison measurements (bench ↔ beam, DREAM ↔ VMM)</h2>
+
+<div style="overflow-x:auto">
+<table>
+<thead><tr><th>item</th><th>state</th><th>figure</th><th>producer</th><th>product</th></tr></thead>
+<tbody>
+<tr><td><b>5a.1</b> DREAM vs VMM, same chambers</td><td>done</td>
+<td><code>dream_vs_vmm</code>, <code>vmm_threshold</code></td>
+<td><code>make_talk_figs.py</code></td>
+<td><code>vmm_dream_matching/efficiency_table.csv</code>, <code>thresholds_run_46.json</code></td></tr>
+<tr><td><b>5a.2</b> ε(HV) bench ↔ beam</td><td>done, both halves</td>
+<td><code>bench_beam_mesh</code> (gain), <code>bench_beam_drift</code> (transport)</td>
+<td><code>make_talk_figs.py</code></td>
+<td>bench stages 11 and 16; beam <code>urw_referenced_efficiency/drift_mesh_scan_1/</code></td></tr>
+<tr><td><b>5a.3</b> VMM config optimum</td><td>done</td>
+<td><code>vmm_config_scan</code>, <code>snr_matrix</code></td>
+<td><code>mpgd26_figs/fig_vmm.py</code>, <code>make_talk_figs.py</code></td>
+<td><code>vmm_config_scan_table.csv</code>, <code>vmm_snr_results.csv</code></td></tr>
+<tr><td><b>5a.4</b> efficiency map bench vs beam</td><td>done</td>
+<td><code>bench_beam_maps</code></td>
+<td><code>make_talk_figs.py</code></td>
+<td>bench <code>06_efficiency/*.npz</code>; beam <code>22_tag_probe_efficiency/eff_map_*.csv</code></td></tr>
+<tr><td><b>5a.5</b> timing beam vs bench</td><td>done</td>
+<td><code>timing_campaigns</code>, <code>timing_vs_drift_magboltz</code>, <code>timing_ladder</code></td>
+<td><code>make_talk_figs.py</code>, <code>mpgd26_figs/fig_timing.py</code></td>
+<td><code>dream_timing_scans.csv</code>, <code>dream_timing_persubrun.csv</code>, <code>gas_timing_model.csv</code></td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>5b — physics / telescope measurements</h2>
+
+<div style="overflow-x:auto">
+<table>
+<thead><tr><th>item</th><th>state</th><th>figure</th><th>producer</th><th>product</th></tr></thead>
+<tbody>
+<tr><td><b>5b.1</b> 3-plane 2-of-3 tagging</td>
+<td>done, and superseded by the absolute uRWELL measurement</td>
+<td><code>eff_methods_comparison</code>, <code>urw_panels_P2_MID</code>, <code>padmap_working_point</code></td>
+<td>stage <code>22_tag_probe_efficiency.py</code>; <code>fig_efficiency.py</code>, <code>fig_padmap.py</code></td>
+<td><code>22_tag_probe_efficiency/tag_probe_efficiency_spark_vetoed.csv</code>, <code>eff_map_&lt;det&gt;_*.csv</code></td></tr>
+<tr><td><b>5b.2</b> 3-plane event display</td><td>done</td>
+<td><code>coincidence_side</code>, <code>coincidence_hero</code>, <code>coincidence_beam</code></td>
+<td><code>make_coincidence.py</code>, <code>tools/extract_coincident_event.py</code></td>
+<td><code>nTof_x17/mpgd26/data/coincident_events.json</code></td></tr>
+<tr><td><b>5b.3</b> plane-to-plane spatial residuals</td><td>done — rms 3.37 / 3.44 mm = 12 mm/√12</td>
+<td><code>urw_panels_P2_MID</code> (panels 1–2)</td>
+<td><code>urw_reference/urw_p2_efficiency.py</code></td>
+<td><code>urw_referenced_efficiency/highstat_eff_1/</code>, columns <code>res_x_mm</code>, <code>res_y_mm</code></td></tr>
+<tr><td><b>5b.4</b> plane-to-plane time residuals</td><td>done</td>
+<td><code>timing_ladder</code>, <code>timing_vs_mesh_bothruns</code>, <code>timing_2d_curves_vs_drift_*</code></td>
+<td>stage <code>29_waveform_timing.py</code>; <code>fig_timing.py</code></td>
+<td><code>waveform_timing_summary.json</code> → <code>dream_timing_persubrun.csv</code> (<code>kind='pair'</code> rows)</td></tr>
+<tr><td><b>5b.5</b> track efficiency &amp; fake rate vs rate</td>
+<td>done, muons only — no rate dependence (+0.6 ± 0.4 and +0.5 ± 0.3 points/kHz); fake match 0.05–0.11 %</td>
+<td><code>rate_performance</code></td>
+<td><code>mpgd26_figs/fig_rate.py</code></td>
+<td>per-bin <code>efficiency_vs_time</code> in the <code>urw_timebins</code> JSONs; <code>accidental_per_10mm</code></td></tr>
+<tr><td><b>5b.6</b> angle scan</td><td>not taken — outlook</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><b>5b.7</b> multi-track separation, pions</td><td>not taken — outlook</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td><i>new</i> uRWELL track vs P2-only track</td>
+<td>measured — 508 coincidences; localises to 3.3 mm, cannot measure angle</td>
+<td><code>p2_standalone_tracking</code>, <code>twotrack_side</code></td>
+<td><code>tools/extract_track_pairs.py</code> (lxplus), <code>make_coincidence.py --pairs</code>, <code>fig_p2_tracking.py</code></td>
+<td><code>nTof_x17/mpgd26/data/track_pairs.csv</code> (508 rows), <code>track_pairs.json</code></td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout ok">
+<p><b>The 5b headline, in one sentence.</b> With 12 mm pads over a 620 mm lever
+arm, the three P2 planes <b>localise but do not collimate</b>: the crossing
+point at the middle plane is reproduced to 3.3 mm = 12 mm/√12, while one pad
+step corresponds to 19 mrad against a beam that diverges by 1.2 mrad — so
+73 % of coincidences fire the same pad on all three planes. Localisation is
+exactly what the in-situ 2-of-3 tagging scheme needs.</p>
+</div>
+
+<h2>How to rebuild any of it</h2>
+
+<pre><code># beam figures (26 of them), from the EOS copy of the campaign
+cd P2_basket_analysis/sps_beam_analysis/mpgd26_figs
+./fetch_from_eos.sh [--hv]      # workspace, ~90 MB (+136 MB HV traces)
+python3 aggregate.py            # products -> report_data/*.csv
+python3 fig_efficiency.py       # and fig_timing / fig_vmm / fig_padmap /
+                                # fig_charging / fig_stability / fig_rate /
+                                # fig_p2_tracking
+
+# cross-campaign figures
+python3 P2_basket_analysis/mpgd2026/make_talk_figs.py -o figs
+
+# 3D scenes
+nTof_x17/.venv/bin/python nTof_x17/mpgd26/make_coincidence.py \
+    --pairs --gevent 230000195106 --views side,hero
+
+# gather everything the talk uses, with provenance
+python3 P2_basket_analysis/conference/gather_figures.py
+</code></pre>
+
+<h2>Pipelines and other records</h2>
+
+<ul>
+<li><b>uRWELL-referenced efficiency on condor</b> — <code>sps_beam_analysis/condor/urw/README.md</code>.
+Note the one data bug it works around: <code>p2in_hvrange_2/run_config.json</code>
+is the only run of 74 that types both uRWELL planes as <code>P2</code>, which
+breaks the tracking geometry.</li>
+<li><b>DREAM stage pipeline</b> — <code>sps_beam_analysis/PIPELINE_OVERVIEW_2026-07-26.md</code>,
+<code>condor/README_CONDOR.md</code>.</li>
+<li><b>Cosmic bench</b> — <code>cosmic_bench_analysis/22_conference_figures.py</code>,
+<code>run_p2_pipeline.sh</code>.</li>
+<li><b>Campaign logbook</b> — <code>TB_July2026_H4/analysis/2026-07-*.md</code>.</li>
+<li><b>The written report</b> — <a href="2026-08-16-mpgd26-sps-beam-report.html">SPS H4 beam test, full preliminary analysis</a>.</li>
+<li><b>The deck</b> — <a href="2026-08-17-mpgd26-talk-draft-deck.html">MPGD26 talk, draft deck</a>.</li>
+</ul>
+
+    </div>
+  </article>
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <span>Alexandra Kallitsopoulou</span>
+  <span><a href="../notes/">← all notes</a></span>
+</div></footer>
+</body>
+</html>
