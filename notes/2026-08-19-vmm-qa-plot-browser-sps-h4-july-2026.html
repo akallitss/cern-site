@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>VMM QA plot browser — SPS H4 July 2026</title>
+<meta name="description" content="Every sub_run of the VMM campaign, re-rendered from the online counts store: 974 figures across 75 sub_runs, browsable.">
+<meta name="category" content="Analysis">
+<meta name="keywords" content="vmm,sps,test beam,qa,micromegas,p2">
+<meta name="date" content="2026-08-19">
+<meta name="updated" content="2026-08-19">
+<meta name="visibility" content="public">
+<!-- ======================================================================= -->
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+  /* note-local styles go here */
+</style>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="../">Alexandra Kallitsopoulou</a>
+  <nav class="nav"><a href="../">Home</a><a href="../notes/">Notes</a></nav>
+</div></header>
+
+<main class="wrap">
+  <article>
+    <header class="note-header">
+      <h1>VMM QA plot browser — SPS H4 July 2026</h1>
+      <p class="muted">Every sub_run of the VMM campaign, re-rendered from the online counts store: 974 figures across 75 sub_runs, browsable.</p>
+      <div class="meta-row">
+        <span class="pill">Analysis</span>
+        <time datetime="2026-08-19">2026-08-19</time>
+        <span class="faint">vmm,sps,test beam,qa,micromegas,p2</span>
+      </div>
+    </header>
+
+    <div class="note-body">
+      <p>The VMM readout of the P2 telescope ran for twelve days at SPS H4 in July 2026.
+      Its online monitoring never saved a single plot — and that was deliberate. This note
+      is the browsable set, rebuilt afterwards from what the DAQ <em>did</em> keep.</p>
+
+      <p class="callout"><strong>Browse it here → <a href="../vmm-qa-plots/index.html">the QA plot browser</a></strong><br>
+      One row per sub_run, each linking to its own page of thirteen figures.
+      <strong>974 figures, 75 sub_runs, 31 runs (run_23 – run_58), 1&nbsp;779 captures,
+      1.21&nbsp;×&nbsp;10<sup>10</sup> recorded hits.</strong></p>
+
+      <h2>Why there were no plots to begin with</h2>
+
+      <p>The online watcher reduces each 45&nbsp;s capture to a <code>counts.npz</code> —
+      per-VMM histograms of ADC, channel, BCID, TDC, offset, the over-threshold flag, a 2-D
+      ADC-vs-channel map and a time profile — plus a small <code>scalars.json</code>. It draws
+      nothing. The reasoning, from the source:</p>
+
+      <blockquote><p>Rendering 36 PNGs per 45&nbsp;s capture costs ~43&nbsp;s and produces ~2900
+      images an hour that nobody opens; worse, four of the twenty VMMs carry so few hits per file
+      that their per-file 1024-bin ADC “spectrum” is under one entry per bin.</p></blockquote>
+
+      <p>The dashboard drew from those counts live, in the browser, and nothing was written to
+      disk. The DAQ machine's own <code>analysis/</code> tree was never mirrored off the box
+      either. So the campaign finished with its raw data safe and no monitoring plots at all.</p>
+
+      <h2>What made the rebuild possible</h2>
+
+      <p>The counts are <strong>additive</strong>. That one property is the whole design: merging
+      <em>N</em> captures is a sum of arrays, so a sub_run's histograms cost nothing to assemble
+      and are strictly better than any single capture's. A VMM sitting at 382 hits per file is
+      noise on its own; over a sub_run it is ~18&nbsp;000 hits and a real spectrum.</p>
+
+      <p>So these are not recovered screenshots — they are re-rendered, and they are better than
+      what was on the screen at the beam. Three of the thirteen figures could not have existed
+      per-capture at all.</p>
+
+      <figure>
+        <img src="2026-08-19-vmm-qa-plot-browser-sps-h4-july-2026_files/padmap.png" alt="Occupancy on the instrumented pads, three stations">
+        <figcaption><strong>Occupancy on the true pad geometry.</strong> Each pad is drawn as its
+        own rotated quadrilateral from the Gerber-derived map. Only connectors c4–c6 are
+        instrumented — 384 of the 1280 pads — so this is a wedge of the anode, not the whole
+        detector. Needs a whole sub_run behind it to mean anything.</figcaption>
+      </figure>
+
+      <figure>
+        <img src="2026-08-19-vmm-qa-plot-browser-sps-h4-july-2026_files/station_adc.png" alt="Pulse height per station with the discriminator wall marked">
+        <figcaption><strong>Pulse height per station, with the discriminator wall.</strong> The
+        dashed line is the 0.5th percentile — not the lowest populated bin, which stray counts
+        put at zero — and the MPV excludes the saturation overflow at 1023, which otherwise wins
+        outright on a well-illuminated station.</figcaption>
+      </figure>
+
+      <figure>
+        <img src="2026-08-19-vmm-qa-plot-browser-sps-h4-july-2026_files/trends.png" alt="Per-capture trends across a sub_run">
+        <figcaption><strong>Per-capture trends.</strong> Occupancy, median ADC, live channels and
+        over-threshold fraction across the sub_run — the quantities that have actually caught
+        problems on this setup. Flat across all 48 captures here, except the last, truncated one.</figcaption>
+      </figure>
+
+      <h2>Reading the pulse-height figure honestly</h2>
+
+      <div class="callout warn">
+        <p>The counts store holds <strong>every recorded hit, with no trigger coincidence</strong>.
+        On a run with a noisy channel this figure is mostly that channel: run_46's P2_IN is
+        1.14&nbsp;×&nbsp;10<sup>9</sup> hits sitting in one narrow spike, and its wall/MPV of 0.93
+        describes noise, not a muon. The track-matched spectrum — the one behind the measured
+        threshold ratio of ~0.68 that limits the VMM-read efficiency — needs the uRWELL reference
+        tracks and cannot be built from counts alone. It lives in the efficiency autopsy, not here.</p>
+      </div>
+
+      <p>What this set <em>is</em> good for: the position of the wall, the saturation fraction,
+      which station is dominated by noise, whether a chip went dead mid-run, and the beam spot.</p>
+
+      <h2>A couple of things that fell out of it</h2>
+
+      <ul>
+        <li><strong>Dead channels are directly visible.</strong> Channels that ever fired come out
+        at P2_IN 382, P2_MID 351, P2_OUT 377 of 384 — P2_MID's dead group shows up without
+        anyone looking for it, and is stable capture to capture.</li>
+        <li><strong>One sub_run has nothing to draw, correctly.</strong>
+        <code>run_25/driftscan_gap300V</code> is flagged
+        <code>.subrun_complete.void-empty-260730</code> and its only store is an interrupted
+        <code>.partial</code> — 75 of 76 is the right answer, not a failure.</li>
+        <li><strong>The gas labels are the corrected ones.</strong> All 75 sub_runs render as
+        Ar/CO₂/iC₄H₁₀ 93/5/2, which is the fix applied to the run metadata for everything up to
+        run_58 — the copies still sitting on the local disk carry the old, wrong label.</li>
+      </ul>
+
+      <h2>Reproducing it</h2>
+
+      <p>The renderer is <code>vmm_qa/render_from_store.py</code> in the VMM beam DAQ repository.
+      It never opens a raw capture, so it runs anywhere the counts are readable — including
+      directly against the EOS copy:</p>
+
+<pre><code>python3 render_from_store.py \
+    /eos/experiment/ntof/data/x17/p2_sps_july/vmm/runs \
+    --out ./vmm_qa_plots --jobs 6</code></pre>
+
+      <p>Measured cost: 352&nbsp;MB peak RSS and ~16&nbsp;s per sub_run. The counts are streamed
+      one capture at a time, so memory is set by the figure rendering and does not grow with the
+      number of captures — a 48-capture sub_run costs the same as a single one.</p>
+
+      <p class="faint">The figures on this page are from
+      <code>run_46/cfg_gain4.5_peaktime200</code>: mesh 450&nbsp;V, drift 750&nbsp;V, gain
+      4.5&nbsp;mV/fC, 48 captures, 1.52&nbsp;×&nbsp;10<sup>9</sup> hits.</p>
+    </div>
+  </article>
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <span>Alexandra Kallitsopoulou</span>
+  <span><a href="../notes/">← all notes</a></span>
+</div></footer>
+</body>
+</html>

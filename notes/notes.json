@@ -1,7 +1,27 @@
 {
-  "latest_update": "2026-08-18",
-  "count": 6,
+  "latest_update": "2026-08-19",
+  "count": 7,
   "notes": [
+    {
+      "title": "VMM QA plot browser — SPS H4 July 2026",
+      "description": "Every sub_run of the VMM campaign, re-rendered from the online counts store: 974 figures across 75 sub_runs, browsable.",
+      "category": "Analysis",
+      "tags": [
+        "vmm",
+        "sps",
+        "test beam",
+        "qa",
+        "micromegas",
+        "p2"
+      ],
+      "date": "2026-08-19",
+      "updated": "2026-08-19",
+      "unlisted": false,
+      "path": "2026-08-19-vmm-qa-plot-browser-sps-h4-july-2026.html",
+      "url": "/notes/2026-08-19-vmm-qa-plot-browser-sps-h4-july-2026.html",
+      "size": 8334,
+      "size_h": "8.1 kB"
+    },
     {
       "title": "MPGD26 analysis index — every figure, its producer and its data",
       "description": "Where each roadmap 5a/5b item lives: figure, the script that makes it, and the product behind it, for the MPGD2026 talk.",
@@ -42,8 +62,8 @@
       "unlisted": false,
       "path": "2026-08-17-mpgd26-talk-draft-deck.html",
       "url": "/notes/2026-08-17-mpgd26-talk-draft-deck.html",
-      "size": 116371,
-      "size_h": "113.6 kB"
+      "size": 117151,
+      "size_h": "114.4 kB"
     },
     {
       "title": "P2 @ SPS H4 — full preliminary analysis for MPGD26",
