@@ -1329,13 +1329,20 @@ chains, same defect, same coordinates.</div>
 <div>
 <h3>The result</h3>
 <table>
-<thead><tr><th>station</th><th>DREAM</th><th>VMM, best config</th></tr></thead>
+<thead><tr><th>station</th><th>DREAM, same working point</th><th>VMM, best config</th></tr></thead>
 <tbody>
-<tr><td>P2_IN</td><td>0.965</td><td>0.155 <span class="sub">(lower bound)</span></td></tr>
-<tr class="hl"><td>P2_MID</td><td>0.971</td><td>0.669</td></tr>
-<tr class="hl"><td>P2_OUT</td><td>0.960</td><td><b>0.854</b></td></tr>
+<tr><td>P2_IN</td><td>0.943</td><td>0.155 <span class="sub">(lower bound)</span></td></tr>
+<tr class="hl"><td>P2_MID</td><td>0.910 &ndash; 0.968</td><td>0.669</td></tr>
+<tr class="hl"><td>P2_OUT</td><td>0.955 &ndash; 0.972</td><td><b>0.854</b></td></tr>
 </tbody>
 </table>
+<p class="sub"><b>Updated 19 Aug.</b> The DREAM column is now taken at
+<i>run_46's own</i> working point — mesh 450 <b>/ drift 750</b>, not
+highstat_eff_1's drift 700 — and is the spread of every uRWELL-referenced
+DREAM measurement there (25 and 28 Jul). P2_IN's reference is the 28 Jul
+chamber, i.e. the one run_46 actually read; the old 0.965 belonged to the
+chamber swapped out on 27 Jul. P2_MID's DREAM reference is itself unstable
+across those three days, which is why no P2_MID claim is built on it.</p>
 <ul>
 <li><b>P2_OUT is the clean case</b> and the honest headline: 85 % where DREAM
 gives 96 %, on the same chamber.</li>
@@ -1343,7 +1350,7 @@ gives 96 %, on the same chamber.</li>
 at raised thresholds, and a residual of 4.7 mm against 3.4 mm elsewhere with a
 20–30 mm shoulder — the signature of a partly wrong channel→pad map, on the
 plane with the known mapping trouble.</li>
-<li>Cluster size: VMM 1.11–1.18 pads vs DREAM 1.05–1.08.</li>
+<li><s>Cluster size: VMM 1.11–1.18 pads vs DREAM 1.05–1.08.</s> <b>Withdrawn 19 Aug:</b> not like-for-like — DREAM builds a charge-weighted leading cluster, the VMM efficiency code deliberately does not cluster. Do not quote until the VMM side is reclustered the same way.</li>
 </ul>
 </div>
 </div>
