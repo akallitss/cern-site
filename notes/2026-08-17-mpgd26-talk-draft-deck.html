@@ -1419,6 +1419,109 @@ result of the VMM arm — do not rush it.</b></p>
 <span class="num">25</span></section>
 
 <!-- ==================================================================== -->
+<section class="slide"><span class="tag opt">OPTIONAL — VMM timing</span>
+<h2>The VMM coincidence time, per chamber and per gas</h2>
+<span class="tag newres" style="right:120px">NEW</span>
+
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/vmm_timing_peaks.png"
+     alt="Station-minus-trigger BCID phase for P2_MID and P2_OUT on both gases, each with a Gaussian-plus-flat-background fit">
+
+<div class="cols">
+<div>
+<h3>What is plotted</h3>
+<ul>
+<li>Station&nbsp;&minus;&nbsp;trigger <b>BCID phase</b>, hits paired only inside
+one SRS marker interval &mdash; the firmware leaves the rollover counter stuck,
+so absolute time is ambiguous by multiples of 92.16&nbsp;&micro;s and only the
+phase is usable.</li>
+<li>The <b>flat pedestal is drawn, not hidden</b>: ~18 BCID cycles fit in one
+marker, so each trigger has ~18 candidate partners. Its height is the honest
+measure of how clean the coincidence is (peak/bg 17&ndash;32 here).</li>
+<li>Same measurement that ran on every capture of the campaign; this
+reimplementation reproduces the stored fits to <b>&lt;0.5&nbsp;ns</b>
+(22.00 against 22.004&nbsp;ns on P2_MID).</li>
+</ul>
+</div>
+<div>
+<h3>The numbers</h3>
+<table>
+<thead><tr><th>working point</th><th>P2_MID</th><th>P2_OUT</th></tr></thead>
+<tbody>
+<tr><td>gas A, 450&nbsp;/&nbsp;750</td><td>22.0</td><td>26.6 ns</td></tr>
+<tr><td>gas A, 450&nbsp;/&nbsp;<b>850</b></td><td>22.3</td><td><b>24.2</b> ns</td></tr>
+<tr class="hl"><td>gas B, 450&nbsp;/&nbsp;750</td><td><b>18.4</b></td><td>25.0 ns</td></tr>
+</tbody>
+</table>
+<ul>
+<li><b>P2_OUT keeps improving out to drift 850&nbsp;V</b>, where P2_MID has
+plateaued &mdash; its own drift optimum was never reached.</li>
+<li>P2_OUT carries an unexplained <b>right-hand shoulder at +200&ndash;280 ns</b>
+in both gases, absent on P2_MID. Its &sigma; is a core width, not the whole
+response.</li>
+</ul>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "Same chambers, same trigger, two gases. The
+distributions are clean Gaussians on a flat accidental pedestal, and the CF<sub>4</sub>
+mixture is visibly narrower on the middle station."</p>
+<span class="num">26</span></section>
+
+<!-- ==================================================================== -->
+<section class="slide"><span class="tag opt">OPTIONAL — VMM timing</span>
+<h2>The trigger costs more than the chamber &mdash; and the clock never mattered</h2>
+<span class="tag newres" style="right:120px">NEW</span>
+
+<img src="2026-08-17-mpgd26-talk-draft-deck_files/vmm_timing.png"
+     alt="Left: VMM coincidence width versus drift voltage for both gases. Right: the width decomposed into trigger, chamber, per-channel t0 and BCID quantisation">
+
+<div class="cols">
+<div>
+<h3>Correcting a claim we have been making</h3>
+<ul>
+<li>We have been saying &sigma; is <b>pinned at the 22.5&nbsp;ns BCID
+quantisation</b> for want of calibration runs. <b>It is not.</b> The TDC fine
+time is already applied, and toggling it off moves &sigma; by ~1&nbsp;ns.</li>
+<li>Quantisation alone is <b>22.5/&radic;12 = 6.5&nbsp;ns</b>, the smallest term
+in the budget.</li>
+<li>Per-channel t<sub>0</sub> (10.8&nbsp;ns rms) and time-walk (16&nbsp;ns over
+the ADC deciles) are real but buy only <b>5&nbsp;%</b> in quadrature.</li>
+</ul>
+</div>
+<div>
+<h3>What actually dominates</h3>
+<p>Station&minus;station coincidence carries no trigger term, which
+over-determines the system and lets the trigger be <i>solved for</i>:</p>
+<table>
+<thead><tr><th></th><th>gas A</th><th>gas B</th></tr></thead>
+<tbody>
+<tr class="hl"><td>trigger channel</td><td><b>18.4</b></td><td><b>16.4</b> ns</td></tr>
+<tr><td>P2_MID itself</td><td>15.6</td><td><b>12.2</b> ns</td></tr>
+<tr><td>P2_OUT itself</td><td>25.4</td><td>24.7 ns</td></tr>
+</tbody>
+</table>
+<ul>
+<li>The trigger is a <b>scintillator read through a VMM discriminator</b> &mdash;
+and it is larger than the chamber it measures.</li>
+<li>It shrinks on gas B because <b>hybrid 0 carries the trigger</b> and that run
+sets gain 4.5 instead of 3.0: the threshold story reaches even the trigger.</li>
+<li><b>P2_MID's own resolution is 12.2&nbsp;ns on CF<sub>4</sub></b> &mdash; well
+inside the 20&nbsp;ns goal. The raw 18.4&nbsp;ns hides it.</li>
+<li>Referencing to the <b>DREAM trigger timestamp</b> through the stream
+matching (10.4&nbsp;ns rms) instead would give <b>18.7&nbsp;ns</b> on gas A and
+<b>16.0&nbsp;ns</b> on gas B &mdash; no change to the detector.</li>
+</ul>
+</div>
+</div>
+
+<p class="notes"><b>Say:</b> "The honest headline of the VMM timing arm is that
+we were measuring our own trigger. Take it out and the middle chamber is at
+twelve nanoseconds on the new gas." <b>Estimator note if asked:</b> these are
+Gaussian core fits, the same estimator the campaign quotes; an rms over the
+tails sits ~30 % higher.</p>
+<span class="num">27</span></section>
+
+<!-- ==================================================================== -->
 <section class="slide"><span class="tag core">CORE</span>
 <h2>The three planes tracking on their own — and what that costs</h2>
 <span class="tag newres" style="right:120px">NEW</span>
@@ -1463,7 +1566,7 @@ millimetres — which is what the in-situ efficiency scheme needs. They cannot
 measure the angle of a beam this parallel, and the reason is arithmetic: one
 pad over the lever arm is nineteen milliradians against a one-milliradian
 beam."</p>
-<span class="num">26</span></section>
+<span class="num">28</span></section>
 
 
 <!-- ==================================================================== -->
@@ -1487,8 +1590,10 @@ beam."</p>
 <td>the P2 tracker works in its own geometry</td></tr>
 <tr class="hl"><td>SPS Jul 2026</td><td>same three</td><td>VMM3a</td>
 <td>uRWELL, absolute</td><td>0.155* / 0.669 / <b>0.854</b></td>
-<td>19.4&ndash;22 ns (trigger-limited)</td><td>3.4 mm, same as DREAM</td>
-<td>the VMM deficit is the threshold, not the chamber</td></tr>
+<td>18.4&ndash;22 ns raw; <b>12.2&ndash;15.6 ns</b> with the trigger removed</td>
+<td>3.4 mm, same as DREAM</td>
+<td>the VMM deficit is the threshold, not the chamber &mdash; and the timing
+was measuring our own trigger</td></tr>
 </tbody>
 </table>
 
@@ -1514,13 +1619,16 @@ independent chains agreed on one flipped ribbon.</li>
 <ul>
 <li><b>VMM per-channel threshold trim + time calibration.</b> This is the
 single highest-value item: the trim DACs were never used, and σ is pinned at
-the 22.5 ns BCID bin for want of calibration runs. <b>Corrected 19 Aug:</b> the
-width is not BCID-limited &mdash; the TDC fine time is already applied and
-quantisation alone is 22.5/&radic;12 = 6.5 ns. The largest removable term is the
-<b>trigger channel</b> (33.4 ns, a scintillator through a VMM discriminator)
-against P2_MID's 26.6 ns intrinsic; referencing to the DREAM trigger timestamp
-through the stream matching (10.4 ns rms) is the real gain. Per-channel t0 and
-slewing are worth only 2&ndash;4 %.</li>
+the 22.5 ns BCID bin for want of calibration runs. <b>Measured 19 Aug at the
+nominal working point (slide 27):</b> the width is <b>not</b> BCID-limited &mdash;
+the TDC fine time is already applied and quantisation alone is
+22.5/&radic;12 = 6.5 ns. The dominant removable term is the <b>trigger channel</b>
+&mdash; a scintillator read through a VMM discriminator &mdash; at
+<b>18.4 ns on gas A and 16.4 on gas B</b>, against the chamber's own
+<b>15.6 / 12.2 ns</b>. Referencing to the DREAM trigger timestamp through the
+stream matching (10.4 ns rms) would give 18.7 / 16.0 ns with no hardware change;
+per-channel t<sub>0</sub> and slewing are worth only 5 %. <b>So the calibration
+runs are not the priority the trigger reference is.</b></li>
 <li><b>Confirm the CF₄ gas timing directly</b> — one short DREAM run on the new
 gas turns a validated prediction into a measurement.</li>
 <li><b>Fix P2_IN connector 11/14</b> and re-derive its channel map.</li>
@@ -1537,7 +1645,7 @@ mesh transparency is still fine past 900 V.</li>
 Four rows: two campaigns, two readouts, one detector generation — and the last
 column is what each one actually settled." <b>Then close on the trim DACs:</b>
 "the most valuable thing we can do next costs no beam time at all."</p>
-<span class="num">27</span></section>
+<span class="num">29</span></section>
 
 
 <!-- ==================================================================== -->
@@ -1581,7 +1689,7 @@ ceiling.</div>
 <p class="notes"><b>Say:</b> "Efficiency is mesh-dominated and we never reached
 the plateau — so the 96–97 % is a lower bound on what these chambers can do,
 limited by how much voltage we were willing to put on them."</p>
-<span class="num">28</span></section>
+<span class="num">30</span></section>
 
 
 <!-- ==================================================================== -->
@@ -1611,7 +1719,7 @@ algorithms: <code>frac30</code> for MID/OUT, <code>dCFD</code> for IN.</div>
 clock phase is different on every front-end unit. Without that the timing number
 is meaningless — with it, it is stable to under half a nanosecond over four and a
 half hours."</p>
-<span class="num">29</span></section>
+<span class="num">31</span></section>
 
 
 <!-- ==================================================================== -->
@@ -1627,7 +1735,7 @@ P2_IN chamber swap on 28 Jul is marked.</div>
 This is also the slide that proves the HV was where I say it was — the
 efficiency analysis reads its live time from this monitor, not from the run
 configuration."</p>
-<span class="num">30</span></section>
+<span class="num">32</span></section>
 
 
 <!-- ==================================================================== -->
@@ -1659,7 +1767,7 @@ figure is the one thing a careful reviewer would object to.</p>
 <p class="notes"><b>Say:</b> "The reason I can call this charging-up rather
 than a rate effect is the gap in the middle — the efficiency comes back up over
 the beam pause and then decays again."</p>
-<span class="num">31</span></section>
+<span class="num">33</span></section>
 
 
 <!-- ==================================================================== -->
@@ -1703,7 +1811,7 @@ the strongest argument for one short DREAM run next time.</div>
 <p class="notes"><b>Say:</b> "We predicted a 2.4× faster gas needing only
 16 volts more, we changed the bottle mid-campaign, and both the turn-on shift
 and the drift latency moved the way the prediction said."</p>
-<span class="num">32</span></section>
+<span class="num">34</span></section>
 
 
 <!-- ==================================================================== -->
@@ -1731,7 +1839,7 @@ right.</div>
 <p class="notes"><b>Say:</b> "Two 7-by-7 grids, so the working point is not a
 guess. Efficiency wants mesh; timing wants a bit of drift field as well — and
 they do not fight each other."</p>
-<span class="num">33</span></section>
+<span class="num">35</span></section>
 
 
 <!-- ==================================================================== -->
@@ -1768,7 +1876,7 @@ from the raw zero-suppressed stream: a shape check, not an efficiency.</p>
 <p class="notes"><b>Say:</b> "Before we had the uRWELLs we would have quoted
 92.5 percent. The external reference is worth four points on the outer
 stations — and knowing that is worth more than the four points."</p>
-<span class="num">34</span></section>
+<span class="num">36</span></section>
 
 
 <!-- ==================================================================== -->
@@ -1807,7 +1915,7 @@ efficiency.</div>
 <p class="notes"><b>Say:</b> "This is a metallic, non-resistive mesh, so sparks
 are the thing you have to prove you can live with. One station was noisy and
 conditioned itself quiet, and CF₄ did not make it worse."</p>
-<span class="num">35</span></section>
+<span class="num">37</span></section>
 
 <!-- ==================================================================== -->
 <section class="slide"><span class="tag opt">OPTIONAL</span>
@@ -1844,7 +1952,7 @@ rates.</p>
 reach, and the accidental background is a tenth of a percent. The honest caveat
 is that our lever on rate is a factor two, not a factor twenty — the pion run
 that would have given that was not taken."</p>
-<span class="num">36</span></section>
+<span class="num">38</span></section>
 
 
 <!-- ==================================================================== -->
@@ -1884,7 +1992,7 @@ the bench signature from Act 2 — the same diagnostic worked on the beam.</div>
 <p class="notes"><b>Say:</b> "We swapped chambers mid-campaign and got full
 turn-on curves for both. The replacement is better, and it is the one every VMM
 number in this talk was taken with."</p>
-<span class="num">37</span></section>
+<span class="num">39</span></section>
 
 
 <!-- ==================================================================== -->
@@ -1922,7 +2030,7 @@ because no time-calibration runs exist. That is an outlook item, not a defect.</
 <p class="notes"><b>Say:</b> "These two campaigns look like they disagree about
 the gain. They do not — one is optimising signal-to-noise and the other is
 optimising signal-over-threshold, and for P2 it is the second one that pays."</p>
-<span class="num">38</span></section>
+<span class="num">40</span></section>
 
 
 <!-- ==================================================================== -->
@@ -1960,7 +2068,7 @@ events are drawn <b>hollow</b> and never quoted as a resolution.</div>
 <p class="notes"><b>Say:</b> "Four detectors is a small sample and the coverage
 is uneven. I would rather show you the holes than let you assume there are
 none."</p>
-<span class="num">39</span></section>
+<span class="num">41</span></section>
 
 <!-- ==================================================================== -->
 <section class="slide"><span class="tag opt">OPTIONAL</span>
@@ -1989,7 +2097,7 @@ independent cross-check the wish list asked for.</div>
 <p class="notes"><b>Say:</b> "The pillars are visible on the bench because
 cosmics illuminate the whole fan. The beam spot is 5 cm across and misses
 them — which is why the beam number is higher, and why you need both."</p>
-<span class="num">40</span></section>
+<span class="num">42</span></section>
 
 
 <!-- ==================================================================== -->
@@ -2038,7 +2146,7 @@ channel→pad map on the plane that already had mapping trouble. The uRWELL
 tracks now make re-deriving that map possible, which is the fix.</p>
 </div>
 </div>
-<span class="num">41</span></section>
+<span class="num">43</span></section>
 
 
 <!-- ==================================================================== -->
@@ -2077,7 +2185,7 @@ the detectors.</li>
 </ul>
 </div>
 </div>
-<span class="num">42</span></section>
+<span class="num">44</span></section>
 
 
 <!-- ==================================================================== -->
@@ -2123,7 +2231,7 @@ independently confirmed in the data.</li>
 <div class="msg warn">Worth saying if pressed: the honest version of "96–97 %"
 is <b>"96.5 / 97.1 / 96.0 % at the working point on 25 July, settling to ≈96 /
 95 % after an hour of beam."</b> Everything above is why that is the sentence.</div>
-<span class="num">43</span></section>
+<span class="num">45</span></section>
 
 
 <!-- ==================================================================== -->
@@ -2162,7 +2270,7 @@ thing is to report the <b>measured time spread</b> against the Magboltz
 prediction, with no free parameter.</div>
 </div>
 </div>
-<span class="num">44</span></section>
+<span class="num">46</span></section>
 
 
 <!-- ==================================================================== -->
@@ -2203,7 +2311,7 @@ gain/threshold floor, and the VMM analysis then showed exactly what a threshold
 floor looks like when you can move the threshold.</div>
 </div>
 </div>
-<span class="num">45</span></section>
+<span class="num">47</span></section>
 
 <!-- ==================================================================== -->
 <section class="slide"><span class="tag bkup">BACKUP</span>
@@ -2232,7 +2340,7 @@ attacks the same term.</div>
 </div>
 <p class="notes"><b>Say:</b> "We were within a nanosecond of optimal on the best
 station, and the scan tells us exactly what a bigger drift gap would buy."</p>
-<span class="num">46</span></section>
+<span class="num">48</span></section>
 
 
 <!-- ==================================================================== -->
@@ -2292,7 +2400,7 @@ VMM data must be labelled from its own config, never from the DREAM one.</li>
 </ul>
 </div>
 </div>
-<span class="num">47</span></section>
+<span class="num">49</span></section>
 
 
 <!-- ==================================================================== -->
@@ -2333,7 +2441,7 @@ VMM data must be labelled from its own config, never from the DREAM one.</li>
 velocity and the flattest v<sub>d</sub> plateau for only +16 V of mesh</b>. The
 40 % CF₄ mixtures are marginally faster but cost 125–179 V, which pushes the
 chamber well past where it sparks.</div>
-<span class="num">48</span></section>
+<span class="num">50</span></section>
 
 
 <!-- ==================================================================== -->
@@ -2368,7 +2476,7 @@ before either detector reached a beam. Proposed next step: an induced-pulse lab
 test.</p>
 </div>
 </div>
-<span class="num">49</span></section>
+<span class="num">51</span></section>
 
 
 <!-- ==================================================================== -->
@@ -2390,6 +2498,18 @@ sub-runs, so the two are directly comparable. <b>This supersedes the
 the threshold-DAC-only pairs and the per-pad pulse-height correlation, drawn
 from the run_46 autopsy.</li>
 <li><b>the cross-campaign timing ladder</b> (slide 20) — roadmap WP-G.</li>
+<li><b>the VMM timing arm</b> (slides 26–27) — the trigger-referenced
+BCID-phase coincidence gathered over the whole campaign (10 122 station-captures,
+45 runs), the dt distributions refitted per chamber per gas, and the width
+decomposed. <b>It corrects a claim this deck and the roadmap were both making:</b>
+σ is <i>not</i> pinned at the 22.5 ns BCID quantisation — the TDC fine time is
+already applied, quantisation alone is 6.5 ns, and the dominant removable term
+is the <b>trigger channel</b> (18.4 ns gas A, 16.4 gas B) against the chamber's
+own 15.6 / 12.2 ns. New machinery:
+<code>vmm_dream_matching/vmm_trigger_timing.py</code>,
+<code>vmm_timing_peaks.py</code>, <code>vmm_timing_budget.py</code> and
+<code>decode_to_store.py</code>, the last because no gas-B sub_run kept a
+column store and the peaks had to come out of the raw pcapng.</li>
 <li><b>the Nov-2025 SNR grid</b> (slide 7) — roadmap WP-E, redrawn as a grid
 with the untaken cells marked rather than as lines through a sparse scan.</li>
 <li><b>the manufacturing slide</b> (slide 5) — the baking-buckling study had
@@ -2430,7 +2550,7 @@ specs come from internal notes. Ask the collaboration now.</li>
 BASKET-specific beyond the design report.</li>
 <li><b>Which efficiency form of words.</b> The deck uses "96.5 / 97.1 / 96.0 %
 at the working point, settling to ≈96 / 95 %". Confirm.</li>
-<li><b>The 27 Jul level shift</b> is unexplained (slide 35). It is in backup;
+<li><b>The 27 Jul level shift</b> is unexplained (slide 45). It is in backup;
 decide whether to volunteer it.</li>
 <li><b>P2_IN under VMM</b> is a lower bound pending a re-derived channel map.
 The tracks now make that possible — worth doing before the talk if there is
@@ -2440,13 +2560,11 @@ conditions</b> from the dedicated waveform study. Note that the roadmap's
 "46 ns" and stage 19's "20.8 ns per-pad median" are different estimators of
 different things — do not mix them in one sentence.</li>
 </ol>
-<div class="msg warn"><b>Cut first if the dry run overruns:</b> slide 8 (Act 1
-remainder), slide 18 (the alternative event views), slide 35 (bench coverage
-detail), slide 30 (2D surfaces), slide 33 (chamber swap).
+<div class="msg warn"><b>Cut first if the dry run overruns:</b> slide 9 (Act 1 remainder), slide 18 (the alternative event views), slide 41 (bench coverage detail), slide 35 (2D surfaces), slide 39 (chamber swap).
 <b>Protect:</b> 15–23 — that block is the talk.</div>
 </div>
 </div>
-<span class="num">50</span></section>
+<span class="num">52</span></section>
 
 
 <p class="foot">
