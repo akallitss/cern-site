@@ -33,12 +33,17 @@ fi
 
 echo "▸ syncing to $HOST:$DEST"
 # -r recursive, -l links, -t times, -z compress, --chmod: world-readable files/dirs (web server needs it)
+# vmm-qa-plots/ is 485 MB of generated figures that live on the web area but NOT in this
+# repo (they are rebuilt by vmm_qa/render_from_store.py from the counts store on EOS).
+# Excluding it keeps it out of every sync AND protects it from --delete, which does not
+# remove excluded paths on the receiver.
 rsync -rltvz $DRY $DELETE \
   --chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r \
   --exclude '.git/' --exclude '.gitignore' --exclude '.claude/' \
   --exclude 'scripts/' --exclude 'templates/' --exclude 'Makefile' \
   --exclude 'README.md' --exclude 'CLAUDE.md' --exclude 'site.config.json' \
   --exclude '__pycache__/' --exclude '.DS_Store' \
+  --exclude 'vmm-qa-plots/' \
   ./ "$HOST:$DEST"
 
 SITE=$(python3 -c 'import json;print(json.load(open("site.config.json")).get("site_url",""))')
