@@ -1487,7 +1487,7 @@ beam."</p>
 <td>the P2 tracker works in its own geometry</td></tr>
 <tr class="hl"><td>SPS Jul 2026</td><td>same three</td><td>VMM3a</td>
 <td>uRWELL, absolute</td><td>0.155* / 0.669 / <b>0.854</b></td>
-<td>22.5 ns (BCID-limited)</td><td>3.4 mm, same as DREAM</td>
+<td>19.4&ndash;22 ns (trigger-limited)</td><td>3.4 mm, same as DREAM</td>
 <td>the VMM deficit is the threshold, not the chamber</td></tr>
 </tbody>
 </table>
@@ -1514,7 +1514,13 @@ independent chains agreed on one flipped ribbon.</li>
 <ul>
 <li><b>VMM per-channel threshold trim + time calibration.</b> This is the
 single highest-value item: the trim DACs were never used, and σ is pinned at
-the 22.5 ns BCID bin for want of calibration runs.</li>
+the 22.5 ns BCID bin for want of calibration runs. <b>Corrected 19 Aug:</b> the
+width is not BCID-limited &mdash; the TDC fine time is already applied and
+quantisation alone is 22.5/&radic;12 = 6.5 ns. The largest removable term is the
+<b>trigger channel</b> (33.4 ns, a scintillator through a VMM discriminator)
+against P2_MID's 26.6 ns intrinsic; referencing to the DREAM trigger timestamp
+through the stream matching (10.4 ns rms) is the real gain. Per-channel t0 and
+slewing are worth only 2&ndash;4 %.</li>
 <li><b>Confirm the CF₄ gas timing directly</b> — one short DREAM run on the new
 gas turns a validated prediction into a measurement.</li>
 <li><b>Fix P2_IN connector 11/14</b> and re-derive its channel map.</li>
