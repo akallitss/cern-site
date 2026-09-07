@@ -1,6 +1,6 @@
 {
-  "latest_update": "2026-08-19",
-  "count": 7,
+  "latest_update": "2026-09-07",
+  "count": 18,
   "notes": [
     {
       "title": "VMM QA plot browser — SPS H4 July 2026",
@@ -78,12 +78,30 @@
         "beam test"
       ],
       "date": "2026-08-16",
-      "updated": "2026-08-18",
+      "updated": "2026-09-07",
       "unlisted": false,
       "path": "2026-08-16-mpgd26-sps-beam-report.html",
       "url": "/notes/2026-08-16-mpgd26-sps-beam-report.html",
-      "size": 33759,
-      "size_h": "33.0 kB"
+      "size": 34099,
+      "size_h": "33.3 kB"
+    },
+    {
+      "title": "MPGD26 slide options — P2 @ SPS H4",
+      "description": "Options deck: candidate slides for the MPGD26 talk, one option per slide with recommendations.",
+      "category": "Talks & Papers",
+      "tags": [
+        "mpgd26",
+        "slides",
+        "talk",
+        "sps"
+      ],
+      "date": "2026-08-16",
+      "updated": "2026-09-07",
+      "unlisted": false,
+      "path": "2026-08-16-mpgd26-slide-options.html",
+      "url": "/notes/2026-08-16-mpgd26-slide-options.html",
+      "size": 19871,
+      "size_h": "19.4 kB"
     },
     {
       "title": "Welcome to the notes hub",
@@ -103,22 +121,227 @@
       "size_h": "4.7 kB"
     },
     {
-      "title": "MPGD26 slide options — P2 @ SPS H4",
-      "description": "Options deck: candidate slides for the MPGD26 talk, one option per slide with recommendations.",
-      "category": "Talks & Papers",
+      "title": "VMM SNR Analysis — P2 Basket Detector",
+      "description": "Signal-to-noise analysis of the VMM3a configuration scan on the P2 BASKET detector: sweeping gain (sg) and peaking time (snt) over paired signal/noise runs to find the SNR-optimal configuration.",
+      "category": "Analysis",
       "tags": [
-        "mpgd26",
-        "slides",
-        "talk",
-        "sps"
+        "vmm",
+        "vmm3a",
+        "snr",
+        "configuration scan",
+        "sps",
+        "test beam",
+        "p2",
+        "basket"
       ],
-      "date": "2026-08-16",
-      "updated": "2026-08-16",
+      "date": "2026-06-19",
+      "updated": "2026-06-19",
       "unlisted": false,
-      "path": "2026-08-16-mpgd26-slide-options.html",
-      "url": "/notes/2026-08-16-mpgd26-slide-options.html",
-      "size": 18906,
-      "size_h": "18.5 kB"
+      "path": "2026-06-19-vmm-snr-analysis-p2-basket.html",
+      "url": "/notes/2026-06-19-vmm-snr-analysis-p2-basket.html",
+      "size": 2314186,
+      "size_h": "2.2 MB"
+    },
+    {
+      "title": "VMM Trigger Rate Analysis — P2 Basket Detector",
+      "description": "The five-step trigger-rate pipeline applied to the VMM3a configuration scan at 5 kHz and 15 kHz beam intensity, illustrated step by step on VMM 11 and VMM 12.",
+      "category": "Analysis",
+      "tags": [
+        "vmm",
+        "vmm3a",
+        "trigger rate",
+        "configuration scan",
+        "sps",
+        "test beam",
+        "p2",
+        "basket"
+      ],
+      "date": "2026-06-04",
+      "updated": "2026-06-04",
+      "unlisted": false,
+      "path": "2026-06-04-vmm-trigger-rate-analysis-p2-basket.html",
+      "url": "/notes/2026-06-04-vmm-trigger-rate-analysis-p2-basket.html",
+      "size": 3898092,
+      "size_h": "3.7 MB"
+    },
+    {
+      "title": "Triangle Geometry Check — P2 Basket FEM",
+      "description": "Geometry and boundary-condition check of the triangle reference model: 625.2 mm side, 1693 cm² active area, 18 597 pillar centres at 3 mm pitch and the 1 mm wall border.",
+      "category": "Detector R&D",
+      "tags": [
+        "micromegas",
+        "fem",
+        "geometry",
+        "pillars",
+        "simulation",
+        "mechanics"
+      ],
+      "date": "2026-06-03",
+      "updated": "2026-06-03",
+      "unlisted": false,
+      "path": "detector/p2-triangle-geometry-check.html",
+      "url": "/notes/detector/p2-triangle-geometry-check.html",
+      "size": 661356,
+      "size_h": "645.9 kB"
+    },
+    {
+      "title": "Triangle FEM — Uz surface",
+      "description": "Out-of-plane displacement surface of the equilateral-triangle reference geometry (area 169 256 mm², E = 1 GPa, t = 0.5 mm, 3 mm pillar pitch).",
+      "category": "Detector R&D",
+      "tags": [
+        "micromegas",
+        "fem",
+        "triangle",
+        "simulation",
+        "mechanics"
+      ],
+      "date": "2026-06-03",
+      "updated": "2026-06-03",
+      "unlisted": false,
+      "path": "detector/p2-triangle-fem-uz-surface.html",
+      "url": "/notes/detector/p2-triangle-fem-uz-surface.html",
+      "size": 793418,
+      "size_h": "774.8 kB"
+    },
+    {
+      "title": "P2 Basket — buckling geometry and BC check",
+      "description": "Boundary-condition zone map behind the baking-buckling sweep: wall spring, pillar snap and free interior node counts, read straight from the tension-sweep CSVs.",
+      "category": "Detector R&D",
+      "tags": [
+        "micromegas",
+        "fem",
+        "buckling",
+        "boundary conditions",
+        "pillars",
+        "mechanics"
+      ],
+      "date": "2026-06-03",
+      "updated": "2026-06-03",
+      "unlisted": false,
+      "path": "detector/p2-buckling-geometry-bc-check.html",
+      "url": "/notes/detector/p2-buckling-geometry-bc-check.html",
+      "size": 691685,
+      "size_h": "675.5 kB"
+    },
+    {
+      "title": "P2 Basket — Baking Buckling Analysis",
+      "description": "Will the mesh buckle during the 25 → 146 °C bake? Analytical eigenvalue sweep over 300–1000 N/m — the threshold sits at ~121 N/m (1.2 N/cm), well below the tested range, matching the experiment.",
+      "category": "Detector R&D",
+      "tags": [
+        "micromegas",
+        "fem",
+        "buckling",
+        "baking",
+        "tension",
+        "mechanics"
+      ],
+      "date": "2026-06-03",
+      "updated": "2026-06-03",
+      "unlisted": false,
+      "path": "detector/p2-baking-buckling-analysis.html",
+      "url": "/notes/detector/p2-baking-buckling-analysis.html",
+      "size": 5903,
+      "size_h": "5.8 kB"
+    },
+    {
+      "title": "P2 Basket FEM Tension Sweep — without pillars",
+      "description": "The same 3–10 N/cm sweep with the pillar support removed: displacement runs to tens of millimetres, far past the 50 µm planarity threshold — the reference case for what the pillars carry.",
+      "category": "Detector R&D",
+      "tags": [
+        "micromegas",
+        "fem",
+        "calculix",
+        "tension",
+        "simulation",
+        "mechanics"
+      ],
+      "date": "2026-06-03",
+      "updated": "2026-06-03",
+      "unlisted": false,
+      "path": "detector/p2-fem-tension-sweep-without-pillars.html",
+      "url": "/notes/detector/p2-fem-tension-sweep-without-pillars.html",
+      "size": 751790,
+      "size_h": "734.2 kB"
+    },
+    {
+      "title": "P2 Basket FEM Tension Sweep — with pillars",
+      "description": "CalculiX tension sweep 3–10 N/cm of the v4 basket model with the pillar lattice: out-of-plane displacement 16–32 µm and von Mises stress against the 50 µm planarity threshold.",
+      "category": "Detector R&D",
+      "tags": [
+        "micromegas",
+        "fem",
+        "calculix",
+        "tension",
+        "pillars",
+        "simulation",
+        "mechanics"
+      ],
+      "date": "2026-06-03",
+      "updated": "2026-06-03",
+      "unlisted": false,
+      "path": "detector/p2-fem-tension-sweep-with-pillars.html",
+      "url": "/notes/detector/p2-fem-tension-sweep-with-pillars.html",
+      "size": 783482,
+      "size_h": "765.1 kB"
+    },
+    {
+      "title": "P2 Basket FEM Comparison Report",
+      "description": "Three mesh strategies at T = 1000 N/m: the basket adaptive FreeCAD mesh gives 31.96 µm with an artefact peak, the identical geometry on a uniform Gmsh mesh gives 1.57 µm — a 20× difference from mesh quality alone.",
+      "category": "Detector R&D",
+      "tags": [
+        "micromegas",
+        "fem",
+        "mesh",
+        "gmsh",
+        "simulation",
+        "mechanics"
+      ],
+      "date": "2026-06-03",
+      "updated": "2026-06-03",
+      "unlisted": false,
+      "path": "detector/p2-fem-mesh-comparison.html",
+      "url": "/notes/detector/p2-fem-mesh-comparison.html",
+      "size": 976216,
+      "size_h": "953.3 kB"
+    },
+    {
+      "title": "Basket vs Triangle — Uz comparison",
+      "description": "Out-of-plane displacement of the P2 basket polygon against an equal-area equilateral triangle, same Gmsh C3D10 mesh settings and a shared colour scale per tension step.",
+      "category": "Detector R&D",
+      "tags": [
+        "micromegas",
+        "fem",
+        "geometry",
+        "gmsh",
+        "simulation",
+        "mechanics"
+      ],
+      "date": "2026-06-03",
+      "updated": "2026-06-03",
+      "unlisted": false,
+      "path": "detector/p2-basket-vs-triangle-uz.html",
+      "url": "/notes/detector/p2-basket-vs-triangle-uz.html",
+      "size": 886610,
+      "size_h": "865.8 kB"
+    },
+    {
+      "title": "P2 Basket — geometry verification",
+      "description": "Layer-stack verification of the v4 basket model against the sweep target — PCB substrate, 128 µm amplification gap and 500 µm mesh layer — over 102 407 nodes.",
+      "category": "Detector R&D",
+      "tags": [
+        "micromegas",
+        "geometry",
+        "fem",
+        "layer stack",
+        "simulation"
+      ],
+      "date": "2026-05-10",
+      "updated": "2026-05-10",
+      "unlisted": false,
+      "path": "detector/p2-basket-geometry-verification.html",
+      "url": "/notes/detector/p2-basket-geometry-verification.html",
+      "size": 987492,
+      "size_h": "964.3 kB"
     },
     {
       "title": "P2 Basket Bulk Micromegas — FEM Technical Report",
