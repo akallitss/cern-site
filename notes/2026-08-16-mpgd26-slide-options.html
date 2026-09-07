@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
 <title>MPGD26 slide options — P2 @ SPS H4</title>
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
 <meta name="description" content="Options deck: candidate slides for the MPGD26 talk, one option per slide with recommendations.">
 <meta name="category" content="Talks & Papers">
 <meta name="keywords" content="mpgd26,slides,talk,sps">
 <meta name="date" content="2026-08-16">
-<meta name="updated" content="2026-08-16">
+<meta name="updated" content="2026-09-07">
 <meta name="visibility" content="public">
 <!-- ======================================================================= -->
 <style>
@@ -223,7 +223,7 @@ corrected on EOS.</p>
 <td>12</td><td>best station</td></tr>
 <tr><td class="out">P2_OUT</td><td>96.0 %</td><td>≈94.6 %</td><td>18.4</td>
 <td>69</td><td>works; uniform gain deficit + sparky</td></tr>
-<tr><td>VMM readout (c4–c6)</td><td colspan="2">turn-on shape ✓, cluster 1.11–1.18 pads</td>
+<tr><td>VMM readout (c4–c6)</td><td colspan="2">turn-on shape ✓ (cluster size withdrawn — not like-for-like)</td>
 <td>BCID 22.5</td><td>—</td><td>—</td><td>needs per-pad denominator (path known)</td></tr>
 </table>
 <p class="msg"><b>Message:</b> a P2-geometry telescope measured absolutely:
@@ -304,13 +304,22 @@ property of the detector, not of one analysis.</p>
 </section>
 
 <section class="slide"><span class="tag bkup">BACKUP — caveat</span>
-<h2>Why DREAM and VMM efficiencies must not share an axis</h2>
+<h2>Putting DREAM and VMM on one axis: what had to be fixed first</h2>
 <img src="mpgd26-sps-beam-report_files/vmm_vs_dream_caveat.png" alt="DREAM vs VMM">
-<p class="msg"><b>Message:</b> the VMM number counts every trigger while
-only c4–c6 carry hybrids (and P2_IN sat below turn-on) — comparable
-quantities are the turn-on shape, cluster size and hit maps. The per-pad
-acceptance-restricted efficiency is the known missing step; tonight's
-per-capture stores make its backfill cheap.</p>
+<p class="msg"><b>SUPERSEDED 17 Aug — kept for the history.</b> This slide
+used to say the two efficiencies must never share an axis, because the VMM
+number was a whole-station scalar over every trigger while only c4–c6 carry
+hybrids. That denominator mismatch is <b>fixed</b>: the VMM efficiency has
+been re-derived against the same uRWELL tracks, the same fiducial and the
+same probe radius as the DREAM campaign, over 78 sub-runs, so the two are
+now directly comparable — see the DREAM-vs-VMM slide.</p>
+<p class="msg">Three caveats that <i>do</i> survive, and are carried on the
+comparison itself: the DREAM reference must be taken at the VMM run's own
+<b>drift voltage</b> (750 V, not highstat_eff_1's 700 V); <b>P2_IN</b> is a
+lower bound, and its DREAM reference is the 28 Jul chamber, since the
+original was swapped out on 27 Jul; and the <b>cluster-size</b> comparison
+is still <i>not</i> like-for-like — the VMM efficiency code deliberately does
+not cluster — so it has been dropped rather than quoted.</p>
 </section>
 
 <section class="slide"><span class="tag bkup">BACKUP — stability</span>
@@ -348,7 +357,10 @@ holes are enumerated, not discovered later.</p>
 Ar/CF<sub>4</sub>/iC<sub>4</sub>H<sub>10</sub> 88/10/2 to confirm the
 predicted ≈13.5 ns (gas term 8.8→3.3 ns, working point +16 V).</li>
 <li><b>Electronics:</b> attack the 13 ns non-gas floor (walk/shaping);
-VMM time calibration runs to break the 22.5 ns BCID quantisation.</li>
+VMM timing: <b>not</b> BCID-limited (corrected 19 Aug) — the TDC fine time is
+already applied and quantisation alone is only 22.5/&radic;12 = 6.5 ns. The
+largest removable term is the trigger channel itself, 33.4 ns; reference to the
+DREAM trigger timestamp through the stream matching (10.4 ns rms) instead.</li>
 <li><b>VMM per-pad efficiency</b> backfill from tonight's capture stores →
 true DREAM/VMM like-for-like.</li>
 <li><b>Hardware:</b> P2_IN connector 11/14 check; P2_OUT gain
