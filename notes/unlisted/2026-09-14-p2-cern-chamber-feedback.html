@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>P2 BASKET CERN-bulked chamber: bench and beam feedback</title>
+<meta name="description" content="Feedback slides for the CERN MPT workshop: the CERN-bulked P2 chamber (det5) on the cosmic bench and in the July 2026 SPS H4 beam (DREAM readout)">
+<meta name="category" content="Detector R&amp;D">
+<meta name="keywords" content="P2,BASKET,Micromegas,bulk,feedback,slides">
+<meta name="date" content="2026-09-14">
+<meta name="updated" content="2026-09-14">
+<meta name="visibility" content="unlisted">
+<meta name="robots" content="noindex, nofollow">
+<!-- ======================================================================= -->
+<style>
+  :root { --ink:#1a1a1a; --ink2:#5b5a56; --line:#dedcd6; --bg:#efeee9;
+          --card:#ffffff; --acc:#4a3aa7; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:17px/1.5 system-ui, "Segoe UI", Roboto, sans-serif; }
+  main { padding-inline:16px; padding-block:18px 40px; }
+  .slide { max-width:1100px; margin:0 auto 22px; background:var(--card);
+           border:1px solid var(--line); border-radius:6px;
+           padding:30px 40px 34px; position:relative; }
+  .slide h1 { font-size:1.9em; line-height:1.2; margin:.2em 0 .3em; }
+  .slide h2 { font-size:1.35em; margin:0 0 14px; }
+  .sub { color:var(--ink2); margin:0 0 10px; }
+  .n { position:absolute; right:18px; bottom:10px; font-size:.8em; color:var(--ink2); }
+  img { max-width:100%; display:block; margin:6px auto; }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start; }
+  .fig-l { display:grid; grid-template-columns:1.35fr 1fr; gap:24px; align-items:start; }
+  @media (max-width:760px) { .two, .fig-l { grid-template-columns:1fr; }
+                             .slide { padding:22px 18px 30px; } }
+  ul { margin:6px 0; padding-left:20px; } li { margin:5px 0; }
+  .tbl { overflow-x:auto; }
+  table { border-collapse:collapse; width:100%; font-size:.92em; }
+  th, td { border-bottom:1px solid var(--line); padding:7px 8px; text-align:left; vertical-align:top; }
+  th { color:var(--ink2); font-weight:600; }
+  .note { border-left:3px solid var(--line); padding:4px 12px; color:var(--ink2); font-size:.93em; margin:12px 0 0; }
+  .key { border-left:3px solid var(--acc); padding:4px 12px; margin:12px 0 0; }
+  .cap { text-align:center; color:var(--ink2); font-size:.88em; margin:0; }
+  .title { text-align:left; padding-block:56px; }
+</style>
+</head>
+<body>
+<main>
+
+<section class="slide title">
+  <h1>P2 BASKET chamber bulked at CERN<br>what we measured</h1>
+  <p class="sub">SPS H4 muon beam (28–29 July 2026) and cosmic bench at Saclay (8–9 September 2026)</p>
+  <p class="sub">A. Kallitsopoulou · 14 September 2026 · DREAM readout only</p>
+  <div class="n">1</div>
+</section>
+
+<section class="slide">
+  <h2>The chamber and how it was tested</h2>
+  <div class="two">
+    <div>
+      <ul>
+        <li>P2 BASKET board and mesh supplied by CEA; bulk made at CERN (ref. 3717-A)</li>
+        <li>150 µm amplification gap; 0.5 mm Dynamask pillars on a 2 mm grid + 5 large 6.15 mm pillars → <b>4.9 % of the pad area</b></li>
+        <li>1280 pads (~12 × 12 mm), 1697 cm² active area; 4 mm drift gap</li>
+      </ul>
+    </div>
+    <div class="tbl">
+      <table>
+        <tr><th></th><th>Beam</th><th>Cosmic bench</th></tr>
+        <tr><td>particles</td><td>SPS H4 muons</td><td>cosmic muons</td></tr>
+        <tr><td>reference</td><td>two uRWELL planes, <i>or</i> the other two P2 chambers</td><td>M3 telescope</td></tr>
+        <tr><td>area probed</td><td>~13 % beam spot</td><td>8 of 10 connectors read out</td></tr>
+        <tr><td>gas</td><td>Ar/CO₂/iC₄H₁₀ 93/5/2</td><td>Ar/iC₄H₁₀ 95/5</td></tr>
+      </table>
+    </div>
+  </div>
+  <p class="note">The gases differ, so the gain at a given voltage differs. Compare curve shapes, not voltages.
+  Bench efficiency: track reconstructed within 40 mm of the telescope track, pillars included.</p>
+  <div class="n">2</div>
+</section>
+
+<section class="slide">
+  <h2>Summary</h2>
+  <div class="tbl">
+    <table>
+      <tr><th></th><th>Result</th></tr>
+      <tr><td>Beam efficiency</td><td><b>94 %</b> at mesh 450 / drift 750 V (uRWELL reference); 93 % with P2 self-tracking. Still rising at 450 V.</td></tr>
+      <tr><td>Bench efficiency</td><td><b>89 %</b> over 12 h at 420 / 820 V, flat in time; a pad fires for 93 % of tracks</td></tr>
+      <tr><td>Turn-on</td><td>clean in both setups; no plateau reached at the highest mesh voltage we used</td></tr>
+      <tr><td>Drift field</td><td>efficiency plateau from ~150 V above the mesh on the bench</td></tr>
+      <tr><td>Sparks (bench)</td><td>none up to 380 V mesh; ~30 / h at 420 V</td></tr>
+      <tr><td>Planarity</td><td>the signal-timing map suggests a drift-gap variation of order 1 mm (slides 7–8, needs confirmation)</td></tr>
+    </table>
+  </div>
+  <p class="key">The chamber works and is stable. At the voltages we used, its efficiency is still limited by gain.</p>
+  <div class="n">3</div>
+</section>
+
+<section class="slide">
+  <h2>Beam: efficiency</h2>
+  <div class="two">
+    <div>
+      <img src="2026-09-14-p2-cern-chamber-feedback_files/beam_mesh.png" alt="Beam efficiency vs mesh voltage">
+      <p class="cap">mesh scan, drift field held fixed</p>
+    </div>
+    <div>
+      <img src="2026-09-14-p2-cern-chamber-feedback_files/beam_drift.png" alt="Beam efficiency vs drift voltage">
+      <p class="cap">drift scans at three mesh voltages</p>
+    </div>
+  </div>
+  <ul>
+    <li>Both references (uRWELL tracks, and the two other P2 chambers) agree within 1–2 points: 84 → 90 → 93 → 94 % at mesh 420 → 450 V.</li>
+    <li>At fixed mesh, efficiency is flat above drift ≈ mesh + 300 V: the drift field is not the limit, the gain is.</li>
+  </ul>
+  <div class="n">4</div>
+</section>
+
+<section class="slide">
+  <h2>Cosmic bench: efficiency vs voltage</h2>
+  <div class="two">
+    <div>
+      <img src="2026-09-14-p2-cern-chamber-feedback_files/bench_mesh.png" alt="Bench efficiency vs mesh voltage">
+      <p class="cap">mesh scan</p>
+    </div>
+    <div>
+      <img src="2026-09-14-p2-cern-chamber-feedback_files/bench_drift.png" alt="Bench efficiency vs drift voltage">
+      <p class="cap">drift scan (mesh 420 V)</p>
+    </div>
+  </div>
+  <ul>
+    <li>Mesh: 50 % at 350 V → 89 % at 420 V, still rising. We did not go higher, because the spark rate grows from 390 V (8 / h) to 420 V (30 / h).</li>
+    <li>Drift: plateau at 87–88 % from drift − mesh ≈ 150 V onwards.</li>
+  </ul>
+  <div class="n">5</div>
+</section>
+
+<section class="slide">
+  <h2>Cosmic bench: stability</h2>
+  <div class="fig-l">
+    <img src="2026-09-14-p2-cern-chamber-feedback_files/bench_time.png" alt="Bench efficiency vs time over 12 hours">
+    <div>
+      <ul>
+        <li>12.3 h at mesh 420 / drift 820 V.</li>
+        <li>Efficiency flat at 87–90 % in every 30-min bin; no charging-up and no drift.</li>
+        <li>35 sparks / h on the mesh. The affected periods are vetoed (12 % of the run); the spark rate settled at the same level as in the scan the day before.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="n">6</div>
+</section>
+
+<section class="slide">
+  <h2>Possible drift-gap variation (preliminary)</h2>
+  <div class="fig-l">
+    <img src="2026-09-14-p2-cern-chamber-feedback_files/bench_timing_surface.png" alt="Map of signal arrival time over the board">
+    <div>
+      <ul>
+        <li>Median signal arrival time per 36 mm region, relative to the chamber median, with per-connector cable delays removed.</li>
+        <li>Later arrival (red) means a longer drift path, i.e. a larger gap.</li>
+        <li>Signals arrive ~35 ns later in the middle than near the edges: a dome-like shape.</li>
+        <li>Pulse height follows the same pattern, as expected for a longer drift path (not what a cable or electronics delay would give).</li>
+      </ul>
+    </div>
+  </div>
+  <div class="n">7</div>
+</section>
+
+<section class="slide">
+  <h2>Possible drift-gap variation: size and caveats</h2>
+  <div class="fig-l">
+    <img src="2026-09-14-p2-cern-chamber-feedback_files/bench_bow_scaling.png" alt="Implied gap variation vs drift voltage">
+    <div>
+      <ul>
+        <li>An electronic delay would stay constant in ns. A geometric effect scales with 1/drift velocity. Converted to distance, the timing swing stays roughly constant at <b>0.7–1.3 mm</b> over the drift scan, which points to geometry.</li>
+        <li>This is an indirect estimate, uncertain to a few tenths of a mm.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="note"><b>What we cannot tell yet:</b>
+  whether it comes from the bulked board itself (e.g. mesh tension after lamination), from how the chamber sits in our bench frame, or from the drift frame;
+  we have one chamber in one orientation, and no direct mechanical measurement.
+  A flatness measurement of the board, or a run with the chamber mounted differently, would settle it.
+  We see no clear link between this pattern and the efficiency.</p>
+  <div class="n">8</div>
+</section>
+
+<section class="slide">
+  <h2>Take-aways</h2>
+  <ul>
+    <li><b>The CERN bulk works:</b> 94 % in the beam and 89 % on the bench (whole area), stable over 12 h.</li>
+    <li>Efficiency is still gain-limited at the voltages we used: neither setup reached a plateau before sparking became noticeable.</li>
+    <li>The P2 chambers can measure their own efficiency without an external reference: self-tracking agrees with the uRWELL reference within 1–2 points.</li>
+    <li>The signal timing suggests a drift-gap variation of order 1 mm across the board. We would welcome your view on possible mechanical causes, and on whether a flatness check of the bulked board is possible.</li>
+  </ul>
+  <p class="note">Our side, not the bulk: the chamber needed an adapted HV connection on the drift frame before it could be powered in the beam.
+  Not covered here: VMM readout (under separate study) and time resolution.</p>
+  <div class="n">9</div>
+</section>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>P2 BASKET Saclay-bulked chambers: bench and beam feedback</title>
+<meta name="description" content="Feedback slides for the Saclay bulk production: det1-det4 on the cosmic bench and in the July 2026 SPS H4 beam (DREAM readout)">
+<meta name="category" content="Detector R&amp;D">
+<meta name="keywords" content="P2,BASKET,Micromegas,bulk,feedback,slides">
+<meta name="date" content="2026-09-14">
+<meta name="updated" content="2026-09-14">
+<meta name="visibility" content="unlisted">
+<meta name="robots" content="noindex, nofollow">
+<!-- ======================================================================= -->
+<style>
+  :root { --ink:#1a1a1a; --ink2:#5b5a56; --line:#dedcd6; --bg:#efeee9;
+          --card:#ffffff; --acc:#1f6fb4; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:17px/1.5 system-ui, "Segoe UI", Roboto, sans-serif; }
+  main { padding-inline:16px; padding-block:18px 40px; }
+  .slide { max-width:1100px; margin:0 auto 22px; background:var(--card);
+           border:1px solid var(--line); border-radius:6px;
+           padding:30px 40px 34px; position:relative; }
+  .slide h1 { font-size:1.9em; line-height:1.2; margin:.2em 0 .3em; }
+  .slide h2 { font-size:1.35em; margin:0 0 14px; }
+  .sub { color:var(--ink2); margin:0 0 10px; }
+  .n { position:absolute; right:18px; bottom:10px; font-size:.8em; color:var(--ink2); }
+  img { max-width:100%; display:block; margin:6px auto; }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start; }
+  .fig-l { display:grid; grid-template-columns:1.35fr 1fr; gap:24px; align-items:start; }
+  @media (max-width:760px) { .two, .fig-l { grid-template-columns:1fr; }
+                             .slide { padding:22px 18px 30px; } }
+  ul { margin:6px 0; padding-left:20px; } li { margin:5px 0; }
+  .tbl { overflow-x:auto; }
+  table { border-collapse:collapse; width:100%; font-size:.92em; }
+  th, td { border-bottom:1px solid var(--line); padding:7px 8px; text-align:left; vertical-align:top; }
+  th { color:var(--ink2); font-weight:600; }
+  .note { border-left:3px solid var(--line); padding:4px 12px; color:var(--ink2); font-size:.93em; margin:12px 0 0; }
+  .key { border-left:3px solid var(--acc); padding:4px 12px; margin:12px 0 0; }
+  .cap { text-align:center; color:var(--ink2); font-size:.88em; margin:0; }
+  .title { text-align:left; padding-block:56px; }
+</style>
+</head>
+<body>
+<main>
+
+<section class="slide title">
+  <h1>P2 BASKET chambers bulked at Saclay<br>det1 – det4: what we measured</h1>
+  <p class="sub">Cosmic bench (Saclay, June–July 2026) and SPS H4 muon beam (CERN, 22–29 July 2026)</p>
+  <p class="sub">A. Kallitsopoulou · 14 September 2026 · DREAM readout only</p>
+  <div class="n">1</div>
+</section>
+
+<section class="slide">
+  <h2>The chambers and how they were tested</h2>
+  <div class="two">
+    <div>
+      <ul>
+        <li>P2 BASKET board: 1280 pads (~12 × 12 mm), 1697 cm² active area, 10 connectors</li>
+        <li>Bulk Micromegas, insulation mask <b>V1</b>: 0.8 mm pillars on a 4 mm grid + 5 large 6.15 mm pillars → <b>3.8 % of the pad area</b></li>
+        <li>4 mm drift gap</li>
+      </ul>
+    </div>
+    <div class="tbl">
+      <table>
+        <tr><th></th><th>Cosmic bench</th><th>Beam</th></tr>
+        <tr><td>particles</td><td>cosmic muons</td><td>SPS H4 muons</td></tr>
+        <tr><td>reference</td><td>M3 telescope</td><td>two uRWELL planes, <i>or</i> the other two P2 chambers</td></tr>
+        <tr><td>area probed</td><td>whole chamber</td><td>~13 % beam spot</td></tr>
+        <tr><td>gas</td><td>Ar/iC₄H₁₀ 95/5</td><td>Ar/CO₂/iC₄H₁₀ 93/5/2</td></tr>
+      </table>
+    </div>
+  </div>
+  <p class="note">The gases differ, so the gain at a given voltage differs. Compare curve shapes and plateaus between bench and beam, not voltages.
+  Bench efficiency: track reconstructed within 40 mm of the telescope track, over the whole area (pillars included).</p>
+  <div class="n">2</div>
+</section>
+
+<section class="slide">
+  <h2>Summary</h2>
+  <div class="tbl">
+    <table>
+      <tr><th></th><th>Cosmic bench</th><th>Beam (station, dates)</th><th>Beam efficiency</th></tr>
+      <tr><td><b>det1</b></td><td>93–95 % plateau from ~400 V mesh<br><span class="sub">after the mesh-HV contact was redone</span></td>
+          <td>P2_MID, whole test</td><td><b>96 %</b> at 450/700 V, 97 % at drift ≥ 800 V</td></tr>
+      <tr><td><b>det2</b></td><td>90 % (10 h run, 430/600 V)</td>
+          <td>P2_IN, 22–23 Jul: no signal (HV contact)<br>repaired, back 26–27 Jul</td><td><b>87–89 %</b> at 450/750 V<br><b>91 %</b> at 450/900 V, still rising</td></tr>
+      <tr><td><b>det3</b></td><td>91 % at start, lost efficiency within hours<br><span class="sub">drift-electrode HV contact</span></td>
+          <td>P2_OUT, whole test, new HV contact</td><td><b>95 %</b> at 450/700 V, 97 % at drift ≥ 800 V</td></tr>
+      <tr><td><b>det4</b></td><td>92 % after 4 h charging-up<br><span class="sub">noisy</span></td>
+          <td>P2_IN, 24–26 Jul<br>leaky drift frame</td><td><b>96 %</b> at 450/700 V</td></tr>
+    </table>
+  </div>
+  <p class="key">Once each chamber had a stable HV connection, all four bulks gave 91–97 % in the beam, and 95–97 % for det1, det3 and det4.
+  None of the problems we met points at the bulk itself.</p>
+  <p class="note">Beam numbers use the uRWELL reference and mesh / drift voltages as quoted. They are averaged over the working-point runs and rounded.</p>
+  <div class="n">3</div>
+</section>
+
+<section class="slide">
+  <h2>Beam: efficiency vs mesh voltage</h2>
+  <div class="fig-l">
+    <img src="2026-09-14-p2-saclay-chambers-feedback_files/beam_mesh.png" alt="Beam efficiency vs mesh voltage for det1-det4">
+    <div>
+      <ul>
+        <li>Solid: efficiency against the uRWELL tracks.<br>Dashed: the two other P2 chambers provide the track (how P2 will run, without an external reference).</li>
+        <li>The two methods agree within a few points.</li>
+        <li>det1 and det3 reach 93–96 % at 430–450 V; det4 is still rising at the top of its scan.</li>
+        <li>Drift = mesh + 250 V (det1, det3), + 200 V (det4), + 300 V (det2).</li>
+        <li>det2 (repaired) turns on later and plateaus lower than the other three.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="n">4</div>
+</section>
+
+<section class="slide">
+  <h2>Beam: efficiency vs drift voltage</h2>
+  <div class="fig-l">
+    <img src="2026-09-14-p2-saclay-chambers-feedback_files/beam_drift.png" alt="Beam efficiency vs drift voltage at mesh 450 V">
+    <div>
+      <ul>
+        <li>Mesh fixed at 450 V.</li>
+        <li>det1 and det3 reach <b>97 %</b> at drift 800–900 V.</li>
+        <li>det2 (repaired) is still rising at 900 V: <b>91 %</b> with both references.</li>
+        <li>In the same runs (26–27 Jul) det1 read only 91–92 % (97 % two days earlier), so part of det2's gap is run conditions, not the chamber.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="n">5</div>
+</section>
+
+<section class="slide">
+  <h2>Cosmic bench: efficiency vs voltage</h2>
+  <div class="two">
+    <div>
+      <img src="2026-09-14-p2-saclay-chambers-feedback_files/bench_mesh.png" alt="Bench efficiency vs mesh voltage, det1 and det2">
+      <p class="cap">mesh scans (drift field held fixed)</p>
+    </div>
+    <div>
+      <img src="2026-09-14-p2-saclay-chambers-feedback_files/bench_drift.png" alt="Bench efficiency vs drift voltage, det1 and det3">
+      <p class="cap">drift scans (mesh fixed)</p>
+    </div>
+  </div>
+  <ul>
+    <li>det1: clean turn-on, plateau 93–95 % from ~400 V. Drift plateau from ~150 V above the mesh.</li>
+    <li>det2: 85 → 91 %, still rising at 430 V. det3: drift plateau ~91 %, measured before it lost its drift HV.</li>
+    <li>No bench mesh scan exists for det4.</li>
+  </ul>
+  <div class="n">6</div>
+</section>
+
+<section class="slide">
+  <h2>Cosmic bench: stability and uniformity</h2>
+  <div class="two">
+    <div>
+      <img src="2026-09-14-p2-saclay-chambers-feedback_files/bench_time.png" alt="Bench efficiency vs time for det4 and det3">
+      <p class="cap">efficiency vs time at fixed HV</p>
+    </div>
+    <div>
+      <img src="2026-09-14-p2-saclay-chambers-feedback_files/bench_map_det1.png" alt="det1 efficiency map on the cosmic bench">
+      <p class="cap">det1, 18 h at 415/615 V (5 mm sliding window)</p>
+    </div>
+  </div>
+  <ul>
+    <li>det4 charges up: 71 → 92 % over the first ~4 h, then stable.</li>
+    <li>det3 drops 91 → 81 % in 2 h at fixed HV. It later gave no signal at all; the cause was the drift-electrode HV contact.</li>
+    <li>det1 map: uniform over the whole fan. Five of the dark spots are the large support pillars. We have not traced the remaining isolated spots to the bulk.</li>
+  </ul>
+  <div class="n">7</div>
+</section>
+
+<section class="slide">
+  <h2>What went wrong, and where it came from</h2>
+  <div class="tbl">
+    <table>
+      <tr><th></th><th>Symptom</th><th>Cause</th><th>Bulk-related?</th></tr>
+      <tr><td>det1</td><td>gain collapsed intermittently (early July, bench)</td><td>mesh HV contact; repaired</td><td>no — HV connection</td></tr>
+      <tr><td>det2</td><td>no signal at first beam installation</td><td>HV contact; repaired, then took data</td><td>no — HV connection</td></tr>
+      <tr><td>det3</td><td>efficiency lost within hours at fixed HV (bench)</td><td>drift-electrode HV contact; worked in the beam with a new contact</td><td>no — HV connection</td></tr>
+      <tr><td>det4</td><td>noisy on the bench; long charging-up</td><td>leaky drift frame seen at the beam</td><td>no — drift frame</td></tr>
+    </table>
+  </div>
+  <p class="key">Every failure was in the HV connections or the drift frame, which is our assembly. The most useful change for the next chambers is a robust, reproducible HV contact to the mesh and to the drift electrode.</p>
+  <div class="n">8</div>
+</section>
+
+<section class="slide">
+  <h2>Take-aways for the bulk production</h2>
+  <ul>
+    <li><b>All four Saclay bulks work.</b> 95–97 % efficiency in the beam for det1, det3 and det4; det2 reached 91 % after its repair, still rising with drift voltage.</li>
+    <li>Efficiency is uniform across the whole fan on the bench (det1). The support pillars are visible but cost little: the pillar area is 3.8 %, and the bench misses only ~3 % of tracks with no signal at all.</li>
+    <li>Efficiency against the other P2 chambers agrees with the external reference, so the chambers can run P2-style, without extra tracking.</li>
+  </ul>
+  <p class="note">Not covered here: VMM readout (under separate study), timing, and bench mesh scans for det3 (degrading at the time) and det4 (none taken).
+  Numbers are from the August 2026 reprocessing of the bench data and from the July beam analysis.</p>
+  <div class="n">9</div>
+</section>
+
+</main>
+</body>
+</html>
