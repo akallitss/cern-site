@@ -28,6 +28,7 @@
   .sub { color:var(--ink2); margin:0 0 10px; }
   .n { position:absolute; right:18px; bottom:10px; font-size:.8em; color:var(--ink2); }
   img { max-width:100%; display:block; margin:6px auto; }
+  img.wide { max-height:560px; }
   .two { display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start; }
   .fig-l { display:grid; grid-template-columns:1.35fr 1fr; gap:24px; align-items:start; }
   @media (max-width:760px) { .two, .fig-l { grid-template-columns:1fr; }
@@ -79,6 +80,21 @@
 </section>
 
 <section class="slide">
+  <h2>The two test setups</h2>
+  <div class="two">
+    <div>
+      <img src="2026-09-14-p2-cern-chamber-feedback_files/setup_beam.png" alt="Render of the H4 beam setup: three P2 chambers between two uRWELL reference planes">
+      <p class="cap">SPS H4: three P2 chambers between two uRWELL reference planes, one real muon track drawn. This chamber sat at the first station (P2_IN) from 28 July.</p>
+    </div>
+    <div>
+      <img src="2026-09-14-p2-cern-chamber-feedback_files/setup_bench.png" alt="Schematic of the Saclay cosmic bench">
+      <p class="cap">Saclay cosmic bench: the M3 telescope brackets the chamber under test (here at the P1 position); the trigger is a top–bottom scintillator coincidence</p>
+    </div>
+  </div>
+  <div class="n">3</div>
+</section>
+
+<section class="slide">
   <h2>Summary</h2>
   <div class="tbl">
     <table>
@@ -87,12 +103,13 @@
       <tr><td>Bench efficiency</td><td><b>89 %</b> over 12 h at 420 / 820 V, flat in time; a pad fires for 93 % of tracks</td></tr>
       <tr><td>Turn-on</td><td>clean in both setups; no plateau reached at the highest mesh voltage we used</td></tr>
       <tr><td>Drift field</td><td>efficiency plateau from ~150 V above the mesh on the bench</td></tr>
+      <tr><td>Time resolution (beam)</td><td>27 ns at drift 890 V, mesh 440 V; still improving with drift field</td></tr>
       <tr><td>Sparks (bench)</td><td>none up to 380 V mesh; ~30 / h at 420 V</td></tr>
-      <tr><td>Planarity</td><td>the signal-timing map suggests a drift-gap variation of order 1 mm (slides 7–8, needs confirmation)</td></tr>
+      <tr><td>Planarity</td><td>the signal-timing map suggests a drift-gap variation of order 1 mm (slides 10–11, needs confirmation)</td></tr>
     </table>
   </div>
   <p class="key">The chamber works and is stable. At the voltages we used, its efficiency is still limited by gain.</p>
-  <div class="n">3</div>
+  <div class="n">4</div>
 </section>
 
 <section class="slide">
@@ -111,7 +128,7 @@
     <li>Both references (uRWELL tracks, and the two other P2 chambers) agree within 1–2 points: 84 → 90 → 93 → 94 % at mesh 420 → 450 V.</li>
     <li>At fixed mesh, efficiency is flat above drift ≈ mesh + 300 V: the drift field is not the limit, the gain is.</li>
   </ul>
-  <div class="n">4</div>
+  <div class="n">5</div>
 </section>
 
 <section class="slide">
@@ -130,7 +147,7 @@
     <li>Mesh: 50 % at 350 V → 89 % at 420 V, still rising. We did not go higher, because the spark rate grows from 390 V (8 / h) to 420 V (30 / h).</li>
     <li>Drift: plateau at 87–88 % from drift − mesh ≈ 150 V onwards.</li>
   </ul>
-  <div class="n">5</div>
+  <div class="n">6</div>
 </section>
 
 <section class="slide">
@@ -145,7 +162,37 @@
       </ul>
     </div>
   </div>
-  <div class="n">6</div>
+  <div class="n">7</div>
+</section>
+
+<section class="slide">
+  <h2>What each setup actually measures</h2>
+  <img class="wide" src="2026-09-14-p2-cern-chamber-feedback_files/bench_beam_maps.png" alt="Illustration: a P2 chamber's efficiency map on the bench and per-pad map in the beam, same frame">
+  <div class="two">
+    <p class="cap"><b>Bench</b>: cosmics through the whole active area, 5 mm sliding window.</p>
+    <p class="cap"><b>Beam</b>: per-pad efficiency, only where the beam passes.</p>
+  </div>
+  <ul>
+    <li>Illustration with the chamber at the middle station (P2_MID), the one chamber measured both ways with a full map. The layout is identical for every P2 board.</li>
+    <li>The beam lights only the red patch (~13 % of the pad plane); the bench covers the whole chamber, edges and every pillar included. Bench efficiencies therefore come out lower than beam ones.</li>
+    <li>The five large support pillars (red circles, same positions on the CERN and Saclay masks) are dead spots in both setups.</li>
+  </ul>
+  <div class="n">8</div>
+</section>
+
+<section class="slide">
+  <h2>Beam: time resolution</h2>
+  <div class="fig-l">
+    <img src="2026-09-14-p2-cern-chamber-feedback_files/beam_timing.png" alt="Time resolution vs drift voltage in the beam">
+    <div>
+      <ul>
+        <li>Single-chamber time resolution vs drift voltage (DREAM), 28 Jul, mesh 440 V.</li>
+        <li>Better with a stronger drift field: 120 ns at 590 V → <b>27 ns</b> at 890 V, still improving at the end of the scan.</li>
+        <li>The P2 goal is 20 ns. This scan was taken below the efficiency plateau (mesh 440 V). Whether more gain or drift field would reach 20 ns was not measured.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="n">9</div>
 </section>
 
 <section class="slide">
@@ -161,7 +208,7 @@
       </ul>
     </div>
   </div>
-  <div class="n">7</div>
+  <div class="n">10</div>
 </section>
 
 <section class="slide">
@@ -180,7 +227,7 @@
   we have one chamber in one orientation, and no direct mechanical measurement.
   A flatness measurement of the board, or a run with the chamber mounted differently, would settle it.
   We see no clear link between this pattern and the efficiency.</p>
-  <div class="n">8</div>
+  <div class="n">11</div>
 </section>
 
 <section class="slide">
@@ -188,12 +235,13 @@
   <ul>
     <li><b>The CERN bulk works:</b> 94 % in the beam and 89 % on the bench (whole area), stable over 12 h.</li>
     <li>Efficiency is still gain-limited at the voltages we used: neither setup reached a plateau before sparking became noticeable.</li>
+    <li>Time resolution 27 ns in the beam at mesh 440 V, still improving with drift field.</li>
     <li>The P2 chambers can measure their own efficiency without an external reference: self-tracking agrees with the uRWELL reference within 1–2 points.</li>
     <li>The signal timing suggests a drift-gap variation of order 1 mm across the board. We would welcome your view on possible mechanical causes, and on whether a flatness check of the bulked board is possible.</li>
   </ul>
   <p class="note">Our side, not the bulk: the chamber needed an adapted HV connection on the drift frame before it could be powered in the beam.
-  Not covered here: VMM readout (under separate study) and time resolution.</p>
-  <div class="n">9</div>
+  Not covered here: VMM readout (under separate study).</p>
+  <div class="n">12</div>
 </section>
 
 </main>

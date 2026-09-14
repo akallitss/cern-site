@@ -28,6 +28,7 @@
   .sub { color:var(--ink2); margin:0 0 10px; }
   .n { position:absolute; right:18px; bottom:10px; font-size:.8em; color:var(--ink2); }
   img { max-width:100%; display:block; margin:6px auto; }
+  img.wide { max-height:560px; }
   .two { display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start; }
   .fig-l { display:grid; grid-template-columns:1.35fr 1fr; gap:24px; align-items:start; }
   @media (max-width:760px) { .two, .fig-l { grid-template-columns:1fr; }
@@ -79,6 +80,25 @@
 </section>
 
 <section class="slide">
+  <h2>The two test setups</h2>
+  <div class="two">
+    <div>
+      <img src="2026-09-14-p2-saclay-chambers-feedback_files/setup_beam.png" alt="Render of the H4 beam setup: three P2 chambers between two uRWELL reference planes">
+      <p class="cap">SPS H4: three P2 chambers (P2_IN, P2_MID, P2_OUT) between two uRWELL reference planes, one real muon track drawn</p>
+    </div>
+    <div>
+      <img src="2026-09-14-p2-saclay-chambers-feedback_files/setup_bench.png" alt="Schematic of the Saclay cosmic bench">
+      <p class="cap">Saclay cosmic bench: the M3 telescope brackets the P2 chamber under test; the trigger is a top–bottom scintillator coincidence</p>
+    </div>
+  </div>
+  <ul>
+    <li>Beam: det1 at P2_MID and det3 at P2_OUT for the whole test; P2_IN held det2, then det4, then det2 again.</li>
+    <li>Bench: one chamber at a time, at the P1 (z = 232 mm) or P2 (z = 712 mm) position.</li>
+  </ul>
+  <div class="n">3</div>
+</section>
+
+<section class="slide">
   <h2>Summary</h2>
   <div class="tbl">
     <table>
@@ -96,7 +116,7 @@
   <p class="key">Once each chamber had a stable HV connection, all four bulks gave 91–97 % in the beam, and 95–97 % for det1, det3 and det4.
   None of the problems we met points at the bulk itself.</p>
   <p class="note">Beam numbers use the uRWELL reference and mesh / drift voltages as quoted. They are averaged over the working-point runs and rounded.</p>
-  <div class="n">3</div>
+  <div class="n">4</div>
 </section>
 
 <section class="slide">
@@ -113,7 +133,7 @@
       </ul>
     </div>
   </div>
-  <div class="n">4</div>
+  <div class="n">5</div>
 </section>
 
 <section class="slide">
@@ -129,7 +149,7 @@
       </ul>
     </div>
   </div>
-  <div class="n">5</div>
+  <div class="n">6</div>
 </section>
 
 <section class="slide">
@@ -149,27 +169,83 @@
     <li>det2: 85 → 91 %, still rising at 430 V. det3: drift plateau ~91 %, measured before it lost its drift HV.</li>
     <li>No bench mesh scan exists for det4.</li>
   </ul>
-  <div class="n">6</div>
+  <div class="n">7</div>
 </section>
 
 <section class="slide">
-  <h2>Cosmic bench: stability and uniformity</h2>
+  <h2>Bench and beam together: efficiency vs mesh voltage</h2>
+  <img class="wide" src="2026-09-14-p2-saclay-chambers-feedback_files/bench_beam_mesh_all.png" alt="Bench and beam efficiency vs mesh voltage, all Saclay chambers">
+  <ul>
+    <li>Every Saclay chamber and every mesh scan from both setups, on one axis.</li>
+    <li>The gas moves the curve along the voltage axis. The bench gas gives more gain per volt, so the bench plateau starts ~40 V lower. The plateau level is similar.</li>
+    <li>Beam det2 here uses P2 self-tracking at drift = mesh + 200 V.</li>
+  </ul>
+  <div class="n">8</div>
+</section>
+
+<section class="slide">
+  <h2>Bench and beam together: the drift field</h2>
   <div class="two">
     <div>
-      <img src="2026-09-14-p2-saclay-chambers-feedback_files/bench_time.png" alt="Bench efficiency vs time for det4 and det3">
-      <p class="cap">efficiency vs time at fixed HV</p>
+      <img src="2026-09-14-p2-saclay-chambers-feedback_files/bench_beam_drift_all.png" alt="Bench and beam efficiency vs drift voltage, det1 and det3">
+      <p class="cap">vs drift voltage</p>
     </div>
     <div>
-      <img src="2026-09-14-p2-saclay-chambers-feedback_files/bench_map_det1.png" alt="det1 efficiency map on the cosmic bench">
-      <p class="cap">det1, 18 h at 415/615 V (5 mm sliding window)</p>
+      <img src="2026-09-14-p2-saclay-chambers-feedback_files/bench_beam_field.png" alt="Bench and beam efficiency vs drift field, det1 and det3">
+      <p class="cap">vs drift field (4 mm gap), which lines up the different mesh settings</p>
     </div>
   </div>
   <ul>
-    <li>det4 charges up: 71 → 92 % over the first ~4 h, then stable.</li>
-    <li>det3 drops 91 → 81 % in 2 h at fixed HV. It later gave no signal at all; the cause was the drift-electrode HV contact.</li>
-    <li>det1 map: uniform over the whole fan. Five of the dark spots are the large support pillars. We have not traced the remaining isolated spots to the bulk.</li>
+    <li>The same two chambers (det1, det3) measured in both setups.</li>
+    <li>Both rise sharply by ~125 V/cm, and the plateaus agree to within 2–4 points despite the different gas and tracking.</li>
   </ul>
-  <div class="n">7</div>
+  <div class="n">9</div>
+</section>
+
+<section class="slide">
+  <h2>What each setup actually measures</h2>
+  <img class="wide" src="2026-09-14-p2-saclay-chambers-feedback_files/bench_beam_maps.png" alt="det1 efficiency map on the bench and per-pad map in the beam, same frame">
+  <div class="two">
+    <p class="cap"><b>Bench</b>: det1, 18 h of cosmics, 5 mm sliding window, mesh 415 / drift 615 V. Median 95 % over the whole active area.</p>
+    <p class="cap"><b>Beam</b>: the same chamber at P2_MID, 1.15 M muons, per pad, mesh 450 / drift 700 V. Median 97 % inside the spot.</p>
+  </div>
+  <ul>
+    <li>The beam lights only the red patch (170 pads, ~13 % of the pad plane); the bench covers all of it, edges and every pillar included. That is one reason bench numbers are lower.</li>
+    <li>The five large support pillars (red circles) are dead spots in both. Other isolated dark spots on the bench map are single pads, not traced to the bulk.</li>
+  </ul>
+  <div class="n">10</div>
+</section>
+
+<section class="slide">
+  <h2>Cosmic bench: stability</h2>
+  <div class="fig-l">
+    <img src="2026-09-14-p2-saclay-chambers-feedback_files/bench_time.png" alt="Bench efficiency vs time for det4 and det3">
+    <div>
+      <ul>
+        <li>Efficiency vs time at fixed HV.</li>
+        <li>det4 charges up: 71 → 92 % over the first ~4 h, then stable.</li>
+        <li>det3 drops 91 → 81 % in 2 h at fixed HV. It later gave no signal at all; the cause was the drift-electrode HV contact.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="n">11</div>
+</section>
+
+<section class="slide">
+  <h2>Beam: time resolution</h2>
+  <div class="fig-l">
+    <img src="2026-09-14-p2-saclay-chambers-feedback_files/beam_timing.png" alt="Time resolution vs drift voltage in the beam">
+    <div>
+      <ul>
+        <li>Single-chamber time resolution vs drift voltage at mesh 450 V (DREAM).</li>
+        <li>Better with a stronger drift field. At drift 875–900 V: det1 <b>16–17 ns</b>, det3 <b>18 ns</b>, det4* <b>20 ns</b>.</li>
+        <li>det1 and det3 give the same curve on 26 and 28 Jul: the result is reproducible.</li>
+        <li>The P2 goal of 20 ns is reached.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="note">* The chamber at P2_IN during this 26 Jul run is det4 from the installation timeline; it is not independently confirmed (it could be det2).</p>
+  <div class="n">12</div>
 </section>
 
 <section class="slide">
@@ -184,19 +260,21 @@
     </table>
   </div>
   <p class="key">Every failure was in the HV connections or the drift frame, which is our assembly. The most useful change for the next chambers is a robust, reproducible HV contact to the mesh and to the drift electrode.</p>
-  <div class="n">8</div>
+  <div class="n">13</div>
 </section>
 
 <section class="slide">
   <h2>Take-aways for the bulk production</h2>
   <ul>
     <li><b>All four Saclay bulks work.</b> 95–97 % efficiency in the beam for det1, det3 and det4; det2 reached 91 % after its repair, still rising with drift voltage.</li>
+    <li>Bench and beam agree on the same chambers once the gas difference is allowed for.</li>
     <li>Efficiency is uniform across the whole fan on the bench (det1). The support pillars are visible but cost little: the pillar area is 3.8 %, and the bench misses only ~3 % of tracks with no signal at all.</li>
+    <li>Time resolution of 16–20 ns in the beam, within the P2 goal of 20 ns.</li>
     <li>Efficiency against the other P2 chambers agrees with the external reference, so the chambers can run P2-style, without extra tracking.</li>
   </ul>
-  <p class="note">Not covered here: VMM readout (under separate study), timing, and bench mesh scans for det3 (degrading at the time) and det4 (none taken).
+  <p class="note">Not covered here: VMM readout (under separate study), and bench mesh scans for det3 (degrading at the time) and det4 (none taken).
   Numbers are from the August 2026 reprocessing of the bench data and from the July beam analysis.</p>
-  <div class="n">9</div>
+  <div class="n">14</div>
 </section>
 
 </main>
