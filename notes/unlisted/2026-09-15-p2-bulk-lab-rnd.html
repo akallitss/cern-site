@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>P2 BASKET bulks at Saclay: the bulk-lab R&amp;D, April–July 2026</title>
+<meta name="description" content="Bulk-lab meeting slides: how the P2 BASKET fan bulk Micromegas was brought from failed dummy bulks to four working chambers at the SPS beam test">
+<meta name="category" content="Detector R&amp;D">
+<meta name="keywords" content="P2,BASKET,Micromegas,bulk,Dynamask,mesh,lab meeting,slides">
+<meta name="date" content="2026-09-15">
+<meta name="updated" content="2026-09-15">
+<meta name="visibility" content="unlisted">
+<meta name="robots" content="noindex, nofollow">
+<!-- ======================================================================= -->
+<style>
+  :root { --ink:#1a1a1a; --ink2:#5b5a56; --line:#dedcd6; --bg:#efeee9;
+          --card:#ffffff; --acc:#1f6fb4; --bad:#c0392b; --ok:#1e8449; --mid:#d68910; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:17px/1.5 system-ui, "Segoe UI", Roboto, sans-serif; }
+  main { padding-inline:16px; padding-block:18px 40px; }
+  .slide { max-width:1100px; margin:0 auto 22px; background:var(--card);
+           border:1px solid var(--line); border-radius:6px;
+           padding:30px 40px 34px; position:relative; }
+  .slide h1 { font-size:1.9em; line-height:1.2; margin:.2em 0 .3em; }
+  .slide h2 { font-size:1.35em; margin:0 0 14px; }
+  .sub { color:var(--ink2); margin:0 0 10px; }
+  .n { position:absolute; right:18px; bottom:10px; font-size:.8em; color:var(--ink2); }
+  img { max-width:100%; display:block; margin:6px auto; }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start; }
+  .fig-l { display:grid; grid-template-columns:1.2fr 1fr; gap:24px; align-items:start; }
+  .g3, .g4 { display:grid; gap:12px; align-items:start; }
+  .g3 { grid-template-columns:repeat(3, 1fr); }
+  .g4 { grid-template-columns:repeat(4, 1fr); }
+  figure { margin:0; }
+  figure img { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:4px; margin:0 0 4px; }
+  figure.tall img { aspect-ratio:3/4; }
+  figcaption { color:var(--ink2); font-size:.84em; line-height:1.35; }
+  @media (max-width:760px) { .two, .fig-l { grid-template-columns:1fr; }
+                             .g3, .g4 { grid-template-columns:1fr 1fr; }
+                             .slide { padding:22px 18px 30px; } }
+  ul { margin:6px 0; padding-left:20px; } li { margin:5px 0; }
+  .tbl { overflow-x:auto; }
+  table { border-collapse:collapse; width:100%; font-size:.92em; }
+  th, td { border-bottom:1px solid var(--line); padding:6px 8px; text-align:left; vertical-align:top; }
+  th { color:var(--ink2); font-weight:600; }
+  .note { border-left:3px solid var(--line); padding:4px 12px; color:var(--ink2); font-size:.93em; margin:12px 0 0; }
+  .key { border-left:3px solid var(--acc); padding:4px 12px; margin:12px 0 0; }
+  .bad { color:var(--bad); font-weight:600; } .ok { color:var(--ok); font-weight:600; }
+  .mid { color:var(--mid); font-weight:600; }
+  .big { display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin:8px 0 16px; }
+  .big div { border:1px solid var(--line); border-radius:6px; padding:10px 12px; }
+  .big b { display:block; font-size:2em; line-height:1.1; }
+  .big span { color:var(--ink2); font-size:.88em; }
+  @media (max-width:760px) { .big { grid-template-columns:1fr 1fr; } }
+  .title { text-align:left; padding-block:56px; }
+</style>
+</head>
+<body>
+<main>
+
+<!-- 1 ------------------------------------------------------------------ -->
+<section class="slide title">
+  <h1>P2 BASKET bulk Micromegas at Saclay<br>from the first dummy bulk to the SPS beam test</h1>
+  <p class="sub">The bulk-lab R&amp;D, April – July 2026: what we tried, what failed, what worked</p>
+  <p class="sub">Bulk-lab meeting · 15 September 2026</p>
+  <div class="n">1</div>
+</section>
+
+<!-- 2 ------------------------------------------------------------------ -->
+<section class="slide">
+  <h2>The detector we had to build</h2>
+  <div class="fig-l">
+    <div class="tbl">
+      <table>
+        <tr><td>Type</td><td>bulk Micromegas, non-resistive, pad readout</td></tr>
+        <tr><td>Shape</td><td>fan (wedge), 1280 pads of ~12 × 12 mm, 10 connectors</td></tr>
+        <tr><td>Active area</td><td>~1700 cm²</td></tr>
+        <tr><td>Mesh</td><td>stainless steel, ASADA 45/19 µm</td></tr>
+        <tr><td>Photoresist</td><td>Dynamask 5000 dry film</td></tr>
+        <tr><td>Insulation mask</td><td>V1: 0.8 mm pillars on a 4 mm grid + 5 large Ø 6.15 mm pillars (3.8 % of the pad area)</td></tr>
+        <tr><td>Drift</td><td>4 mm gap, aluminised mylar window on a glued frame</td></tr>
+      </table>
+    </div>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/finished.jpg" alt="Finished P2 bulk with its connectors">
+      <figcaption>A finished chamber, 15 July</figcaption>
+    </figure>
+  </div>
+  <p class="note">Four working chambers (det1 – det4) were needed for the cosmic bench and the SPS H4 beam test in July.</p>
+  <div class="n">2</div>
+</section>
+
+<!-- 3 ------------------------------------------------------------------ -->
+<section class="slide">
+  <h2>Why it was hard</h2>
+  <ul>
+    <li><b>A large, flat mesh.</b> ~1700 cm² of mesh must stay flat through lamination, development and baking. Too little tension gives waves; too much and the mesh or the frame gives way.</li>
+    <li><b>Baking makes waves.</b> The stainless-steel mesh expands a little more than the FR4 board when heated. Where the mesh is held by the pillars and the wall, it is squeezed, and it buckles unless the pre-tension is high enough.</li>
+    <li><b>Cleaning out the Dynamask.</b> The unexposed resist has to leave through the mesh over the whole fan. Not enough development leaves resist behind; too much detaches the pillars from the mesh.</li>
+    <li><b>Frames and glue.</b> The frame has to hold the mesh at ~12 N/cm through every step. Frame material and cleaning turned out to matter a lot.</li>
+    <li><b>The lab itself.</b> De-ionised water and nitrogen quality directly affect the result.</li>
+  </ul>
+  <div class="n">3</div>
+</section>
+
+<!-- 4 ------------------------------------------------------------------ -->
+<section class="slide">
+  <h2>Starting point: inspection of the boards (22 April)</h2>
+  <div class="two">
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/inspect_machine.jpg" alt="P2 board on the inspection microscope">
+      <figcaption>A P2 board on the inspection microscope</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/inspect_board.jpg" alt="Board and mask pattern under inspection">
+      <figcaption>Checking the board and the mask pattern before any bulk</figcaption>
+    </figure>
+  </div>
+  <p class="note">All tests from May onwards were first done on <b>5 dummy boards</b>. The real P2 boards were used only once the process worked on a dummy.</p>
+  <div class="n">4</div>
+</section>
+
+<!-- 5 ------------------------------------------------------------------ -->
+<section class="slide">
+  <h2>The bulk process, step by step</h2>
+  <div class="g4">
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/laminate.jpg" alt="Lamination">
+      <figcaption><b>1.</b> Lamination of the Dynamask film on the board</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/mesh_frame.jpg" alt="Mesh on its frame over the board">
+      <figcaption><b>2.</b> Mesh stretched and glued on its frame, tension checked (Grünig G-check), then laminated on the board</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/mask.jpg" alt="Insulation mask film on the board">
+      <figcaption><b>3.</b> Insulation mask film aligned on the board</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/expose.jpg" alt="Exposure frame">
+      <figcaption><b>4.</b> UV exposure: 10–20 min for the wall mask, 20 min for the pillars</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/rinse.jpg" alt="Rinsing after development">
+      <figcaption><b>5.</b> Development (passes at 0.3, 0.6 and 1.8, usually a 2nd at 1.8), then rinsing and drying</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/bake.jpg" alt="Bulk in the oven">
+      <figcaption><b>6.</b> Bake: +10 °C every 10 min up to 146 °C, then 1 h at 146 °C</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/hv_air.jpg" alt="HV test in air">
+      <figcaption><b>7.</b> HV test in air, mesh contact first</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/frame_glue.jpg" alt="Gluing the drift frame">
+      <figcaption><b>8.</b> Drift frame and mylar window glued, connectors soldered</figcaption>
+    </figure>
+  </div>
+  <div class="n">5</div>
+</section>
+
+<!-- 6 ------------------------------------------------------------------ -->
+<section class="slide">
+  <h2>Timeline of all attempts</h2>
+  <img src="2026-09-15-p2-bulk-lab-rnd_files/timeline.png" alt="Timeline of bulk attempts May-July 2026 with outcome and mesh tension">
+  <ul>
+    <li>May: 7 dummy bulks in 4 weeks, all failed. Mesh tension was raised step by step, from 3–4 to 10 N/cm.</li>
+    <li>June: frames and glue were the problem. First good dummy bulk on 8 June; det1 two days later.</li>
+    <li>Late June – July: with the steel frames, 4 of the 5 real boards became working chambers at ~12 N/cm.</li>
+  </ul>
+  <div class="n">6</div>
+</section>
+
+<!-- 7 ------------------------------------------------------------------ -->
+<section class="slide">
+  <h2>May: dummy boards (1/2)</h2>
+  <div class="tbl">
+    <table>
+      <tr><th>Date</th><th>Mesh tension</th><th>What we changed</th><th>What happened</th></tr>
+      <tr><td>04/05</td><td>–</td><td>adhesion test: board brushed vs not brushed</td><td><span class="ok">better pillar / mesh adhesion without brushing</span></td></tr>
+      <tr><td>06/05</td><td>3–4 N/cm</td><td>low tension, mesh cut before baking</td><td><span class="bad">waves on the mesh</span>; board came off during development (accident)</td></tr>
+      <tr><td>07/05</td><td>6–7 N/cm</td><td>mid tension</td><td>process looked good, but no reliable way to clear the Dynamask after 2 passes at 1.8; slowed to 0.6 → <span class="bad">pillars detached from the mesh</span></td></tr>
+      <tr><td>11/05</td><td>3–4 N/cm</td><td>no top pillar layer</td><td><span class="bad">did not survive development</span> (probably needs an evacuation line). Dynamask found on copper that the mask should have covered → mask alignment?</td></tr>
+      <tr><td>12/05</td><td>6–7 N/cm</td><td>mid tension again</td><td><span class="bad">same waves, HV short straight away</span>; cleaned images without mesh, checked with a UV lamp. De-ionised water bottles found empty.</td></tr>
+    </table>
+  </div>
+  <div class="g3">
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/adhesion_peel.jpg" alt="Adhesion test on small dummy boards">
+      <figcaption>04/05: adhesion test, mesh peeled off the pillars</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/dm_stripes.jpg" alt="Dynamask residues on the copper">
+      <figcaption>11/05: Dynamask stripes left on the copper</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/waves.jpg" alt="Waves on the mesh">
+      <figcaption>12/05: waves across the mesh</figcaption>
+    </figure>
+  </div>
+  <div class="n">7</div>
+</section>
+
+<!-- 8 ------------------------------------------------------------------ -->
+<section class="slide">
+  <h2>May: dummy boards (2/2)</h2>
+  <div class="tbl">
+    <table>
+      <tr><th>Date</th><th>Mesh tension</th><th>What we changed</th><th>What happened</th></tr>
+      <tr><td>18/05</td><td>~8 N/cm</td><td>higher tension</td><td><span class="bad">mesh broken</span> on the frame and on the active area (accident); pillars detached (too much development); waves. Board debulked and bulked again.</td></tr>
+      <tr><td>20/05</td><td>–</td><td>Dynamask conductivity test (with / without its plastic film)</td><td>after 2 min of exposure the film no longer conducts; after water it shorts; washed, dried at 40 °C, then HV up to 900 V until overcurrent</td></tr>
+      <tr><td>21/05</td><td>9 → 7 N/cm</td><td>9 N/cm before cutting (7 after)</td><td>good-looking after 2 × 1.8 development, but <span class="bad">waves after baking</span> → bad frames</td></tr>
+      <tr><td>27/05</td><td>10 N/cm</td><td>10 N/cm before cutting, new frame</td><td>process fine, but the new frame was not cleaned properly → <span class="bad">mesh fully detached during development</span></td></tr>
+    </table>
+  </div>
+  <div class="g4">
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/uv_lamp.jpg" alt="Checking the board with a UV lamp">
+      <figcaption>UV lamp check for resist residues</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/di_filters.jpg" alt="De-ionised water filters">
+      <figcaption>De-ionised water filters: the water was not being filtered</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/mesh_detached.jpg" alt="Mesh detached from the board">
+      <figcaption>27/05: mesh fully detached</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/mesh_detached_zoom.jpg" alt="Close-up of pillars after mesh detachment">
+      <figcaption>27/05: pillars left on the board</figcaption>
+    </figure>
+  </div>
+  <div class="n">8</div>
+</section>
+
+<!-- 9 ------------------------------------------------------------------ -->
+<section class="slide">
+  <h2>June: frames and glue</h2>
+  <div class="tbl">
+    <table>
+      <tr><th>Date</th><th>What we did</th><th>What we learned</th></tr>
+      <tr><td>1–8/06</td><td>new mesh frames showed detachment; cleaning tests with soap, acetone, isopropanol</td><td>the new frames were <b>stainless steel</b>, not the steel we normally use</td></tr>
+      <tr><td>08/06</td><td>dummy, mesh ~uniform at 10 N/cm before cutting, old frame, <b>new glue</b></td><td><span class="mid">first mostly successful bulk, very few waves</span>. Room to improve tension uniformity and raise it a bit.</td></tr>
+      <tr><td>10/06</td><td>~12 N/cm, old frame and treated new frame (soap + hot water + isopropanol / acetone)</td><td>stainless-steel frames confirmed as the problem → new steel frames ordered</td></tr>
+      <tr><td>18/06</td><td>dummy at ~10 N/cm</td><td><span class="bad">waves</span>: 10 N/cm is not enough. Steel frames arrived 23/06, used from 25/06.</td></tr>
+    </table>
+  </div>
+  <div class="g3">
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/glue_peel.jpg" alt="Glue peeling off a stainless-steel frame">
+      <figcaption>Glue peeling off a stainless-steel frame</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/glue_test.jpg" alt="Glue tests on frame bars">
+      <figcaption>Glue and cleaning tests on frame bars</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/first_ok.jpg" alt="First good dummy bulk">
+      <figcaption>First good dummy bulk, early June</figcaption>
+    </figure>
+  </div>
+  <div class="n">9</div>
+</section>
+
+<!-- 10 ----------------------------------------------------------------- -->
+<section class="slide">
+  <h2>June – July: the real P2 boards</h2>
+  <div class="tbl">
+    <table>
+      <tr><th>Date</th><th>Board</th><th>Mesh tension</th><th>Result</th></tr>
+      <tr><td>10/06</td><td><b>det1</b></td><td>~12 N/cm</td><td><span class="ok">works.</span> Frame gluing not aligned with the board, tension a bit too high. Sparks at 650 V in air (20 µA), also after re-cleaning and drying; ~400 V in a very leaky integration → sent to the test beam</td></tr>
+      <tr><td>25/06</td><td><b>det2</b></td><td>12–13 N/cm</td><td><span class="ok">works.</span> First board with the <b>evacuation line</b>. 850 V in air; mylar glued 30/06, connectors soldered 02/07</td></tr>
+      <tr><td>01/07</td><td>–</td><td>–</td><td>new frame #2 not cleaned properly: mesh came off the frame before bulking → bulk postponed one day</td></tr>
+      <tr><td>02/07</td><td><b>det3</b></td><td>12 (~11) N/cm</td><td><span class="ok">works.</span> Evacuation line; 2 × 10 min exposure for the wall. 2 days at ~850 V in air (with sparks); mylar glued</td></tr>
+      <tr><td>08/07</td><td>5th board</td><td>–</td><td><span class="bad">failed:</span> waves at lamination, pillars detached. Board debulked and <b>kept</b></td></tr>
+      <tr><td>09/07</td><td><b>det4</b></td><td>12 N/cm</td><td><span class="ok">works.</span> det3 + det4 on the cosmic bench 15/07</td></tr>
+    </table>
+  </div>
+  <div class="g4">
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/det1.jpg" alt="det1 after bulking">
+      <figcaption>det1, 12/06</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/det3_hv.jpg" alt="det3 HV test in air">
+      <figcaption>det3 HV test in air</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/fail_0807.jpg" alt="The failed 08/07 bulk">
+      <figcaption>The failed 08/07 bulk</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/det3_det4.jpg" alt="det3 and det4 finished">
+      <figcaption>det3 and det4 finished, 15/07</figcaption>
+    </figure>
+  </div>
+  <div class="n">10</div>
+</section>
+
+<!-- 11 ----------------------------------------------------------------- -->
+<section class="slide">
+  <h2>In numbers</h2>
+  <div class="big">
+    <div><b>14</b><span>bulks between 6 May and 9 July (9 dummy + 5 real)</span></div>
+    <div><b>8 / 9</b><span>dummy bulks failed and were debulked</span></div>
+    <div><b>4 / 5</b><span>real P2 boards became working chambers</span></div>
+    <div><b>0</b><span>boards thrown away</span></div>
+  </div>
+  <div class="tbl">
+    <table>
+      <tr><th></th><th>Dummy boards</th><th>Real P2 boards</th></tr>
+      <tr><td>boards</td><td>5</td><td>5</td></tr>
+      <tr><td>bulks</td><td>9 (+ 1 small adhesion test)</td><td>5</td></tr>
+      <tr><td>good result</td><td>1 (08/06)</td><td>4: det1, det2, det3, det4</td></tr>
+      <tr><td>failed → debulked</td><td>8; every dummy was reused at least once</td><td>1 (08/07); the board is kept for a new bulk</td></tr>
+      <tr><td>in the bin</td><td>0 boards</td><td>0 boards</td></tr>
+    </table>
+  </div>
+  <p class="note">Each failed bulk also cost a stretched mesh. One more mesh was lost on 01/07 when it came off the new frame before bulking.</p>
+  <div class="n">11</div>
+</section>
+
+<!-- 12 ----------------------------------------------------------------- -->
+<section class="slide">
+  <h2>What the chambers did: cosmic bench and SPS beam</h2>
+  <div class="tbl">
+    <table>
+      <tr><th></th><th>Cosmic bench (Saclay)</th><th>SPS H4 beam, 22–29 July</th><th>Problem met</th></tr>
+      <tr><td><b>det1</b></td><td>93–95 %</td><td><span class="ok">96–97 %</span></td><td>mesh HV contact failing (intermittent); redone</td></tr>
+      <tr><td><b>det2</b></td><td>90 %</td><td><span class="ok">91 %</span> after repair</td><td>no signal at first installation: HV contact, repaired at CERN</td></tr>
+      <tr><td><b>det3</b></td><td>91 %, then lost efficiency in hours</td><td><span class="ok">95–97 %</span></td><td>drift-electrode HV contact; new contact for the beam</td></tr>
+      <tr><td><b>det4</b></td><td>92 % after 4 h charging-up</td><td><span class="ok">96 %</span></td><td>leaky drift frame</td></tr>
+    </table>
+  </div>
+  <div class="g4">
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/drift_hv.jpg" alt="Drift HV contact on the mylar window">
+      <figcaption>Drift HV contact on the mylar window</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/telescope.jpg" alt="P2 chambers in their support">
+      <figcaption>Chambers mounted and cabled, 20/07</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/van.jpg" alt="Van leaving for CERN">
+      <figcaption>Leaving for CERN, 21/07</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/repair_sps.jpg" alt="HV contact repair at CERN">
+      <figcaption>Repairing an HV contact at CERN, 26/07</figcaption>
+    </figure>
+  </div>
+  <p class="key">All four bulks work: 91–97 % efficiency in the beam. <b>None of the failures was the bulk itself</b>; they were all HV contacts (mesh and drift) or the drift frame, i.e. our assembly after the bulk.</p>
+  <p class="note">Beam efficiency against two uRWELL reference planes at mesh 450 V, DREAM readout. Bench and beam gases differ.</p>
+  <div class="n">12</div>
+</section>
+
+<!-- 13 ----------------------------------------------------------------- -->
+<section class="slide">
+  <h2>For comparison: the chamber bulked at CERN (det5)</h2>
+  <div class="fig-l">
+    <div class="tbl">
+      <table>
+        <tr><th></th><th>Saclay (det1–det4)</th><th>CERN (det5)</th></tr>
+        <tr><td>board, mesh</td><td>CEA</td><td>CEA, bulked at CERN</td></tr>
+        <tr><td>pillars</td><td>Ø 0.8 mm, 4 mm grid</td><td>Ø 0.5 mm, 2 mm grid</td></tr>
+        <tr><td>pillar area</td><td>3.8 %</td><td>4.9 %</td></tr>
+        <tr><td>beam efficiency</td><td>91–97 %</td><td>94 %, still rising at 450 V</td></tr>
+        <tr><td>bench efficiency</td><td>90–95 %</td><td>89 %, stable over 12 h</td></tr>
+        <tr><td>time resolution (beam)</td><td>16–20 ns</td><td>27 ns at mesh 440 V</td></tr>
+        <tr><td>our issue</td><td>HV contacts, drift frame</td><td>drift-frame HV connection had to be adapted</td></tr>
+      </table>
+    </div>
+    <div class="two">
+      <figure class="tall">
+        <img src="2026-09-15-p2-bulk-lab-rnd_files/pillars.jpg" alt="Saclay V1 pillars close-up">
+        <figcaption>Saclay pillars, det3</figcaption>
+      </figure>
+      <figure class="tall">
+        <img src="2026-09-15-p2-bulk-lab-rnd_files/cern_pillars.jpg" alt="CERN bulk pillars">
+        <figcaption>CERN bulk, denser pillar grid</figcaption>
+      </figure>
+    </div>
+  </div>
+  <p class="key">det1, det3 and det4 reach 95–97 % in the beam against 94 % for the CERN bulk; det2 (repaired) reached 91 %. det5 was still gain-limited at the voltages used, so this is not a like-for-like comparison.</p>
+  <div class="n">13</div>
+</section>
+
+<!-- 14 ----------------------------------------------------------------- -->
+<section class="slide">
+  <h2>What we learned: the recipe that works</h2>
+  <div class="two">
+    <div class="tbl">
+      <table>
+        <tr><th colspan="2">Process</th></tr>
+        <tr><td>board</td><td>no brushing before lamination</td></tr>
+        <tr><td>mesh</td><td>ASADA 45/19 µm, ~12 N/cm (measured before cutting)</td></tr>
+        <tr><td>frame</td><td><b>steel</b>, not stainless steel; cleaned with soap + hot water + isopropanol / acetone</td></tr>
+        <tr><td>design</td><td><b>evacuation line</b> to help clear the Dynamask during development and rinsing</td></tr>
+        <tr><td>exposure</td><td>wall 10–20 min, pillars 20 min</td></tr>
+        <tr><td>development</td><td>0.3 → 0.6 → 1.8 (→ 1.8). More than this risks detaching the pillars from the mesh</td></tr>
+        <tr><td>bake</td><td>+10 °C / 10 min to 146 °C, 1 h at 146 °C</td></tr>
+      </table>
+    </div>
+    <div>
+      <p><b>Things to watch in the lab</b></p>
+      <ul>
+        <li><b>Check what arrives:</b> the "new" frames were stainless steel. Check the material on every order.</li>
+        <li><b>De-ionised water:</b> the water was not being filtered. Change the filters on time and check the bottles are full.</li>
+        <li><b>Nitrogen purity</b> in the bulk lab: keep it checked in the same way.</li>
+        <li><b>Clean every new frame</b>: two meshes came off frames that were not cleaned properly.</li>
+        <li><b>HV contacts and drift frame</b>: every problem after the bulk was here. They need a robust, reproducible design.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="n">14</div>
+</section>
+
+<!-- 15 ----------------------------------------------------------------- -->
+<section class="slide">
+  <h2>Next steps (to discuss)</h2>
+  <ul>
+    <li><b>New insulation masks.</b> Zoned masks where the pillar diameter and pitch change from one pair of connectors to the next, every zone within a 3 % dead-area budget:
+      <ul>
+        <li>V3A: same dead area everywhere, pillar Ø 0.35 → 0.80 mm</li>
+        <li>V3B: Ø 0.50 mm everywhere, dead area 2.95 → 0.75 % (how sparse can the support be?)</li>
+        <li>V3C: three dead-area levels × three pillar diameters</li>
+      </ul>
+    </li>
+    <li>Open questions for the masks: smallest pillar we can make reliably in 150 µm of Dynamask, and the real lamination growth of the pillars.</li>
+    <li>A reproducible HV contact for the mesh and the drift electrode; a gas-tight drift frame.</li>
+    <li>Re-bulk the 5th board.</li>
+  </ul>
+  <div class="n">15</div>
+</section>
+
+</main>
+</body>
+</html>
