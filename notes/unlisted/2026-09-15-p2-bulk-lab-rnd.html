@@ -36,6 +36,7 @@
   figure { margin:0; }
   figure img { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:4px; margin:0 0 4px; }
   figure.tall img { aspect-ratio:3/4; }
+  figure.full img { aspect-ratio:auto; object-fit:contain; }
   figcaption { color:var(--ink2); font-size:.84em; line-height:1.35; }
   @media (max-width:760px) { .two, .fig-l { grid-template-columns:1fr; }
                              .g3, .g4 { grid-template-columns:1fr 1fr; }
@@ -83,8 +84,8 @@
         <tr><td>Drift</td><td>4 mm gap, aluminised mylar window on a glued frame</td></tr>
       </table>
     </div>
-    <figure>
-      <img src="2026-09-15-p2-bulk-lab-rnd_files/finished.jpg" alt="Finished P2 bulk with its connectors">
+    <figure class="full">
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/finished_rot.jpg" alt="Finished P2 bulk with its connectors">
       <figcaption>A finished chamber, 15 July</figcaption>
     </figure>
   </div>
@@ -131,19 +132,19 @@
       <figcaption><b>1.</b> Lamination of the Dynamask film on the board</figcaption>
     </figure>
     <figure>
-      <img src="2026-09-15-p2-bulk-lab-rnd_files/mesh_frame.jpg" alt="Mesh on its frame over the board">
-      <figcaption><b>2.</b> Mesh stretched and glued on its frame, tension checked (Grünig G-check), then laminated on the board</figcaption>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/mesh_lamination.jpg" alt="Mesh on its frame going through the laminator">
+      <figcaption><b>2.</b> Mesh stretched on its frame (tension checked with a Grünig G-check), then laminated onto the board</figcaption>
     </figure>
     <figure>
       <img src="2026-09-15-p2-bulk-lab-rnd_files/mask.jpg" alt="Insulation mask film on the board">
       <figcaption><b>3.</b> Insulation mask film aligned on the board</figcaption>
     </figure>
     <figure>
-      <img src="2026-09-15-p2-bulk-lab-rnd_files/expose.jpg" alt="Exposure frame">
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/expose_uv.jpg" alt="Board with its mask in the UV exposure unit">
       <figcaption><b>4.</b> UV exposure: 10–20 min for the wall mask, 20 min for the pillars</figcaption>
     </figure>
     <figure>
-      <img src="2026-09-15-p2-bulk-lab-rnd_files/rinse.jpg" alt="Rinsing after development">
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/rinse2.jpg" alt="Board after development and rinsing">
       <figcaption><b>5.</b> Development (passes at 0.3, 0.6 and 1.8, usually a 2nd at 1.8), then rinsing and drying</figcaption>
     </figure>
     <figure>
@@ -193,12 +194,12 @@
       <figcaption>04/05: adhesion test, mesh peeled off the pillars</figcaption>
     </figure>
     <figure>
-      <img src="2026-09-15-p2-bulk-lab-rnd_files/dm_stripes.jpg" alt="Dynamask residues on the copper">
-      <figcaption>11/05: Dynamask stripes left on the copper</figcaption>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/waves_0605.jpg" alt="Waves on the mesh">
+      <figcaption>06/05: waves on the mesh</figcaption>
     </figure>
     <figure>
-      <img src="2026-09-15-p2-bulk-lab-rnd_files/waves.jpg" alt="Waves on the mesh">
-      <figcaption>12/05: waves across the mesh</figcaption>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/dm_stripes.jpg" alt="Dynamask residues on the copper">
+      <figcaption>11/05: Dynamask stripes left on the copper</figcaption>
     </figure>
   </div>
   <div class="n">7</div>
@@ -276,7 +277,7 @@
       <tr><td>25/06</td><td><b>det2</b></td><td>12–13 N/cm</td><td><span class="ok">works.</span> First board with the <b>evacuation line</b>. 850 V in air; mylar glued 30/06, connectors soldered 02/07</td></tr>
       <tr><td>01/07</td><td>–</td><td>–</td><td>new frame #2 not cleaned properly: mesh came off the frame before bulking → bulk postponed one day</td></tr>
       <tr><td>02/07</td><td><b>det3</b></td><td>12 (~11) N/cm</td><td><span class="ok">works.</span> Evacuation line; 2 × 10 min exposure for the wall. 2 days at ~850 V in air (with sparks); mylar glued</td></tr>
-      <tr><td>08/07</td><td>5th board</td><td>–</td><td><span class="bad">failed:</span> waves at lamination, pillars detached. Board debulked and <b>kept</b></td></tr>
+      <tr><td>08/07</td><td>5th board</td><td>–</td><td><span class="bad">failed:</span> waves at lamination, pillars detached. Board debulked and <b>kept</b> (next slide)</td></tr>
       <tr><td>09/07</td><td><b>det4</b></td><td>12 N/cm</td><td><span class="ok">works.</span> det3 + det4 on the cosmic bench 15/07</td></tr>
     </table>
   </div>
@@ -290,8 +291,8 @@
       <figcaption>det3 HV test in air</figcaption>
     </figure>
     <figure>
-      <img src="2026-09-15-p2-bulk-lab-rnd_files/fail_0807.jpg" alt="The failed 08/07 bulk">
-      <figcaption>The failed 08/07 bulk</figcaption>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/det4.jpg" alt="det4 laminated">
+      <figcaption>det4 laminated, 09/07</figcaption>
     </figure>
     <figure>
       <img src="2026-09-15-p2-bulk-lab-rnd_files/det3_det4.jpg" alt="det3 and det4 finished">
@@ -299,6 +300,35 @@
     </figure>
   </div>
   <div class="n">10</div>
+</section>
+
+<!-- 10b ---------------------------------------------------------------- -->
+<section class="slide">
+  <h2>Lamination: waves cannot be fixed later (the 08/07 bulk)</h2>
+  <div class="g4">
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/lam_waves_film.jpg" alt="Waves in the laminated Dynamask">
+      <figcaption>Waves in the Dynamask lamination: the pillars risk detaching from the mesh</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/lam_waves_mesh.jpg" alt="Waves while laminating the mesh">
+      <figcaption>Waves while laminating the mesh: these cannot be recovered</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/fail_0807.jpg" alt="The 08/07 board after development">
+      <figcaption>The same board after development</figcaption>
+    </figure>
+    <figure>
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/dev_wall.jpg" alt="Mesh wall not attached after development">
+      <figcaption>After development even the mesh wall was not attached</figcaption>
+    </figure>
+  </div>
+  <ul>
+    <li>Waves in the Dynamask film put the pillar / mesh attachment at risk.</li>
+    <li>Waves while laminating the mesh stay there: after development the mesh did not attach, not even on the wall, and the board had to be debulked.</li>
+  </ul>
+  <p class="key">Lamination is one of the most critical steps. <b>Check the Dynamask rollers</b> before every lamination: no waves in the film, no waves in the mesh.</p>
+  <div class="n">11</div>
 </section>
 
 <!-- 11 ----------------------------------------------------------------- -->
@@ -321,7 +351,7 @@
     </table>
   </div>
   <p class="note">Each failed bulk also cost a stretched mesh. One more mesh was lost on 01/07 when it came off the new frame before bulking.</p>
-  <div class="n">11</div>
+  <div class="n">12</div>
 </section>
 
 <!-- 12 ----------------------------------------------------------------- -->
@@ -350,13 +380,13 @@
       <figcaption>Leaving for CERN, 21/07</figcaption>
     </figure>
     <figure>
-      <img src="2026-09-15-p2-bulk-lab-rnd_files/repair_sps.jpg" alt="HV contact repair at CERN">
+      <img src="2026-09-15-p2-bulk-lab-rnd_files/repair_contact.jpg" alt="HV contact repair at CERN">
       <figcaption>Repairing an HV contact at CERN, 26/07</figcaption>
     </figure>
   </div>
   <p class="key">All four bulks work: 91–97 % efficiency in the beam. <b>None of the failures was the bulk itself</b>; they were all HV contacts (mesh and drift) or the drift frame, i.e. our assembly after the bulk.</p>
   <p class="note">Beam efficiency against two uRWELL reference planes at mesh 450 V, DREAM readout. Bench and beam gases differ.</p>
-  <div class="n">12</div>
+  <div class="n">13</div>
 </section>
 
 <!-- 13 ----------------------------------------------------------------- -->
@@ -387,7 +417,7 @@
     </div>
   </div>
   <p class="key">det1, det3 and det4 reach 95–97 % in the beam against 94 % for the CERN bulk; det2 (repaired) reached 91 %. det5 was still gain-limited at the voltages used, so this is not a like-for-like comparison.</p>
-  <div class="n">13</div>
+  <div class="n">14</div>
 </section>
 
 <!-- 14 ----------------------------------------------------------------- -->
@@ -400,6 +430,7 @@
         <tr><td>board</td><td>no brushing before lamination</td></tr>
         <tr><td>mesh</td><td>ASADA 45/19 µm, ~12 N/cm (measured before cutting)</td></tr>
         <tr><td>frame</td><td><b>steel</b>, not stainless steel; cleaned with soap + hot water + isopropanol / acetone</td></tr>
+        <tr><td>lamination</td><td><b>no waves</b> in the film or the mesh: check the Dynamask rollers every time</td></tr>
         <tr><td>design</td><td><b>evacuation line</b> to help clear the Dynamask during development and rinsing</td></tr>
         <tr><td>exposure</td><td>wall 10–20 min, pillars 20 min</td></tr>
         <tr><td>development</td><td>0.3 → 0.6 → 1.8 (→ 1.8). More than this risks detaching the pillars from the mesh</td></tr>
@@ -417,7 +448,7 @@
       </ul>
     </div>
   </div>
-  <div class="n">14</div>
+  <div class="n">15</div>
 </section>
 
 <!-- 15 ----------------------------------------------------------------- -->
@@ -435,7 +466,7 @@
     <li>A reproducible HV contact for the mesh and the drift electrode; a gas-tight drift frame.</li>
     <li>Re-bulk the 5th board.</li>
   </ul>
-  <div class="n">15</div>
+  <div class="n">16</div>
 </section>
 
 </main>
