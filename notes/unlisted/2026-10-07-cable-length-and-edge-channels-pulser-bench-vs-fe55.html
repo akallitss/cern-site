@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>Cable length and edge channels: pulser bench vs Fe55</title>
+<meta name="description" content="The pulser edge-channel &#x27;breakdown&#x27; on long off-detector cables is self-triggering noise, not signal loss; no edge effect with Fe55 on the P2 detector">
+<meta name="category" content="Detector R&amp;D">
+<meta name="keywords" content="VMM,cables,P2,Fe55,pulser,hybrid">
+<meta name="date" content="2026-10-07">
+<meta name="updated" content="2026-10-07">
+<meta name="visibility" content="unlisted">
+<!-- ======================================================================= -->
+<link rel="stylesheet" href="../../assets/site.css">
+<style>
+  /* note-local styles go here */
+</style>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="../../">Alexandra Kallitsopoulou</a>
+  <nav class="nav"><a href="../../">Home</a><a href="../../notes/">Notes</a></nav>
+</div></header>
+
+<main class="wrap">
+  <article>
+    <header class="note-header">
+      <h1>Cable length and edge channels: pulser bench vs Fe55</h1>
+      <p class="muted">The pulser edge-channel &#x27;breakdown&#x27; on long off-detector cables is self-triggering noise, not signal loss; no edge effect with Fe55 on the P2 detector</p>
+      <div class="meta-row">
+        <span class="pill">Detector R&amp;D</span>
+        <time datetime="2026-10-07">2026-10-07</time>
+        <span class="faint">VMM,cables,P2,Fe55,pulser,hybrid</span>
+      </div>
+    </header>
+
+    <div class="note-body">
+      <div class="callout ok">
+        <p><strong>Bottom line.</strong> On the pulser bench, the VMM channels at the connector borders
+        (0/1, 29–31, 62/63) appear to "break down" with long cables. They don't lose signal: the
+        real pulse amplitude on those channels is the same fraction of the bulk at every length.
+        What changes is that they <em>start self-triggering</em>: 0.4–3 kHz with 2–3 m of Samtec,
+        ~30 kHz with Hitachi 50 cm + 2 m. Those noise hits (ADC ≈ 120–180) drag any mean or median of
+        the ADC spectrum down. With Fe55 on the P2 detector, the edge channels behave exactly like the
+        bulk, both in photopeak and in noise. The cable attenuates the bulk signal by roughly
+        10 %/m (Samtec) in both campaigns.</p>
+      </div>
+
+      <h2>Data</h2>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th></th><th>Pulser bench (June 2026)</th><th>Fe55 on detector (Oct 2026)</th></tr></thead>
+        <tbody>
+          <tr><td>Signal</td><td>Zedboard pulser, 1 kHz, 120 ns, into every third channel at once
+            (groups 3k / 3k+1 / 3k+2), pulser 1.8 / 2.5 / 3.3 V</td>
+            <td>Fe55 X-rays on the P2 pads, 1–3 pads per event; m410 / d750</td></tr>
+          <tr><td>Cable</td><td>50 cm injection + transmission (Samtec 50 cm–2.5 m, Hitachi 1 m and 2 m);
+            lengths below are the <strong>total</strong></td>
+            <td>single cable: Hitachi 2.0 m (two takes), Samtec 1.5 / 2.0 / 2.5 m</td></tr>
+          <tr><td>Electronics</td><td>hybrid 4118, VMM id 7, 3 mV/fC, 200 ns, SNG on</td>
+            <td>5 hybrids, VMM 4–13, 1 and 3 mV/fC, SNG on</td></tr>
+          <tr><td>Input</td><td>converted <code>hits</code> trees (the June pcapng are owner-only)</td>
+            <td>raw pcapng, decoded with <code>vmm_decode</code></td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2>1. Which channels are actually pulsed</h2>
+      <p>In most June runs the labels <strong>3k+1 and 3k+2 are swapped</strong>: config "3k+1" pulses VMM
+      channels 2, 5, …, 62, and "3k+2" pulses 1, 4, …, 61. This is the "mismatch" noted in the logbook.
+      The Hitachi 50 cm + 2 m runs (8 June, from 16:53) are <em>not</em> swapped. The analysis therefore
+      detects the pulsed group from the data in every run. One run had no pulses at all and was dropped
+      (Hitachi 50 cm + 2 m, 1.8 V, "3k+2", 17:05).</p>
+
+      <h2>2. Pulser: amplitude does not depend on length at the edges</h2>
+      <p>The pulse clock comes from clean bulk channels of the same run. Only hits within ±500 ns of a
+      pulse count as signal; everything else counts as noise.</p>
+      <figure>
+        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/pulser_amplitude_vs_channel_3V3.png" alt="In-time pulse amplitude relative to the bulk vs VMM channel, one curve per cable length">
+        <figcaption>In-time pulse amplitude / bulk, 3.3 V. The dome (ch 0 ≈ 0.89, ch 63 ≈ 0.79, centre ≈ 1.03–1.10)
+        lies on top of itself for every length and for both cables, so it belongs to the injection setup,
+        not to the cable. Channels 31/32 are not low.</figcaption>
+      </figure>
+
+      <h2>3. Pulser: what grows with length is self-triggering</h2>
+      <figure>
+        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/pulser_noise_vs_channel_3V3.png" alt="Out-of-time hit rate vs VMM channel on a log scale, one curve per cable length">
+        <figcaption>Out-of-time rate on the pulsed channels. No noise at 1.0–1.5 m (Samtec). From 2 m, channels 0/1,
+        30/31 and 62/63 fire at 0.4–3 kHz, and with Hitachi 50 cm + 2 m at 20–30 kHz. Within each group the rates are
+        equal, which suggests one oscillating channel with its neighbours read out through the neighbour trigger (SNG).</figcaption>
+      </figure>
+      <figure>
+        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/pulser_efficiency_vs_channel_1V8.png" alt="In-time hits per pulse vs VMM channel at 1.8 V">
+        <figcaption>At the smallest pulse (1.8 V) the busy channels also miss 15–20 % of the real pulses.
+        At 3.3 V the efficiency stays at 1.00. Channel 0 is missing altogether in the Samtec 50 cm + 1 m runs.</figcaption>
+      </figure>
+
+      <h2>4. Fe55 on the detector: no edge effect</h2>
+      <figure>
+        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/fe55_edge_ratio_vs_channel_1mVfC.png" alt="Fe55 photopeak ratio between cable lengths per channel, normalised to the bulk ratio">
+        <figcaption>Per-channel Fe55 photopeak, ratio between two cables on the same channel (pad gain cancels),
+        divided by that pair's bulk ratio. Edge channels sit at 1.00 ± 0.01 for every pair.</figcaption>
+      </figure>
+      <figure>
+        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/fe55_noise_vs_channel_1mVfC.png" alt="Over-threshold rate without source vs VMM channel, Fe55 reference runs">
+        <figcaption>No-source reference runs: ~0.1–0.3 Hz on every channel, edges included, for every cable.
+        The y-range matches the pulser noise plot. The effective threshold is ~140 ADC here and ~150 on the
+        bench, so an oscillation of the same size would show up.</figcaption>
+      </figure>
+
+      <h2>5. Bulk signal vs length</h2>
+      <figure>
+        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/bulk_signal_vs_length.png" alt="Bulk signal relative to Samtec 1.5 m vs total cable length, pulser and Fe55">
+        <figcaption>Bulk signal, indexed to Samtec 1.5 m. Pulser Samtec: about −9.5 %/m. Fe55 Samtec: −8.0 % (1.5→2.0 m)
+        and −5.4 % (2.0→2.5 m; these two runs were taken 9 min apart). Hitachi beats Samtec at the same length:
+        +5–7 % on the pulser bench, +14–18 % with Fe55.</figcaption>
+      </figure>
+      <figure>
+        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/fe55_gain_stability.png" alt="Fe55 photopeak per one-minute file vs time of day">
+        <figcaption>Fe55 gain per 1-min file. Within a run it is flat to &lt;0.5 %, but there are steps between runs:
+        the same Hitachi cable re-measured an hour later is 3.6 % lower. Treat the Fe55 cable-to-cable numbers as ±4 %.</figcaption>
+      </figure>
+
+      <h2>Why the two campaigns disagree</h2>
+      <ul>
+        <li><strong>Different instability, not different attenuation.</strong> The pulser chain (pulser, 50 cm
+          injection cable, joint, transmission cable, hybrid) turns unstable at the connector-edge pins
+          once it is long. The same hybrids and cables on the detector do not. The detector-side source
+          impedance and grounding are the obvious candidates, but these data cannot tell which.</li>
+        <li><strong>Observable.</strong> A mean or median over all hits of a channel mixes signal and noise.
+          With a pulse clock, or with an Fe55 photopeak fit, the edge effect disappears.</li>
+        <li><strong>The 29 Sep Fe55 runs</strong> peak at ~860 ADC with 14 % of hits saturated. A truncated mean
+          (300 &lt; ADC &lt; 1022) is biased there. Use the 7 Oct 1 mV/fC runs.</li>
+        <li>In <code>alarrache.C</code>, the ratio histogram has 60 bins over 0–64 but is filled for 64 channels,
+          so the channel labels of <code>loss.png</code> are shifted.</li>
+      </ul>
+
+      <h2>Open points</h2>
+      <ul>
+        <li>The origin of the amplitude dome (pulser fan-out vs VMM channel gain). The VMM internal test
+          pulse, or the <code>ACDC_Near_Pulser</code> run of 9 July, would settle it.</li>
+        <li>The cable type of the 50 cm + 2.5 m pulser runs is not in the logbook (assumed Samtec).</li>
+        <li>Which channel of each group oscillates: rerun one long-cable configuration with SNG off.</li>
+      </ul>
+
+      <details>
+        <summary>Numbers (summary.txt) and how to reproduce</summary>
+        <p>All numbers: <a href="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/summary.txt">summary.txt</a>.
+        Code: <code>P2_basket_analysis/cable_length/cable_length_study.py</code> (commit 722b9aa). Data copied from
+        <code>vmm_daplxa:/local/p2/p2data/{hybrid_performance,source_tests}</code>.</p>
+        <pre><code>python3 cable_length/cable_length_study.py [--refresh]</code></pre>
+      </details>
+    </div>
+  </article>
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <span>Alexandra Kallitsopoulou</span>
+  <span><a href="../../notes/">← all notes</a></span>
+</div></footer>
+</body>
+</html>

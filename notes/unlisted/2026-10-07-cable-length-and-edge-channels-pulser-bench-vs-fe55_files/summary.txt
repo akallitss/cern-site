@@ -1,0 +1,81 @@
+Cable-length study: pulser bench (June) vs Fe55 on detector (Oct)
+====================================================================
+
+Pulser group labels -> pulsed VMM residue (ch % 3), per run family:
+  Hitachi 1.5 m  3k    -> [0]
+  Hitachi 1.5 m  3k+1  -> [2]
+  Hitachi 1.5 m  3k+2  -> [1]
+  Hitachi 2.5 m  3k    -> [0]
+  Hitachi 2.5 m  3k+1  -> [1]
+  Hitachi 2.5 m  3k+2  -> [2]
+  Samtec  1.0 m  3k    -> [0]
+  Samtec  1.0 m  3k+1  -> [2]
+  Samtec  1.0 m  3k+2  -> [1]
+  Samtec  1.5 m  3k    -> [0]
+  Samtec  1.5 m  3k+1  -> [2]
+  Samtec  1.5 m  3k+2  -> [1]
+  Samtec  2.0 m  3k    -> [0]
+  Samtec  2.0 m  3k+1  -> [2]
+  Samtec  2.0 m  3k+2  -> [1]
+  Samtec  2.5 m  3k    -> [0]
+  Samtec  2.5 m  3k+1  -> [2]
+  Samtec  2.5 m  3k+2  -> [1]
+  Samtec  3.0 m  3k    -> [0]
+  Samtec  3.0 m  3k+1  -> [2]
+  Samtec  3.0 m  3k+2  -> [1]
+
+Pulser runs dropped (no pulses recorded):
+  hybrid_hybrid_4118_test_SNR_SNG_AC_hitachi_50cm_2meter_channels_3k+2_vmm1_1V8_20260608_1705  (216 pulses)
+
+Pulser 1V8: bulk in-time ADC | edge amp/bulk | self-trigger rate [Hz] on 0,1,30,31,62,63
+  Hitachi 1.5 m  bulk   252 | 0:0.90 31:1.03 32:1.02 63:0.81 | noise 23 25 0 0 37 28 | eff 0/1/62/63 0.98 0.97 0.96 1.00
+  Hitachi 2.5 m  bulk   235 | 0:0.95 31:1.01 32:nan 63:0.83 | noise 30813 30985 0 0 nan 20568 | eff 0/1/62/63 0.80 0.81 nan 0.80
+  Samtec  1.0 m  bulk   256 | 0:0.93 31:1.03 32:1.01 63:0.82 | noise 0 0 0 0 0 0 | eff 0/1/62/63 1.00 1.00 1.00 1.00
+  Samtec  1.5 m  bulk   244 | 0:nan 31:1.03 32:1.03 63:0.81 | noise 0 0 0 0 0 0 | eff 0/1/62/63 0.00 1.00 1.00 1.00
+  Samtec  2.0 m  bulk   232 | 0:0.91 31:1.04 32:1.03 63:0.81 | noise 121 119 1 1 6 6 | eff 0/1/62/63 0.92 0.98 0.99 0.94
+  Samtec  2.5 m  bulk   224 | 0:0.94 31:1.02 32:1.02 63:0.82 | noise 937 946 332 401 595 723 | eff 0/1/62/63 0.85 0.97 0.91 0.85
+  Samtec  3.0 m  bulk   213 | 0:0.95 31:1.03 32:1.03 63:0.83 | noise 1148 1141 2930 2980 615 617 | eff 0/1/62/63 0.80 0.87 0.85 0.81
+
+Pulser 2V5: bulk in-time ADC | edge amp/bulk | self-trigger rate [Hz] on 0,1,30,31,62,63
+  Hitachi 1.5 m  bulk   335 | 0:0.91 31:1.04 32:1.03 63:0.81 | noise 24 24 0 0 28 28 | eff 0/1/62/63 1.00 1.00 1.00 1.00
+  Hitachi 2.5 m  bulk   311 | 0:0.88 31:1.02 32:1.04 63:0.78 | noise 30935 30894 0 0 20488 20613 | eff 0/1/62/63 0.96 0.98 0.97 0.96
+  Samtec  1.0 m  bulk   342 | 0:0.92 31:1.03 32:1.03 63:0.82 | noise 0 0 0 0 0 0 | eff 0/1/62/63 1.00 1.00 1.00 1.00
+  Samtec  1.5 m  bulk   326 | 0:nan 31:1.04 32:1.03 63:0.81 | noise 0 0 0 0 0 0 | eff 0/1/62/63 0.00 1.00 1.00 1.00
+  Samtec  2.0 m  bulk   309 | 0:0.89 31:1.04 32:1.02 63:0.80 | noise 106 116 1 1 7 6 | eff 0/1/62/63 1.00 1.00 1.00 1.00
+  Samtec  2.5 m  bulk   296 | 0:0.89 31:1.02 32:1.02 63:0.79 | noise 917 831 442 400 652 714 | eff 0/1/62/63 0.99 1.00 1.00 1.00
+  Samtec  3.0 m  bulk   282 | 0:0.89 31:1.02 32:1.02 63:0.79 | noise 1259 1173 2924 2861 626 651 | eff 0/1/62/63 0.98 1.00 1.00 0.99
+
+Pulser 3V3: bulk in-time ADC | edge amp/bulk | self-trigger rate [Hz] on 0,1,30,31,62,63
+  Hitachi 1.5 m  bulk   432 | 0:0.91 31:1.04 32:1.04 63:0.81 | noise 27 25 0 0 32 29 | eff 0/1/62/63 1.00 1.00 1.00 1.00
+  Hitachi 2.5 m  bulk   400 | 0:0.88 31:1.02 32:1.05 63:0.78 | noise 29719 30758 0 0 20666 19571 | eff 0/1/62/63 1.00 1.01 1.00 0.99
+  Samtec  1.0 m  bulk   442 | 0:0.92 31:1.04 32:1.03 63:0.82 | noise 0 0 0 0 0 0 | eff 0/1/62/63 1.00 1.00 1.00 1.00
+  Samtec  1.5 m  bulk   418 | 0:nan 31:1.04 32:1.04 63:0.82 | noise 0 0 0 0 0 0 | eff 0/1/62/63 0.00 1.00 1.00 1.00
+  Samtec  2.0 m  bulk   398 | 0:0.90 31:1.04 32:1.03 63:0.80 | noise 395 429 9 11 17 15 | eff 0/1/62/63 1.00 1.00 1.00 1.00
+  Samtec  2.5 m  bulk   381 | 0:0.89 31:1.03 32:1.03 63:0.79 | noise 832 1007 406 502 575 571 | eff 0/1/62/63 1.00 1.00 1.00 1.00
+  Samtec  3.0 m  bulk   362 | 0:0.89 31:1.03 32:1.02 63:0.79 | noise 1475 1390 2875 2881 810 674 | eff 0/1/62/63 1.00 1.00 1.00 1.00
+
+Fe55 1 mV/fC photopeak ratios (bulk median ± per-channel spread; edge ch / bulk):
+  Hitachi 2.0 m (A)  / Samtec 1.5 m: 1.085 ± 0.014 | 0:0.994 31:0.996 32:1.005 63:1.003
+  Hitachi 2.0 m (B)  / Samtec 1.5 m: 1.045 ± 0.011 | 0:1.003 31:0.994 32:1.002 63:0.998
+  Samtec 2.0 m       / Samtec 1.5 m: 0.920 ± 0.010 | 0:1.004 31:1.003 32:0.996 63:1.002
+  Samtec 2.5 m       / Samtec 1.5 m: 0.869 ± 0.013 | 0:1.006 31:0.999 32:1.005 63:1.000
+  repeatability Hitachi 2.0 m B/A: 0.964
+  saturated fraction (ADC>=1020), Samtec 1.5 m: 0.026
+
+Fe55 3 mV/fC photopeak ratios (bulk median ± per-channel spread; edge ch / bulk):
+  Hitachi 2.0 m      / Samtec 1.5 m: 1.027 ± 0.011 | 0:0.998 31:1.006 32:1.006 63:1.001
+  Samtec 2.0 m       / Samtec 1.5 m: 0.904 ± 0.007 | 0:1.000 31:1.007 32:1.001 63:0.999
+  saturated fraction (ADC>=1020), Samtec 1.5 m: 0.053
+
+Fe55 reference runs, over-threshold rate [Hz], median over VMMs (bulk | 0 31 32 63):
+  Hitachi 2.0 m (r3)   1 mV/fC   0.10 |  0.08  0.11  0.08  0.11
+  Hitachi 2.0 m (r4)   1 mV/fC   0.24 |  0.21  0.25  0.18  0.25
+  Samtec 1.5 m         1 mV/fC   0.26 |  0.25  0.27  0.24  0.25
+  Samtec 2.0 m         1 mV/fC   0.30 |  0.30  0.32  0.28  0.28
+  Samtec 2.5 m         1 mV/fC   0.24 |  0.24  0.27  0.23  0.24
+  Hitachi 2.0 m        3 mV/fC   0.38 |  0.33  0.42  0.31  0.39
+  Samtec 1.5 m         3 mV/fC   0.41 |  0.37  0.42  0.39  0.40
+  Samtec 2.0 m         3 mV/fC   0.34 |  0.31  0.36  0.33  0.33
+  29 Sep 1.5 m         3 mV/fC   0.28 |  0.27  0.30  0.27  0.24
+  29 Sep 2.0 m         3 mV/fC   0.26 |  0.25  0.29  0.24  0.24
+  29 Sep 2.5 m         3 mV/fC   0.27 |  0.28  0.31  0.27  0.25
