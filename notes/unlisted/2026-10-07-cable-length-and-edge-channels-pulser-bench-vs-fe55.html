@@ -66,6 +66,38 @@
       </table>
       </div>
 
+      <h2>How to read the plots: "/ bulk" and "bulk ratio"</h2>
+      <p><strong>Bulk</strong> means the ordinary channels away from the connector edges: channels 3–60,
+      leaving out 28–35. It never contains 0/1/2, 29–34 or 61–63. The <strong>edge channels</strong>
+      (grey bands in the plots) are 0, 31, 32 and 63, at the borders of the connectors.</p>
+      <div class="grid">
+        <div class="card">
+          <h3>Pulser: amplitude / bulk</h3>
+          <p>Within one run, for each channel:</p>
+          <ol>
+            <li>take the median ADC of its in-time hits (within ±500 ns of a pulse);</li>
+            <li>divide by the median of the same quantity over the bulk channels of that run.</li>
+          </ol>
+          <p>1.00 means "same as a typical channel in this run", 0.80 means "20 % smaller". Dividing by
+          the bulk removes the overall drop with length; what's left is the shape across the channels.</p>
+        </div>
+        <div class="card">
+          <h3>Fe55: bulk ratio and edge / bulk</h3>
+          <ol>
+            <li>For every channel (each VMM 4–13, each channel 0–63), fit the Fe55 photopeak with cable A
+              and with cable B and take <code>r = peak<sub>A</sub> / peak<sub>B</sub></code>. It's the same pad
+              on the same channel, so the pad's own gain cancels and only the cable effect remains.</li>
+            <li>The <strong>bulk ratio</strong> is the median of <code>r</code> over all bulk channels of all
+              VMMs. For Samtec 2.0 m / 1.5 m it is 0.920: a typical channel lost 8 % going from 1.5 to 2.0 m.
+              This is the number in the legend.</li>
+            <li>For each channel number, take the median of <code>r</code> over the VMMs and divide by the
+              bulk ratio. That's what's plotted.</li>
+          </ol>
+          <p>1.00 means the channel lost exactly as much as a typical channel. An edge channel that suffered
+          more from the longer cable would sit below 1.</p>
+        </div>
+      </div>
+
       <h2>1. Which channels are actually pulsed</h2>
       <p>In most June runs the labels <strong>3k+1 and 3k+2 are swapped</strong>: config "3k+1" pulses VMM
       channels 2, 5, …, 62, and "3k+2" pulses 1, 4, …, 61. This is the "mismatch" noted in the logbook.
@@ -88,7 +120,8 @@
         <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/pulser_noise_vs_channel_3V3.png" alt="Out-of-time hit rate vs VMM channel on a log scale, one curve per cable length">
         <figcaption>Out-of-time rate on the pulsed channels. No noise at 1.0–1.5 m (Samtec). From 2 m, channels 0/1,
         30/31 and 62/63 fire at 0.4–3 kHz, and with Hitachi 50 cm + 2 m at 20–30 kHz. Within each group the rates are
-        equal, which suggests one oscillating channel with its neighbours read out through the neighbour trigger (SNG).</figcaption>
+        equal, which suggests one oscillating channel with its neighbours read out through the neighbour trigger (SNG).
+        <strong>This is the "breakdown" seen in the earlier pulser analysis.</strong></figcaption>
       </figure>
       <figure>
         <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/pulser_efficiency_vs_channel_1V8.png" alt="In-time hits per pulse vs VMM channel at 1.8 V">
@@ -100,7 +133,8 @@
       <figure>
         <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/fe55_edge_ratio_vs_channel_1mVfC.png" alt="Fe55 photopeak ratio between cable lengths per channel, normalised to the bulk ratio">
         <figcaption>Per-channel Fe55 photopeak, ratio between two cables on the same channel (pad gain cancels),
-        divided by that pair's bulk ratio. Edge channels sit at 1.00 ± 0.01 for every pair.</figcaption>
+        divided by that pair's bulk ratio (see "How to read the plots"). Edge channels sit at 1.00 ± 0.01 for every pair.
+        The grey points compare the same Hitachi cable measured twice, as a reference for "no change".</figcaption>
       </figure>
       <figure>
         <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/fe55_noise_vs_channel_1mVfC.png" alt="Over-threshold rate without source vs VMM channel, Fe55 reference runs">
@@ -122,26 +156,72 @@
         the same Hitachi cable re-measured an hour later is 3.6 % lower. Treat the Fe55 cable-to-cable numbers as ±4 %.</figcaption>
       </figure>
 
-      <h2>Why the two campaigns disagree</h2>
+      <h2>What the two measurements agree and disagree on</h2>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th></th><th>Pulser</th><th>Fe55</th></tr></thead>
+        <tbody>
+          <tr><td>Typical-channel loss per metre</td><td>~10 %/m</td><td>~10–13 %/m (±4 %)</td></tr>
+          <tr><td>Hitachi vs Samtec</td><td>Hitachi better</td><td>Hitachi better</td></tr>
+          <tr><td>Edge channels lose more signal with length</td><td><strong>No</strong> (section 2)</td><td><strong>No</strong> (section 4)</td></tr>
+          <tr><td>Edge channels self-trigger on long cables</td><td><strong>Yes</strong> (section 3)</td><td><strong>No</strong> (section 4)</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p>So the two campaigns don't disagree about signal loss. The only real difference is the noise.</p>
+
+      <h2>Why the edge channels look "lost" in the pulser data</h2>
+      <p>The real pulse is still there on those channels, at the usual amplitude. But they also produce many
+      extra noise hits with small ADC (~120–180). With 2.5–3 m of cable a channel can have 1–3 noise hits for
+      every real pulse. If you average all the hits of the channel, or take the median, the result is dragged
+      towards ~150 and the channel looks like it collapsed. Only at the lowest pulser voltage (1.8 V) do real
+      pulses actually get lost: 15–20 % of them, because the channel is busy with a noise hit when the pulse
+      arrives.</p>
+      <p>Other things to keep in mind when comparing with earlier analyses:</p>
       <ul>
-        <li><strong>Different instability, not different attenuation.</strong> The pulser chain (pulser, 50 cm
-          injection cable, joint, transmission cable, hybrid) turns unstable at the connector-edge pins
-          once it is long. The same hybrids and cables on the detector do not. The detector-side source
-          impedance and grounding are the obvious candidates, but these data cannot tell which.</li>
-        <li><strong>Observable.</strong> A mean or median over all hits of a channel mixes signal and noise.
-          With a pulse clock, or with an Fe55 photopeak fit, the edge effect disappears.</li>
         <li><strong>The 29 Sep Fe55 runs</strong> peak at ~860 ADC with 14 % of hits saturated. A truncated mean
           (300 &lt; ADC &lt; 1022) is biased there. Use the 7 Oct 1 mV/fC runs.</li>
         <li>In <code>alarrache.C</code>, the ratio histogram has 60 bins over 0–64 but is filled for 64 channels,
           so the channel labels of <code>loss.png</code> are shifted.</li>
       </ul>
 
+      <h2>Why it happens on the pulser bench and not on the detector</h2>
+      <p>What these data show for sure: the same type of cable, at a similar length and a comparable threshold,
+      oscillates on the bench and doesn't on the detector. They don't show <em>why</em>. Candidate explanations:</p>
+      <ul>
+        <li><strong>What sits at the far end of the cable.</strong> On the detector the VMM input sees a pad: a
+          capacitance to the mesh, tied to the detector ground. On the bench it sees the pulser injection network
+          through an extra 50 cm cable and a cable-to-cable joint. A long line ending in a different impedance can
+          make the preamplifier input unstable.</li>
+        <li><strong>Why the edge pins.</strong> The outermost pins of a connector usually have the fewest ground pins
+          next to them, so their return path is the longest and the least shielded. They're the first to go unstable.</li>
+        <li><strong>Grounding.</strong> On the bench, the pulser board and the hybrid may be connected to ground mainly
+          through the signal cable itself. On the detector there's a common ground.</li>
+        <li><strong>The neighbour trigger (SNG)</strong> probably spreads one oscillating channel to its neighbours.
+          That's why the rates come in equal pairs or triples (0/1, 30/31, 62/63).</li>
+      </ul>
+
+      <div class="callout warn">
+        <p><strong>Caveat on the Fe55 result.</strong> The Fe55 ratio method cancels any <em>fixed</em> difference
+        between channels, by design. So it confirms that the edge channels don't lose more signal <em>as the cable
+        gets longer</em>. It can't tell whether the edge channels are always ~10–20 % lower, which is the dome seen
+        in section 2. Whether that dome comes from the pulser board or from the VMM itself needs the VMM internal
+        test pulse, or the <code>ACDC_Near_Pulser</code> run of 9 July.</p>
+      </div>
+
+      <h2>Tests that would separate the explanations</h2>
+      <ol>
+        <li>Repeat one long-cable pulser run with SNG off, to see which single channel actually oscillates.</li>
+        <li>Disconnect the pulser but leave the cables plugged in, open at the far end, and check whether the edge
+          channels still oscillate.</li>
+        <li>Add a ground strap between the pulser board and the hybrid.</li>
+        <li>Use one long transmission cable without the 50 cm injection cable and the joint.</li>
+      </ol>
+
       <h2>Open points</h2>
       <ul>
-        <li>The origin of the amplitude dome (pulser fan-out vs VMM channel gain). The VMM internal test
-          pulse, or the <code>ACDC_Near_Pulser</code> run of 9 July, would settle it.</li>
         <li>The cable type of the 50 cm + 2.5 m pulser runs is not in the logbook (assumed Samtec).</li>
-        <li>Which channel of each group oscillates: rerun one long-cable configuration with SNG off.</li>
+        <li>Channel 0 is missing in the Samtec 50 cm + 1 m runs (cabling or a dead channel at the time).</li>
       </ul>
 
       <details>
