@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>VMM3a / SRS data flow — schematics</title>
+<meta name="description" content="How a hit travels from detector strip to UDP packet, and how the absolute hit timestamp is reconstructed — four reference schematics for VMM3a/SRS pcapng analysis.">
+<meta name="category" content="Detector R&amp;D">
+<meta name="keywords" content="vmm3a,srs,daq,readout,timestamp,p2-basket">
+<meta name="date" content="2026-10-07">
+<meta name="updated" content="2026-10-07">
+<meta name="visibility" content="public">
+<!-- ======================================================================= -->
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+  /* Schematics are wide line-art; show them full width, click through for full resolution. */
+  .schem { display: block; width: 100%; height: auto; border-radius: 6px;
+           border: 1px solid rgba(128, 128, 128, .32); background: #fff; }
+  .note-body figure a { display: block; }
+  .note-body ol { margin: 1em 0 1em 1.4em; }
+  .note-body ol li { margin: .35em 0; }
+</style>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="../">Alexandra Kallitsopoulou</a>
+  <nav class="nav"><a href="../">Home</a><a href="../notes/">Notes</a></nav>
+</div></header>
+
+<main class="wrap">
+  <article>
+    <header class="note-header">
+      <h1>VMM3a / SRS data flow — schematics</h1>
+      <p class="muted">How a hit travels from detector strip to UDP packet, and how the absolute hit timestamp is reconstructed — four reference schematics for VMM3a/SRS pcapng analysis.</p>
+      <div class="meta-row">
+        <span class="pill">Detector R&amp;D</span>
+        <time datetime="2026-10-07">2026-10-07</time>
+        <span class="faint">vmm3a,srs,daq,readout,timestamp,p2-basket</span>
+      </div>
+    </header>
+
+    <div class="note-body">
+      <p>Four reference schematics for the <strong>VMM3a / SRS</strong> readout chain as used on the
+      P2 basket hybrid detector at CEA Saclay. They cover the signal path from a detector strip to a
+      UDP packet on the network, what happens inside the VMM3a ASIC, how the clock, markers, offset
+      and TDC relate to one another, and how the four recorded time fields combine into one absolute
+      hit timestamp.</p>
+
+      <p>These are the drawings I keep coming back to when reading raw pcapng captures — the
+      timestamp reconstruction in particular is easy to get subtly wrong, and panel 3 is the one
+      that settles which BC bin a hit actually belongs to.</p>
+
+      <nav class="toc">
+        <a href="#hardware-chain">1 · Hardware chain</a>
+        <a href="#hit-processing">2 · VMM3a hit processing</a>
+        <a href="#clock-timeline">3 · Clock, markers, offset, TDC</a>
+        <a href="#timestamp">4 · Timestamp reconstruction</a>
+      </nav>
+
+      <h2>Constants the schematics refer to</h2>
+      <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr><th>Quantity</th><th>Value</th><th>Where it matters</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Channels per VMM3a</td><td>64</td><td>Hardware chain</td></tr>
+          <tr><td>FEC FPGA clock (Spartan7)</td><td>44.44 MHz → 22.5 ns per BC bin</td><td>Coarse time</td></tr>
+          <tr><td>BCID counter</td><td>4096 ticks ≈ 92 µs per cycle</td><td>Offset reset by SRS markers</td></tr>
+          <tr><td>TDC resolution</td><td>60 ns / 256 = 0.234 ns per count</td><td>Sub-BC fine time</td></tr>
+          <tr><td>Shaping time (chip <code>ST</code> register)</td><td>25–200 ns, not recorded per hit</td><td>Threshold → peak delay</td></tr>
+          <tr><td><code>srs_timestamp</code></td><td>42-bit FEC free-running counter at 40 MHz → 25 ns</td><td>Long-range absolute reference</td></tr>
+          <tr><td>Network</td><td>9 010-byte UDP datagrams, port 6006</td><td>Capture / decoding</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2 id="hardware-chain">1 · Hardware chain</h2>
+      <figure>
+        <a href="2026-10-07-vmm3a-srs-data-flow-schematics_files/schematic_1_hardware_chain.png">
+          <img class="schem" src="2026-10-07-vmm3a-srs-data-flow-schematics_files/schematic_1_hardware_chain.png"
+               alt="Signal path from detector strip through the VMM3a ASIC and FEC FPGA to a UDP packet">
+        </a>
+        <figcaption>Signal path from detector strip through VMM3a ASIC and FEC FPGA to UDP packet on
+        the network. Key numbers: 64 channels per VMM chip, Spartan7 FPGA at 44.44 MHz (22.5 ns
+        clock), 9 010-byte UDP datagrams on port 6006. Click for full resolution.</figcaption>
+      </figure>
+
+      <h2 id="hit-processing">2 · VMM3a hit processing</h2>
+      <figure>
+        <a href="2026-10-07-vmm3a-srs-data-flow-schematics_files/schematic_2_vmm3a_hit_processing.png">
+          <img class="schem" src="2026-10-07-vmm3a-srs-data-flow-schematics_files/schematic_2_vmm3a_hit_processing.png"
+               alt="Inside the VMM3a ASIC: discriminator, BCID latch, shaper, peak finder, TAC and ADC">
+        </a>
+        <figcaption>Inside the VMM3a ASIC: the discriminator fires on threshold crossing, the BCID is
+        latched, the pulse shaper reaches its peak, the peak finder triggers the TAC, and the ADC
+        digitises the amplitude. Output is a 6-byte hit word containing channel, BCID, TDC, ADC and
+        offset. Click for full resolution.</figcaption>
+      </figure>
+
+      <h2 id="clock-timeline">3 · Clock, markers, offset, and TDC</h2>
+      <figure>
+        <a href="2026-10-07-vmm3a-srs-data-flow-schematics_files/schematic_3_clock_timeline.png">
+          <img class="schem" src="2026-10-07-vmm3a-srs-data-flow-schematics_files/schematic_3_clock_timeline.png"
+               alt="Timeline of SRS markers, offset counter, BCID and TDC, with a zoom into five BC bins">
+        </a>
+        <figcaption><strong>Top panel</strong>: overview timeline — SRS markers reset the offset
+        counter every ~92 µs (one 4096-tick BCID cycle). Hit offset + BCID give the coarse time; the
+        TDC gives the sub-22.5 ns fine-time correction. <strong>Bottom panel</strong>: zoom into 5 BC
+        bins (0–112.5 ns) showing the five steps in order. Click for full resolution.</figcaption>
+      </figure>
+
+      <p>The five steps in the bottom panel, in order:</p>
+      <ol>
+        <li>Threshold at <em>t</em> = 5 ns latches BCID = 2000.</li>
+        <li>Shaping time = 90 ns (4 BC bins; chip <code>ST</code> register, range 25–200 ns, not
+            recorded per hit) carries the pulse from threshold to peak.</li>
+        <li>Peak found at <em>t</em> = 95 ns in BCID = 2004 — the TAC starts.</li>
+        <li>BC edge at <em>t</em> = 112.5 ns — the TAC stops; TDC = 75 → 17.5 ns.</li>
+        <li><code>chip_time = (BCID_thr + 1) × T_BC − TDC × 60/256 ≈ t_threshold</code>, with a
+            resolution of 0.234 ns per count.</li>
+      </ol>
+
+      <h2 id="timestamp">4 · Timestamp reconstruction</h2>
+      <figure>
+        <a href="2026-10-07-vmm3a-srs-data-flow-schematics_files/schematic_4_timestamp_reconstruction.png">
+          <img class="schem" src="2026-10-07-vmm3a-srs-data-flow-schematics_files/schematic_4_timestamp_reconstruction.png"
+               alt="Combining srs_timestamp, offset, BCID and TDC into one absolute hit time">
+        </a>
+        <figcaption>Combining all fields into an absolute hit time. The <code>srs_timestamp</code>
+        (42-bit FEC free-running counter at 40 MHz) provides the long-range absolute reference, while
+        <code>chip_time</code> gives the fine-grained hit position within the ~92 µs BCID cycle.
+        Click for full resolution.</figcaption>
+      </figure>
+
+      <pre><code>abs_time_ns = srs_timestamp × 25 ns
+            + (offset × 4096 + BCID) × 22.5 ns
+            − TDC × 60 ns / 256</code></pre>
+
+      <h2>Provenance and how to regenerate</h2>
+      <p>All four panels are drawn by a single script, which depends only on
+      <code>matplotlib</code> — no data files and no ROOT, so it runs anywhere:</p>
+
+      <pre><code>cd P2_basket_online_analysis
+python3 vmm_srs_dataflow_schematic.py</code></pre>
+
+      <p>It writes <code>schematic_1_hardware_chain.png</code> through
+      <code>schematic_4_timestamp_reconstruction.png</code>. The script is attached here as well:
+      <a href="2026-10-07-vmm3a-srs-data-flow-schematics_files/vmm_srs_dataflow_schematic.py">vmm_srs_dataflow_schematic.py</a>.</p>
+
+      <div class="callout">
+        <p>The figures live in <code>P2_basket_online_analysis</code>, where a blanket
+        <code>*.png</code> rule in <code>.gitignore</code> keeps them out of version control — the
+        repo holds the generator and the viewer page, but not the rendered images. This note is
+        therefore also where the rendered panels are kept.</p>
+      </div>
+    </div>
+  </article>
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <span>Alexandra Kallitsopoulou</span>
+  <span><a href="../notes/">← all notes</a></span>
+</div></footer>
+</body>
+</html>

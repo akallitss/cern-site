@@ -1,7 +1,27 @@
 {
-  "latest_update": "2026-09-07",
-  "count": 18,
+  "latest_update": "2026-10-07",
+  "count": 19,
   "notes": [
+    {
+      "title": "VMM3a / SRS data flow — schematics",
+      "description": "How a hit travels from detector strip to UDP packet, and how the absolute hit timestamp is reconstructed — four reference schematics for VMM3a/SRS pcapng analysis.",
+      "category": "Detector R&D",
+      "tags": [
+        "vmm3a",
+        "srs",
+        "daq",
+        "readout",
+        "timestamp",
+        "p2-basket"
+      ],
+      "date": "2026-10-07",
+      "updated": "2026-10-07",
+      "unlisted": false,
+      "path": "2026-10-07-vmm3a-srs-data-flow-schematics.html",
+      "url": "/notes/2026-10-07-vmm3a-srs-data-flow-schematics.html",
+      "size": 9242,
+      "size_h": "9.0 kB"
+    },
     {
       "title": "VMM QA plot browser — SPS H4 July 2026",
       "description": "Every sub_run of the VMM campaign, re-rendered from the online counts store: 974 figures across 75 sub_runs, browsable.",
