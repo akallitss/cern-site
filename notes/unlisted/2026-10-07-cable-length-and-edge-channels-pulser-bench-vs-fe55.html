@@ -325,6 +325,36 @@
         the same Hitachi cable re-measured an hour later is 3.6 % lower. Treat the Fe55 cable-to-cable numbers as ±4 %.</figcaption>
       </figure>
 
+      <h3>Why some points are above 1</h3>
+      <p>The y-axis is each measurement's mid-connector signal divided by the same quantity with Samtec at 1.5 m total,
+      in the same campaign. Samtec 1.5 m is 1 by definition; a point above 1 just means more signal than Samtec 1.5 m.
+      There are two kinds:</p>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Point</th><th>Value</th><th>Taken</th><th>Why above 1</th></tr></thead>
+        <tbody>
+          <tr><td>External pulser, Samtec 1.0 m (3.3 V)</td><td>1.055 (441.5 vs 418.5 ADC)</td><td>5 June, same morning as 1.5 m</td>
+            <td>Shorter cable, less attenuation: expected. It's on the same line as the longer Samtec cables.</td></tr>
+          <tr><td>External pulser, Hitachi 1.5 m</td><td>1.032</td><td>8 June 16:47</td>
+            <td>Hitachi attenuates less than Samtec at the same length. Its 2.5 m point (0.957) is also above Samtec 2.5 m (0.910).
+              But the Hitachi runs were on 8 June and the Samtec 1.5 m reference on 5 June, so day-to-day changes are mixed in.</td></tr>
+          <tr><td>Fe55, Hitachi 2.0 m (A), 1 mV/fC</td><td>1.085</td><td>7 Oct 11:45</td>
+            <td rowspan="3">Hitachi attenuates less, <em>and</em> these runs were taken before the Samtec 1.5 m reference
+              (15:17 at 1 mV/fC, 14:45 at 3 mV/fC) while the gain was falling.</td></tr>
+          <tr><td>Fe55, Hitachi 2.0 m (B), 1 mV/fC</td><td>1.045</td><td>7 Oct 12:54</td></tr>
+          <tr><td>Fe55, Hitachi 2.0 m, 3 mV/fC</td><td>1.027</td><td>7 Oct 13:58</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p>The Fe55 Hitachi points need care. The same Hitachi cable gave 1.085, then 1.045 an hour later: the gain fell by
+      3.6 % in between, with nothing changed. The three Hitachi values also drop in the order they were taken, as they get
+      closer in time to the Samtec reference (3.5 h, 2.4 h, 0.8 h before it). If the gain kept falling through the
+      afternoon, part of Hitachi's advantage with Fe55 is gas-gain drift, not the cable. How much can't be said from these runs.
+      The external-pulser Hitachi points don't depend on gas gain, and still show Hitachi ahead by 5–7 %. This is for
+      reference only, since P2 will use Samtec.</p>
+      <p>The same drift works the other way on the Samtec Fe55 points: they were taken in order 1.5 → 2.0 → 2.5 m, so a
+      falling gain would make the longer cables look worse. That's the confound already flagged in the Samtec section.</p>
+
       <h2>6. Noise: neighbour-trigger hits, external pulser vs detector</h2>
       <p>Both campaigns ran with the neighbour trigger (SNG) on. When a channel fires, its neighbours are read out
       too, below threshold. Those neighbour hits sample the baseline of a channel at a random moment, plus noise, plus
