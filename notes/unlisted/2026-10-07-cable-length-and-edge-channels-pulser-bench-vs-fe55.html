@@ -241,6 +241,65 @@
         (see the Samtec section). Channels 31/32 are not low.</figcaption>
       </figure>
 
+      <h2>2b. Timing-free check: Gaussian fit to the pulse peak</h2>
+      <p>Section 2 selects hits by time, using a pulse clock. To check that the result doesn't depend on that, and to
+      compare with what a timing-free analysis (mean or median of all hits) sees, each pulsed channel's full ADC spectrum,
+      <em>all</em> hits with no time selection, is fitted with a Gaussian on the pulse peak:</p>
+      <ol>
+        <li>Histogram all hits of the channel in the run where it is pulsed.</li>
+        <li>Find the peaks of the (9-bin smoothed) spectrum. The <strong>pulse peak</strong> is the highest-ADC peak that
+          holds at least 30 % of the number of pulses. The number of pulses is the hit count of the run's pulsed
+          mid-connector channels (~10 000). This is not simply "the tallest peak": on a self-triggering edge channel the
+          noise peak at ~120–180 ADC is the tallest one, up to 30 times taller than the pulse peak.</li>
+        <li>Fit a Gaussian in ±1.5σ around it, four iterations. Its mean is the pulse amplitude.</li>
+        <li>Reject the fit when the pulse can't be told apart from the noise. A channel with no excess hits (at most 1.2
+          hits per pulse) contains only pulses and is always kept. On a channel with noise hits, the noise peak is 2–7 ADC
+          wide while the pulse peaks there are 30–60 ADC wide, so a fit narrower than 8 or wider than 80 ADC is rejected.</li>
+      </ol>
+      <p><strong>Cross-check:</strong> on the mid-connector channels, the Gaussian mean agrees with the in-time median of
+      section 2 within 0.5–1.7 ADC (median difference) at every length and voltage.</p>
+      <figure>
+        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/pulser_gauss_vs_channel_3V3.png" alt="External pulser 3.3 V, Samtec: raw median of all hits, Gaussian mean of the pulse peak, and the per-channel ratio between lengths, vs VMM channel">
+        <figcaption>External pulser, Samtec, 3.3 V, no timing used anywhere. (a) Median of all hits / mid-connector
+        median: the edge channels "break down" from 2 m (down to 0.3). (b) Gaussian mean of the pulse peak / mid-connector
+        median: the curves for all lengths lie on top of each other, the edge channels included. (c) The same analysis as
+        the Fe55 bottom panel (section 4): per channel, Gaussian mean at length L divided by the same channel at 1.5 m,
+        then by the median of that ratio over the mid-connector channels. Channel 0 is missing because it is dead at 1.5 m.</figcaption>
+      </figure>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>3.3 V, edge channel / mid-connector</th><th>1.0 m</th><th>2.0 m</th><th>2.5 m</th><th>3.0 m</th></tr></thead>
+        <tbody>
+          <tr><td>ch 1: median of all hits / Gaussian mean</td><td>0.89 / 0.89</td><td>0.33 / 0.88</td><td>0.30 / 0.87</td><td>0.35 / 0.87</td></tr>
+          <tr><td>ch 31: median of all hits / Gaussian mean</td><td>1.04 / 1.04</td><td>1.03 / 1.04</td><td>0.38 / 1.03</td><td>0.33 / 1.03</td></tr>
+          <tr><td>ch 62: median of all hits / Gaussian mean</td><td>0.87 / 0.87</td><td>0.85 / 0.86</td><td>0.34 / 0.86</td><td>0.38 / 0.85</td></tr>
+          <tr><td>ch 63: median of all hits / Gaussian mean</td><td>0.82 / 0.82</td><td>0.80 / 0.81</td><td>0.38 / 0.79</td><td>0.40 / 0.80</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <ul>
+        <li><strong>The fit recovers the pulse on every edge channel at 3.3 V.</strong> The "breakdown" in (a) is the noise
+          peak pulling the median down. The pulse peak itself sits where it sat with the shortest cable.</li>
+        <li><strong>In the Fe55-style ratio (c)</strong>, the edge channels at 3.3 V are at 0.987–0.996 for 2.0 m, 0.976–0.992
+          for 2.5 m and 0.973–0.995 for 3.0 m. The mid-connector channels scatter by ±0.3–0.5 %. So the external pulser sees a
+          small extra loss on some edge channels, largest on ch 63 (−2.4 % at 2.5 m, −2.7 % at 3.0 m). With Fe55, the
+          edge channels at 2.0 and 2.5 m are within 0.7 % (section 4).</li>
+        <li><strong>Part of that small extra loss is the day change.</strong> The 1.5 m reference was taken on 5 June and the
+          longer cables on 8 June. Comparing only 8 June runs, ch 63 loses 1.0 % from 2.0 to 2.5 m and 1.3 % from 2.0 to 3.0 m.</li>
+        <li><strong>At 1.8 V the method reaches its limit.</strong> The pulse (~200–250 ADC) is then not far above the noise
+          peak (~130–180). At 2.5 and 3.0 m the two merge on the self-triggering edge channels (0, 1, 30, 62, 63), and those
+          fits are rejected (crosses in the figure below). Where the fit is accepted, it gives the same values as at 3.3 V.
+          The 2.5 V runs only lose ch 0 and 30 at 3.0 m.</li>
+        <li><strong>The pulse peak gets wider with longer cables:</strong> σ ≈ 12 ADC at 1.5 m and 22–27 ADC from 2 m on the
+          mid-connector channels, and 30–60 ADC on the edge channels. That is the same extra noise that the neighbour-trigger
+          hits show (section 6), now riding on the pulse.</li>
+      </ul>
+      <figure>
+        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/pulser_gauss_vs_channel_1V8.png" alt="Same as the previous figure at 1.8 V, with crosses where the pulse cannot be separated from the noise">
+        <figcaption>Same at 1.8 V. Crosses: channels whose pulse peak can't be separated from the noise peak (2.5 and 3.0 m,
+        edge channels). Elsewhere the Gaussian mean gives the same per-channel shape as at 3.3 V.</figcaption>
+      </figure>
+
       <h2>3. Pulser: what grows with length is self-triggering</h2>
       <figure>
         <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/pulser_noise_vs_channel_3V3.png" alt="Out-of-time hit rate vs VMM channel on a log scale, one curve per cable length">
