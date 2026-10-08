@@ -9,7 +9,7 @@
 <meta name="category" content="Detector R&amp;D">
 <meta name="keywords" content="VMM,cables,P2,Fe55,pulser,hybrid">
 <meta name="date" content="2026-10-07">
-<meta name="updated" content="2026-10-07">
+<meta name="updated" content="2026-10-08">
 <meta name="visibility" content="unlisted">
 <!-- ======================================================================= -->
 <link rel="stylesheet" href="../../assets/site.css">
@@ -49,8 +49,11 @@
         they <em>start self-triggering</em>: none up to 1.5 m, 0.1–0.4 kHz at 2.0 m, ~1 kHz at 2.5 m and ~3 kHz
         at 3.0 m (total length). Those noise hits (ADC ≈ 120–180) drag any mean or median of the ADC spectrum
         down. With Fe55 on the P2 detector (Samtec 1.5 / 2.0 / 2.5 m), the edge channels behave exactly like the
-        bulk, both in photopeak (within 0.6 %) and in noise (~0.3 Hz). A typical channel loses about
-        9 %/m of signal on the bench and 13 ± 6 %/m with Fe55.</p>
+        bulk, both in photopeak (within 0.6 %) and in noise (~0.3 Hz). <strong>Why only the bench:</strong> the
+        neighbour-trigger hits show the bench is 3–5× noisier than the detector at the same gain, and its edge
+        channels get ~2× noisier again from 2 m on. There the noise reaches the threshold; on the detector it stays far
+        below it (section 6). A typical channel loses about 9 %/m of signal on the bench and 13–17 %/m with Fe55,
+        but both numbers have a confound (see the caveats in the Samtec section).</p>
       </div>
 
       <h2>Samtec: what changes with cable length</h2>
@@ -68,26 +71,42 @@
         <tbody>
           <tr><td>Pulser, bulk signal (3.3 V, /1.5 m)</td><td>1.055</td><td>1</td><td>0.951</td><td>0.910</td><td>0.864</td></tr>
           <tr><td>Fe55, bulk signal (1 mV/fC, /1.5 m, ±4 %)</td><td>–</td><td>1</td><td>0.920</td><td>0.869</td><td>–</td></tr>
+          <tr><td>Fe55, bulk signal (3 mV/fC, /1.5 m, ±4 %)</td><td>–</td><td>1</td><td>0.904</td><td>0.831</td><td>–</td></tr>
           <tr><td>Pulser, edge vs bulk (3.3 V, /1.0 m)</td><td>1</td><td>0.995</td><td>0.986</td><td>0.975</td><td>0.980</td></tr>
           <tr><td>Fe55, edge vs bulk (1 mV/fC, /1.5 m)</td><td>–</td><td>1</td><td>1.003</td><td>1.003</td><td>–</td></tr>
           <tr><td>Pulser, worst edge self-trigger rate (3.3 V)</td><td>none</td><td>none</td><td>0.4 kHz</td><td>1.0 kHz</td><td>3.6 kHz</td></tr>
           <tr><td>Pulser, real pulses kept on worst edge ch. (1.8 V)</td><td>1.00</td><td>1.00</td><td>0.92</td><td>0.85</td><td>0.80</td></tr>
           <tr><td>Detector, worst edge noise rate (no source)</td><td>–</td><td>0.3 Hz</td><td>0.4 Hz</td><td>0.3 Hz</td><td>–</td></tr>
+          <tr><td>Bench noise spread, bulk / worst edge (3 mV/fC) [ADC]</td><td>14.5 / 20</td><td>11 / 20</td><td>19 / 44</td><td>19 / 44</td><td>22 / 45</td></tr>
+          <tr><td>Detector noise spread, bulk / worst edge (3 mV/fC) [ADC]</td><td>–</td><td>4.0 / 4.2</td><td>3.5 / 4.2</td><td>3.5 / 4.0</td><td>–</td></tr>
         </tbody>
       </table>
       </div>
       <p class="muted">* The cable type of the 3.0 m pulser runs (50 cm + 2.5 m) is not in the logbook; they belong
       to the Samtec series and are assumed Samtec. Fit slopes: pulser −8.8 / −9.2 / −9.4 %/m at 1.8 / 2.5 / 3.3 V;
-      Fe55 −13.1 %/m at 1 mV/fC (three points, each ±4 %). The 3 mV/fC Fe55 runs have only 1.5 and 2.0 m
-      (0.904), too few for a slope.</p>
+      Fe55 −13.1 %/m at 1 mV/fC and −16.9 %/m at 3 mV/fC (three points each, ±4 % per point). The 3 mV/fC runs also
+      have 3–5 % saturated hits, which can bias the peak.</p>
+      <div class="callout warn">
+        <p><strong>Two confounds behind the length dependence.</strong></p>
+        <ul>
+          <li><strong>Pulser bench: length vs day.</strong> The 1.0 and 1.5 m runs were taken on 5 June, the 2.0, 2.5 and
+            3.0 m runs on 8 June. The step in noise and the onset of self-triggering both fall between 1.5 and 2.0 m,
+            so part of it may be a different bench setup on the second day. Within 8 June, the self-triggering still
+            grows with length (Samtec 0.4 → 1.0 → 3.6 kHz).</li>
+          <li><strong>Fe55: length vs time.</strong> The Samtec runs were taken in order of increasing length through the
+            afternoon, and the gas gain was not stable between runs (the same Hitachi cable lost 3.6 % in one hour).
+            A downward gain drift would add to the apparent cable loss, which may be why Fe55 (13–17 %/m) comes out
+            steeper than the pulser (9 %/m).</li>
+        </ul>
+      </div>
       <p>What this means for P2 with Samtec:</p>
       <ul>
         <li><strong>Up to 1.5 m</strong> nothing happens at the edges on either setup.</li>
         <li><strong>From 2 m</strong> the pulser bench shows edge self-triggering that grows quickly with length.
           The detector, measured up to 2.5 m, does not. Whether the detector stays quiet with longer cables, or
           in its final grounding, is not measured.</li>
-        <li><strong>Signal:</strong> each extra metre of Samtec costs roughly 9–13 % of the signal on every channel.
-          The edges are not significantly worse.</li>
+        <li><strong>Signal:</strong> each extra metre of Samtec costs roughly 9 % (pulser) to 13–17 % (Fe55, possibly
+          inflated by gain drift) of the signal on every channel. The edges are not significantly worse.</li>
       </ul>
 
       <h2>Data</h2>
@@ -141,6 +160,16 @@
         </div>
       </div>
 
+      <h3>Why the Fe55 edge-ratio plot used to show no 10 % loss</h3>
+      <p>Dividing by the bulk ratio removes the overall cable loss on purpose: the question that plot answers is
+      "does any channel lose <em>more</em> than a typical channel?". The loss itself is in the bulk ratio. The figure in
+      section 4 now shows both: the raw per-channel ratio on top, where the 8 % and 13 % losses are visible as the
+      level of each set of points, and the normalised ratio below.</p>
+      <p><strong>Bulk channels or all channels?</strong> The reference excludes the channels under test, so that an edge
+      effect can't hide inside its own reference. In practice it makes no difference here: the edge channels are 4 out
+      of 64, and the median over all channels equals the bulk median to 0.001 (Samtec 2.0/1.5 m: 0.920 vs 0.920; 2.5/1.5 m:
+      0.869 vs 0.870 at 1 mV/fC).</p>
+
       <h2>1. Which channels are actually pulsed</h2>
       <p>In most June runs the labels <strong>3k+1 and 3k+2 are swapped</strong>: config "3k+1" pulses VMM
       channels 2, 5, …, 62, and "3k+2" pulses 1, 4, …, 61. This is the "mismatch" noted in the logbook.
@@ -175,9 +204,10 @@
 
       <h2>4. Fe55 on the detector: no edge effect</h2>
       <figure>
-        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/fe55_edge_ratio_vs_channel_1mVfC.png" alt="Fe55 photopeak ratio between cable lengths per channel, normalised to the bulk ratio">
-        <figcaption>Per-channel Fe55 photopeak, ratio between two cables on the same channel (pad gain cancels),
-        divided by that pair's bulk ratio (see "How to read the plots"). Edge channels sit at 1.00 ± 0.01 for every pair.
+        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/fe55_edge_ratio_vs_channel_1mVfC.png" alt="Fe55 photopeak ratio between cable lengths per channel: raw on top, normalised to the bulk ratio below">
+        <figcaption>Per-channel Fe55 photopeak, ratio between two cables on the same channel (pad gain cancels).
+        <strong>Top:</strong> raw ratio; the dashed lines are the bulk ratios (0.920 for 2.0/1.5 m, 0.869 for 2.5/1.5 m), i.e.
+        the cable loss. <strong>Bottom:</strong> divided by the bulk ratio; edge channels sit at 1.00 ± 0.01 for every pair.
         The grey points compare the same Hitachi cable measured twice, as a reference for "no change".</figcaption>
       </figure>
       <figure>
@@ -200,19 +230,47 @@
         the same Hitachi cable re-measured an hour later is 3.6 % lower. Treat the Fe55 cable-to-cable numbers as ±4 %.</figcaption>
       </figure>
 
+      <h2>6. Noise: neighbour-trigger hits, bench vs detector</h2>
+      <p>Both campaigns ran with the neighbour trigger (SNG) on. When a channel fires, its neighbours are read out
+      too, below threshold. Those neighbour hits sample the baseline of a channel at a random moment, plus noise, plus
+      any crosstalk from the channel that fired. Their spread (half the 16–84 % width of the ADC distribution) is
+      therefore a noise measure available in both setups. On the bench I use the unpulsed channels read out at pulse
+      time; on the detector, the SNG hits of the Fe55 runs. The no-source runs give only ~25 neighbour hits per channel,
+      too few.</p>
+      <figure>
+        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/noise_bench_vs_detector_3V3.png" alt="Spread of neighbour-trigger hits vs channel for the pulser bench and the detector, and vs cable length">
+        <figcaption>(a) Bench, Samtec, 3 mV/fC. (b) Detector, Samtec, Fe55 at 3 mV/fC. Same y-axis.
+        (c) Bulk median and worst edge channel vs length for both.</figcaption>
+      </figure>
+      <ul>
+        <li><strong>The bench is 3–5× noisier</strong> at the same gain: bulk spread 11–22 ADC against ~4 ADC on the detector.</li>
+        <li><strong>On the bench the edge channels are the noisiest,</strong> and from 2 m they jump from ~20 to ~45 ADC. On the
+          detector the edges are like the bulk (≤ 4.2 ADC) and nothing changes from 1.5 to 2.5 m.</li>
+        <li><strong>It is noise, not crosstalk from the pulses.</strong> The level of the neighbour hits rises with the pulser
+          voltage (62 → 72 ADC from 1.8 to 3.3 V: that part is crosstalk). The spread does not change with the voltage
+          (e.g. 2.0 m: 17.5 / 17.5 / 19.0 ADC at 1.8 / 2.5 / 3.3 V).</li>
+      </ul>
+      <p>This explains the self-triggering in numbers. The threshold sits at ~150 ADC on the bench and ~140 ADC on the
+      detector, with the baseline at ~65 and ~48 ADC, so the margin is ~85–90 ADC in both. On the detector that is more
+      than 20 times the noise spread: the noise never reaches threshold. On the bench it is ~4–8 times the bulk spread,
+      ~4.5 times on the edge channels up to 1.5 m (a few tens of Hz were seen on Hitachi 1.5 m) and only ~2 times on the
+      edge channels from 2 m: those channels fire on noise at the kHz level.</p>
+
       <h2>What the two measurements agree and disagree on</h2>
       <div style="overflow-x:auto">
       <table>
         <thead><tr><th></th><th>Pulser</th><th>Fe55</th></tr></thead>
         <tbody>
-          <tr><td>Typical-channel loss per metre (Samtec)</td><td>~9 %/m</td><td>~13 ± 6 %/m</td></tr>
+          <tr><td>Typical-channel loss per metre (Samtec)</td><td>~9 %/m (length and day confounded)</td><td>13–17 %/m (length and gain drift confounded)</td></tr>
+          <tr><td>Noise spread at 3 mV/fC, bulk / edge</td><td>11–22 / up to 45 ADC, grows with length</td><td>~4 / ~4 ADC, flat</td></tr>
           <tr><td>Hitachi vs Samtec (reference only)</td><td>Hitachi better</td><td>Hitachi better</td></tr>
           <tr><td>Edge channels lose more signal with length (Samtec)</td><td><strong>≤ 2.5 %</strong> at 3 m (section 2)</td><td><strong>No</strong>, &lt; 0.6 % at 2.5 m (section 4)</td></tr>
           <tr><td>Edge channels self-trigger on long cables</td><td><strong>Yes</strong> (section 3)</td><td><strong>No</strong> (section 4)</td></tr>
         </tbody>
       </table>
       </div>
-      <p>So the two campaigns don't disagree about signal loss. The only real difference is the noise.</p>
+      <p>So both campaigns see a signal loss with length on every channel. The Fe55 loss comes out steeper, possibly
+      because of gas-gain drift. Neither sees a significant extra loss at the edges. The real difference is the noise.</p>
 
       <h2>Why the edge channels look "lost" in the pulser data</h2>
       <p>The real pulse is still there on those channels, within ~2.5 % of the usual amplitude. But they also produce many
@@ -230,8 +288,17 @@
       </ul>
 
       <h2>Why it happens on the pulser bench and not on the detector</h2>
-      <p>What these data show for sure: the same type of cable, at a similar length and a comparable threshold,
-      oscillates on the bench and doesn't on the detector. They don't show <em>why</em>. Candidate explanations:</p>
+      <p>What the data show:</p>
+      <ol>
+        <li><strong>The bench is noisier everywhere,</strong> by 3–5× at the same gain, and the noise grows with cable
+          length, most on the edge channels (section 6). On the detector the same kind of cable adds no noise up to 2.5 m.</li>
+        <li><strong>The self-triggering is just that noise crossing the threshold.</strong> On the bench edge channels from
+          2 m the margin is only ~2× the noise spread; on the detector it is &gt;20×.</li>
+        <li><strong>It doesn't need the pulses.</strong> One bench run recorded no pulses at all (Hitachi 50 cm + 2 m, 1.8 V,
+          8 June 17:05), and channels 0–2 still fired at ~30 kHz.</li>
+      </ol>
+      <p>So the bench chain picks up much more noise than the detector, and the long cable makes it worse. What the data
+      don't show is <em>where the bench noise comes from</em>. Candidate explanations:</p>
       <ul>
         <li><strong>What sits at the far end of the cable.</strong> On the detector the VMM input sees a pad: a
           capacitance to the mesh, tied to the detector ground. On the bench it sees the pulser injection network
@@ -260,6 +327,9 @@
           channels still oscillate.</li>
         <li>Add a ground strap between the pulser board and the hybrid.</li>
         <li>Use one long transmission cable without the 50 cm injection cable and the joint.</li>
+        <li>Retake the short-cable (1.0 and 1.5 m) bench runs on the same day and setup as the long ones, to separate
+          length from day.</li>
+        <li>For Fe55, interleave the lengths (e.g. 1.5 → 2.5 → 2.0 → 1.5 m), so a gain drift can be measured and removed.</li>
       </ol>
 
       <h2>Open points</h2>

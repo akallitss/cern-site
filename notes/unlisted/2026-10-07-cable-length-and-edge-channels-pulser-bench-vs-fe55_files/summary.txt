@@ -65,6 +65,7 @@ Fe55 1 mV/fC photopeak ratios (bulk median ± per-channel spread; edge ch / bulk
 Fe55 3 mV/fC photopeak ratios (bulk median ± per-channel spread; edge ch / bulk):
   Hitachi 2.0 m      / Samtec 1.5 m: 1.027 ± 0.011 | 0:0.998 31:1.006 32:1.006 63:1.001
   Samtec 2.0 m       / Samtec 1.5 m: 0.904 ± 0.007 | 0:1.000 31:1.007 32:1.001 63:0.999
+  Samtec 2.5 m       / Samtec 1.5 m: 0.831 ± 0.009 | 0:0.998 31:1.006 32:1.001 63:1.002
   saturated fraction (ADC>=1020), Samtec 1.5 m: 0.053
 
 Fe55 reference runs, over-threshold rate [Hz], median over VMMs (bulk | 0 31 32 63):
@@ -76,6 +77,7 @@ Fe55 reference runs, over-threshold rate [Hz], median over VMMs (bulk | 0 31 32 
   Hitachi 2.0 m        3 mV/fC   0.38 |  0.33  0.42  0.31  0.39
   Samtec 1.5 m         3 mV/fC   0.41 |  0.37  0.42  0.39  0.40
   Samtec 2.0 m         3 mV/fC   0.34 |  0.31  0.36  0.33  0.33
+  Samtec 2.5 m         3 mV/fC   0.38 |  0.33  0.36  0.38  0.39
   29 Sep 1.5 m         3 mV/fC   0.28 |  0.27  0.30  0.27  0.24
   29 Sep 2.0 m         3 mV/fC   0.26 |  0.25  0.29  0.24  0.24
   29 Sep 2.5 m         3 mV/fC   0.27 |  0.28  0.31  0.27  0.25
@@ -93,6 +95,25 @@ SAMTEC ONLY (Hitachi will not be available)
   Fe55 1 mV/fC: bulk / 1.5 m 1.5m:1.000 2.0m:0.920 2.5m:0.869  -> -13.1 %/m (±4 % per point)
      edge/bulk (0,31,32,63): 1.5m: 1.000 1.000 1.000 1.000 | 2.0m: 1.004 1.003 0.996 1.002 | 2.5m: 1.006 0.999 1.005 1.000
      max ref-run rate on edge zone [Hz]: 1.5m:0.30 2.0m:0.37 2.5m:0.29
-  Fe55 3 mV/fC: bulk / 1.5 m 1.5m:1.000 2.0m:0.904  -> -19.2 %/m (±4 % per point)
-     edge/bulk (0,31,32,63): 1.5m: 1.000 1.000 1.000 1.000 | 2.0m: 1.000 1.007 1.001 0.999
-     max ref-run rate on edge zone [Hz]: 1.5m:0.59 2.0m:0.52
+  Fe55 3 mV/fC: bulk / 1.5 m 1.5m:1.000 2.0m:0.904 2.5m:0.831  -> -16.9 %/m (±4 % per point)
+     edge/bulk (0,31,32,63): 1.5m: 1.000 1.000 1.000 1.000 | 2.0m: 1.000 1.007 1.001 0.999 | 2.5m: 0.998 1.006 1.001 1.002
+     max ref-run rate on edge zone [Hz]: 1.5m:0.59 2.0m:0.52 2.5m:0.60
+
+NEIGHBOUR-TRIGGER HITS, Samtec (level = median ADC, spread = half 16-84 % width)
+  bench runs: 1.0/1.5 m on 5 June, 2.0/2.5/3.0 m on 8 June (length and day are confounded)
+  bench 1.0 m | 1V8: level 62 spread 13.5 worst edge 20 | 2V5: level 65 spread 14.0 worst edge 20 | 3V3: level 72 spread 14.5 worst edge 20
+  bench 1.5 m | 1V8: level 60 spread 10.5 worst edge 18 | 2V5: level 65 spread 10.5 worst edge 18 | 3V3: level 71 spread 11.0 worst edge 20
+  bench 2.0 m | 1V8: level 61 spread 17.5 worst edge 40 | 2V5: level 64 spread 17.5 worst edge 41 | 3V3: level 70 spread 19.0 worst edge 44
+  bench 2.5 m | 1V8: level 60 spread 18.8 worst edge 42 | 2V5: level 64 spread 19.0 worst edge 44 | 3V3: level 69 spread 19.0 worst edge 44
+  bench 3.0 m | 1V8: level 62 spread 21.5 worst edge 46 | 2V5: level 65 spread 22.0 worst edge 44 | 3V3: level 70 spread 22.0 worst edge 45
+  detector 1 mV/fC 1.5 m | level 45 spread 1.0 worst edge 1.5
+  detector 1 mV/fC 2.0 m | level 45 spread 1.0 worst edge 1.5
+  detector 1 mV/fC 2.5 m | level 45 spread 1.0 worst edge 1.5
+  detector 3 mV/fC 1.5 m | level 49 spread 4.0 worst edge 4.2
+  detector 3 mV/fC 2.0 m | level 48 spread 3.5 worst edge 4.2
+  detector 3 mV/fC 2.5 m | level 48 spread 3.5 worst edge 4.0
+  bulk ratio vs all-channel ratio (Fe55, Samtec / 1.5 m):
+    1 mV/fC 2.0 m: bulk 0.920  all channels 0.920
+    1 mV/fC 2.5 m: bulk 0.869  all channels 0.870
+    3 mV/fC 2.0 m: bulk 0.904  all channels 0.904
+    3 mV/fC 2.5 m: bulk 0.831  all channels 0.831
