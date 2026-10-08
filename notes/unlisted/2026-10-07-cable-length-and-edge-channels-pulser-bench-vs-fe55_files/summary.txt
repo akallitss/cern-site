@@ -1,4 +1,4 @@
-Cable-length study: pulser bench (June) vs Fe55 on detector (Oct)
+Cable-length study: external-pulser runs (June) vs Fe55 on detector (Oct)
 ====================================================================
 
 Pulser group labels -> pulsed VMM residue (ch % 3), per run family:
@@ -100,18 +100,31 @@ SAMTEC ONLY (Hitachi will not be available)
      max ref-run rate on edge zone [Hz]: 1.5m:0.59 2.0m:0.52 2.5m:0.60
 
 NEIGHBOUR-TRIGGER HITS, Samtec (level = median ADC, spread = half 16-84 % width)
-  bench runs: 1.0/1.5 m on 5 June, 2.0/2.5/3.0 m on 8 June (length and day are confounded)
-  bench 1.0 m | 1V8: median 62 mean 60 edge median 57 spread 13.5 worst edge 20 | 2V5: median 65 mean 65 edge median 60 spread 14.0 worst edge 20 | 3V3: median 72 mean 70 edge median 64 spread 14.5 worst edge 20
-  bench 1.5 m | 1V8: median 60 mean 60 edge median 56 spread 10.5 worst edge 18 | 2V5: median 65 mean 65 edge median 60 spread 10.5 worst edge 18 | 3V3: median 71 mean 71 edge median 64 spread 11.0 worst edge 20
-  bench 2.0 m | 1V8: median 61 mean 59 edge median 60 spread 17.5 worst edge 40 | 2V5: median 64 mean 64 edge median 62 spread 17.5 worst edge 41 | 3V3: median 70 mean 69 edge median 66 spread 19.0 worst edge 44
-  bench 2.5 m | 1V8: median 60 mean 59 edge median 62 spread 18.8 worst edge 42 | 2V5: median 64 mean 63 edge median 64 spread 19.0 worst edge 44 | 3V3: median 69 mean 68 edge median 66 spread 19.0 worst edge 44
-  bench 3.0 m | 1V8: median 62 mean 60 edge median 64 spread 21.5 worst edge 46 | 2V5: median 65 mean 63 edge median 64 spread 22.0 worst edge 44 | 3V3: median 70 mean 69 edge median 67 spread 22.0 worst edge 45
-  detector 1 mV/fC 1.5 m | median 45 mean 46 edge median 44 spread 1.0 worst edge 1.5
-  detector 1 mV/fC 2.0 m | median 45 mean 46 edge median 43 spread 1.0 worst edge 1.5
-  detector 1 mV/fC 2.5 m | median 45 mean 46 edge median 43 spread 1.0 worst edge 1.5
-  detector 3 mV/fC 1.5 m | median 49 mean 51 edge median 48 spread 4.0 worst edge 4.2
-  detector 3 mV/fC 2.0 m | median 48 mean 50 edge median 48 spread 3.5 worst edge 4.2
-  detector 3 mV/fC 2.5 m | median 48 mean 50 edge median 48 spread 3.5 worst edge 4.0
+  external-pulser runs: 1.0/1.5 m on 5 June, 2.0/2.5/3.0 m on 8 June (length and day are confounded)
+  external pulser 1.0 m | 1V8: median 62 mean 60 edge median 57 spread 13.5 worst edge 20 | 2V5: median 65 mean 65 edge median 60 spread 14.0 worst edge 20 | 3V3: median 72 mean 70 edge median 64 spread 14.5 worst edge 20
+  external pulser 1.5 m | 1V8: median 60 mean 60 edge median 56 spread 10.5 worst edge 18 | 2V5: median 65 mean 65 edge median 60 spread 10.5 worst edge 18 | 3V3: median 71 mean 71 edge median 64 spread 11.0 worst edge 20
+  external pulser 2.0 m | 1V8: median 61 mean 59 edge median 60 spread 17.5 worst edge 40 | 2V5: median 64 mean 64 edge median 62 spread 17.5 worst edge 41 | 3V3: median 70 mean 69 edge median 66 spread 19.0 worst edge 44
+  external pulser 2.5 m | 1V8: median 60 mean 59 edge median 62 spread 18.8 worst edge 42 | 2V5: median 64 mean 63 edge median 64 spread 19.0 worst edge 44 | 3V3: median 69 mean 68 edge median 66 spread 19.0 worst edge 44
+  external pulser 3.0 m | 1V8: median 62 mean 60 edge median 64 spread 21.5 worst edge 46 | 2V5: median 65 mean 63 edge median 64 spread 22.0 worst edge 44 | 3V3: median 70 mean 69 edge median 67 spread 22.0 worst edge 45
+  detector Fe55 1 mV/fC 1.5 m | median 45 mean 46 edge median 44 spread 1.0 worst edge 1.5
+  detector Fe55 1 mV/fC 2.0 m | median 45 mean 46 edge median 43 spread 1.0 worst edge 1.5
+  detector Fe55 1 mV/fC 2.5 m | median 45 mean 46 edge median 43 spread 1.0 worst edge 1.5
+  detector Fe55 3 mV/fC 1.5 m | median 49 mean 51 edge median 48 spread 4.0 worst edge 4.2
+  detector Fe55 3 mV/fC 2.0 m | median 48 mean 50 edge median 48 spread 3.5 worst edge 4.2
+  detector Fe55 3 mV/fC 2.5 m | median 48 mean 50 edge median 48 spread 3.5 worst edge 4.0
+  detector, Fe55 run vs no-source run (mid-connector ch of VMM 4-13 pooled):
+    1 mV/fC 1.5 m Fe55      enp4s0f1_enp4s0f1_fe55_samtec_1.5m_m410d750_sng_1mVfC_20261007-151716 live  600 s | hits/ch  10828 | median 45 mean 46.9 spread 6.0
+    1 mV/fC 1.5 m no source enp4s0f1_enp4s0f1_ref4_samtec_1.5m_m410d750_sng_1mVfC_20261007-150833 live  300 s | hits/ch     28 | median 45 mean 65.3 spread 9.0
+    1 mV/fC 2.0 m Fe55      enp4s0f1_enp4s0f1_fe55_samtec_2.0m_m410d750_sng_1mVfC_20261007-162811 live  600 s | hits/ch  10063 | median 45 mean 46.6 spread 6.0
+    1 mV/fC 2.0 m no source enp4s0f1_enp4s0f1_ref4_samtec_2.0m_m410d750_sng_1mVfC_20261007-161257 live  300 s | hits/ch     26 | median 45 mean 78.3 spread 10.5
+    1 mV/fC 2.5 m Fe55      enp4s0f1_enp4s0f1_fe55_samtec_2.5m_m410d750_sng_1mVfC_20261007-164656 live  600 s | hits/ch   9480 | median 45 mean 46.5 spread 6.0
+    1 mV/fC 2.5 m no source enp4s0f1_enp4s0f1_ref4_samtec_2.5m_m410d750_sng_1mVfC_20261007-170053 live  300 s | hits/ch     25 | median 45 mean 67.9 spread 14.5
+    3 mV/fC 1.5 m Fe55      enp4s0f1_enp4s0f1_fe55_samtec_1.5m_m410d750_sng_3mVfC_20261007-144517 live  600 s | hits/ch  13338 | median 49 mean 56.7 spread 12.0
+    3 mV/fC 1.5 m no source enp4s0f1_enp4s0f1_ref4_samtec_1.5m_m410d750_sng_3mVfC_20261007-145714 live  300 s | hits/ch     86 | median 49 mean 71.9 spread 24.5
+    3 mV/fC 2.0 m Fe55      enp4s0f1_enp4s0f1_fe55_samtec_2.0m_m410d750_sng_3mVfC_20261007-155347 live  600 s | hits/ch  13026 | median 48 mean 56.0 spread 11.5
+    3 mV/fC 2.0 m no source enp4s0f1_enp4s0f1_ref4_samtec_2.0m_m410d750_sng_3mVfC_20261007-160431 live  300 s | hits/ch     79 | median 49 mean 72.8 spread 27.0
+    3 mV/fC 2.5 m Fe55      enp4s0f1_enp4s0f1_fe55_samtec_2.5m_m410d750_sng_3mVfC_20261007-171625 live  600 s | hits/ch  12582 | median 48 mean 55.3 spread 12.0
+    3 mV/fC 2.5 m no source enp4s0f1_enp4s0f1_ref4_samtec_2.5m_m410d750_sng_3mVfC_20261007-170954 live  300 s | hits/ch     91 | median 49 mean 75.6 spread 30.0
   mid-connector ratio vs all-channel ratio (Fe55, Samtec / 1.5 m):
     1 mV/fC 2.0 m: mid-connector 0.920  all channels 0.920
     1 mV/fC 2.5 m: mid-connector 0.869  all channels 0.870
