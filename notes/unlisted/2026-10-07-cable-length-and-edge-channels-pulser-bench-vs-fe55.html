@@ -288,7 +288,7 @@
           longer cables on 8 June. Comparing only 8 June runs, ch 63 loses 1.0 % from 2.0 to 2.5 m and 1.3 % from 2.0 to 3.0 m.</li>
         <li><strong>At 1.8 V the method reaches its limit.</strong> The pulse (~200–250 ADC) is then not far above the noise
           peak (~130–180). At 2.5 and 3.0 m the two merge on the self-triggering edge channels (0, 1, 30, 62, 63), and those
-          fits are rejected (crosses in the figure below). Where the fit is accepted, it gives the same values as at 3.3 V.
+          fits are rejected (crosses in the figure below). Where the fit is accepted, it gives nearly the same values as at 3.3 V (largest difference: ch 0 at 2.0 m, 0.84 against 0.90).
           The 2.5 V runs only lose ch 0 and 30 at 3.0 m.</li>
         <li><strong>The pulse peak gets wider with longer cables:</strong> σ ≈ 12 ADC at 1.5 m and 22–27 ADC from 2 m on the
           mid-connector channels, and 30–60 ADC on the edge channels. That is the same extra noise that the neighbour-trigger
@@ -510,7 +510,7 @@
       <p>The real pulse is still there on those channels, within ~2.5 % of the usual amplitude. But they also produce many
       extra noise hits with small ADC (~120–180). With 2.5–3 m of cable a channel can have 1–3 noise hits for
       every real pulse. If you average all the hits of the channel, or take the median, the result is dragged
-      towards ~150 and the channel looks like it collapsed. Only at the lowest pulser voltage (1.8 V) do real
+      towards ~150 and the channel looks like it collapsed. A Gaussian fit to the pulse peak, with no timing, recovers the real amplitude (section 2b). Only at the lowest pulser voltage (1.8 V) do real
       pulses actually get lost: 15–20 % of them, because the channel is busy with a noise hit when the pulse
       arrives.</p>
       <p>Other things to keep in mind when comparing with earlier analyses:</p>
