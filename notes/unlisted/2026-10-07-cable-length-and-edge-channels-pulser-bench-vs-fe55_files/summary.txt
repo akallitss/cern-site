@@ -27,34 +27,34 @@ Pulser group labels -> pulsed VMM residue (ch % 3), per run family:
 Pulser runs dropped (no pulses recorded):
   hybrid_hybrid_4118_test_SNR_SNG_AC_hitachi_50cm_2meter_channels_3k+2_vmm1_1V8_20260608_1705  (216 pulses)
 
-Pulser 1V8: bulk in-time ADC | edge amp/bulk | self-trigger rate [Hz] on 0,1,30,31,62,63
-  Hitachi 1.5 m  bulk   252 | 0:0.90 31:1.03 32:1.02 63:0.81 | noise 23 25 0 0 37 28 | eff 0/1/62/63 0.98 0.97 0.96 1.00
-  Hitachi 2.5 m  bulk   235 | 0:0.95 31:1.01 32:nan 63:0.83 | noise 30813 30985 0 0 nan 20568 | eff 0/1/62/63 0.80 0.81 nan 0.80
-  Samtec  1.0 m  bulk   256 | 0:0.93 31:1.03 32:1.01 63:0.82 | noise 0 0 0 0 0 0 | eff 0/1/62/63 1.00 1.00 1.00 1.00
-  Samtec  1.5 m  bulk   244 | 0:nan 31:1.03 32:1.03 63:0.81 | noise 0 0 0 0 0 0 | eff 0/1/62/63 0.00 1.00 1.00 1.00
-  Samtec  2.0 m  bulk   232 | 0:0.91 31:1.04 32:1.03 63:0.81 | noise 121 119 1 1 6 6 | eff 0/1/62/63 0.92 0.98 0.99 0.94
-  Samtec  2.5 m  bulk   224 | 0:0.94 31:1.02 32:1.02 63:0.82 | noise 937 946 332 401 595 723 | eff 0/1/62/63 0.85 0.97 0.91 0.85
-  Samtec  3.0 m  bulk   213 | 0:0.95 31:1.03 32:1.03 63:0.83 | noise 1148 1141 2930 2980 615 617 | eff 0/1/62/63 0.80 0.87 0.85 0.81
+Pulser 1V8: mid-connector in-time ADC | edge amp/mid-connector | self-trigger rate [Hz] on 0,1,30,31,62,63
+  Hitachi 1.5 m  mid-connector   252 | 0:0.90 31:1.03 32:1.02 63:0.81 | noise 23 25 0 0 37 28 | eff 0/1/62/63 0.98 0.97 0.96 1.00
+  Hitachi 2.5 m  mid-connector   235 | 0:0.95 31:1.01 32:nan 63:0.83 | noise 30813 30985 0 0 nan 20568 | eff 0/1/62/63 0.80 0.81 nan 0.80
+  Samtec  1.0 m  mid-connector   256 | 0:0.93 31:1.03 32:1.01 63:0.82 | noise 0 0 0 0 0 0 | eff 0/1/62/63 1.00 1.00 1.00 1.00
+  Samtec  1.5 m  mid-connector   244 | 0:nan 31:1.03 32:1.03 63:0.81 | noise 0 0 0 0 0 0 | eff 0/1/62/63 0.00 1.00 1.00 1.00
+  Samtec  2.0 m  mid-connector   232 | 0:0.91 31:1.04 32:1.03 63:0.81 | noise 121 119 1 1 6 6 | eff 0/1/62/63 0.92 0.98 0.99 0.94
+  Samtec  2.5 m  mid-connector   224 | 0:0.94 31:1.02 32:1.02 63:0.82 | noise 937 946 332 401 595 723 | eff 0/1/62/63 0.85 0.97 0.91 0.85
+  Samtec  3.0 m  mid-connector   213 | 0:0.95 31:1.03 32:1.03 63:0.83 | noise 1148 1141 2930 2980 615 617 | eff 0/1/62/63 0.80 0.87 0.85 0.81
 
-Pulser 2V5: bulk in-time ADC | edge amp/bulk | self-trigger rate [Hz] on 0,1,30,31,62,63
-  Hitachi 1.5 m  bulk   335 | 0:0.91 31:1.04 32:1.03 63:0.81 | noise 24 24 0 0 28 28 | eff 0/1/62/63 1.00 1.00 1.00 1.00
-  Hitachi 2.5 m  bulk   311 | 0:0.88 31:1.02 32:1.04 63:0.78 | noise 30935 30894 0 0 20488 20613 | eff 0/1/62/63 0.96 0.98 0.97 0.96
-  Samtec  1.0 m  bulk   342 | 0:0.92 31:1.03 32:1.03 63:0.82 | noise 0 0 0 0 0 0 | eff 0/1/62/63 1.00 1.00 1.00 1.00
-  Samtec  1.5 m  bulk   326 | 0:nan 31:1.04 32:1.03 63:0.81 | noise 0 0 0 0 0 0 | eff 0/1/62/63 0.00 1.00 1.00 1.00
-  Samtec  2.0 m  bulk   309 | 0:0.89 31:1.04 32:1.02 63:0.80 | noise 106 116 1 1 7 6 | eff 0/1/62/63 1.00 1.00 1.00 1.00
-  Samtec  2.5 m  bulk   296 | 0:0.89 31:1.02 32:1.02 63:0.79 | noise 917 831 442 400 652 714 | eff 0/1/62/63 0.99 1.00 1.00 1.00
-  Samtec  3.0 m  bulk   282 | 0:0.89 31:1.02 32:1.02 63:0.79 | noise 1259 1173 2924 2861 626 651 | eff 0/1/62/63 0.98 1.00 1.00 0.99
+Pulser 2V5: mid-connector in-time ADC | edge amp/mid-connector | self-trigger rate [Hz] on 0,1,30,31,62,63
+  Hitachi 1.5 m  mid-connector   335 | 0:0.91 31:1.04 32:1.03 63:0.81 | noise 24 24 0 0 28 28 | eff 0/1/62/63 1.00 1.00 1.00 1.00
+  Hitachi 2.5 m  mid-connector   311 | 0:0.88 31:1.02 32:1.04 63:0.78 | noise 30935 30894 0 0 20488 20613 | eff 0/1/62/63 0.96 0.98 0.97 0.96
+  Samtec  1.0 m  mid-connector   342 | 0:0.92 31:1.03 32:1.03 63:0.82 | noise 0 0 0 0 0 0 | eff 0/1/62/63 1.00 1.00 1.00 1.00
+  Samtec  1.5 m  mid-connector   326 | 0:nan 31:1.04 32:1.03 63:0.81 | noise 0 0 0 0 0 0 | eff 0/1/62/63 0.00 1.00 1.00 1.00
+  Samtec  2.0 m  mid-connector   309 | 0:0.89 31:1.04 32:1.02 63:0.80 | noise 106 116 1 1 7 6 | eff 0/1/62/63 1.00 1.00 1.00 1.00
+  Samtec  2.5 m  mid-connector   296 | 0:0.89 31:1.02 32:1.02 63:0.79 | noise 917 831 442 400 652 714 | eff 0/1/62/63 0.99 1.00 1.00 1.00
+  Samtec  3.0 m  mid-connector   282 | 0:0.89 31:1.02 32:1.02 63:0.79 | noise 1259 1173 2924 2861 626 651 | eff 0/1/62/63 0.98 1.00 1.00 0.99
 
-Pulser 3V3: bulk in-time ADC | edge amp/bulk | self-trigger rate [Hz] on 0,1,30,31,62,63
-  Hitachi 1.5 m  bulk   432 | 0:0.91 31:1.04 32:1.04 63:0.81 | noise 27 25 0 0 32 29 | eff 0/1/62/63 1.00 1.00 1.00 1.00
-  Hitachi 2.5 m  bulk   400 | 0:0.88 31:1.02 32:1.05 63:0.78 | noise 29719 30758 0 0 20666 19571 | eff 0/1/62/63 1.00 1.01 1.00 0.99
-  Samtec  1.0 m  bulk   442 | 0:0.92 31:1.04 32:1.03 63:0.82 | noise 0 0 0 0 0 0 | eff 0/1/62/63 1.00 1.00 1.00 1.00
-  Samtec  1.5 m  bulk   418 | 0:nan 31:1.04 32:1.04 63:0.82 | noise 0 0 0 0 0 0 | eff 0/1/62/63 0.00 1.00 1.00 1.00
-  Samtec  2.0 m  bulk   398 | 0:0.90 31:1.04 32:1.03 63:0.80 | noise 395 429 9 11 17 15 | eff 0/1/62/63 1.00 1.00 1.00 1.00
-  Samtec  2.5 m  bulk   381 | 0:0.89 31:1.03 32:1.03 63:0.79 | noise 832 1007 406 502 575 571 | eff 0/1/62/63 1.00 1.00 1.00 1.00
-  Samtec  3.0 m  bulk   362 | 0:0.89 31:1.03 32:1.02 63:0.79 | noise 1475 1390 2875 2881 810 674 | eff 0/1/62/63 1.00 1.00 1.00 1.00
+Pulser 3V3: mid-connector in-time ADC | edge amp/mid-connector | self-trigger rate [Hz] on 0,1,30,31,62,63
+  Hitachi 1.5 m  mid-connector   432 | 0:0.91 31:1.04 32:1.04 63:0.81 | noise 27 25 0 0 32 29 | eff 0/1/62/63 1.00 1.00 1.00 1.00
+  Hitachi 2.5 m  mid-connector   400 | 0:0.88 31:1.02 32:1.05 63:0.78 | noise 29719 30758 0 0 20666 19571 | eff 0/1/62/63 1.00 1.01 1.00 0.99
+  Samtec  1.0 m  mid-connector   442 | 0:0.92 31:1.04 32:1.03 63:0.82 | noise 0 0 0 0 0 0 | eff 0/1/62/63 1.00 1.00 1.00 1.00
+  Samtec  1.5 m  mid-connector   418 | 0:nan 31:1.04 32:1.04 63:0.82 | noise 0 0 0 0 0 0 | eff 0/1/62/63 0.00 1.00 1.00 1.00
+  Samtec  2.0 m  mid-connector   398 | 0:0.90 31:1.04 32:1.03 63:0.80 | noise 395 429 9 11 17 15 | eff 0/1/62/63 1.00 1.00 1.00 1.00
+  Samtec  2.5 m  mid-connector   381 | 0:0.89 31:1.03 32:1.03 63:0.79 | noise 832 1007 406 502 575 571 | eff 0/1/62/63 1.00 1.00 1.00 1.00
+  Samtec  3.0 m  mid-connector   362 | 0:0.89 31:1.03 32:1.02 63:0.79 | noise 1475 1390 2875 2881 810 674 | eff 0/1/62/63 1.00 1.00 1.00 1.00
 
-Fe55 1 mV/fC photopeak ratios (bulk median ± per-channel spread; edge ch / bulk):
+Fe55 1 mV/fC photopeak ratios (mid-connector median ± per-channel spread; edge ch / mid-connector):
   Hitachi 2.0 m (A)  / Samtec 1.5 m: 1.085 ± 0.014 | 0:0.994 31:0.996 32:1.005 63:1.003
   Hitachi 2.0 m (B)  / Samtec 1.5 m: 1.045 ± 0.011 | 0:1.003 31:0.994 32:1.002 63:0.998
   Samtec 2.0 m       / Samtec 1.5 m: 0.920 ± 0.010 | 0:1.004 31:1.003 32:0.996 63:1.002
@@ -62,13 +62,13 @@ Fe55 1 mV/fC photopeak ratios (bulk median ± per-channel spread; edge ch / bulk
   repeatability Hitachi 2.0 m B/A: 0.964
   saturated fraction (ADC>=1020), Samtec 1.5 m: 0.026
 
-Fe55 3 mV/fC photopeak ratios (bulk median ± per-channel spread; edge ch / bulk):
+Fe55 3 mV/fC photopeak ratios (mid-connector median ± per-channel spread; edge ch / mid-connector):
   Hitachi 2.0 m      / Samtec 1.5 m: 1.027 ± 0.011 | 0:0.998 31:1.006 32:1.006 63:1.001
   Samtec 2.0 m       / Samtec 1.5 m: 0.904 ± 0.007 | 0:1.000 31:1.007 32:1.001 63:0.999
   Samtec 2.5 m       / Samtec 1.5 m: 0.831 ± 0.009 | 0:0.998 31:1.006 32:1.001 63:1.002
   saturated fraction (ADC>=1020), Samtec 1.5 m: 0.053
 
-Fe55 reference runs, over-threshold rate [Hz], median over VMMs (bulk | 0 31 32 63):
+Fe55 reference runs, over-threshold rate [Hz], median over VMMs (mid-connector | 0 31 32 63):
   Hitachi 2.0 m (r3)   1 mV/fC   0.10 |  0.08  0.11  0.08  0.11
   Hitachi 2.0 m (r4)   1 mV/fC   0.24 |  0.21  0.25  0.18  0.25
   Samtec 1.5 m         1 mV/fC   0.26 |  0.25  0.27  0.24  0.25
@@ -83,20 +83,20 @@ Fe55 reference runs, over-threshold rate [Hz], median over VMMs (bulk | 0 31 32 
   29 Sep 2.5 m         3 mV/fC   0.27 |  0.28  0.31  0.27  0.25
 
 SAMTEC ONLY (Hitachi will not be available)
-  pulser 1V8: bulk / 1.5 m 1.0m:1.049 1.5m:1.000 2.0m:0.949 2.5m:0.914 3.0m:0.871  -> -8.8 %/m
-     edge amp/bulk vs 1.0 m: 1.0m:1.000 1.5m:1.005 2.0m:0.997 2.5m:1.002 3.0m:1.016
+  pulser 1V8: mid-connector / 1.5 m 1.0m:1.049 1.5m:1.000 2.0m:0.949 2.5m:0.914 3.0m:0.871  -> -8.8 %/m
+     edge amp/mid-connector vs 1.0 m: 1.0m:1.000 1.5m:1.005 2.0m:0.997 2.5m:1.002 3.0m:1.016
      max self-trigger on edge zone [Hz]: 1.0m:0 1.5m:0 2.0m:121 2.5m:946 3.0m:2980 | min eff: 1.0m:1.00 1.5m:1.00 2.0m:0.92 2.5m:0.85 3.0m:0.80 | dead ch: 1.5m:[0]
-  pulser 2V5: bulk / 1.5 m 1.0m:1.051 1.5m:1.000 2.0m:0.949 2.5m:0.909 3.0m:0.866  -> -9.2 %/m
-     edge amp/bulk vs 1.0 m: 1.0m:1.000 1.5m:1.003 2.0m:0.983 2.5m:0.978 3.0m:0.977
+  pulser 2V5: mid-connector / 1.5 m 1.0m:1.051 1.5m:1.000 2.0m:0.949 2.5m:0.909 3.0m:0.866  -> -9.2 %/m
+     edge amp/mid-connector vs 1.0 m: 1.0m:1.000 1.5m:1.003 2.0m:0.983 2.5m:0.978 3.0m:0.977
      max self-trigger on edge zone [Hz]: 1.0m:0 1.5m:0 2.0m:116 2.5m:917 3.0m:2924 | min eff: 1.0m:1.00 1.5m:1.00 2.0m:1.00 2.5m:0.99 3.0m:0.98 | dead ch: 1.5m:[0]
-  pulser 3V3: bulk / 1.5 m 1.0m:1.055 1.5m:1.000 2.0m:0.951 2.5m:0.910 3.0m:0.864  -> -9.4 %/m
-     edge amp/bulk vs 1.0 m: 1.0m:1.000 1.5m:0.995 2.0m:0.986 2.5m:0.975 3.0m:0.980
+  pulser 3V3: mid-connector / 1.5 m 1.0m:1.055 1.5m:1.000 2.0m:0.951 2.5m:0.910 3.0m:0.864  -> -9.4 %/m
+     edge amp/mid-connector vs 1.0 m: 1.0m:1.000 1.5m:0.995 2.0m:0.986 2.5m:0.975 3.0m:0.980
      max self-trigger on edge zone [Hz]: 1.0m:0 1.5m:0 2.0m:429 2.5m:1007 3.0m:3554 | min eff: 1.0m:1.00 1.5m:1.00 2.0m:1.00 2.5m:1.00 3.0m:1.00 | dead ch: 1.5m:[0]
-  Fe55 1 mV/fC: bulk / 1.5 m 1.5m:1.000 2.0m:0.920 2.5m:0.869  -> -13.1 %/m (±4 % per point)
-     edge/bulk (0,31,32,63): 1.5m: 1.000 1.000 1.000 1.000 | 2.0m: 1.004 1.003 0.996 1.002 | 2.5m: 1.006 0.999 1.005 1.000
+  Fe55 1 mV/fC: mid-connector / 1.5 m 1.5m:1.000 2.0m:0.920 2.5m:0.869  -> -13.1 %/m (±4 % per point)
+     edge/mid-connector (0,31,32,63): 1.5m: 1.000 1.000 1.000 1.000 | 2.0m: 1.004 1.003 0.996 1.002 | 2.5m: 1.006 0.999 1.005 1.000
      max ref-run rate on edge zone [Hz]: 1.5m:0.30 2.0m:0.37 2.5m:0.29
-  Fe55 3 mV/fC: bulk / 1.5 m 1.5m:1.000 2.0m:0.904 2.5m:0.831  -> -16.9 %/m (±4 % per point)
-     edge/bulk (0,31,32,63): 1.5m: 1.000 1.000 1.000 1.000 | 2.0m: 1.000 1.007 1.001 0.999 | 2.5m: 0.998 1.006 1.001 1.002
+  Fe55 3 mV/fC: mid-connector / 1.5 m 1.5m:1.000 2.0m:0.904 2.5m:0.831  -> -16.9 %/m (±4 % per point)
+     edge/mid-connector (0,31,32,63): 1.5m: 1.000 1.000 1.000 1.000 | 2.0m: 1.000 1.007 1.001 0.999 | 2.5m: 0.998 1.006 1.001 1.002
      max ref-run rate on edge zone [Hz]: 1.5m:0.59 2.0m:0.52 2.5m:0.60
 
 NEIGHBOUR-TRIGGER HITS, Samtec (level = median ADC, spread = half 16-84 % width)
@@ -112,8 +112,8 @@ NEIGHBOUR-TRIGGER HITS, Samtec (level = median ADC, spread = half 16-84 % width)
   detector 3 mV/fC 1.5 m | median 49 mean 51 edge median 48 spread 4.0 worst edge 4.2
   detector 3 mV/fC 2.0 m | median 48 mean 50 edge median 48 spread 3.5 worst edge 4.2
   detector 3 mV/fC 2.5 m | median 48 mean 50 edge median 48 spread 3.5 worst edge 4.0
-  bulk ratio vs all-channel ratio (Fe55, Samtec / 1.5 m):
-    1 mV/fC 2.0 m: bulk 0.920  all channels 0.920
-    1 mV/fC 2.5 m: bulk 0.869  all channels 0.870
-    3 mV/fC 2.0 m: bulk 0.904  all channels 0.904
-    3 mV/fC 2.5 m: bulk 0.831  all channels 0.831
+  mid-connector ratio vs all-channel ratio (Fe55, Samtec / 1.5 m):
+    1 mV/fC 2.0 m: mid-connector 0.920  all channels 0.920
+    1 mV/fC 2.5 m: mid-connector 0.869  all channels 0.870
+    3 mV/fC 2.0 m: mid-connector 0.904  all channels 0.904
+    3 mV/fC 2.5 m: mid-connector 0.831  all channels 0.831

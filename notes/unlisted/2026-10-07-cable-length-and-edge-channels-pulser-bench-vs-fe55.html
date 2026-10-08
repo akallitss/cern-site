@@ -45,11 +45,11 @@
       <div class="callout ok">
         <p><strong>Bottom line (Samtec).</strong> On the pulser bench, the VMM channels at the connector borders
         (0/1, 29–31, 62/63) appear to "break down" with long cables. They barely lose signal: the real pulse
-        amplitude on those channels loses at most ~2.5 % more than the bulk, even at 3 m. What changes is that
+        amplitude on those channels loses at most ~2.5 % more than the mid-connector channels, even at 3 m. What changes is that
         they <em>start self-triggering</em>: none up to 1.5 m, 0.1–0.4 kHz at 2.0 m, ~1 kHz at 2.5 m and ~3 kHz
         at 3.0 m (total length). Those noise hits (ADC ≈ 120–180) drag any mean or median of the ADC spectrum
         down. With Fe55 on the P2 detector (Samtec 1.5 / 2.0 / 2.5 m), the edge channels behave exactly like the
-        bulk, both in photopeak (within 0.6 %) and in noise (~0.3 Hz). <strong>Why only the bench:</strong> the
+        mid-connector channels (3–27, 36–60), both in photopeak (within 0.6 %) and in noise (~0.3 Hz). <strong>Why only the bench:</strong> the
         neighbour-trigger hits show the bench is 3–5× noisier than the detector at the same gain, and its edge
         channels get ~2× noisier again from 2 m on. There the noise reaches the threshold; on the detector it stays far
         below it (section 6). A typical channel loses about 9 %/m of signal on the bench and 13–17 %/m with Fe55,
@@ -58,9 +58,9 @@
 
       <h2>Samtec: what changes with cable length</h2>
       <figure>
-        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/samtec_summary.png" alt="Three panels for Samtec cables vs total length: bulk signal, edge-channel signal relative to bulk, and highest edge self-trigger rate">
+        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/samtec_summary.png" alt="Three panels for Samtec cables vs total length: mid-connector signal, edge-channel signal relative to mid-connector, and highest edge self-trigger rate">
         <figcaption>(a) Typical-channel signal, relative to 1.5 m, with a straight-line fit.
-        (b) Edge channels 0/31/32/63: their signal relative to the bulk, compared with the shortest cable.
+        (b) Edge channels 0/31/32/63: their signal relative to the mid-connector channels, compared with the shortest cable.
         Below 1 means the edges lose more than a typical channel.
         (c) The highest self-trigger rate among the edge channels. Triangles mean nothing fired in 10 s.
         The labels give the fraction of real 1.8 V pulses still recorded on the worst edge channel.</figcaption>
@@ -69,20 +69,20 @@
       <table>
         <thead><tr><th>Total Samtec length</th><th>1.0 m</th><th>1.5 m</th><th>2.0 m</th><th>2.5 m</th><th>3.0 m*</th></tr></thead>
         <tbody>
-          <tr><td>Pulser, bulk signal (3.3 V, /1.5 m)</td><td>1.055</td><td>1</td><td>0.951</td><td>0.910</td><td>0.864</td></tr>
-          <tr><td>Fe55, bulk signal (1 mV/fC, /1.5 m, ±4 %)</td><td>–</td><td>1</td><td>0.920</td><td>0.869</td><td>–</td></tr>
-          <tr><td>Fe55, bulk signal (3 mV/fC, /1.5 m, ±4 %)</td><td>–</td><td>1</td><td>0.904</td><td>0.831</td><td>–</td></tr>
-          <tr><td>Pulser, edge vs bulk (3.3 V, /1.0 m)</td><td>1</td><td>0.995</td><td>0.986</td><td>0.975</td><td>0.980</td></tr>
-          <tr><td>Fe55, edge vs bulk (1 mV/fC, /1.5 m)</td><td>–</td><td>1</td><td>1.003</td><td>1.003</td><td>–</td></tr>
+          <tr><td>Pulser, mid-connector signal (3.3 V, /1.5 m)</td><td>1.055</td><td>1</td><td>0.951</td><td>0.910</td><td>0.864</td></tr>
+          <tr><td>Fe55, mid-connector signal (1 mV/fC, /1.5 m, ±4 %)</td><td>–</td><td>1</td><td>0.920</td><td>0.869</td><td>–</td></tr>
+          <tr><td>Fe55, mid-connector signal (3 mV/fC, /1.5 m, ±4 %)</td><td>–</td><td>1</td><td>0.904</td><td>0.831</td><td>–</td></tr>
+          <tr><td>Pulser, edge vs mid-connector (3.3 V, /1.0 m)</td><td>1</td><td>0.995</td><td>0.986</td><td>0.975</td><td>0.980</td></tr>
+          <tr><td>Fe55, edge vs mid-connector (1 mV/fC, /1.5 m)</td><td>–</td><td>1</td><td>1.003</td><td>1.003</td><td>–</td></tr>
           <tr><td>Pulser, worst edge self-trigger rate (3.3 V)</td><td>none</td><td>none</td><td>0.4 kHz</td><td>1.0 kHz</td><td>3.6 kHz</td></tr>
           <tr><td>Pulser, real pulses kept on worst edge ch. (1.8 V)</td><td>1.00</td><td>1.00</td><td>0.92</td><td>0.85</td><td>0.80</td></tr>
           <tr><td>Detector, worst edge noise rate (no source)</td><td>–</td><td>0.3 Hz</td><td>0.4 Hz</td><td>0.3 Hz</td><td>–</td></tr>
-          <tr><td>Bench noise spread, bulk / worst edge (3 mV/fC) [ADC]</td><td>14.5 / 20</td><td>11 / 20</td><td>19 / 44</td><td>19 / 44</td><td>22 / 45</td></tr>
-          <tr><td>Detector noise spread, bulk / worst edge (3 mV/fC) [ADC]</td><td>–</td><td>4.0 / 4.2</td><td>3.5 / 4.2</td><td>3.5 / 4.0</td><td>–</td></tr>
-          <tr><td>Bench neighbour-hit level, median / mean, bulk (1.8 V) [ADC]</td><td>62 / 60</td><td>60 / 60</td><td>61 / 59</td><td>60 / 59</td><td>62 / 60</td></tr>
-          <tr><td>Bench neighbour-hit level, median, bulk / edge (1.8 V) [ADC]</td><td>62 / 57</td><td>60 / 56</td><td>61 / 60</td><td>60 / 62</td><td>62 / 64</td></tr>
-          <tr><td>Detector neighbour-hit level, median / mean, bulk (3 mV/fC) [ADC]</td><td>–</td><td>49 / 51</td><td>48 / 50</td><td>48 / 50</td><td>–</td></tr>
-          <tr><td>Detector neighbour-hit level, median, bulk / edge (3 mV/fC) [ADC]</td><td>–</td><td>49 / 48</td><td>48 / 48</td><td>48 / 48</td><td>–</td></tr>
+          <tr><td>Bench noise spread, mid-connector / worst edge (3 mV/fC) [ADC]</td><td>14.5 / 20</td><td>11 / 20</td><td>19 / 44</td><td>19 / 44</td><td>22 / 45</td></tr>
+          <tr><td>Detector noise spread, mid-connector / worst edge (3 mV/fC) [ADC]</td><td>–</td><td>4.0 / 4.2</td><td>3.5 / 4.2</td><td>3.5 / 4.0</td><td>–</td></tr>
+          <tr><td>Bench neighbour-hit level, median / mean, mid-connector (1.8 V) [ADC]</td><td>62 / 60</td><td>60 / 60</td><td>61 / 59</td><td>60 / 59</td><td>62 / 60</td></tr>
+          <tr><td>Bench neighbour-hit level, median, mid-connector / edge (1.8 V) [ADC]</td><td>62 / 57</td><td>60 / 56</td><td>61 / 60</td><td>60 / 62</td><td>62 / 64</td></tr>
+          <tr><td>Detector neighbour-hit level, median / mean, mid-connector (3 mV/fC) [ADC]</td><td>–</td><td>49 / 51</td><td>48 / 50</td><td>48 / 50</td><td>–</td></tr>
+          <tr><td>Detector neighbour-hit level, median, mid-connector / edge (3 mV/fC) [ADC]</td><td>–</td><td>49 / 48</td><td>48 / 48</td><td>48 / 48</td><td>–</td></tr>
         </tbody>
       </table>
       </div>
@@ -132,32 +132,33 @@
       </table>
       </div>
 
-      <h2>How to read the plots: "/ bulk" and "bulk ratio"</h2>
-      <p><strong>Bulk</strong> means the ordinary channels away from the connector edges: channels 3–60,
-      leaving out 28–35. It never contains 0/1/2, 29–34 or 61–63. The <strong>edge channels</strong>
-      (grey bands in the plots) are 0, 31, 32 and 63, at the borders of the connectors.</p>
+      <h2>How to read the plots: "/ mid-connector" and "mid-connector ratio"</h2>
+      <p>Each VMM's 64 channels leave the hybrid on two connector blocks, channels 0–31 and 32–63. The
+      <strong>edge channels</strong> (grey bands in the plots) are the ones at the ends of a block: 0, 31, 32 and 63.
+      The <strong>mid-connector channels</strong> are the reference: channels 3–27 and 36–60, i.e. at least
+      three channels away from either end of a block. They never include 0–2, 28–35 or 61–63.</p>
       <div class="grid">
         <div class="card">
-          <h3>Pulser: amplitude / bulk</h3>
+          <h3>Pulser: amplitude / mid-connector</h3>
           <p>Within one run, for each channel:</p>
           <ol>
             <li>take the median ADC of its in-time hits (within ±500 ns of a pulse);</li>
-            <li>divide by the median of the same quantity over the bulk channels of that run.</li>
+            <li>divide by the median of the same quantity over the mid-connector channels of that run.</li>
           </ol>
           <p>1.00 means "same as a typical channel in this run", 0.80 means "20 % smaller". Dividing by
-          the bulk removes the overall drop with length; what's left is the shape across the channels.</p>
+          the mid-connector median removes the overall drop with length; what's left is the shape across the channels.</p>
         </div>
         <div class="card">
-          <h3>Fe55: bulk ratio and edge / bulk</h3>
+          <h3>Fe55: mid-connector ratio and edge / mid-connector</h3>
           <ol>
             <li>For every channel (each VMM 4–13, each channel 0–63), fit the Fe55 photopeak with cable A
               and with cable B and take <code>r = peak<sub>A</sub> / peak<sub>B</sub></code>. It's the same pad
               on the same channel, so the pad's own gain cancels and only the cable effect remains.</li>
-            <li>The <strong>bulk ratio</strong> is the median of <code>r</code> over all bulk channels of all
+            <li>The <strong>mid-connector ratio</strong> is the median of <code>r</code> over all mid-connector channels of all
               VMMs. For Samtec 2.0 m / 1.5 m it is 0.920: a typical channel lost 8 % going from 1.5 to 2.0 m.
               This is the number in the legend.</li>
             <li>For each channel number, take the median of <code>r</code> over the VMMs and divide by the
-              bulk ratio. That's what's plotted.</li>
+              mid-connector ratio. That's what's plotted.</li>
           </ol>
           <p>1.00 means the channel lost exactly as much as a typical channel. An edge channel that suffered
           more from the longer cable would sit below 1.</p>
@@ -165,13 +166,13 @@
       </div>
 
       <h3>Why the Fe55 edge-ratio plot used to show no 10 % loss</h3>
-      <p>Dividing by the bulk ratio removes the overall cable loss on purpose: the question that plot answers is
-      "does any channel lose <em>more</em> than a typical channel?". The loss itself is in the bulk ratio. The figure in
+      <p>Dividing by the mid-connector ratio removes the overall cable loss on purpose: the question that plot answers is
+      "does any channel lose <em>more</em> than a typical channel?". The loss itself is in the mid-connector ratio. The figure in
       section 4 now shows both: the raw per-channel ratio on top, where the 8 % and 13 % losses are visible as the
       level of each set of points, and the normalised ratio below.</p>
-      <p><strong>Bulk channels or all channels?</strong> The reference excludes the channels under test, so that an edge
+      <p><strong>Mid-connector channels or all channels?</strong> The reference excludes the channels under test, so that an edge
       effect can't hide inside its own reference. In practice it makes no difference here: the edge channels are 4 out
-      of 64, and the median over all channels equals the bulk median to 0.001 (Samtec 2.0/1.5 m: 0.920 vs 0.920; 2.5/1.5 m:
+      of 64, and the median over all channels equals the mid-connector median to 0.001 (Samtec 2.0/1.5 m: 0.920 vs 0.920; 2.5/1.5 m:
       0.869 vs 0.870 at 1 mV/fC).</p>
 
       <h2>1. Which channels are actually pulsed</h2>
@@ -182,13 +183,13 @@
       (Hitachi 50 cm + 2 m, 1.8 V, "3k+2", 17:05).</p>
 
       <h2>2. Pulser: edge amplitude barely depends on length</h2>
-      <p>The pulse clock comes from clean bulk channels of the same run. Only hits within ±500 ns of a
+      <p>The pulse clock comes from clean mid-connector channels of the same run. Only hits within ±500 ns of a
       pulse count as signal; everything else counts as noise.</p>
       <figure>
-        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/pulser_amplitude_vs_channel_3V3.png" alt="In-time pulse amplitude relative to the bulk vs VMM channel, one curve per cable length">
-        <figcaption>In-time pulse amplitude / bulk, 3.3 V. The dome (ch 0 ≈ 0.89, ch 63 ≈ 0.79, centre ≈ 1.03–1.10)
+        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/pulser_amplitude_vs_channel_3V3.png" alt="In-time pulse amplitude relative to the mid-connector channels vs VMM channel, one curve per cable length">
+        <figcaption>In-time pulse amplitude / mid-connector, 3.3 V. The dome (ch 0 ≈ 0.89, ch 63 ≈ 0.79, centre ≈ 1.03–1.10)
         is almost the same for every length and for both cables, so it belongs to the injection setup,
-        not to the cable. With Samtec, the edges drop by at most ~2.5 % more than the bulk between 1 m and 3 m
+        not to the cable. With Samtec, the edges drop by at most ~2.5 % more than the mid-connector channels between 1 m and 3 m
         (see the Samtec section). Channels 31/32 are not low.</figcaption>
       </figure>
 
@@ -208,10 +209,10 @@
 
       <h2>4. Fe55 on the detector: no edge effect</h2>
       <figure>
-        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/fe55_edge_ratio_vs_channel_1mVfC.png" alt="Fe55 photopeak ratio between cable lengths per channel: raw on top, normalised to the bulk ratio below">
+        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/fe55_edge_ratio_vs_channel_1mVfC.png" alt="Fe55 photopeak ratio between cable lengths per channel: raw on top, normalised to the mid-connector ratio below">
         <figcaption>Per-channel Fe55 photopeak, ratio between two cables on the same channel (pad gain cancels).
-        <strong>Top:</strong> raw ratio; the dashed lines are the bulk ratios (0.920 for 2.0/1.5 m, 0.869 for 2.5/1.5 m), i.e.
-        the cable loss. <strong>Bottom:</strong> divided by the bulk ratio; edge channels sit at 1.00 ± 0.01 for every pair.
+        <strong>Top:</strong> raw ratio; the dashed lines are the mid-connector ratios (0.920 for 2.0/1.5 m, 0.869 for 2.5/1.5 m), i.e.
+        the cable loss. <strong>Bottom:</strong> divided by the mid-connector ratio; edge channels sit at 1.00 ± 0.01 for every pair.
         The grey points compare the same Hitachi cable measured twice, as a reference for "no change".</figcaption>
       </figure>
       <figure>
@@ -221,10 +222,10 @@
         bench, so an oscillation of the same size would show up.</figcaption>
       </figure>
 
-      <h2>5. Bulk signal vs length</h2>
+      <h2>5. Mid-connector signal vs length</h2>
       <figure>
-        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/bulk_signal_vs_length.png" alt="Bulk signal relative to Samtec 1.5 m vs total cable length, pulser and Fe55">
-        <figcaption>Bulk signal, indexed to Samtec 1.5 m. Pulser Samtec: about −9.5 %/m. Fe55 Samtec: −8.0 % (1.5→2.0 m)
+        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/mid_connector_signal_vs_length.png" alt="Mid-connector signal relative to Samtec 1.5 m vs total cable length, pulser and Fe55">
+        <figcaption>Mid-connector signal, indexed to Samtec 1.5 m. Pulser Samtec: about −9.5 %/m. Fe55 Samtec: −8.0 % (1.5→2.0 m)
         and −5.4 % (2.0→2.5 m; these two runs were taken 9 min apart). For reference only (Hitachi will not be
         used): Hitachi beats Samtec at the same length, +5–7 % on the pulser bench and +14–18 % with Fe55.</figcaption>
       </figure>
@@ -245,13 +246,13 @@
         <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/noise_bench_vs_detector_3V3.png" alt="Level (median ADC) and spread of neighbour-trigger hits vs channel for the pulser bench and the detector, and vs cable length">
         <figcaption><strong>Top row: level</strong> (median ADC of the neighbour-trigger hits). <strong>Bottom row: spread.</strong>
         (a) Bench, Samtec, 3.3 V pulses, 3 mV/fC. (b) Detector, Samtec, Fe55 at 3 mV/fC. Same y-axes.
-        (c) vs length: bulk median, edge median (top) or worst edge (bottom), and bulk mean (top, triangles), for the
+        (c) vs length: mid-connector median, edge median (top) or worst edge (bottom), and mid-connector mean (top, triangles), for the
         bench at 3.3 V (solid) and 1.8 V (dashed, least crosstalk) and the detector at 3 and 1 mV/fC.</figcaption>
       </figure>
       <ul>
-        <li><strong>The bench is 3–5× noisier</strong> at the same gain: bulk spread 11–22 ADC against ~4 ADC on the detector.</li>
+        <li><strong>The bench is 3–5× noisier</strong> at the same gain: mid-connector spread 11–22 ADC against ~4 ADC on the detector.</li>
         <li><strong>On the bench the edge channels are the noisiest,</strong> and from 2 m they jump from ~20 to ~45 ADC. On the
-          detector the edges are like the bulk (≤ 4.2 ADC) and nothing changes from 1.5 to 2.5 m.</li>
+          detector the edges are like the mid-connector channels (≤ 4.2 ADC) and nothing changes from 1.5 to 2.5 m.</li>
         <li><strong>It is noise, not crosstalk from the pulses.</strong> The level of the neighbour hits rises with the pulser
           voltage (62 → 72 ADC from 1.8 to 3.3 V: that part is crosstalk). The spread does not change with the voltage
           (e.g. 2.0 m: 17.5 / 17.5 / 19.0 ADC at 1.8 / 2.5 / 3.3 V).</li>
@@ -262,13 +263,13 @@
         <li><strong>The level differs between the setups by ~12 ADC</strong> (60 vs 48 at 3 mV/fC). That's not a noise
           difference: the two use different hybrids with their own pedestals, and the bench level includes crosstalk from
           the pulsed neighbours. Its per-channel zigzag in (a) follows the 3-channel pulse pattern.</li>
-        <li><strong>Edge channels:</strong> on the detector their level is the same as the bulk (48 vs 48). On the bench it is
-          4–5 ADC lower with short cables (56–57 vs 60–62 at 1.8 V) and reaches the bulk level from 2 m. The bench edges are
-          different from the bulk, the detector edges are not.</li>
+        <li><strong>Edge channels:</strong> on the detector their level is the same as the mid-connector channels (48 vs 48). On the bench it is
+          4–5 ADC lower with short cables (56–57 vs 60–62 at 1.8 V) and reaches the mid-connector level from 2 m. The bench edges are
+          different from the mid-connector channels, the detector edges are not.</li>
       </ul>
       <p>This explains the self-triggering in numbers. The threshold sits at ~150 ADC on the bench and ~140 ADC on the
       detector, with the baseline at ~65 and ~48 ADC, so the margin is ~85–90 ADC in both. On the detector that is more
-      than 20 times the noise spread: the noise never reaches threshold. On the bench it is ~4–8 times the bulk spread,
+      than 20 times the noise spread: the noise never reaches threshold. On the bench it is ~4–8 times the mid-connector spread,
       ~4.5 times on the edge channels up to 1.5 m (a few tens of Hz were seen on Hitachi 1.5 m) and only ~2 times on the
       edge channels from 2 m: those channels fire on noise at the kHz level.</p>
 
@@ -278,7 +279,7 @@
         <thead><tr><th></th><th>Pulser</th><th>Fe55</th></tr></thead>
         <tbody>
           <tr><td>Typical-channel loss per metre (Samtec)</td><td>~9 %/m (length and day confounded)</td><td>13–17 %/m (length and gain drift confounded)</td></tr>
-          <tr><td>Noise spread at 3 mV/fC, bulk / edge</td><td>11–22 / up to 45 ADC, grows with length</td><td>~4 / ~4 ADC, flat</td></tr>
+          <tr><td>Noise spread at 3 mV/fC, mid-connector / edge</td><td>11–22 / up to 45 ADC, grows with length</td><td>~4 / ~4 ADC, flat</td></tr>
           <tr><td>Hitachi vs Samtec (reference only)</td><td>Hitachi better</td><td>Hitachi better</td></tr>
           <tr><td>Edge channels lose more signal with length (Samtec)</td><td><strong>≤ 2.5 %</strong> at 3 m (section 2)</td><td><strong>No</strong>, &lt; 0.6 % at 2.5 m (section 4)</td></tr>
           <tr><td>Edge channels self-trigger on long cables</td><td><strong>Yes</strong> (section 3)</td><td><strong>No</strong> (section 4)</td></tr>
