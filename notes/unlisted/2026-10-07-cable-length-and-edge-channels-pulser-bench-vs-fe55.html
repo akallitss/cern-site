@@ -263,6 +263,48 @@
         the cable loss. <strong>Bottom:</strong> divided by the mid-connector ratio; edge channels sit at 1.00 ± 0.01 for every pair.
         The grey points compare the same Hitachi cable measured twice, as a reference for "no change".</figcaption>
       </figure>
+      <h3>Why the bottom panel sits at 1</h3>
+      <p>A longer cable attenuates every channel by about the same fraction. With 2.0 m instead of 1.5 m (1 mV/fC), a
+      mid-connector channel keeps 92.0 % of its photopeak. If an edge channel is attenuated by the same fraction, its own ratio
+      is also ~0.920, and dividing by 0.920 gives 1. The bottom panel therefore asks one question: <em>does this channel
+      lose more (below 1) or less (above 1) than the mid-connector channels?</em> The size of the loss itself is in the top panel.</p>
+      <p>Worked example, channel 0, Samtec 2.0 m vs 1.5 m, 1 mV/fC:</p>
+      <ol>
+        <li>On each of the 10 VMMs, take the channel-0 photopeak with 1.5 m and with 2.0 m (typical values 209 and 193 ADC)
+          and the ratio <code>r</code>. Same pad, same VMM channel, so the pad's gain cancels.</li>
+        <li>The median of <code>r</code> over the 10 VMMs is 0.923: channel 0 kept 92.3 %.</li>
+        <li>The mid-connector ratio for this pair is 0.920.</li>
+        <li>0.923 / 0.920 = <strong>1.004</strong>, the point plotted at channel 0. The error bar is the spread of <code>r</code>
+          over the 10 VMMs divided by √10: ±0.005.</li>
+      </ol>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Samtec pair</th><th>Mid-connector ratio</th><th>ch 0</th><th>ch 31</th><th>ch 32</th><th>ch 63</th><th>Mid-connector channels, scatter</th></tr></thead>
+        <tbody>
+          <tr><td>2.0 / 1.5 m, 1 mV/fC</td><td>0.920</td><td>1.004 ± 0.005</td><td>1.003 ± 0.003</td><td>0.996 ± 0.004</td><td>1.002 ± 0.003</td><td>±0.4 % (0.988–1.008)</td></tr>
+          <tr><td>2.5 / 1.5 m, 1 mV/fC</td><td>0.869</td><td>1.006 ± 0.003</td><td>0.999 ± 0.006</td><td>1.005 ± 0.002</td><td>1.000 ± 0.004</td><td>±0.5 % (0.987–1.012)</td></tr>
+          <tr><td>2.0 / 1.5 m, 3 mV/fC</td><td>0.904</td><td>1.000 ± 0.002</td><td>1.007 ± 0.001</td><td>1.001 ± 0.003</td><td>0.999 ± 0.004</td><td>±0.3 % (0.993–1.010)</td></tr>
+          <tr><td>2.5 / 1.5 m, 3 mV/fC</td><td>0.831</td><td>0.998 ± 0.004</td><td>1.006 ± 0.005</td><td>1.001 ± 0.003</td><td>1.002 ± 0.005</td><td>±0.4 % (0.990–1.011)</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p>Points to keep apart:</p>
+      <ul>
+        <li><strong>For the mid-connector channels, "around 1" is partly by construction:</strong> they define the reference,
+          so their median is exactly 1. What is measured is their scatter, ±0.3–0.5 %, i.e. how precisely a single channel's
+          ratio is known.</li>
+        <li><strong>For the edge channels it is a result, not a construction:</strong> channels 0, 31, 32 and 63 (and 28–35,
+          0–2, 61–63) are left out of the reference. They could have landed anywhere. They land within 0.7 % of 1, inside the
+          scatter of ordinary channels.</li>
+        <li><strong>Sensitivity:</strong> an edge channel losing 5 % more than the others would sit at 0.95, about 10–20 error
+          bars below 1, and would be obvious. The excess loss on edge channels is below ~1 % up to 2.5 m.</li>
+        <li><strong>Why normalise at all:</strong> anything that scales all channels together cancels in the bottom panel,
+          including the gas-gain drift between runs. The grey Hitachi points show it: the same cable measured twice, one hour
+          apart, has a raw ratio of 0.964 (the gain dropped 3.6 %), yet sits at 1 below. So the edge result is not affected by
+          the drift that confounds the loss per metre (section 5).</li>
+        <li><strong>What it can't see:</strong> a difference that is the same with both cables (an edge channel always 10 %
+          lower) cancels in <code>r</code>. See the caveat further down.</li>
+      </ul>
       <figure>
         <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/fe55_noise_vs_channel_1mVfC.png" alt="Over-threshold rate without source vs VMM channel, Fe55 reference runs">
         <figcaption>No-source reference runs: ~0.1–0.3 Hz on every channel, edges included, for every cable.
