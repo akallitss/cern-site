@@ -79,6 +79,10 @@
           <tr><td>Detector, worst edge noise rate (no source)</td><td>–</td><td>0.3 Hz</td><td>0.4 Hz</td><td>0.3 Hz</td><td>–</td></tr>
           <tr><td>Bench noise spread, bulk / worst edge (3 mV/fC) [ADC]</td><td>14.5 / 20</td><td>11 / 20</td><td>19 / 44</td><td>19 / 44</td><td>22 / 45</td></tr>
           <tr><td>Detector noise spread, bulk / worst edge (3 mV/fC) [ADC]</td><td>–</td><td>4.0 / 4.2</td><td>3.5 / 4.2</td><td>3.5 / 4.0</td><td>–</td></tr>
+          <tr><td>Bench neighbour-hit level, median / mean, bulk (1.8 V) [ADC]</td><td>62 / 60</td><td>60 / 60</td><td>61 / 59</td><td>60 / 59</td><td>62 / 60</td></tr>
+          <tr><td>Bench neighbour-hit level, median, bulk / edge (1.8 V) [ADC]</td><td>62 / 57</td><td>60 / 56</td><td>61 / 60</td><td>60 / 62</td><td>62 / 64</td></tr>
+          <tr><td>Detector neighbour-hit level, median / mean, bulk (3 mV/fC) [ADC]</td><td>–</td><td>49 / 51</td><td>48 / 50</td><td>48 / 50</td><td>–</td></tr>
+          <tr><td>Detector neighbour-hit level, median, bulk / edge (3 mV/fC) [ADC]</td><td>–</td><td>49 / 48</td><td>48 / 48</td><td>48 / 48</td><td>–</td></tr>
         </tbody>
       </table>
       </div>
@@ -238,9 +242,11 @@
       time; on the detector, the SNG hits of the Fe55 runs. The no-source runs give only ~25 neighbour hits per channel,
       too few.</p>
       <figure>
-        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/noise_bench_vs_detector_3V3.png" alt="Spread of neighbour-trigger hits vs channel for the pulser bench and the detector, and vs cable length">
-        <figcaption>(a) Bench, Samtec, 3 mV/fC. (b) Detector, Samtec, Fe55 at 3 mV/fC. Same y-axis.
-        (c) Bulk median and worst edge channel vs length for both.</figcaption>
+        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/noise_bench_vs_detector_3V3.png" alt="Level (median ADC) and spread of neighbour-trigger hits vs channel for the pulser bench and the detector, and vs cable length">
+        <figcaption><strong>Top row: level</strong> (median ADC of the neighbour-trigger hits). <strong>Bottom row: spread.</strong>
+        (a) Bench, Samtec, 3.3 V pulses, 3 mV/fC. (b) Detector, Samtec, Fe55 at 3 mV/fC. Same y-axes.
+        (c) vs length: bulk median, edge median (top) or worst edge (bottom), and bulk mean (top, triangles), for the
+        bench at 3.3 V (solid) and 1.8 V (dashed, least crosstalk) and the detector at 3 and 1 mV/fC.</figcaption>
       </figure>
       <ul>
         <li><strong>The bench is 3–5× noisier</strong> at the same gain: bulk spread 11–22 ADC against ~4 ADC on the detector.</li>
@@ -249,6 +255,16 @@
         <li><strong>It is noise, not crosstalk from the pulses.</strong> The level of the neighbour hits rises with the pulser
           voltage (62 → 72 ADC from 1.8 to 3.3 V: that part is crosstalk). The spread does not change with the voltage
           (e.g. 2.0 m: 17.5 / 17.5 / 19.0 ADC at 1.8 / 2.5 / 3.3 V).</li>
+        <li><strong>The level (median or mean ADC) does not change with cable length</strong> in either setup:
+          bench 60–62 ADC at 1.8 V (69–72 at 3.3 V), detector 48–49 ADC at 3 mV/fC and 45 at 1 mV/fC, from the shortest to the
+          longest cable. Mean and median agree within 2 ADC, so the distributions have no big tail. So a longer cable does not
+          shift the baseline; it only widens it on the bench.</li>
+        <li><strong>The level differs between the setups by ~12 ADC</strong> (60 vs 48 at 3 mV/fC). That's not a noise
+          difference: the two use different hybrids with their own pedestals, and the bench level includes crosstalk from
+          the pulsed neighbours. Its per-channel zigzag in (a) follows the 3-channel pulse pattern.</li>
+        <li><strong>Edge channels:</strong> on the detector their level is the same as the bulk (48 vs 48). On the bench it is
+          4–5 ADC lower with short cables (56–57 vs 60–62 at 1.8 V) and reaches the bulk level from 2 m. The bench edges are
+          different from the bulk, the detector edges are not.</li>
       </ul>
       <p>This explains the self-triggering in numbers. The threshold sits at ~150 ADC on the bench and ~140 ADC on the
       detector, with the baseline at ~65 and ~48 ADC, so the margin is ~85–90 ADC in both. On the detector that is more

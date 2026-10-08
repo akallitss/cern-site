@@ -101,17 +101,17 @@ SAMTEC ONLY (Hitachi will not be available)
 
 NEIGHBOUR-TRIGGER HITS, Samtec (level = median ADC, spread = half 16-84 % width)
   bench runs: 1.0/1.5 m on 5 June, 2.0/2.5/3.0 m on 8 June (length and day are confounded)
-  bench 1.0 m | 1V8: level 62 spread 13.5 worst edge 20 | 2V5: level 65 spread 14.0 worst edge 20 | 3V3: level 72 spread 14.5 worst edge 20
-  bench 1.5 m | 1V8: level 60 spread 10.5 worst edge 18 | 2V5: level 65 spread 10.5 worst edge 18 | 3V3: level 71 spread 11.0 worst edge 20
-  bench 2.0 m | 1V8: level 61 spread 17.5 worst edge 40 | 2V5: level 64 spread 17.5 worst edge 41 | 3V3: level 70 spread 19.0 worst edge 44
-  bench 2.5 m | 1V8: level 60 spread 18.8 worst edge 42 | 2V5: level 64 spread 19.0 worst edge 44 | 3V3: level 69 spread 19.0 worst edge 44
-  bench 3.0 m | 1V8: level 62 spread 21.5 worst edge 46 | 2V5: level 65 spread 22.0 worst edge 44 | 3V3: level 70 spread 22.0 worst edge 45
-  detector 1 mV/fC 1.5 m | level 45 spread 1.0 worst edge 1.5
-  detector 1 mV/fC 2.0 m | level 45 spread 1.0 worst edge 1.5
-  detector 1 mV/fC 2.5 m | level 45 spread 1.0 worst edge 1.5
-  detector 3 mV/fC 1.5 m | level 49 spread 4.0 worst edge 4.2
-  detector 3 mV/fC 2.0 m | level 48 spread 3.5 worst edge 4.2
-  detector 3 mV/fC 2.5 m | level 48 spread 3.5 worst edge 4.0
+  bench 1.0 m | 1V8: median 62 mean 60 edge median 57 spread 13.5 worst edge 20 | 2V5: median 65 mean 65 edge median 60 spread 14.0 worst edge 20 | 3V3: median 72 mean 70 edge median 64 spread 14.5 worst edge 20
+  bench 1.5 m | 1V8: median 60 mean 60 edge median 56 spread 10.5 worst edge 18 | 2V5: median 65 mean 65 edge median 60 spread 10.5 worst edge 18 | 3V3: median 71 mean 71 edge median 64 spread 11.0 worst edge 20
+  bench 2.0 m | 1V8: median 61 mean 59 edge median 60 spread 17.5 worst edge 40 | 2V5: median 64 mean 64 edge median 62 spread 17.5 worst edge 41 | 3V3: median 70 mean 69 edge median 66 spread 19.0 worst edge 44
+  bench 2.5 m | 1V8: median 60 mean 59 edge median 62 spread 18.8 worst edge 42 | 2V5: median 64 mean 63 edge median 64 spread 19.0 worst edge 44 | 3V3: median 69 mean 68 edge median 66 spread 19.0 worst edge 44
+  bench 3.0 m | 1V8: median 62 mean 60 edge median 64 spread 21.5 worst edge 46 | 2V5: median 65 mean 63 edge median 64 spread 22.0 worst edge 44 | 3V3: median 70 mean 69 edge median 67 spread 22.0 worst edge 45
+  detector 1 mV/fC 1.5 m | median 45 mean 46 edge median 44 spread 1.0 worst edge 1.5
+  detector 1 mV/fC 2.0 m | median 45 mean 46 edge median 43 spread 1.0 worst edge 1.5
+  detector 1 mV/fC 2.5 m | median 45 mean 46 edge median 43 spread 1.0 worst edge 1.5
+  detector 3 mV/fC 1.5 m | median 49 mean 51 edge median 48 spread 4.0 worst edge 4.2
+  detector 3 mV/fC 2.0 m | median 48 mean 50 edge median 48 spread 3.5 worst edge 4.2
+  detector 3 mV/fC 2.5 m | median 48 mean 50 edge median 48 spread 3.5 worst edge 4.0
   bulk ratio vs all-channel ratio (Fe55, Samtec / 1.5 m):
     1 mV/fC 2.0 m: bulk 0.920  all channels 0.920
     1 mV/fC 2.5 m: bulk 0.869  all channels 0.870
