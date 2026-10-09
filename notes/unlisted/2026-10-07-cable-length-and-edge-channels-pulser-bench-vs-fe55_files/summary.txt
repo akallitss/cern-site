@@ -82,9 +82,7 @@ Fe55 reference runs, over-threshold rate [Hz], median over VMMs (mid-connector |
   29 Sep 2.0 m         3 mV/fC   0.26 |  0.25  0.29  0.24  0.24
   29 Sep 2.5 m         3 mV/fC   0.27 |  0.28  0.31  0.27  0.25
 
-Fe55 GAIN DRIFT inside runs (mid-connector photopeak vs time): -2.49 ± 0.62 %/h, chi2/ndf 0.96
-  Hitachi 2.0 m (A)  1 mV/fC  -3.7 ± 1.6 %/h
-  Hitachi 2.0 m (B)  1 mV/fC  -3.2 ± 2.3 %/h
+Fe55 GAIN DRIFT inside runs (mid-connector photopeak vs time): -2.20 ± 0.69 %/h, chi2/ndf 1.14
   Samtec 1.5 m       1 mV/fC  -3.1 ± 1.6 %/h
   Samtec 2.0 m       1 mV/fC  -0.9 ± 1.4 %/h
   Samtec 2.5 m       1 mV/fC  -1.8 ± 2.9 %/h
@@ -105,11 +103,11 @@ SAMTEC ONLY (Hitachi will not be available)
      max self-trigger on edge zone [Hz]: 1.0m:0 1.5m:0 2.0m:429 2.5m:1007 3.0m:3554 | min eff: 1.0m:1.00 1.5m:1.00 2.0m:1.00 2.5m:1.00 3.0m:1.00 | dead ch: 1.5m:[0]
   Fe55 1 mV/fC: mid-connector / 1.5 m 1.5m:1.000 2.0m:0.920 2.5m:0.869  -> -13.1 %/m (±4 % per point)
      edge/mid-connector (0,31,32,63): 1.5m: 1.000 1.000 1.000 1.000 | 2.0m: 1.004 1.003 0.996 1.002 | 2.5m: 1.006 0.999 1.005 1.000
-     drift-corrected: 1.5m:1.000(dt +0.00 h) 2.0m:0.948(dt +1.18 h) 2.5m:0.903(dt +1.49 h)  -> -9.7 %/m
+     drift-corrected: 1.5m:1.000(dt +0.00 h) 2.0m:0.944(dt +1.18 h) 2.5m:0.899(dt +1.49 h)  -> -10.1 %/m
      max ref-run rate on edge zone [Hz]: 1.5m:0.30 2.0m:0.37 2.5m:0.29
   Fe55 3 mV/fC: mid-connector / 1.5 m 1.5m:1.000 2.0m:0.904 2.5m:0.831  -> -16.9 %/m (±4 % per point)
      edge/mid-connector (0,31,32,63): 1.5m: 1.000 1.000 1.000 1.000 | 2.0m: 1.000 1.007 1.001 0.999 | 2.5m: 0.998 1.006 1.001 1.002
-     drift-corrected: 1.5m:1.000(dt +0.00 h) 2.0m:0.930(dt +1.14 h) 2.5m:0.887(dt +2.52 h)  -> -11.3 %/m
+     drift-corrected: 1.5m:1.000(dt +0.00 h) 2.0m:0.927(dt +1.14 h) 2.5m:0.880(dt +2.52 h)  -> -12.0 %/m
      max ref-run rate on edge zone [Hz]: 1.5m:0.59 2.0m:0.52 2.5m:0.60
 
 PULSE PEAK, GAUSSIAN FIT, NO TIMING (external pulser, Samtec)

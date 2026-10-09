@@ -52,7 +52,7 @@
         mid-connector channels (3–27, 36–60), both in photopeak (within 0.6 %) and in noise (~0.3 Hz). <strong>Why only with the external pulser:</strong> the
         neighbour-trigger hits show the external-pulser setup is 3–5× noisier than the detector at the same gain, and its edge
         channels get ~2× noisier again from 2 m on. There the noise reaches the threshold; on the detector it stays far
-        below it (section 6). A typical channel loses about 9 %/m of signal with the external pulser and 10–11 %/m with Fe55, once the
+        below it (section 6). A typical channel loses about 9 %/m of signal with the external pulser and 10–12 %/m with Fe55, once the
         Fe55 numbers are corrected for the detector gain drift measured inside each run (section 5b). The two agree:
         <strong>~10 % per metre</strong>, on every channel.</p>
       </div>
@@ -71,8 +71,8 @@
         <thead><tr><th>Total Samtec length</th><th>1.0 m</th><th>1.5 m</th><th>2.0 m</th><th>2.5 m</th><th>3.0 m*</th></tr></thead>
         <tbody>
           <tr><td>Pulser, mid-connector signal (3.3 V, /1.5 m)</td><td>1.055</td><td>1</td><td>0.951</td><td>0.910</td><td>0.864</td></tr>
-          <tr><td>Fe55, mid-connector signal (1 mV/fC, /1.5 m), gain-corrected [raw]</td><td>–</td><td>1</td><td>0.948 ± 0.007 [0.920]</td><td>0.903 ± 0.009 [0.869]</td><td>–</td></tr>
-          <tr><td>Fe55, mid-connector signal (3 mV/fC, /1.5 m), gain-corrected [raw]</td><td>–</td><td>1</td><td>0.930 ± 0.007 [0.904]</td><td>0.887 ± 0.016 [0.831]</td><td>–</td></tr>
+          <tr><td>Fe55, mid-connector signal (1 mV/fC, /1.5 m), gain-corrected [raw]</td><td>–</td><td>1</td><td>0.944 ± 0.008 [0.920]</td><td>0.899 ± 0.010 [0.869]</td><td>–</td></tr>
+          <tr><td>Fe55, mid-connector signal (3 mV/fC, /1.5 m), gain-corrected [raw]</td><td>–</td><td>1</td><td>0.927 ± 0.008 [0.904]</td><td>0.880 ± 0.017 [0.831]</td><td>–</td></tr>
           <tr><td>Pulser, edge vs mid-connector (3.3 V, /1.0 m)</td><td>1</td><td>0.995</td><td>0.986</td><td>0.975</td><td>0.980</td></tr>
           <tr><td>Fe55, edge vs mid-connector (1 mV/fC, /1.5 m)</td><td>–</td><td>1</td><td>1.003</td><td>1.003</td><td>–</td></tr>
           <tr><td>Pulser, worst edge self-trigger rate (3.3 V)</td><td>none</td><td>none</td><td>0.4 kHz</td><td>1.0 kHz</td><td>3.6 kHz</td></tr>
@@ -89,7 +89,7 @@
       </div>
       <p class="muted">* The cable type of the 3.0 m pulser runs (50 cm + 2.5 m) is not in the logbook; they belong
       to the Samtec series and are assumed Samtec. Fit slopes: pulser −8.8 / −9.2 / −9.4 %/m at 1.8 / 2.5 / 3.3 V;
-      Fe55 gain-corrected −9.7 %/m at 1 mV/fC and −11.3 %/m at 3 mV/fC (raw −13.1 and −16.9 %/m; section 5b). The 3 mV/fC runs also
+      Fe55 gain-corrected −10.1 %/m at 1 mV/fC and −12.0 %/m at 3 mV/fC (raw −13.1 and −16.9 %/m; section 5b). The 3 mV/fC runs also
       have 3–5 % saturated hits, which can bias the peak.</p>
       <div class="callout warn">
         <p><strong>Two confounds behind the length dependence.</strong></p>
@@ -99,8 +99,8 @@
             so part of it may be a different setup on the second day. Within 8 June, the self-triggering still
             grows with length (Samtec 0.4 → 1.0 → 3.6 kHz).</li>
           <li><strong>Fe55: length vs time.</strong> The Samtec runs were taken in order of increasing length through the
-            afternoon while the detector gain fell by 2.5 ± 0.6 %/h (measured inside each run, section 5b). Uncorrected,
-            that makes the longer cables look worse (13–17 %/m). Corrected, Fe55 gives 10–11 %/m, in line with the
+            afternoon while the detector gain fell by 2.2 ± 0.7 %/h (measured inside each run, section 5b). Uncorrected,
+            that makes the longer cables look worse (13–17 %/m). Corrected, Fe55 gives 10–12 %/m, in line with the
             external pulser (9 %/m). The correction assumes the drift kept the same rate between runs.</li>
         </ul>
       </div>
@@ -110,7 +110,7 @@
         <li><strong>From 2 m</strong> the external-pulser runs show edge self-triggering that grows quickly with length.
           The detector, measured up to 2.5 m, does not. Whether the detector stays quiet at 3.0 m is not measured.</li>
         <li><strong>Signal:</strong> each extra metre of Samtec costs ~10 % of the signal on every channel (9 %/m external
-          pulser, 10–11 %/m Fe55 after the gain correction), i.e. ~5 % per extra 0.5 m. The edges are not significantly worse.</li>
+          pulser, 10–12 %/m Fe55 after the gain correction), i.e. ~5 % per extra 0.5 m. The edges are not significantly worse.</li>
       </ul>
 
       <h2>Data</h2>
@@ -376,7 +376,7 @@
         <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/mid_connector_signal_vs_length.png" alt="Mid-connector signal relative to Samtec 1.5 m vs total cable length, pulser and Fe55">
         <figcaption>Mid-connector signal, indexed to Samtec 1.5 m. Pulser Samtec: about −9.5 %/m. Fe55 Samtec here are the raw values, not
         corrected for the gain drift (section 5b): −8.0 % (1.5→2.0 m) and −5.4 % (2.0→2.5 m). For reference only (Hitachi
-        will not be used): Hitachi beats Samtec at the same length, +5–7 % with the external pulser, +4–8 % with Fe55 after
+        will not be used): Hitachi beats Samtec at the same length, +5–7 % with the external pulser, ~9 % with Fe55 at 3 mV/fC after
         the gain correction.</figcaption>
       </figure>
       <figure>
@@ -392,15 +392,17 @@
       <figure>
         <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/gain_drift.png" alt="Slope of the Fe55 photopeak inside each 10-minute run, with the weighted average">
         <figcaption>Slope of the Fe55 photopeak inside each run, in % per hour, with its fit error. Vertical line and band:
-        weighted average, −2.5 ± 0.6 %/h.</figcaption>
+        weighted average, −2.2 ± 0.7 %/h. Only runs after the HV-supply change at 13:00.</figcaption>
       </figure>
       <ul>
-        <li><strong>The peak goes down inside 8 of the 9 runs.</strong> Combined: <strong>−2.5 ± 0.6 %/h</strong>, and the
-          runs agree with each other (χ²/ndf = 0.96).</li>
-        <li><strong>Independent check:</strong> the same Hitachi cable measured twice, 69 min apart, lost 3.6 %, i.e.
-          −3.1 %/h. With the correction the two takes agree (0.997 and 0.987 relative to Samtec 1.5 m).</li>
+        <li><strong>Only the runs after the HV-supply change</strong> (7 Oct, ~13:00) are used, i.e. the conditions of the
+          length comparison: the six Samtec runs and Hitachi 2.0 m at 3 mV/fC.</li>
+        <li><strong>The peak goes down inside 6 of the 7 runs.</strong> Combined: <strong>−2.2 ± 0.7 %/h</strong>, and the
+          runs agree with each other (χ²/ndf = 1.14).</li>
+        <li>The Hitachi cable measured twice in the morning (−3.6 % in 69 min) points the same way, but it was taken
+          before the supply change, so it is not used.</li>
         <li><strong>Correction:</strong> each length ratio is divided by (1 + rate × Δt), with Δt the time between the run
-          and the Samtec 1.5 m reference. The uncertainty of the rate gives ±0.7–1.6 % on the corrected points.</li>
+          and the Samtec 1.5 m reference. The uncertainty of the rate gives ±0.8–1.7 % on the corrected points.</li>
         <li><strong>Assumption:</strong> the drift kept the same rate between runs, where it is not measured. The cause is
           not known from these data (gas gain changes with pressure and temperature, for example).</li>
       </ul>
@@ -408,11 +410,11 @@
       <table>
         <thead><tr><th>Samtec / 1.5 m</th><th>Δt</th><th>Raw</th><th>Gain-corrected</th></tr></thead>
         <tbody>
-          <tr><td>2.0 m, 1 mV/fC</td><td>+1.2 h</td><td>0.920</td><td>0.948 ± 0.007</td></tr>
-          <tr><td>2.5 m, 1 mV/fC</td><td>+1.5 h</td><td>0.869</td><td>0.903 ± 0.009</td></tr>
-          <tr><td>2.0 m, 3 mV/fC</td><td>+1.1 h</td><td>0.904</td><td>0.930 ± 0.007</td></tr>
-          <tr><td>2.5 m, 3 mV/fC</td><td>+2.5 h</td><td>0.831</td><td>0.887 ± 0.016</td></tr>
-          <tr><td>Slope</td><td></td><td>−13.1 / −16.9 %/m</td><td><strong>−9.7 / −11.3 %/m</strong></td></tr>
+          <tr><td>2.0 m, 1 mV/fC</td><td>+1.2 h</td><td>0.920</td><td>0.944 ± 0.008</td></tr>
+          <tr><td>2.5 m, 1 mV/fC</td><td>+1.5 h</td><td>0.869</td><td>0.899 ± 0.010</td></tr>
+          <tr><td>2.0 m, 3 mV/fC</td><td>+1.1 h</td><td>0.904</td><td>0.927 ± 0.008</td></tr>
+          <tr><td>2.5 m, 3 mV/fC</td><td>+2.5 h</td><td>0.831</td><td>0.880 ± 0.017</td></tr>
+          <tr><td>Slope</td><td></td><td>−13.1 / −16.9 %/m</td><td><strong>−10.1 / −12.0 %/m</strong></td></tr>
         </tbody>
       </table>
       </div>
@@ -434,8 +436,8 @@
               But the Hitachi runs were on 8 June and the Samtec 1.5 m reference on 5 June, so day-to-day changes are mixed in.</td></tr>
           <tr><td>Fe55, Hitachi 2.0 m (A), 1 mV/fC</td><td>1.085</td><td>7 Oct 11:45</td>
             <td rowspan="3">Hitachi attenuates less, <em>and</em> these runs were taken before the Samtec 1.5 m reference
-              (15:17 at 1 mV/fC, 14:45 at 3 mV/fC) while the gain was falling. Gain-corrected (section 5b):
-              0.997, 0.987 and 1.007.</td></tr>
+              (15:17 at 1 mV/fC, 14:45 at 3 mV/fC) while the gain was falling. Only the 3 mV/fC run is after the HV-supply change;
+              gain-corrected (section 5b) it is 1.010.</td></tr>
           <tr><td>Fe55, Hitachi 2.0 m (B), 1 mV/fC</td><td>1.045</td><td>7 Oct 12:54</td></tr>
           <tr><td>Fe55, Hitachi 2.0 m, 3 mV/fC</td><td>1.027</td><td>7 Oct 13:58</td></tr>
         </tbody>
@@ -443,12 +445,71 @@
       </div>
       <p>The Fe55 Hitachi points need care. The same Hitachi cable gave 1.085, then 1.045 an hour later: the gain fell by
       3.6 % in between, with nothing changed. The three Hitachi values also drop in the order they were taken, as they get
-      closer in time to the Samtec reference (3.5 h, 2.4 h, 0.8 h before it). With the gain correction of section 5b
-      they become 0.997, 0.987 and 1.007: Hitachi 2.0 m gives about the same signal as Samtec 1.5 m, i.e. 4–8 % more than
-      Samtec 2.0 m. The external-pulser Hitachi points, which don't depend on gas gain, show Hitachi ahead by 5–7 %. This is for
+      closer in time to the Samtec reference (3.5 h, 2.4 h, 0.8 h before it). The two 1 mV/fC Hitachi runs were taken
+      before the HV-supply change at ~13:00 and are not used for conclusions. The 3 mV/fC run (after the change),
+      gain-corrected, is 1.010: Hitachi 2.0 m gives about the same signal as Samtec 1.5 m, ~9 % more than Samtec 2.0 m. The external-pulser Hitachi points, which don't depend on gas gain, show Hitachi ahead by 5–7 %. This is for
       reference only, since P2 will use Samtec.</p>
       <p>The same drift works the other way on the Samtec Fe55 points: they were taken in order 1.5 → 2.0 → 2.5 m, so a
       falling gain makes the longer cables look worse. Section 5b corrects for it.</p>
+
+      <h2>5c. Per VMM: Mean(ADC) and RMS(ADC) vs channel</h2>
+      <p>To check that the result holds on every VMM and not only in the median over VMMs, the same comparison is done
+      VMM by VMM, with the simplest quantities: the <strong>mean</strong> and the <strong>RMS</strong> (standard deviation)
+      of the ADC of all over-threshold hits of each channel. Only runs from the directory
+      <code>source_tests/cable_length</code> taken <strong>after the HV-supply change</strong> (~13:00, 7 Oct) are used,
+      so all conditions are identical: Samtec 1.5 / 2.0 / 2.5 m at 1 and 3 mV/fC, and Hitachi 2.0 m at 3 mV/fC only
+      (the 1 mV/fC Hitachi run started at 12:54). No gain-drift correction is applied in these plots.</p>
+      <p>How to read them: one panel per VMM (4–13), x = VMM channel, grey bands = connector-edge channels. In the ratio
+      plots, y = Mean (or RMS) of the channel with that cable divided by the same channel, same VMM, with Samtec 1.5 m;
+      dashed lines = median over the mid-connector channels of that VMM. Channels with fewer than 100 hits are left out.</p>
+      <figure>
+        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/fe55_per_vmm_mean_ratio_3mVfC.png" alt="Per-VMM ratio of Mean ADC to Samtec 1.5 m vs channel, 3 mV/fC">
+        <figcaption>Mean(ADC) ratio to Samtec 1.5 m, 3 mV/fC, per VMM.</figcaption>
+      </figure>
+      <figure>
+        <img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/fe55_per_vmm_mean_ratio_1mVfC.png" alt="Per-VMM ratio of Mean ADC to Samtec 1.5 m vs channel, 1 mV/fC">
+        <figcaption>Mean(ADC) ratio to Samtec 1.5 m, 1 mV/fC, per VMM.</figcaption>
+      </figure>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Ratio to Samtec 1.5 m, median of mid-connector channels</th><th>Mean(ADC)</th><th>RMS(ADC)</th><th>Photopeak (section 4)</th><th>VMM-to-VMM spread of the Mean ratio</th></tr></thead>
+        <tbody>
+          <tr><td>Samtec 2.0 m, 1 mV/fC</td><td>0.94</td><td>1.00</td><td>0.92</td><td>0.3 %</td></tr>
+          <tr><td>Samtec 2.5 m, 1 mV/fC</td><td>0.90</td><td>0.98</td><td>0.87</td><td>0.4 %</td></tr>
+          <tr><td>Samtec 2.0 m, 3 mV/fC</td><td>0.92</td><td>0.92</td><td>0.90</td><td>0.4 %</td></tr>
+          <tr><td>Samtec 2.5 m, 3 mV/fC</td><td>0.85</td><td>0.87</td><td>0.83</td><td>0.5 %</td></tr>
+          <tr><td>Hitachi 2.0 m, 3 mV/fC</td><td>1.01</td><td>1.01</td><td>1.03</td><td>0.6 %</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <ul>
+        <li><strong>Every VMM shows the same thing.</strong> The mid-connector ratio is the same on all ten VMMs within
+          0.3–0.6 %, and the edge channels follow their neighbours on every VMM. The median over VMMs used elsewhere in this
+          note hides nothing.</li>
+        <li><strong>Mean and RMS show less loss than the photopeak</strong> (raw, not drift-corrected, all three). Both are
+          distorted by the cuts at the two ends of the ADC range. At the low end, the threshold removes the smallest hits,
+          and removes more of them when the signal shrinks with a longer cable: that pushes the mean up and narrows the
+          spectrum, so the RMS barely changes at 1 mV/fC (the peak there is only ~250 ADC). At the high end, at 3 mV/fC,
+          5 % of the Samtec 1.5 m hits are clipped at 1023, which lowers the reference mean. The photopeak position is not
+          affected by either, which is why the rest of the note uses it.</li>
+        <li><strong>Isolated outliers are channels with few hits</strong> (pads at the border of the detector or outside the
+          source spot, a few hundred hits), where the mean comes from a handful of events.</li>
+        <li><strong>One real anomaly: VMM 10 with the 2.5 m cable.</strong> Channels 11, 13, 29, 31, 47 (and 37 at 1 mV/fC)
+          almost stop recording Fe55 hits in both 2.5 m runs: e.g. ch 11 goes from 16.8 Hz (1.5 m) and 17.5 Hz (2.0 m) to
+          0.4 Hz, the no-source level. Their Mean and RMS then come from a few hundred leftover hits, which gives the
+          large swings in the VMM 10 panels. Channel 17 instead fills with low-ADC hits at 2.5 m (6.7 Hz without source,
+          0.75 Hz with 1.5 m). This is specific to one VMM and one cable, not to the edge channels or to the length in
+          general: it looks like a few contacts of that cable/connector, worth checking before using the 2.5 m cable.</li>
+      </ul>
+      <details>
+        <summary>Absolute Mean(ADC) and RMS(ADC) per VMM, and the RMS ratios</summary>
+        <figure><img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/fe55_per_vmm_mean_3mVfC.png" alt="Per-VMM Mean ADC vs channel, 3 mV/fC"><figcaption>Mean(ADC), 3 mV/fC.</figcaption></figure>
+        <figure><img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/fe55_per_vmm_rms_3mVfC.png" alt="Per-VMM RMS ADC vs channel, 3 mV/fC"><figcaption>RMS(ADC), 3 mV/fC.</figcaption></figure>
+        <figure><img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/fe55_per_vmm_rms_ratio_3mVfC.png" alt="Per-VMM RMS ratio to Samtec 1.5 m, 3 mV/fC"><figcaption>RMS(ADC) ratio to Samtec 1.5 m, 3 mV/fC. The channel-to-channel zigzag is statistical: even and odd channels agree to 1 %.</figcaption></figure>
+        <figure><img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/fe55_per_vmm_mean_1mVfC.png" alt="Per-VMM Mean ADC vs channel, 1 mV/fC"><figcaption>Mean(ADC), 1 mV/fC.</figcaption></figure>
+        <figure><img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/fe55_per_vmm_rms_1mVfC.png" alt="Per-VMM RMS ADC vs channel, 1 mV/fC"><figcaption>RMS(ADC), 1 mV/fC.</figcaption></figure>
+        <figure><img src="2026-10-07-cable-length-and-edge-channels-pulser-bench-vs-fe55_files/fe55_per_vmm_rms_ratio_1mVfC.png" alt="Per-VMM RMS ratio to Samtec 1.5 m, 1 mV/fC"><figcaption>RMS(ADC) ratio to Samtec 1.5 m, 1 mV/fC.</figcaption></figure>
+      </details>
 
       <h2>6. Noise: neighbour-trigger hits, external pulser vs detector</h2>
       <p>Both campaigns ran with the neighbour trigger (SNG) on. When a channel fires, its neighbours are read out
@@ -531,7 +592,7 @@
       <table>
         <thead><tr><th></th><th>Pulser</th><th>Fe55</th></tr></thead>
         <tbody>
-          <tr><td>Typical-channel loss per metre (Samtec)</td><td>~9 %/m</td><td>10–11 %/m gain-corrected (13–17 %/m raw)</td></tr>
+          <tr><td>Typical-channel loss per metre (Samtec)</td><td>~9 %/m</td><td>10–12 %/m gain-corrected (13–17 %/m raw)</td></tr>
           <tr><td>Noise spread at 3 mV/fC, mid-connector / edge</td><td>11–22 / up to 45 ADC, grows with length</td><td>~4 / ~4 ADC, flat</td></tr>
           <tr><td>Hitachi vs Samtec (reference only)</td><td>Hitachi better</td><td>Hitachi better</td></tr>
           <tr><td>Edge channels lose more signal with length (Samtec)</td><td><strong>≤ 2.5 %</strong> at 3 m (section 2)</td><td><strong>No</strong>, &lt; 0.6 % at 2.5 m (section 4)</td></tr>
