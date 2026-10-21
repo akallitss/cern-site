@@ -73,7 +73,9 @@ chamber's mesh voltage. Each lands within 1–2 efficiency points. One thing doe
 setting, the chips do not sit at the same effective level.</div>
 
 <div class="callout"><strong>New: <a href="#part2">Part 2</a></strong> explains what <code>sdt</code> is, how one config value turns into
-mV, VMM ADC and fC, where the noise floor is, and how low the thresholds could go with per-channel trimming.</div>
+mV, VMM ADC and fC, where the noise floor is, and how low the thresholds could go with per-channel trimming.<br>
+<strong>New: <a href="#part3">Part 3</a></strong> takes the 29–30 July threshold scan channel by channel. It covers how far each chip can come down,
+how many channels that costs, and what efficiency results.</div>
 
 <!-- ================================================================== -->
 <div class="step">
@@ -436,7 +438,8 @@ sdt from 300 down to 210 in steps of 5, at 3.0 and 4.5 mV/fC, 200 packets each. 
 </figure>
 <ul>
   <li><b>The noise is concentrated in a few channels.</b> On VMM 14 at sdt 220, two channels (34, 51) carry all its noise. On VMM 19 at 225
-  (4.5 mV/fC), three channels (20, 36, 1) carry 98 %. Most channels are quiet several DAC counts below where the chip as a whole becomes noisy.</li>
+  (4.5 mV/fC), three channels (20, 36, 1) carry 98 %. Most channels are quiet several DAC counts below where the chip as a whole becomes noisy.
+  A few steps lower it spreads to tens of channels; <a href="#part3">Part 3</a> follows it channel by channel.</li>
   <li><b>In ADC terms</b> the chips fill with noise once the threshold comes within roughly <b>10–20 ADC of the baseline</b> (≈ 2–4 fC at
   4.5 mV/fC). The November neighbour-triggered runs give a baseline width of σ ≈ 5–12 ADC per channel (most 5–8), so this is the usual 2–4 σ.</li>
   <li><b>The beam data agree.</b> VMM 19 at sdt 224 in run_46 recorded 284 M hits, against 2–5 M on the other chips: the bench says 225
@@ -512,6 +515,166 @@ the next beam. The 95 % in the table needs about 10 ADC (≈ 2 fC) above baselin
 that last step has to come from the chamber (more gas gain) rather than the electronics.</div>
 </div>
 
+<!-- ================================================================== -->
+<h2 id="part3" style="margin-top:3rem">Part 3 · How far down, and what masking costs: the 29–30 July threshold scan, channel by channel</h2>
+<p class="muted">Part 2 used the bench scan only chip by chip. Here every one of the 384 P2_OUT channels gets its own noise turn-on.
+Combined with the efficiency model, that gives the trade-off directly: lower the threshold, more of the signal gets through, but more
+channels turn noisy and have to be raised or masked. The goal is the point where the two balance.</p>
+
+<div class="step">
+<h2><span class="step-n">G</span>Which channel is noisy at which threshold</h2>
+<p>The scan (<code>vmm_thr_scan.sh</code>) stepped every chip together from sdt 300 down to 210, five counts per step, taking 200 UDP packets per point.
+That is about 2 s and ~300 k hits per point. The 3.0 mV/fC pass ran on 29 July at 17:15, during the MD with no beam. The 4.5 mV/fC pass ran on 30 July at 09:31.
+In the 4.5 pass P2_OUT records nothing at all from sdt 235 upwards, so no beam particles reached it. Every hit below is noise. I call a channel <b>noisy</b> above
+10 Hz, which is 20 hits in the capture.</p>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig13_channel_noise_map.png" alt="Per-channel noise rate against sdt for the six P2_OUT chips">
+  <figcaption><b>Figure 13.</b> One panel per P2_OUT chip at 4.5 mV/fC. Each column is a channel and each row a scan step. The colour is that channel's noise rate,
+  and white means silent. The purple numbers on the right count the channels above 10 Hz at that step. The dashed line is the July setting.</figcaption>
+</figure>
+<ul>
+  <li><b>The noise turns on channel by channel, not all at once.</b> At sdt 225 one or a few channels on a chip are noisy, and that is the
+  "1–3 channels" picture of Part 2. Five counts lower, ten or more are. On VMM 19 the count goes 1 → 4 → 16 → 32 → 41 from 230 down to 210.</li>
+  <li><b>The turn-on follows each chip's baseline.</b> VMM 14, 16 and 19 sit with their baseline at sdt ≈ 200 and turn on at 215–225, which is about
+  15–25 counts above baseline (≈ 13–22 VMM ADC, ≈ 3–4 fC). VMM 15, 17 and 18 have their baseline 15–20 counts lower, so at 210 they are
+  still 23–30 counts above it and silent. Their noise edge lies below the scan.</li>
+  <li><b>The worst offenders are always the same channels.</b> VMM 19 ch 20 is noisy up to 230. ch 0 shows occasional bursts up to 255 that never last.
+  VMM 14 ch 34 is noisy up to 225.</li>
+</ul>
+</div>
+
+<div class="step">
+<h2><span class="step-n">H</span>Is a bench scan a valid map of the beam?</h2>
+<p>The scan took 2 s per point, without beam, a day before the threshold runs. Before building on it, it should be checked against the beam.
+Run_46 ran with almost every chip at sdt 224, which is next to the scan's 225 step.</p>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig14_bench_vs_beam.png" alt="Bench noise rate per channel against beam hits per channel">
+  <figcaption><b>Figure 14.</b> Each point is one channel. The x-axis is its noise rate on the bench at sdt 225. The y-axis is its hit count in beam run_46 (sdt 224),
+  divided by the median channel of its chip, where beam particles give a value near 1. Channels silent on the bench are drawn in the grey band.</figcaption>
+</figure>
+<p>The match is channel for channel. On VMM 19, ch 20 recorded <b>3,500× the median</b> in the beam and is the hottest channel on the bench.
+The next ones in the beam (ch 1, 36, 6, 15, 27, 11) are the next ones on the bench, in the same order. VMM 14 ch 34 (141×) and VMM 11 ch 10 (42×) are the
+only noisy channels of their chips on the bench too. No channel that is silent on the bench goes above 5× its chip's median in the beam.
+<b>So the 2-second bench scan predicts which channels flood in the beam, and it can be used to decide what to raise or mask.</b></p>
+</div>
+
+<div class="step">
+<h2><span class="step-n">I</span>The trade-off, chip by chip, with only the global threshold and masks</h2>
+<p>This option needs no new calibration: it uses only the per-chip sdt and the per-channel mask bit (<code>sm</code>). For each chip and each scan step,
+I mask every channel that is noisy there. The chip's efficiency is then the signal efficiency at that threshold, from the DREAM-spectrum model of
+Part 1, times the fraction of channels left unmasked.</p>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig15_tradeoff_per_chip.png" alt="Chip efficiency against sdt with masked-channel counts">
+  <figcaption><b>Figure 15.</b> Dashed line: signal efficiency alone. It rises as the threshold comes down. Solid line: after masking the channels that
+  are noisy at that sdt, with their number in purple. The star marks the best step and the open circle the July setting. The model uses the P2_OUT pad spectra
+  with each chip's own baseline, and treats every channel as equally illuminated.</figcaption>
+</figure>
+<p>For VMM 14, 16 and 19, the two curves stay together while only one or two channels are masked. Then they separate sharply: one step lower, ten or more channels go.
+So the optimum is sharp, and it sits <b>one step above where the chip starts to fill with noise</b>. VMM 15, 17 and 18 are still improving at 210,
+the bottom of the scan.</p>
+<div style="overflow-x:auto">
+<table class="num">
+  <tr><th>chip</th><th>baseline (sdt)</th><th>July sdt</th><th>best measured sdt</th><th>channels to mask</th><th>model eff. July → best</th></tr>
+  <tr><td>VMM 14</td><td>≈ 201</td><td>230</td><td><b>220</b></td><td>1 (ch 34)</td><td>89 % → 91 %</td></tr>
+  <tr><td>VMM 15</td><td>≈ 180</td><td>230</td><td><b>≤ 210</b></td><td>1 (ch 56)</td><td>77 % → 87 %</td></tr>
+  <tr><td>VMM 16</td><td>≈ 199</td><td>230</td><td><b>220</b></td><td>0</td><td>88 % → 92 %</td></tr>
+  <tr><td>VMM 17</td><td>≈ 187</td><td>230</td><td><b>≤ 210</b></td><td>0</td><td>81 % → 91 %</td></tr>
+  <tr><td>VMM 18</td><td>≈ 182</td><td>230</td><td><b>≤ 210</b></td><td>0</td><td>78 % → 89 %</td></tr>
+  <tr><td>VMM 19</td><td>≈ 204</td><td>265</td><td><b>230</b></td><td>1 (ch 20)</td><td>70 % → 89 %</td></tr>
+  <tr><td><b>P2_OUT</b> (beam-weighted)</td><td></td><td></td><td></td><td><b>3 of 384</b></td><td><b>83.7 % → 91.2 %</b></td></tr>
+</table>
+</div>
+<p>For July the model gives 83.7 %, against the 85.3 % measured, so it runs about 1.5 points low. The step that counts is the predicted
+<b>+7.5 points</b>, for three masked channels and no new calibration. Two checks on it:</p>
+<ul>
+  <li><b>The noise cut.</b> At 100 Hz the best steps move down by at most one step, to 91.9 %. At 1 Hz, which is only two hits in a 2 s capture,
+  VMM 14 and 16 move one step up and two masked channels fall in the beam spot, giving 87.8 %. The choice of cut is worth about ±2 points. A longer capture
+  would settle it (see L).</li>
+  <li><b>Gain.</b> The same exercise at 3.0 mV/fC gives a best of 87.7 %. The noise turns on about one step lower, but the signal is 1.5× smaller in the
+  same units. So stay at 4.5 mV/fC.</li>
+</ul>
+</div>
+
+<div class="step">
+<h2><span class="step-n">J</span>What the trim adds</h2>
+<p>With a trim calibration, each channel can sit at its own threshold, which is the scheme from F. Every clean channel goes to a common
+target above its own baseline. Each noisy channel is raised only as far as it needs: to the first step where the bench shows it quiet. Nothing has to be masked
+unless the trim runs out of range, about 42 DAC counts, and no P2_OUT channel needs more than 30.</p>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig16_station_tradeoff.png" alt="Station efficiency against common threshold above baseline, trimmed, at two gains">
+  <figcaption><b>Figure 16.</b> Top: P2_OUT efficiency against the common target above baseline. Every channel is assumed trimmed, and the noisy ones are raised to their own quiet point.
+  Below about 25 ADC, part of the chamber was never scanned that low. The solid line assumes those channels stay quiet, and the dashed line holds them at sdt 210. The truth lies
+  in the shaded band. Bottom: how many of the 384 P2_OUT channels are known to need raising (purple) and how many were never measured (grey).
+  The star is the no-trim optimum from I and the circle is July.</figcaption>
+</figure>
+<div style="overflow-x:auto">
+<table class="num">
+  <tr><th>target above baseline</th><th>≈ fC at 4.5 mV/fC</th><th>channels raised (known)</th><th>P2_OUT efficiency, 4.5 mV/fC</th><th>same, 3.0 mV/fC</th></tr>
+  <tr><td>22 ADC (25 DAC)</td><td>4.5</td><td>6</td><td>90 %</td><td>84 %</td></tr>
+  <tr><td>18 ADC (20 DAC)</td><td>3.6</td><td>22</td><td>91–92 %</td><td>86–88 %</td></tr>
+  <tr><td>13.5 ADC (15 DAC)</td><td>2.7</td><td>54</td><td>92–94 %</td><td>88–91 %</td></tr>
+  <tr><td>9 ADC (10 DAC)</td><td>1.8</td><td>80+</td><td>92.5–95 %</td><td>89–94 %</td></tr>
+</table>
+</div>
+<ul>
+  <li><b>Down to about 20 ADC, the trim adds little over masking.</b> The no-trim optimum (91.2 %, the star) already sits on the curve.</li>
+  <li><b>Below that, the trim is what makes going lower possible.</b> Without it, dozens of channels per chip would have to be masked, as the left side of Figure 15 shows.
+  With it, each noisy channel just keeps a slightly higher threshold. At 13.5 ADC (≈ 2.7 fC) the model gives 92–94 %, and at 9 ADC 92.5–95 %.</li>
+  <li><b>The width of the band is the unmeasured part.</b> Whether DREAM's 95.6 % can be matched depends on how the channels that were never scanned below
+  sdt 210 behave between 5 and 20 ADC above their baseline. Part 2 estimated σ ≈ 5–8 ADC for most channels, which puts the edge at 3σ ≈ 15–25 ADC.
+  On that estimate, the realistic floor is the 13–18 ADC row: <b>about 92–93 %</b>.</li>
+</ul>
+</div>
+
+<div class="step">
+<h2><span class="step-n">K</span>The other two stations</h2>
+<p>The same scan covers P2_IN (VMM 2–7) and P2_MID (VMM 8–13). The July "opt" config (runs 48, 52, 66) had already raised exactly the chips this scan
+flags: VMM 4 and 9 to 300, 7 to 285, 12 to 255, 5 to 245. That is evidently where it came from. Channels above 10 Hz at 4.5 mV/fC:</p>
+<div style="overflow-x:auto">
+<table class="num">
+  <tr><th>chip</th><th>station</th><th>July sdt</th><th>@210</th><th>@220</th><th>@230</th><th>@240</th><th>@250</th><th>best measured (≤ 2 masked)</th><th>note</th></tr>
+  <tr><td>VMM 2</td><td>IN</td><td>230</td><td>5</td><td>0</td><td>0</td><td>0</td><td>0</td><td>215</td><td></td></tr>
+  <tr><td>VMM 3</td><td>IN</td><td>230</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>≤ 210</td><td></td></tr>
+  <tr><td>VMM 4</td><td>IN</td><td>300</td><td>7</td><td>5</td><td>5</td><td>4</td><td>3</td><td>none</td><td>walking burst</td></tr>
+  <tr><td>VMM 5</td><td>IN</td><td>245</td><td>46</td><td>15</td><td>1</td><td>1</td><td>0</td><td>230 (mask ch 46)</td><td>whole chip</td></tr>
+  <tr><td>VMM 6</td><td>IN</td><td>230</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>?</td><td>ADC edge ≈ 10: check</td></tr>
+  <tr><td>VMM 7</td><td>IN</td><td>285</td><td>6</td><td>3</td><td>2</td><td>2</td><td>1</td><td>230 (mask 24, 25)</td><td>walking burst</td></tr>
+  <tr><td>VMM 8</td><td>MID</td><td>230</td><td>4</td><td>0</td><td>0</td><td>0</td><td>0</td><td>215</td><td></td></tr>
+  <tr><td>VMM 9</td><td>MID</td><td>300</td><td>15</td><td>13</td><td>12</td><td>12</td><td>10</td><td>none</td><td>walking burst</td></tr>
+  <tr><td>VMM 10</td><td>MID</td><td>230</td><td>26</td><td>4</td><td>0</td><td>0</td><td>0</td><td>225 (mask ch 22)</td><td></td></tr>
+  <tr><td>VMM 11</td><td>MID</td><td>230</td><td>24</td><td>4</td><td>0</td><td>0</td><td>0</td><td>225 (mask ch 10)</td><td></td></tr>
+  <tr><td>VMM 12</td><td>MID</td><td>255</td><td>64</td><td>53</td><td>14</td><td>4</td><td>0</td><td>245</td><td>whole chip</td></tr>
+  <tr><td>VMM 13</td><td>MID</td><td>230</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>≤ 210</td><td></td></tr>
+</table>
+</div>
+<ul>
+  <li><b>Most chips behave like P2_OUT.</b> They can come down 5–20 counts from the July setting for a mask or two.</li>
+  <li><b>VMM 12 and VMM 5 are noisy as whole chips.</b> At 220, 53 of VMM 12's 64 channels are above 10 Hz. Per-channel masking cannot fix that; it is the
+  chip's global level, or a board-level noise source, and these chips have to stay higher.</li>
+  <li><b>VMM 4, 7 and 9 have a different problem, a "walking burst".</b> At any one step, one to three channels fire at 1–100 kHz, and even at sdt 300 there is no
+  quiet step. Which channels they are changes from step to step, moving along neighbouring channels (VMM 7: ch 23 → 24 → 25; VMM 9: 20 → 27 → 32 → 25 → 56).
+  It also differs between the two days. That does not depend on threshold, so it is not threshold noise, and a static mask list cannot catch it. Chambers sparking during
+  the week, or a hybrid-level oscillation, would both look like this; the time structure of those hits would tell them apart.</li>
+</ul>
+</div>
+
+<div class="step">
+<h2><span class="step-n">L</span>What to measure next, so the band in Figure 16 collapses</h2>
+<ol>
+  <li><b>Extend the same scan down to sdt ≈ 170, in steps of 2–3 counts, at 4.5 mV/fC.</b> Then VMM 15, 17 and 18 get a measured noise edge too.
+  Capture ~20 s per point rather than 200 packets, so that 1 Hz means 20 hits and not 2. With chambers at HV and the beam off, as on 30 July, it takes about an hour.</li>
+  <li><b>Run the vmmsc pedestal and threshold calibration on the P2 hybrids</b> (step 1–2 of the scheme in F). It replaces the inferred chip
+  baselines (±3–5 counts) with measured per-channel ones, and it gives the trims.</li>
+  <li><b>Then rerun this analysis:</b> per channel, threshold = max(target, quiet point). Mask only what the trim cannot reach, and expect a
+  handful of channels on P2_OUT. The scripts are written so that the new scan can be dropped in.</li>
+  <li><b>Check in the beam with out-of-spill hits</b>, which give the same per-channel noise rate with the beam present.</li>
+</ol>
+<div class="callout ok"><b>Bottom line.</b> Using only global thresholds and three masked channels, P2_OUT goes from 85 % to about 91–92 %, at
+sdt 220 / ≤ 210 / 220 / ≤ 210 / ≤ 210 / 230 on VMM 14–19 at 4.5 mV/fC. With the trim calibration and a lower scan, about 93 % is realistic.
+95 % (DREAM) needs every channel at about 2 fC above its baseline. That is only possible if the channels the scan never reached turn out quieter than the ones it did,
+or if the chamber's gas gain goes up.</div>
+</div>
+
 <details>
   <summary>Where everything comes from</summary>
   <ul>
@@ -525,6 +688,9 @@ that last step has to come from the chamber (more gas gain) rather than the elec
     <li>Bench noise scan (29–30 Jul): <code>TestBenchCERN/config_scan/</code> and its <code>qa_plots/*/…root</code> hit trees; script <code>vmm_thr_scan.sh</code>.</li>
     <li>Trim and ADC calibration (3 Nov 2025): <code>vmm_daplxa:/local/p2/p2soft/_install/data/20251103/3mVfC_200ns_60ns_negative/</code>.</li>
     <li>DAC ↔ mV: <code>vmm_daplxa:/local/p2/p2soft/vmmsc/src/calibration_module.cpp</code> (<code>ThresholdDAC_to_mV</code>, <code>PulserDAC_to_PulseHeight_mV</code>).</li>
+    <li>Part 3 trade-off: scratch scripts <code>tradeoff.py</code> (per-channel onsets, model) and <code>note_figs3.py</code> (Figures 13–16), run on
+    <code>thrscan_summary.json</code> (per-chip, per-channel hit counts and capture span of every scan step, from the <code>qa_plots</code> ROOT files).
+    Per-chip sdt of the beam runs from <code>vmm/runs/run_52/…_opt.txt</code>.</li>
     <li>November noise width and SNR versus gain: <code>P2_basket_analysis/SNR_Analysis/vmm_analysis_report.html</code>.</li>
   </ul>
 </details>
