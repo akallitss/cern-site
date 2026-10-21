@@ -656,6 +656,21 @@ flags: VMM 4 and 9 to 300, 7 to 285, 12 to 255, 5 to 245. That is evidently wher
   It also differs between the two days. That does not depend on threshold, so it is not threshold noise, and a static mask list cannot catch it. Chambers sparking during
   the week, or a hybrid-level oscillation, would both look like this; the time structure of those hits would tell them apart.</li>
 </ul>
+<p>The same plot as Figure 15, for the other two stations:</p>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig15b_tradeoff_P2_IN.png" alt="Threshold versus masking trade-off for the P2_IN chips">
+  <figcaption><b>Figure 15b.</b> P2_IN (VMM 2–7), 4.5 mV/fC. As in Figure 15: dashed = signal only, solid = after masking the channels noisy at that sdt
+  (purple counts), star = best, circle = July.</figcaption>
+</figure>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig15c_tradeoff_P2_MID.png" alt="Threshold versus masking trade-off for the P2_MID chips">
+  <figcaption><b>Figure 15c.</b> P2_MID (VMM 8–13), same layout.</figcaption>
+</figure>
+<div class="callout warn"><b>How far to trust these two.</b> The noise side (which channels, at which sdt) is measured and is as good as for P2_OUT.
+The efficiency side is not. The signal spectrum is borrowed from P2_OUT's DREAM data, so the percentages say what these chips would give on a
+chamber with P2_OUT's gain. The shapes and the best sdt are the useful part. The baselines of VMM 4, 7 and 9 (marked "?") are extrapolated from the
+sdt 285–300 runs, and VMM 6 has none, so its panel shows only the fraction of channels left unmasked. For the walking-burst chips (4, 7, 9) the
+"best" point assumes a fixed mask list, which their noise does not respect, so read those panels as an upper bound.</div>
 </div>
 
 <div class="step">
