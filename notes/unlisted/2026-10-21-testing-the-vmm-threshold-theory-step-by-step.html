@@ -683,6 +683,26 @@ sdt 285–300 runs, and VMM 6 has none, so its panel shows only the fraction of 
   <figcaption><b>Figure 18.</b> How many channels each chip has to mask at that best point, with the channel numbers where there are 1–3 of them. The sdt is along the bottom.
   Without the three walking-burst chips, the whole three-station set needs <b>7 masked channels out of 1152</b>.</figcaption>
 </figure>
+<h3>The same summary at 3.0 mV/fC, and why 4.5 is the default</h3>
+<p>The bench scan was taken at both gains (29 July at 3.0, 30 July at 4.5), so the same analysis runs on the 3.0 scan unchanged.
+Only the gain in the signal model changes: at 3.0 mV/fC one DAC count above baseline corresponds to 1.5× more charge, so the same sdt cuts deeper into the signal.
+The open circles stay the real July operating point (4.5 mV/fC, July sdt), so both figures compare against what actually ran.</p>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig17_best_eff_per_vmm_g3.png" alt="Best reachable efficiency per VMM id at 3.0 mV/fC">
+  <figcaption><b>Figure 17b.</b> As Figure 17, but with the 3.0 mV/fC noise scan and signal model. Lower on almost every chip: P2_OUT chips reach 80–91 % instead of 87–92 %.</figcaption>
+</figure>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig18_masks_per_vmm_g3.png" alt="Channels masked per VMM id at 3.0 mV/fC">
+  <figcaption><b>Figure 18b.</b> As Figure 18 at 3.0 mV/fC. Again 7 masks outside the walking-burst chips, but different channels; the walking-burst chips change completely between the two days, which is what you expect from noise that hops.</figcaption>
+</figure>
+<p>Why 4.5 is the one to use:</p>
+<ul>
+  <li><b>The noise floor in DAC barely moves with gain.</b> Lowering the gain from 4.5 to 3.0 lets each chip go only about 5 DAC lower (210–225 instead of 210–230), while the signal shrinks by a third.
+  So per unit of signal charge the threshold ends up <i>higher</i> at 3.0. The part of the noise that limits us comes from the discriminator and threshold DAC, which do not scale with the preamp gain, so more gain buys real separation.</li>
+  <li><b>Most chips sit at the scan floor at both gains</b> (7 at 3.0, 6 at 4.5), so neither number is final. That penalises 3.0 more: at 3.0 the 210 floor costs more charge.</li>
+  <li><b>Station level:</b> P2_OUT reaches 91.2 % at 4.5 against at most 87.7 % at 3.0 (Section I). The beam ran at 4.5 in July, so 4.5 is also the setting the hot-channel validation (Figure 14) was done at.</li>
+  <li><b>Where 3.0 looks better</b>: VMM 2, 5 and 11 by one point or less, which is within the model's uncertainty, and VMM 9 by 7 points, but VMM 9 is a walking-burst chip and its 3.0 result is just a quieter day.</li>
+</ul>
 </div>
 
 <div class="step">
