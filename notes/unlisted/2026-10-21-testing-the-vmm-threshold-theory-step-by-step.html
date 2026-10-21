@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>Testing the VMM threshold theory, step by step</title>
+<meta name="description" content="How the P2_OUT VMM-vs-DREAM efficiency gap was tested against the 'discriminator too high for the gain' theory: one fit, then three out-of-sample predictions (amplifier gain, a single chip's threshold, mesh HV).">
+<meta name="category" content="Analysis">
+<meta name="keywords" content="VMM,DREAM,threshold,efficiency,SPS,P2">
+<meta name="date" content="2026-10-21">
+<meta name="updated" content="2026-10-21">
+<meta name="visibility" content="unlisted">
+<meta name="robots" content="noindex, nofollow">
+<!-- ======================================================================= -->
+<link rel="stylesheet" href="../../assets/site.css">
+<style>
+  main.wrap, .site-header .wrap, .site-footer .wrap { max-width: 1120px; }
+  .note-body { max-width: none; }
+  .note-body p, .note-body ul, .note-body dl, .note-body .callout { max-width: 80ch; }
+  :root { --vmm: #2a78d6; --dream: #eb6834; --pred: #3b4652; }
+  @media (prefers-color-scheme: dark) { :root { --pred: #b8c2cc; --vmm: #5b9ae6; --dream: #f0855a; } }
+  .note-body figure img { background: #fff; border-radius: 8px; width: 100%; height: auto; }
+  .note-body figure { margin: 1.4rem 0; }
+  .note-body figcaption { font-size: .92rem; color: var(--fg-muted); margin-top: .4rem; }
+  .step { border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
+          padding: 1rem 1.2rem; margin: 2.2rem 0 1rem; }
+  .step h2 { margin-top: 0; }
+  .step-n { display: inline-block; min-width: 2rem; height: 2rem; line-height: 2rem; text-align: center;
+            border-radius: 50%; background: var(--accent); color: var(--bg-elev); font-weight: 700;
+            margin-right: .5rem; }
+  .qa { display: grid; grid-template-columns: 9rem 1fr; gap: .35rem 1rem; margin: .6rem 0; }
+  .qa dt { font-weight: 600; color: var(--fg-muted); }
+  .qa dd { margin: 0; }
+  @media (max-width: 640px) { .qa { grid-template-columns: 1fr; } .qa dt { margin-top: .5rem; } }
+  .vmm { color: var(--vmm); font-weight: 600; } .dream { color: var(--dream); font-weight: 600; }
+  .eq { font-family: var(--mono); background: var(--code-bg); padding: .7rem 1rem; border-radius: 8px;
+        overflow-x: auto; }
+  svg.schem { width: 100%; height: auto; display: block; }
+  svg.schem text { font-family: var(--font); fill: var(--fg); }
+  svg.schem .muted { fill: var(--fg-muted); }
+  svg.schem .box { fill: var(--bg); stroke: var(--fg-faint); stroke-width: 1.5; }
+  svg.schem .vbox { fill: var(--bg); stroke: var(--vmm); stroke-width: 2; }
+  svg.schem .dbox { fill: var(--bg); stroke: var(--dream); stroke-width: 2; }
+  svg.schem .wire { stroke: var(--fg-muted); stroke-width: 1.6; fill: none; }
+  svg.schem .vt { fill: var(--vmm); } svg.schem .dt { fill: var(--dream); }
+  table.num td, table.num th { text-align: right; } table.num td:first-child, table.num th:first-child { text-align: left; }
+</style>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="../../">Alexandra Kallitsopoulou</a>
+  <nav class="nav"><a href="../../">Home</a><a href="../../notes/">Notes</a></nav>
+</div></header>
+
+<main class="wrap">
+  <article>
+    <header class="note-header">
+      <h1>Testing the VMM threshold theory, step by step</h1>
+      <p class="muted">P2_OUT at the SPS, July–August 2026. The VMM records 85 % of tracks and DREAM 96 % on the same chamber. The theory: the VMM's discriminator is set too high for the chamber's gain. This page explains how that was tested: fit the model once, then check whether it predicts runs where only one setting was changed.</p>
+      <div class="meta-row">
+        <span class="pill">Analysis</span>
+        <time datetime="2026-10-21">2026-10-21</time>
+        <span class="faint">VMM · DREAM · threshold · efficiency · SPS · P2_OUT</span>
+      </div>
+    </header>
+
+    <div class="note-body">
+
+<div class="callout ok"><strong>Short answer.</strong> Yes, the data support the theory. Fitted once, on one run, the model then predicts
+three changes it was never fitted to: lowering the VMM amplifier gain, raising one chip's threshold, and lowering the
+chamber's mesh voltage. Each lands within 1–2 efficiency points. One thing does not fit "one threshold": at the same DAC
+setting, the chips do not sit at the same effective level.</div>
+
+<!-- ================================================================== -->
+<div class="step">
+<h2><span class="step-n">0</span>The setup, and the idea in one picture</h2>
+<p>The same P2 chamber (det3, at station P2_OUT) was read out by two different front-end chips, on different days, in the same beam
+at the same HV (mesh 450 V, drift 750 V). A uRWELL telescope gives a reference track, so for every pad we can ask: when a
+particle crossed this pad, did the readout record a hit?</p>
+
+<svg class="schem" viewBox="0 25 860 250" role="img" aria-label="Signal chain: one chamber pad read by DREAM or by VMM">
+  <!-- chamber -->
+  <rect class="box" x="10" y="95" width="150" height="110" rx="8"/>
+  <text x="85" y="125" text-anchor="middle" font-weight="600">P2_OUT pad</text>
+  <text x="85" y="148" text-anchor="middle" class="muted" font-size="13">charge Q</text>
+  <text x="85" y="166" text-anchor="middle" class="muted" font-size="13">(Landau distributed,</text>
+  <text x="85" y="184" text-anchor="middle" class="muted" font-size="13">scales with mesh HV)</text>
+  <path class="wire" d="M160 150 H200 V70 H230"/>
+  <path class="wire" d="M200 150 V230 H230"/>
+  <text x="208" y="155" class="muted" font-size="12">either / or</text>
+  <!-- DREAM chain -->
+  <rect class="dbox" x="230" y="35" width="170" height="70" rx="8"/>
+  <text x="315" y="64" text-anchor="middle" class="dt" font-weight="600">DREAM</text>
+  <text x="315" y="85" text-anchor="middle" class="muted" font-size="13">preamp + shaper</text>
+  <path class="wire" d="M400 70 H430"/>
+  <rect class="dbox" x="430" y="35" width="190" height="70" rx="8"/>
+  <text x="525" y="62" text-anchor="middle" font-size="14">sample the waveform</text>
+  <text x="525" y="84" text-anchor="middle" class="muted" font-size="13">keep everything first</text>
+  <path class="wire" d="M620 70 H650"/>
+  <rect class="dbox" x="650" y="35" width="200" height="70" rx="8"/>
+  <text x="750" y="60" text-anchor="middle" font-size="14">zero suppression</text>
+  <text x="750" y="80" text-anchor="middle" class="dt" font-size="13">5σ of EACH channel's own</text>
+  <text x="750" y="97" text-anchor="middle" class="dt" font-size="13">noise ≈ 27 ADC, flat ±1</text>
+  <!-- VMM chain -->
+  <rect class="vbox" x="230" y="195" width="170" height="70" rx="8"/>
+  <text x="315" y="222" text-anchor="middle" class="vt" font-weight="600">VMM3a</text>
+  <text x="315" y="243" text-anchor="middle" class="muted" font-size="13">preamp gain 3.0 / 4.5 mV/fC</text>
+  <path class="wire" d="M400 230 H430"/>
+  <rect class="vbox" x="430" y="195" width="190" height="70" rx="8"/>
+  <text x="525" y="220" text-anchor="middle" font-size="14">comparator: pulse &gt; DAC?</text>
+  <text x="525" y="241" text-anchor="middle" class="vt" font-size="13">ONE "sdt" value per chip</text>
+  <text x="525" y="257" text-anchor="middle" class="vt" font-size="13">(64 channels, no trim used)</text>
+  <path class="wire" d="M620 230 H650"/>
+  <rect class="vbox" x="650" y="195" width="200" height="70" rx="8"/>
+  <text x="750" y="222" text-anchor="middle" font-size="14">if it fired: peak ADC</text>
+  <text x="750" y="243" text-anchor="middle" class="muted" font-size="13">if not: the hit never exists</text>
+</svg>
+<p class="faint" style="margin-top:.3rem">The VMM decides <i>before</i> digitising: a pulse under its threshold leaves no trace at all. DREAM digitises first and applies its own low, per-channel cut afterwards.</p>
+
+<p>The theory says the VMM's threshold sits inside the signal distribution, while DREAM's sits far below it. In the picture
+below, the <span class="dream">orange</span> curve is the pulse-height spectrum DREAM measured on a pad, the dashed line is
+DREAM's own threshold, and the <span class="vmm">blue</span> line is where the VMM threshold would have to sit. Everything to the
+left of the blue line is a particle DREAM records and the VMM does not.</p>
+
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig1_model.png" alt="DREAM spectra on a strong and a weak pad with the two thresholds drawn">
+  <figcaption><b>Figure 1.</b> Two real P2_OUT pads from DREAM run <code>eff_nominal_1</code>. The same blue line costs a high-gain pad 4 %
+  and a low-gain pad 33 %. This is why the VMM's losses sit in one place (the low-gain corner) rather than being spread evenly.</figcaption>
+</figure>
+
+<p>Written as a formula, for every pad:</p>
+<p class="eq">VMM efficiency(pad) = DREAM efficiency(pad) × [ fraction of that pad's DREAM spectrum above T ]</p>
+<p>There is only one unknown, the threshold <b>T</b>, expressed in DREAM ADC so it can be laid over the DREAM spectra.
+Everything else in the formula is measured.</p>
+</div>
+
+<!-- ================================================================== -->
+<div class="step">
+<h2><span class="step-n">1</span>Fit T once (what the existing slide already shows)</h2>
+<dl class="qa">
+  <dt>Question</dt><dd>Is there a single T that turns DREAM's 53 per-pad spectra into the VMM's 53 per-pad efficiencies?</dd>
+  <dt>Data</dt><dd>DREAM <code>eff_nominal_1</code> (27 Jul, 1.87 M tracks) and VMM <code>run_46</code> (1 Aug, gain 4.5 mV/fC, all six P2_OUT chips at sdt 224, 0.85 M tracks). Same HV and gas.</dd>
+  <dt>Method</dt><dd>Try every T from 4 to 400, compute the predicted efficiency on every pad, keep the T with the smallest track-weighted residual.</dd>
+  <dt>Result</dt><dd><b>T = 162 DREAM ADC</b> (range 145–178). Predicted 85.5 %, measured 85.3 %, pad-by-pad r = 0.90.</dd>
+</dl>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig2_fit_run46.png" alt="Residual versus trial threshold, and predicted versus measured per pad">
+  <figcaption><b>Figure 2.</b> Left: the residual has a clear minimum. Right: each dot is a pad.</figcaption>
+</figure>
+<div class="callout warn"><b>Why this is not proof on its own.</b> T was chosen to match these exact numbers. A least-squares fit always
+returns <i>some</i> best value, and a good match on the data used for the fit is only consistency. To test the theory, take T as fixed
+and ask the model to predict runs it has never seen, where <b>one setting at a time</b> was changed. If the loss had another
+cause (dead time, the trigger, timing windows, the detector itself), these predictions would fail. That is what steps 2–4 do.</div>
+</div>
+
+<!-- ================================================================== -->
+<div class="step">
+<h2>The logic of steps 2–4</h2>
+<p>Every setting we can change acts on the same quantity: <b>signal ÷ threshold</b>. The theory makes a specific, numerical prediction for each one:</p>
+<svg class="schem" viewBox="0 0 860 210" role="img" aria-label="Three settings that each change signal over threshold">
+  <rect class="box" x="300" y="10" width="260" height="54" rx="8"/>
+  <text x="430" y="34" text-anchor="middle" font-weight="600">VMM efficiency is set by</text>
+  <text x="430" y="54" text-anchor="middle" font-size="15">signal ÷ threshold</text>
+  <path class="wire" d="M430 64 V90 M140 90 H720 M140 90 V115 M430 90 V115 M720 90 V115"/>
+  <rect class="vbox" x="10" y="115" width="260" height="88" rx="8"/>
+  <text x="140" y="138" text-anchor="middle" font-weight="600">2 · amplifier gain</text>
+  <text x="140" y="160" text-anchor="middle" font-size="13">4.5 → 3.0 mV/fC (VMM)</text>
+  <text x="140" y="182" text-anchor="middle" class="vt" font-size="13">T must grow by exactly ×1.5</text>
+  <rect class="vbox" x="300" y="115" width="260" height="88" rx="8"/>
+  <text x="430" y="138" text-anchor="middle" font-weight="600">3 · one chip's DAC</text>
+  <text x="430" y="160" text-anchor="middle" font-size="13">sdt 224 → 265 on VMM 19 only</text>
+  <text x="430" y="182" text-anchor="middle" class="vt" font-size="13">loss only on that chip's pads</text>
+  <rect class="dbox" x="590" y="115" width="260" height="88" rx="8"/>
+  <text x="720" y="138" text-anchor="middle" font-weight="600">4 · chamber gain</text>
+  <text x="720" y="160" text-anchor="middle" font-size="13">mesh 450 → 390 V (chamber)</text>
+  <text x="720" y="182" text-anchor="middle" class="dt" font-size="13">DREAM's spectrum, same T</text>
+</svg>
+<p>Tests 2 and 3 change the electronics and leave the chamber alone. Test 4 changes the chamber and leaves the electronics alone.
+All the VMM efficiencies come from the uRWELL-matched, per-pad tables on EOS
+(<code>vmm/matching/efficiency_v2/</code>), and every chip setting was read from the configuration files archived next to each run,
+not from the run names or the comments inside those files.</p>
+</div>
+
+<!-- ================================================================== -->
+<div class="step">
+<h2><span class="step-n">2</span>Lower the VMM amplifier gain</h2>
+<dl class="qa">
+  <dt>Question</dt><dd>If the chamber and the DAC stay the same and the VMM amplifier gain goes from 4.5 to 3.0 mV/fC, each pulse is 1.5× smaller in mV while the
+  threshold in mV is unchanged. Measured in charge, the threshold therefore rises by 1.5×. Do the data show that?</dd>
+  <dt>Data</dt><dd>Two pairs of runs taken about 40–70 min apart on 1 Aug, all at sdt 230:
+  <code>run_48</code> (4.5) → <code>run_43</code> (3.0) and <code>run_52</code> (4.5) → <code>run_50</code> (3.0).
+  VMM 19's pads are left out here because that chip was at a different setting in the 4.5 runs (see step 3).</dd>
+  <dt>Method</dt><dd>(a) Fit T on each run separately and compare the two values. (b) A real prediction: take T from the 4.5 run, multiply by 1.5,
+  and predict the 3.0 run without any fitting.</dd>
+</dl>
+<div style="overflow-x:auto">
+<table class="num">
+  <thead><tr><th>pair</th><th>T at 4.5</th><th>T at 3.0 (free fit)</th><th>ratio (theory: 1.50)</th><th>predicted at 3.0, no fit</th><th>measured at 3.0</th><th>per-pad r</th></tr></thead>
+  <tbody>
+    <tr><td>run_48 → run_43</td><td>186</td><td>265</td><td>1.42 <span class="faint">(1.20–1.69)</span></td><td>0.704</td><td>0.719</td><td>0.94</td></tr>
+    <tr><td>run_52 → run_50</td><td>188</td><td>271</td><td>1.44 <span class="faint">(1.22–1.70)</span></td><td>0.698</td><td>0.710</td><td>0.94</td></tr>
+  </tbody>
+</table>
+</div>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig3_gain_step.png" alt="Threshold fits at both gains, and predicted versus measured per pad at gain 3.0">
+  <figcaption><b>Figure 3.</b> Left: the best threshold moves to the right by about the expected factor. Middle and right: each pad at gain 3.0, predicted with no free parameter.</figcaption>
+</figure>
+<p><b>Reading.</b> The threshold moves by the factor the electronics require, and the pattern of which pads lose most is predicted
+correctly (r = 0.94). The prediction comes out about 1.5 points low, i.e. the measured ratio is slightly below 1.5. That would be
+the case if the threshold is not exactly proportional to 1/gain (for example, a small baseline shift between gain settings). It is
+inside the uncertainty band.</p>
+</div>
+
+<!-- ================================================================== -->
+<div class="step">
+<h2><span class="step-n">3</span>A natural experiment: one chip's threshold raised, the others nearly unchanged</h2>
+<dl class="qa">
+  <dt>Question</dt><dd>If the threshold of a single chip is raised, do only that chip's pads lose efficiency?</dd>
+  <dt>Data</dt><dd>The config files show that between <code>run_46</code> and <code>run_48</code> (both at gain 4.5, 72 min apart), VMM 16–18 went from sdt 224 to 230,
+  and <b>VMM 19 alone went from 224 to 265</b>. Nothing else differs.</dd>
+  <dt>Method</dt><dd>Fit T separately for each chip's pads, in each run.</dd>
+</dl>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig4_vmm19.png" alt="Per-chip efficiency and fitted threshold in run_46 and run_48">
+  <figcaption><b>Figure 4.</b> Left: efficiency per chip. Right: the fitted threshold per chip. The number on each bar is that chip's DAC setting in that run.</figcaption>
+</figure>
+<ul>
+  <li><b>VMM 19</b>: threshold 92 → 276 DREAM ADC, efficiency <b>0.868 → 0.607</b>.</li>
+  <li><b>VMM 16–18</b>: thresholds up by 23–25 ADC, efficiency down by 3–4 points.</li>
+  <li><b>Same conversion on both</b>: VMM 19 gives 184 ADC / 41 DAC counts ≈ <b>4.5 ADC per count</b>; the others give ~24 ADC / 6 counts ≈ <b>4 ADC per count</b>.</li>
+</ul>
+<p><b>Reading.</b> This is the most direct test. The beam, the chamber, the trigger and the reconstruction are the same for all four
+chips, yet the efficiency drop follows the one chip whose threshold was raised, and by the right amount. Anything that acts on the
+whole station (dead time, the coincidence window, the detector) cannot single out 5 pads.</p>
+</div>
+
+<!-- ================================================================== -->
+<div class="step">
+<h2><span class="step-n">4</span>Lower the chamber gain instead (mesh HV scan)</h2>
+<dl class="qa">
+  <dt>Question</dt><dd>If the electronics stay fixed and the mesh voltage is lowered, the chamber gives less charge and the whole spectrum slides to the left,
+  under a threshold that does not move. Does one fixed level reproduce the VMM's curve at every voltage?</dd>
+  <dt>Data</dt><dd>VMM mesh scan <code>run_32</code> (31 Jul, mesh 450 → 390 V). DREAM's own mesh scan of the same chamber,
+  <code>beam_nominal_meshscan_1</code>, which gives a measured DREAM spectrum and DREAM efficiency at each of the same seven voltages.</dd>
+  <dt>Method</dt><dd>Fit T at 450 V only. Then cut DREAM's spectrum at 440, 430, … 390 V at that <b>same</b> T. No gain model and no
+  extrapolation: the real spectrum measured at each voltage is used.</dd>
+</dl>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig5_mesh_scan.png" alt="DREAM spectra at three mesh voltages, and VMM efficiency predicted vs measured across the scan">
+  <figcaption><b>Figure 5.</b> Left: as the mesh voltage drops, DREAM's spectrum slides under the fixed VMM level while staying well above
+  DREAM's own threshold. Right: DREAM efficiency (orange), VMM measured (blue dots), and the prediction (dark line). Log scale.</figcaption>
+</figure>
+<div style="overflow-x:auto">
+<table class="num">
+  <thead><tr><th>mesh [V]</th><th>450</th><th>440</th><th>430</th><th>420</th><th>410</th><th>400</th><th>390</th></tr></thead>
+  <tbody>
+    <tr><td class="vmm">VMM measured</td><td>0.734</td><td>0.605</td><td>0.456</td><td>0.310</td><td>0.191</td><td>0.111</td><td>0.064</td></tr>
+    <tr><td>VMM predicted</td><td><i>fit</i></td><td>0.603</td><td>0.462</td><td>0.322</td><td>0.202</td><td>0.119</td><td>0.071</td></tr>
+    <tr><td class="dream">DREAM measured</td><td>0.958</td><td>0.943</td><td>0.936</td><td>0.928</td><td>0.917</td><td>0.900</td><td>0.871</td></tr>
+  </tbody>
+</table>
+</div>
+<p><b>Reading.</b> One level fixed at 450 V follows the VMM through a factor-11 drop in efficiency, to within about 1 point.
+The second VMM mesh scan (<code>run_55/56</code>, 1 Aug) matches to within about 2 points. The same chamber, read by DREAM, still
+records 87 % of tracks at 390 V. So the chamber is still producing signals; they are just below the VMM's level.</p>
+<p class="faint">The threshold comes out as 339 here, not 162, because this DREAM product measures cluster amplitude on a different
+scale from the per-pad spectra in steps 1–3. Each test only uses ratios within its own scale, so this does not matter.</p>
+</div>
+
+<!-- ================================================================== -->
+<div class="step">
+<h2><span class="step-n">5</span>What does <i>not</i> fit "one threshold"</h2>
+<ul>
+  <li><b>The chips do not share one level.</b> In <code>run_46</code> all six P2_OUT chips were at sdt 224, yet the fitted levels
+  (Figure 4, light bars) are <b>143 / 169 / 198 / 92</b> DREAM ADC on VMM 16 / 17 / 18 / 19. Half of the pad-to-pad scatter of the
+  per-pad thresholds is between chips. The same DAC value gives different effective thresholds on different chips. This is what the
+  VMM's per-channel threshold trim exists for, and it was never used in this campaign.</li>
+  <li><b>The fit drifts from day to day.</b> At gain 3.0 the fitted level is 252 on 31 Jul (<code>run_32</code>) and 286 on the afternoon
+  of 1 Aug (<code>run_55</code>), about 13 % apart. This is the known 24-hour drift of the VMM efficiency, seen as a drift of signal
+  relative to threshold. Whether the chamber gain or the electronics moved is <b>not</b> established.</li>
+  <li><b>No pulse-by-pulse test is possible.</b> DREAM never read P2_OUT during a VMM run (in those runs it read only the uRWELL),
+  so "the same pulse fires DREAM but not the VMM" cannot be checked pulse by pulse. All the evidence above is statistical, across
+  runs and pads.</li>
+  <li><b>A trap with the gain slope.</b> If you estimate the chamber's gain-vs-HV slope from DREAM's fitted <i>most probable value</i>,
+  you get about 22 V per factor e, and a pure rescaling of one spectrum then disagrees with the VMM mesh scan. DREAM's medians and other
+  quantiles give about 29–31 V, which agrees with the VMM. Step 4 avoids the question by using DREAM's measured spectrum at every voltage.</li>
+</ul>
+<p>Already ruled out earlier (<a href="https://alexandra-kallitsopoulou.web.cern.ch/notes/2026-08-16-vmm-efficiency-autopsy.html">August autopsy</a>):
+the coincidence time window (widening it 3σ → 20σ gains only 0.4 points), beam rate, dead time, position in the spill, geometry and
+channel mapping, track quality, and the VMM ADC's code-width non-uniformity (the comparator acts before the ADC).</p>
+</div>
+
+<!-- ================================================================== -->
+<div class="step">
+<h2>Summary</h2>
+<div style="overflow-x:auto">
+<table>
+  <thead><tr><th>test</th><th>what changed</th><th>theory predicts</th><th>data</th></tr></thead>
+  <tbody>
+    <tr><td>1 · fit</td><td>nothing (calibration)</td><td>one T fits all pads</td><td>T = 162, r = 0.90, 85.5 vs 85.3 %</td></tr>
+    <tr><td>2 · amplifier gain</td><td>4.5 → 3.0 mV/fC</td><td>T × 1.50</td><td>T × 1.42 / 1.44; predicted 0.70 vs measured 0.71–0.72</td></tr>
+    <tr><td>3 · one chip's DAC</td><td>VMM 19: 224 → 265</td><td>loss only on VMM 19</td><td>VMM 19 −26 pts, others −3 pts; ~4–4.5 ADC per DAC count on both</td></tr>
+    <tr><td>4 · mesh HV</td><td>450 → 390 V</td><td>DREAM spectrum cut at a fixed T</td><td>7 points within ~1 pt, across 0.73 → 0.06</td></tr>
+    <tr><td>caveat</td><td>—</td><td>same DAC = same level</td><td><b>no</b>: chips differ by up to 2× at sdt 224</td></tr>
+  </tbody>
+</table>
+</div>
+<p><b>Conclusion.</b> The VMM inefficiency on P2_OUT behaves exactly like a discriminator set too high for the signal. It responds
+to the VMM gain, to one chip's DAC and to the chamber HV in the way the theory predicts, and the model works from DREAM's own measured
+spectra. The practical consequences: equalise the chips with the per-channel trim, then lower the global threshold, or equivalently
+raise the signal. The model estimates that about 3.4× more signal over threshold would reach DREAM's 95 %.</p>
+</div>
+
+<details>
+  <summary>Where everything comes from</summary>
+  <ul>
+    <li>DREAM per-pad spectra and efficiency: <code>P2_basket_analysis/sps_beam_analysis/dream_vmm_comparison/data/dream_padadc_eff_nominal_1_P2_OUT*</code>; model in <code>threshold_model.py</code>.</li>
+    <li>VMM per-pad n / k: EOS <code>/eos/experiment/ntof/data/x17/p2_sps_july/vmm/matching/efficiency_v2/vmm_eff_&lt;run&gt;_&lt;sub&gt;.json</code> (<code>stations[P2_OUT].per_pad</code>).</li>
+    <li>Chip settings: <code>.../vmm/runs/&lt;run&gt;/p2b-config-cern-ext_*.txt</code>, sdt = spi2 × 64 + spi1, gain field <code>sg</code> (2 = 3.0, 3 = 4.5 mV/fC).</li>
+    <li>DREAM mesh scan: LaCie <code>TB_July2026_H4/analysis/det3/beam_nominal_meshscan_1/</code>, stage 20 (spectra) and stage 22 (tag-and-probe efficiency).</li>
+    <li>VMM station efficiencies vs conditions: <code>vmm_dream_matching/efficiency_conditions.csv</code>.</li>
+  </ul>
+</details>
+
+    </div>
+  </article>
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <span>Alexandra Kallitsopoulou</span>
+  <span><a href="../../notes/">← all notes</a></span>
+</div></footer>
+</body>
+</html>
