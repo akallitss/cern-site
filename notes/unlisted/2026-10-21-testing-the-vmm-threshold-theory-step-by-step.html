@@ -72,6 +72,9 @@ three changes it was never fitted to: lowering the VMM amplifier gain, raising o
 chamber's mesh voltage. Each lands within 1–2 efficiency points. One thing does not fit "one threshold": at the same DAC
 setting, the chips do not sit at the same effective level.</div>
 
+<div class="callout"><strong>New: <a href="#part2">Part 2</a></strong> explains what <code>sdt</code> is, how one config value turns into
+mV, VMM ADC and fC, where the noise floor is, and how low the thresholds could go with per-channel trimming.</div>
+
 <!-- ================================================================== -->
 <div class="step">
 <h2><span class="step-n">0</span>The setup, and the idea in one picture</h2>
@@ -313,6 +316,202 @@ spectra. The practical consequences: equalise the chips with the per-channel tri
 raise the signal. The model estimates that about 3.4× more signal over threshold would reach DREAM's 95 %.</p>
 </div>
 
+<!-- ================================================================== -->
+<h2 id="part2" style="margin-top:3rem">Part 2 · What the threshold numbers mean, and how low we can go</h2>
+<p>Part 1 gave the threshold as "T DREAM ADC": a way of saying where the VMM's cut falls inside the signal, measured with DREAM's ruler.
+This part translates it into the units on the VMM side: the <code>sdt</code> value in the config file, millivolts, VMM ADC counts and
+charge in fC. It then looks at the noise, which sets how low the threshold can go.</p>
+
+<div class="step">
+<h2><span class="step-n">A</span>What sdt is</h2>
+<p>Each VMM channel has a preamplifier and shaper. A charge Q on the pad becomes a voltage bump of height
+<b>gain × Q</b> (3.0 or 4.5 mV per fC here), sitting on top of a DC level called the <b>baseline</b>, around 170 mV.
+A comparator checks whether the bump rises above a reference voltage. That reference is the <b>threshold</b>, and it is
+produced by a 10-bit DAC whose setting is <code>sdt</code>. <b>There is one sdt per chip, shared by all 64 channels.</b>
+If the bump never crosses it, the channel records nothing. If it does, the chip records the time and digitises the <b>peak</b>,
+which gives the VMM ADC value.</p>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig6_pulse_cartoon.png" alt="Cartoon of two shaped pulses, one crossing the threshold, one not">
+  <figcaption><b>Figure 6.</b> Cartoon of one channel. The pulse shape is the VMM's own shaper response (from the shaper note in
+  <code>data/VMM-electronics-techinical-info</code>, 200 ns peaking); the amplitudes are illustrative. The only quantity that matters is the
+  gap between the threshold line and the baseline. Raising <code>sdt</code> raises the line. Raising the gain makes the bumps taller.</figcaption>
+</figure>
+<p>The config file writes sdt as two numbers, because the 10-bit value is split across two registers:</p>
+<p class="eq">sdt = (bank1spi2 value) × 64 + (bank1spi1 value)  &nbsp;&nbsp;→&nbsp;&nbsp; e.g. spi2 = 3, spi1 = 38 → sdt = 230</p>
+<p><b>Default value.</b> The base configuration
+(<code>vmm_daplxa:/local/p2/p2testbench/TestBenchCERN/config_base/p2b-config-cern-base.yaml</code>) sets <b>sdt = 4 × 64 + 44 = 300</b>
+on every chip, gain <code>sg = 2</code> (3.0 mV/fC) and the trim <code>sd = 0</code> on all 64 × 20 channels. The <code>_deflt</code>
+configs only comment out the sdt lines, so those runs ran at 300. That matches the ~290–300 I inferred from the ADC edges before having this file.
+The <code>_opt</code> values (224 / 230 / 265) come from the bench noise scan in section D.</p>
+</div>
+
+<div class="step">
+<h2><span class="step-n">B</span>One number in four units</h2>
+<svg class="schem" viewBox="0 0 860 300" role="img" aria-label="Conversion ladder from sdt DAC counts to mV, VMM ADC and fC">
+  <text x="10" y="26" font-weight="600">Conversion chain (P2_OUT, July)</text>
+  <rect class="vbox" x="10" y="45" width="190" height="95" rx="8"/>
+  <text x="105" y="72" text-anchor="middle" font-weight="600">sdt</text>
+  <text x="105" y="94" text-anchor="middle" font-size="13">config DAC count</text>
+  <text x="105" y="114" text-anchor="middle" class="muted" font-size="12">0 … 1023</text>
+  <rect class="vbox" x="230" y="45" width="190" height="95" rx="8"/>
+  <text x="325" y="72" text-anchor="middle" font-weight="600">threshold [mV]</text>
+  <text x="325" y="94" text-anchor="middle" font-size="13">0.801 × sdt + 25.2</text>
+  <text x="325" y="114" text-anchor="middle" class="muted" font-size="12">vmmsc ThresholdDAC_to_mV</text>
+  <rect class="vbox" x="450" y="45" width="190" height="95" rx="8"/>
+  <text x="545" y="72" text-anchor="middle" font-weight="600">VMM ADC</text>
+  <text x="545" y="94" text-anchor="middle" font-size="13">≈ 1.1 ADC per mV</text>
+  <text x="545" y="114" text-anchor="middle" class="muted" font-size="12">baseline ≈ 38–45 ADC</text>
+  <rect class="dbox" x="670" y="45" width="180" height="95" rx="8"/>
+  <text x="760" y="72" text-anchor="middle" font-weight="600">charge [fC]</text>
+  <text x="760" y="94" text-anchor="middle" font-size="13">(ADC − baseline)</text>
+  <text x="760" y="114" text-anchor="middle" font-size="13">÷ (1.1 × gain)</text>
+  <path class="wire" d="M200 92 H230 M420 92 H450 M640 92 H670"/>
+  <text x="215" y="160" text-anchor="middle" class="vt" font-size="12.5">1 count</text>
+  <text x="215" y="176" text-anchor="middle" class="vt" font-size="12.5">= 0.8 mV</text>
+  <text x="435" y="160" text-anchor="middle" class="vt" font-size="12.5">0.8 mV</text>
+  <text x="435" y="176" text-anchor="middle" class="vt" font-size="12.5">≈ 0.9 ADC</text>
+  <text x="655" y="160" text-anchor="middle" class="dt" font-size="12.5">4.5 mV/fC:</text>
+  <text x="655" y="176" text-anchor="middle" class="dt" font-size="12.5">≈ 5 ADC / fC</text>
+  <text x="10" y="215" font-weight="600">Worked example: VMM 18 in run_52 (4.5 mV/fC, sdt 230)</text>
+  <text x="10" y="240" font-size="13.5">sdt 230 → 209 mV absolute → edge at 81 VMM ADC → 81 − 38 = <tspan font-weight="600">43 ADC above baseline</tspan> ≈ 39 mV ≈ <tspan font-weight="600">8.7 fC</tspan></text>
+  <text x="10" y="264" font-size="13.5">Typical P2_OUT pad signal (most probable) at 4.5 mV/fC ≈ 46 ADC above baseline ≈ 9.5 fC → the cut sits right on the peak.</text>
+  <text x="10" y="288" class="muted" font-size="12.5">"0.9 ADC per sdt count" = moving the DAC up by one step moves the lowest recorded ADC value up by ~0.9.</text>
+</svg>
+<p>Where each number comes from:</p>
+<ul>
+  <li><b>DAC → mV.</b> The VMM slow-control code (<code>vmmsc/src/calibration_module.cpp</code>) uses threshold [mV] = 0.801 × sdt + 25.2. This is the nominal chip curve, not measured on our chips.</li>
+  <li><b>DAC → ADC, measured.</b> The lowest ADC a chip records (its "edge") moves by <b>0.85–0.95 ADC per sdt count</b>
+  (Figure 8, left): VMM 19 from 224 → 265, the other chips 224 → 230 → 300. At one sdt the edge is <b>the same at 3.0 and 4.5 mV/fC</b>,
+  and it does not move during a mesh-HV scan. The threshold is a fixed voltage, and the ADC reads absolute voltage.</li>
+  <li><b>ADC → mV, independently.</b> The November 2025 pulser calibration on the same hardware (<code>Offline_ADC_091630.csv</code>)
+  gives 3.2 ADC per fC at 3 mV/fC, i.e. <b>1.07 ADC per mV</b>. The DAC route gives 0.9 / 0.8 = 1.12. The two agree to 5 %.</li>
+  <li><b>Baseline in ADC.</b> Extrapolating each chip's edge against the threshold fitted in Part 1 gives an intercept of
+  <b>38 ADC</b> (Figure 8, right, r = 0.975). The November sub-threshold neighbour hits, which sample the baseline directly, peak at
+  <b>40–50 ADC</b> (SNR analysis report, "noise pedestal stability").</li>
+</ul>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig7_adc_edges.png" alt="VMM ADC spectra of three chips for four settings">
+  <figcaption><b>Figure 7.</b> The VMM's own ADC spectra for three P2_OUT chips. The sharp left edge (▼) is the threshold. Solid versus dotted
+  blue (same sdt, gains 4.5 and 3.0) share an edge. The black curve (default sdt 300) is shifted right by ~60 ADC on every chip. On VMM 19,
+  sdt 224 (light blue) is a spike at the edge: the chip is recording mostly noise.</figcaption>
+</figure>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig8_edge_calibration.png" alt="Edge versus sdt per chip, and edge versus fitted threshold">
+  <figcaption><b>Figure 8.</b> Left: edge versus sdt for every P2_OUT chip; the lines are parallel at ~0.9 ADC per count, but each chip sits at a
+  different height. Right: the VMM's own edges against the thresholds fitted from efficiency in Part 1. Two unrelated measurements fall on one line.</figcaption>
+</figure>
+<p><b>Why the chips differ.</b> The DAC sets an absolute voltage, but every chip, and every channel, has its own baseline. At sdt 230 the gap
+between threshold and baseline is <b>26 / 45 / 28 / 39 / 43 ADC</b> on VMM 14 / 15 / 16 / 17 / 18 (VMM 19 at sdt 265: 55). In charge at
+4.5 mV/fC that is roughly 5.5 to 11 fC. The same config value lands at very different places on different chips.</p>
+</div>
+
+<div class="step">
+<h2><span class="step-n">C</span>How this sets the efficiency</h2>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig11_eff_vs_threshold.png" alt="Efficiency versus threshold above baseline with chip positions">
+  <figcaption><b>Figure 11.</b> Model efficiency of P2_OUT (DREAM spectra, Part 1) against the threshold above baseline, with each chip marked where it
+  actually sat. The two best chips (VMM 14, 16) are at ~88 %; the others give away 10–20 points through the threshold alone.</figcaption>
+</figure>
+<div style="overflow-x:auto">
+<table class="num">
+  <thead><tr><th>threshold above baseline (4.5 mV/fC)</th><th>45 ADC</th><th>30 ADC</th><th>25 ADC</th><th>20 ADC</th><th>15 ADC</th><th>10 ADC</th></tr></thead>
+  <tbody>
+    <tr><td>in charge</td><td>9.3 fC</td><td>6.2 fC</td><td>5.2 fC</td><td>4.1 fC</td><td>3.1 fC</td><td>2.1 fC</td></tr>
+    <tr><td>station efficiency</td><td>77 %</td><td>87 %</td><td>89 %</td><td>92 %</td><td>93 %</td><td>95 %</td></tr>
+    <tr><td>worst 10 % of pads</td><td>54 %</td><td>71 %</td><td>77 %</td><td>83 %</td><td>87 %</td><td>91 %</td></tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+<div class="step">
+<h2><span class="step-n">D</span>The noise floor, measured on the bench</h2>
+<p>On 29–30 July, with no beam, a threshold scan was taken on the VMM DAQ machine (<code>TestBenchCERN/vmm_thr_scan.sh</code>):
+sdt from 300 down to 210 in steps of 5, at 3.0 and 4.5 mV/fC, 200 packets each. Every hit in it is noise.</p>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig9_bench_noise_scan.png" alt="Noise rate per chip against sdt at two gains">
+  <figcaption><b>Figure 9.</b> Noise hits per second per chip against sdt. Each chip "turns on" with noise at its own sdt, the same chips that sit
+  closest to their baseline in Figure 8 (VMM 19, 14, 16). VMM 15, 17 and 18 stay silent down to 210, the lowest point scanned. At 4.5 mV/fC the
+  onset moves ~5 DAC counts higher than at 3.0: the noise is amplified along with the signal.</figcaption>
+</figure>
+<ul>
+  <li><b>The noise is concentrated in a few channels.</b> On VMM 14 at sdt 220, two channels (34, 51) carry all its noise. On VMM 19 at 225
+  (4.5 mV/fC), three channels (20, 36, 1) carry 98 %. Most channels are quiet several DAC counts below where the chip as a whole becomes noisy.</li>
+  <li><b>In ADC terms</b> the chips fill with noise once the threshold comes within roughly <b>10–20 ADC of the baseline</b> (≈ 2–4 fC at
+  4.5 mV/fC). The November neighbour-triggered runs give a baseline width of σ ≈ 5–12 ADC per channel (most 5–8), so this is the usual 2–4 σ.</li>
+  <li><b>The beam data agree.</b> VMM 19 at sdt 224 in run_46 recorded 284 M hits, against 2–5 M on the other chips: the bench says 225
+  is that chip's noise edge.</li>
+  <li><b>Gain does not buy much signal-to-noise.</b> The bench onset shift between gains, and the November SNR heatmap (MPV / σ roughly
+  flat from 3.0 to 6.0 mV/fC on the P2 large detector), both say the noise grows almost as fast as the signal. Higher gain mainly makes
+  the fixed-mV effects, such as chip-to-chip baseline offsets and DAC steps, smaller in charge. It also costs ADC range: 4–5 % of hits already
+  saturate at 4.5 mV/fC, and about 10 % would at 9.</li>
+</ul>
+</div>
+
+<div class="step">
+<h2><span class="step-n">E</span>Can the far, beam-free pads define the noise floor?</h2>
+<p>In principle yes, if they really see no particles. In this beam they do not qualify:</p>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig12_halo.png" alt="Hit rate against distance from the beam centre and far-pad spectrum">
+  <figcaption><b>Figure 12.</b> Left: hits per reference track on every P2_OUT pad against its distance from the beam centre. The rate falls
+  smoothly out to 35 cm with no plateau, and lowering sdt from 300 to 230 does not raise it, which noise would. Right: the summed spectrum
+  of pads more than 20 cm away is broad and muon-like, simply cut at a lower edge at sdt 230.</figcaption>
+</figure>
+<p>The H4 muon beam has a wide halo, so even the edge of a 50 cm chamber sees real particles. Cleaner in-situ noise references are:</p>
+<ul>
+  <li><b>Between spills.</b> The SPS spill structure gives ~10 s of beam-off every cycle. Hits in those gaps are noise on every channel, the beam
+  channels included. The November pipeline already builds this spill mask (<code>SNR_Analysis/vmm_trigger_analysis.py</code>), and the July runs
+  with hit columns (run_43, 50, 52, …) would support it.</li>
+  <li><b>Neighbour-triggered sub-threshold hits</b> (<code>sng = 1</code>, as in November). These give each channel's baseline and σ directly in ADC.</li>
+  <li><b>The bench scan</b> in D, which needs no beam at all.</li>
+</ul>
+</div>
+
+<div class="step">
+<h2><span class="step-n">F</span>The proposed scheme: low global threshold, trim per channel, mask what is left</h2>
+<p>The idea: set each chip's global threshold for its clean channels, raise the few noisy channels with the per-channel trim, and mask a
+channel only if even the trim cannot quiet it. The hardware supports this, and the slow control already has the routine.</p>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig10_trim.png" alt="Trim scan per channel and spread before and after trim">
+  <figcaption><b>Figure 10.</b> The per-channel trim measured on the November 2025 bench (<code>vmmsc</code> threshold calibration,
+  <code>_install/data/20251103/.../Threshold_093415.csv</code>, 10 chips). Left: each line is one channel; increasing the 5-bit trim
+  <code>sd</code> from 0 to 31 lowers that channel's threshold by <b>1.1 mV per step (≈ 34 mV in total)</b>. Untrimmed, the 64 channels of a chip
+  spread with σ ≈ 3.7 mV (15–20 mV peak to peak). Trimmed to a common target, σ ≈ 0.3 mV.</figcaption>
+</figure>
+<svg class="schem" viewBox="0 0 860 210" role="img" aria-label="Three-step threshold procedure">
+  <rect class="vbox" x="10" y="20" width="260" height="170" rx="8"/>
+  <text x="140" y="46" text-anchor="middle" font-weight="600">1 · measure</text>
+  <text x="140" y="72" text-anchor="middle" font-size="13">vmmsc: pedestal per channel</text>
+  <text x="140" y="92" text-anchor="middle" font-size="13">(monitor output → xADC, in mV)</text>
+  <text x="140" y="118" text-anchor="middle" font-size="13">noise rate vs sdt per channel</text>
+  <text x="140" y="138" text-anchor="middle" font-size="13">(bench scan, or out-of-spill)</text>
+  <text x="140" y="168" text-anchor="middle" class="vt" font-size="12.5">→ baseline and noise per channel</text>
+  <rect class="vbox" x="300" y="20" width="260" height="170" rx="8"/>
+  <text x="430" y="46" text-anchor="middle" font-weight="600">2 · set</text>
+  <text x="430" y="72" text-anchor="middle" font-size="13">target = X mV above pedestal</text>
+  <text x="430" y="92" text-anchor="middle" font-size="13">(e.g. 15–20 mV ≈ 3.5–4 fC)</text>
+  <text x="430" y="118" text-anchor="middle" font-size="13">global sdt per chip, then trim sd</text>
+  <text x="430" y="138" text-anchor="middle" font-size="13">so every channel sits on X</text>
+  <text x="430" y="168" text-anchor="middle" class="vt" font-size="12.5">vmmsc "Threshold calibration" does this</text>
+  <rect class="dbox" x="590" y="20" width="260" height="170" rx="8"/>
+  <text x="720" y="46" text-anchor="middle" font-weight="600">3 · fix the few noisy ones</text>
+  <text x="720" y="72" text-anchor="middle" font-size="13">lower that channel's sd</text>
+  <text x="720" y="92" text-anchor="middle" font-size="13">(raises it, up to ~15 mV above X</text>
+  <text x="720" y="112" text-anchor="middle" font-size="13">from a mid-range trim)</text>
+  <text x="720" y="138" text-anchor="middle" font-size="13">still noisy → mask (sm = 1)</text>
+  <text x="720" y="168" text-anchor="middle" class="dt" font-size="12.5">cost: one pad, not a whole chip</text>
+</svg>
+<p><b>What it would buy on P2_OUT.</b> At a common 20 ADC above baseline (≈ 18 mV, ≈ 4 fC at 4.5 mV/fC) the model gives <b>~92 %</b>, against 85 %
+now; at 15 ADC, <b>~93 %</b>. In sdt terms, with each chip's baseline estimated from its edges (VMM 14 / 15 / 16 / 17 / 18 / 19 ≈ 201 / 180 / 199 / 187 / 182 / 203),
+"20 ADC above baseline" means roughly <b>sdt 223 / 202 / 221 / 209 / 204 / 225</b> before trimming. The bench says that is close to the noise
+edge for VMM 14, 16 and 19, where the trim and a few masked channels would have to do the work. VMM 15, 17 and 18 were never scanned that low.</p>
+<div class="callout warn"><b>What still needs a measurement.</b> These baselines are inferred, ±3–5 DAC counts. The clean way is to run
+the vmmsc pedestal and threshold calibration on the P2 hybrids with the chambers connected and at HV. The November file was taken at 3 mV/fC,
+with the default 40 mV target, on a different set of chambers. That should be followed by a short noise scan below sdt 210 at the gain to be used, before
+the next beam. The 95 % in the table needs about 10 ADC (≈ 2 fC) above baseline, which is inside the noise for at least half the chips:
+that last step has to come from the chamber (more gas gain) rather than the electronics.</div>
+</div>
+
 <details>
   <summary>Where everything comes from</summary>
   <ul>
@@ -321,6 +520,12 @@ raise the signal. The model estimates that about 3.4× more signal over threshol
     <li>Chip settings: <code>.../vmm/runs/&lt;run&gt;/p2b-config-cern-ext_*.txt</code>, sdt = spi2 × 64 + spi1, gain field <code>sg</code> (2 = 3.0, 3 = 4.5 mV/fC).</li>
     <li>DREAM mesh scan: LaCie <code>TB_July2026_H4/analysis/det3/beam_nominal_meshscan_1/</code>, stage 20 (spectra) and stage 22 (tag-and-probe efficiency).</li>
     <li>VMM station efficiencies vs conditions: <code>vmm_dream_matching/efficiency_conditions.csv</code>.</li>
+    <li>Per-chip VMM ADC spectra for every sub-run: EOS <code>analysis/vmm/&lt;run&gt;/&lt;sub&gt;/&lt;capture&gt;/counts.npz</code> (keys <code>adc</code>, <code>adc_vs_ch</code>); edge = ADC at 1 % of the chip's spectrum.</li>
+    <li>Base chip configuration: <code>vmm_daplxa:/local/p2/p2testbench/TestBenchCERN/config_base/p2b-config-cern-base.yaml</code>.</li>
+    <li>Bench noise scan (29–30 Jul): <code>TestBenchCERN/config_scan/</code> and its <code>qa_plots/*/…root</code> hit trees; script <code>vmm_thr_scan.sh</code>.</li>
+    <li>Trim and ADC calibration (3 Nov 2025): <code>vmm_daplxa:/local/p2/p2soft/_install/data/20251103/3mVfC_200ns_60ns_negative/</code>.</li>
+    <li>DAC ↔ mV: <code>vmm_daplxa:/local/p2/p2soft/vmmsc/src/calibration_module.cpp</code> (<code>ThresholdDAC_to_mV</code>, <code>PulserDAC_to_PulseHeight_mV</code>).</li>
+    <li>November noise width and SNR versus gain: <code>P2_basket_analysis/SNR_Analysis/vmm_analysis_report.html</code>.</li>
   </ul>
 </details>
 
