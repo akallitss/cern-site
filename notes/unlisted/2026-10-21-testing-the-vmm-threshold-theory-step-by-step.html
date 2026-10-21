@@ -556,6 +556,38 @@ Run_46 ran with almost every chip at sdt 224, which is next to the scan's 225 st
 The next ones in the beam (ch 1, 36, 6, 15, 27, 11) are the next ones on the bench, in the same order. VMM 14 ch 34 (141×) and VMM 11 ch 10 (42×) are the
 only noisy channels of their chips on the bench too. No channel that is silent on the bench goes above 5× its chip's median in the beam.
 <b>So the 2-second bench scan predicts which channels flood in the beam, and it can be used to decide what to raise or mask.</b></p>
+
+<h3>The same comparison with only the hits between spills</h3>
+<p>Figure 14 counts every hit of the run, signal included. To compare noise with noise, I decoded all 48 captures of run_46 from the raw pcapng
+(1 Aug, 04:53–05:28, 1.52 × 10<sup>9</sup> hits, the same total as the summed <code>counts.npz</code>) and binned each channel's hits in 0.1 s steps.
+The DREAM trigger fanned into VMM 0 ch 44 marks the spills: 4.8 s of beam every 14.4 s, and nothing on that channel in between.
+"Between spills" means every 0.1 s bin at least 0.5 s away from a spill bin: <b>1251 s</b> of the run, against 669 s at full spill intensity.
+For each chip, the bench rate is taken at the scanned sdt nearest to its run_46 setting (225 for the chips at 224).</p>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig14b_bench_vs_out_of_spill.png" alt="Bench noise rate against run_46 out-of-spill rate per channel, and out-of-spill ADC spectra on P2_OUT">
+  <figcaption><b>Figure 14b.</b> (a) One point per channel, all 18 chips. Both axes are now hits per second. The y-axis keeps only the out-of-spill hits within 32 ADC
+  of the chip's threshold edge, the noise-like part (see b). Zeros are drawn in the grey bands; the bench resolution is one hit in 1.9 s, ≈ 0.5 Hz.
+  (b) P2_OUT out-of-spill ADC spectra, measured from each chip's threshold edge, for the noisy channels and for all the others, with the in-spill spectrum for comparison.</figcaption>
+</figure>
+<p>Between spills there are two different kinds of hit.</p>
+<ul>
+  <li><b>The noisy channels, at the threshold edge.</b> Their hits pile up in the first 16 ADC above the edge and only 12 % have another P2_OUT hit within ±150 ns: electronics noise.
+  They are the same channels as on the bench: 8 of the 10 channels above 10 Hz on the bench are hot between spills too.
+  (Of the other two, VMM 10 ch 22 has no hit at all in run_46, spill included, so it was dead or disconnected that day, and VMM 19 ch 0, 16 Hz on the bench, is quiet between spills.)
+  But they are <b>about 100× hotter in the beam hall</b>: VMM 19 ch 20 1.4 kHz on the bench → 120 kHz; VMM 14 ch 34 28 Hz → 4.8 kHz; VMM 11 ch 10 11 Hz → 2.0 kHz.
+  The bench reaches these rates only at sdt 215–220, so in the beam hall the noise behaves as if the threshold were <b>5–10 DAC counts lower</b> than on the bench.
+  That is also why 8 channels that were nearly quiet on the bench at 225 are above 100 Hz between spills (VMM 19 ch 3, 6, 11, 15, 27, 47; VMM 10 ch 24; VMM 11 ch 33):
+  all of them are noisy on the bench at 215–220. The walking-burst VMM 4 is the exception: its ch 39 runs at the same ≈ 0.48 MHz in both places at sdt 300.</li>
+  <li><b>A floor on every channel that is not noise.</b> Median channel between spills: P2_OUT 7.7 Hz, P2_MID 1.5 Hz, P2_IN 0.4 Hz. It is flat from 0.5 s to 10 s after the spill,
+  it is spread evenly over the pads (rank correlation with the beam profile ≈ 0), its ADC spectrum is the same shape as the in-spill hits and runs to the top of the range,
+  and 51 % of these hits have a partner on another P2_OUT channel within ±150 ns. Those are real ionising particles, not electronics.
+  The bench saw none of it on 30 July, when ≈ 15 hits per channel per point would have been visible, so it comes with beam operation. Something that is radioactive while the beam runs,
+  near P2_OUT, is my guess, but this data cannot say what. It does not matter for the efficiency: masking would not remove it, since it is on every pad, and at 8 Hz per pad it hardly ever lands inside a 200 ns matching window.</li>
+</ul>
+<div class="callout warn"><b>What this changes in Part 3.</b> The mask list from the bench holds in the beam. The noise onsets do not: they sit about 1–2 scan steps higher.
+Moving every P2_OUT onset up by 5 or 10 DAC moves each chip's best sdt up by the same amount, and the six-chip average of the best efficiency drops from 89.9 % to 87.7 % or 85.2 %.
+For comparison, the July setting gives 80.4 % on the same average. So lowering the threshold still pays, but the best sdt values in Figures 15–18 should be read as 5–10 counts too low for the beam hall.
+The cleanest way to pin this down is the in-beam version of the scan: a few minutes per sdt, using only the hits between spills.</div>
 </div>
 
 <div class="step">
@@ -714,7 +746,7 @@ The open circles stay the real July operating point (4.5 mV/fC, July sdt), so bo
   baselines (±3–5 counts) with measured per-channel ones, and it gives the trims.</li>
   <li><b>Then rerun this analysis:</b> per channel, threshold = max(target, quiet point). Mask only what the trim cannot reach, and expect a
   handful of channels on P2_OUT. The scripts are written so that the new scan can be dropped in.</li>
-  <li><b>Check in the beam with out-of-spill hits</b>, which give the same per-channel noise rate with the beam present.</li>
+  <li><b>Repeat the scan in the beam, using only the hits between spills</b>, a few minutes per sdt. run_46 already shows how (Figure 14b): same channels as the bench, but the noise onset is 5–10 DAC higher in the beam hall.</li>
 </ol>
 <div class="callout ok"><b>Bottom line.</b> Using only global thresholds and three masked channels, P2_OUT goes from 85 % to about 91–92 %, at
 sdt 220 / ≤ 210 / 220 / ≤ 210 / ≤ 210 / 230 on VMM 14–19 at 4.5 mV/fC. With the trim calibration and a lower scan, about 93 % is realistic.
@@ -731,6 +763,7 @@ or if the chamber's gas gain goes up.</div>
     <li>DREAM mesh scan: LaCie <code>TB_July2026_H4/analysis/det3/beam_nominal_meshscan_1/</code>, stage 20 (spectra) and stage 22 (tag-and-probe efficiency).</li>
     <li>VMM station efficiencies vs conditions: <code>vmm_dream_matching/efficiency_conditions.csv</code>.</li>
     <li>Per-chip VMM ADC spectra for every sub-run: EOS <code>analysis/vmm/&lt;run&gt;/&lt;sub&gt;/&lt;capture&gt;/counts.npz</code> (keys <code>adc</code>, <code>adc_vs_ch</code>); edge = ADC at 1 % of the chip's spectrum.</li>
+    <li>Out-of-spill comparison (Figure 14b): run_46 raw pcapng decoded with <code>vmm_decode.iter_chunks</code> through <code>extract_vmm_triggers.iter_columns</code>; scratch scripts <code>oos/oos_bin.py</code> (hits per channel per 0.1 s), <code>oos/oos_adc.py</code> (ADC spectra and coincidences), <code>note_figs3d.py</code> (figure).</li>
     <li>Base chip configuration: <code>vmm_daplxa:/local/p2/p2testbench/TestBenchCERN/config_base/p2b-config-cern-base.yaml</code>.</li>
     <li>Bench noise scan (29–30 Jul): <code>TestBenchCERN/config_scan/</code> and its <code>qa_plots/*/…root</code> hit trees; script <code>vmm_thr_scan.sh</code>.</li>
     <li>Trim and ADC calibration (3 Nov 2025): <code>vmm_daplxa:/local/p2/p2soft/_install/data/20251103/3mVfC_200ns_60ns_negative/</code>.</li>
