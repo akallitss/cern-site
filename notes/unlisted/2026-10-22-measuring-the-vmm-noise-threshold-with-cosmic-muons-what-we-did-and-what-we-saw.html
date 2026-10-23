@@ -33,6 +33,10 @@
 
 
 
+
+
+
+
 <style>
   :root{--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--alert:#eb6834;--surface:#fcfcfb;
     --c0:#eef0f3;--c1:#cde2fb;--c2:#86b6ef;--c3:#3987e5;--c4:#1c5cab;--c5:#0d366b;
@@ -94,9 +98,9 @@
 <div class="tldr"><strong>In one minute.</strong>
 <ul>
 <li><strong>The question:</strong> how low can we set the threshold of each VMM chip before electronic noise takes over? The beam test could only <em>guess</em> the answer. Here, with cosmic muons, we can <em>measure</em> it.</li>
-<li><strong>What we did, in order:</strong> (1) a first test, which showed a flood of data from a few chips; (2) a noise scan with the chamber voltage on; (3) the same scan with the voltage <em>off</em>, to separate the detector from the electronics; (4) a closer look at single channels; (5) a direct measurement of the baseline of each channel, using a chip setting where a firing channel makes its neighbours report.</li>
-<li><strong>What we found:</strong> the chips do <em>not</em> start to be noisy at the same threshold, and this spread stays when the voltage is off, so it comes from the electronics, not the chambers. Three chips (VMM 4, 7, 9) have noisy channels that also stay with the voltage off. And each channel has a noise peak of its own, so the channels inside one chip differ too. The baselines we could measure directly (about half of the channels so far) are mostly 45 to 65 ADC counts, not the 38 used so far for every channel, and they differ from chip to chip.</li>
-<li><strong>What this means for the next step:</strong> one threshold per chip is not enough. We need the baseline of <em>every channel</em> (half is done), in threshold units (millivolts, not yet done), and then to correct each channel. Then we repeat the scan and, only then, measure efficiency.</li>
+<li><strong>What we did, in order:</strong> (1) a first test, which showed a flood of data from a few chips; (2) a noise scan with the chamber voltage on; (3) the same scan with the voltage <em>off</em>, to separate the detector from the electronics; (4) a closer look at single channels; (5) a direct measurement of the baseline of each channel, using a chip setting where a firing channel makes its neighbours report; (6) the same scans with the three chips we had masked (VMM 4, 7, 9) switched back on.</li>
+<li><strong>What we found:</strong> the chips do <em>not</em> start to be noisy at the same threshold, and this spread stays when the voltage is off, so it comes from the electronics, not the chambers. Three chips (VMM 4, 7, 9) have noisy channels that also stay with the voltage off; when we switch them back on they show two kinds of noise: an ordinary smooth onset like the other chips, plus bursts that jump up and down with each new configuration, even at very high thresholds. And each channel has a noise peak of its own, so the channels inside one chip differ too. The baselines we could measure directly (about half of the channels so far) are mostly 45 to 65 ADC counts, not the 38 used so far for every channel, and they differ from chip to chip.</li>
+<li><strong>What this means for the next step:</strong> one threshold per chip is not enough. We need the baseline of <em>every channel</em> (half is done), in threshold units (millivolts, not yet done), and then to correct each channel. Then we repeat the scan and, only then, measure efficiency. The high voltage was switched on after these measurements, so the next runs are the first with the voltage on and all chips included.</li>
 </ul></div>
 
 <h2>0. The idea in one picture</h2>
@@ -1155,7 +1159,7 @@
 <text class="m" x="10" y="338" font-size="11">Orange: fires. Blue: read out as a neighbour. One step leaves most channels unmeasured; a few steps cover (nearly) all.</text>
 </svg><p class="caption">Each step lets other channels fire, and their neighbours get measured. The cartoon uses 16 channels and three steps.</p></div>
 
-<div class="stepcard done"><div class="sc-head"><span class="stepn">6</span><strong>Neighbour read-out with the voltage OFF</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>We switched on <code>sng = 1</code> on every chip and took 2 minutes at five settings: one first test, and then four thresholds per chip, 0, 3, 6 and 9 steps lower than that chip&rsquo;s noise onset from step 4. VMM 4 and 9 stay masked. The voltage stayed off, so the baselines are measured without any detector effect.</dd><dt>What we saw</dt><dd>Between 64 and 67&nbsp;% of the hits on every chip are neighbour read-outs, as expected. After adding the five captures, <strong>627 of the 1024 channels</strong> on the 16 working chips had a baseline (at least 50 read-outs); the count after each capture was 410, 410, 428, 528, 627, and the two lowest thresholds added the most. The whole of each 2-minute capture was used (599&nbsp;s in total). The median baseline is 54&nbsp;ADC; chip medians range from 48 to 61; only 10 of the 627 channels are at or below 38.</dd><dt>What it tells us</dt><dd>The single value used so far for every channel (38) is wrong for almost all of them, and the baselines differ between chips and, by a few ADC counts, inside each chip. About {100 * (BL_TOTAL - BL_COV) / BL_TOTAL:.0f}&nbsp;% of the channels still have no measurement (VMM 6 and VMM 7 the most). All the data taken have now been used, so more coverage needs new data: more steps, longer runs, or cosmic muons with the voltage on (they hit all channels evenly).</dd><dt>So the next step is</dt><dd>put the baselines in threshold units (millivolts), which needs one more measurement (step 7).</dd></dl></div>
+<div class="stepcard done"><div class="sc-head"><span class="stepn">6</span><strong>Neighbour read-out with the voltage OFF</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>We switched on <code>sng = 1</code> on every chip and took 2 minutes at five settings: one first test, and then four thresholds per chip, 0, 3, 6 and 9 steps lower than that chip&rsquo;s noise onset from step 4. VMM 4 and 9 stay masked. The voltage stayed off, so the baselines are measured without any detector effect.</dd><dt>What we saw</dt><dd>Between 64 and 67&nbsp;% of the hits on every chip are neighbour read-outs, as expected. After adding the five captures, <strong>627 of the 1024 channels</strong> on the 16 working chips had a baseline (at least 50 read-outs); the count after each capture was 410, 410, 428, 528, 627, and the two lowest thresholds added the most. The whole of each 2-minute capture was used (599&nbsp;s in total). The median baseline is 54&nbsp;ADC; chip medians range from 48 to 61; only 10 of the 627 channels are at or below 38.</dd><dt>What it tells us</dt><dd>The single value used so far for every channel (38) is wrong for almost all of them, and the baselines differ between chips and, by a few ADC counts, inside each chip. About {100 * (BL_TOTAL - BL_COV) / BL_TOTAL:.0f}&nbsp;% of the channels still have no measurement (VMM 6 and VMM 7 the most). All the data taken have now been used, so more coverage needs new data: more steps, longer runs, or cosmic muons with the voltage on (they hit all channels evenly).</dd><dt>So the next step is</dt><dd>put the baselines in threshold units (millivolts), which needs one more measurement (step 9). First, though, the three chips we had masked must be put back into the study (next section).</dd></dl></div>
 <div class="viz-card"><svg viewBox="0 0 694 436" role="img" aria-label="Measured ADC baseline of every channel">
 <text class="t" x="14" y="18" font-size="13" font-weight="600">Measured baseline (ADC) of every channel, from neighbour read-out</text>
 <text class="m" x="14" y="34" font-size="11">one row per chip, one cell per channel 0-63; the colour is the median ADC of its neighbour read-outs</text>
@@ -3669,7 +3673,7 @@
 <line x1="84.0" y1="184.7708634495842" x2="540.0" y2="157.89741741142058" stroke="var(--alert)" stroke-width="2.2" stroke-dasharray="6 4"/>
 <text class="t" x="534" y="70" font-size="12" text-anchor="end" font-weight="600">rank correlation +0.33</text>
 </svg><p class="caption">Each dot is a channel with both a measured baseline and a clear noise peak (39 channels here, peaks with at least 10 hits). A line through the dots is almost flat. The rank correlation is +0.48 (13 channels, at least 30 hits), +0.33 (39 channels, at least 10 hits), +0.17 (82 channels, at least 5 hits); it gets smaller as more channels are included, and the ordinary correlation is small (+0.04 to +0.21). Channels above 100 ADC (the three outliers) are left out of the plot and of these numbers.</p></div>
-<p><strong>So the answer is no, at least not clearly.</strong> An earlier look with fewer channels showed a weak positive trend; with the whole data it largely disappears. Three reasons are possible, and none is tested yet: (1) the ADC baseline is not the same thing as the level the threshold acts on, because each channel&rsquo;s threshold comparator has its own small offset; (2) the threshold steps are coarse (3 to 10 units) and many peaks have few hits; (3) the peaks come from the voltage-on scan and the baselines from the voltage-off scan. Reason (1) is exactly why the chip monitor measurement of step 7 matters: it measures the pedestal <em>and</em> the threshold of each channel, so it gives the missing link.</p>
+<p><strong>So the answer is no, at least not clearly.</strong> An earlier look with fewer channels showed a weak positive trend; with the whole data it largely disappears. Three reasons are possible, and none is tested yet: (1) the ADC baseline is not the same thing as the level the threshold acts on, because each channel&rsquo;s threshold comparator has its own small offset; (2) the threshold steps are coarse (3 to 10 units) and many peaks have few hits; (3) the peaks come from the voltage-on scan and the baselines from the voltage-off scan. Reason (1) is exactly why the chip monitor measurement of step 9 matters: it measures the pedestal <em>and</em> the threshold of each channel, so it gives the missing link.</p>
 <div class="viz-card"><svg viewBox="0 0 640 190" role="img" aria-label="Three units for the same level">
 <text class="t" x="10" y="18" font-size="13" font-weight="600">Three ways to say the same level: what we set, what is real, what the data shows</text>
 <rect x="10" y="36" width="180" height="118" rx="10" fill="var(--s1)" opacity="0.14"/><rect x="10" y="36" width="180" height="118" rx="10" fill="none" stroke="var(--s1)" stroke-width="2.4" stroke-dasharray="0"/>
@@ -3685,12 +3689,165 @@
 </svg><p class="caption">The chain we are building. We set the threshold in DAC steps and see the baseline in ADC counts. To correct channel by channel we also need the level in millivolts, which the chip can report through its monitor.</p></div>
 
 
-<h2>7. What we know, and what we do not</h2>
+<h2>7. Putting VMM 4, 7 and 9 back in</h2>
+<p>For the scans above we had masked VMM 4 and VMM 9 completely (and one channel of VMM 7), because their bursts filled the disk. That left them out exactly where the comparison with the other chips matters. So we repeated the measurement with the voltage off and these three chips unmasked and following the threshold, from very high thresholds down to low ones, once with the normal read-out and once with neighbour read-out. All other chips sat at a quiet setting (d = 50). The three chips were read at 22 thresholds in total; each point is 2 minutes.</p>
+<div class="viz-card"><svg viewBox="0 0 640 356" role="img" aria-label="Rate of VMM 4, 7 and 9 against threshold step">
+<text class="t" x="10" y="18" font-size="13" font-weight="600">VMM 4, 7 and 9 unmasked, voltage off: rate against threshold step</text>
+<text class="m" x="10" y="33" font-size="11">kHz per chip, log scale; first 300 MB of each 2-minute capture.</text>
+<text class="m" x="10" y="47" font-size="11">Dots on the bottom edge: no hits, or fewer than 0.01 kHz.</text>
+<circle cx="16" cy="66" r="5" fill="var(--s1)"/><text class="m" x="26" y="70" font-size="11">normal read-out (sng 0)</text><circle cx="190" cy="66" r="6.5" fill="none" stroke="var(--s2)" stroke-width="2.6"/><text class="m" x="203" y="70" font-size="11">neighbour read-out (sng 1)</text>
+<text class="f" x="10" y="86" font-size="10">x: threshold step d (left: very high threshold, right: low). Hover a point for the hot channel.</text>
+<text class="t" x="113.33333333333333" y="98" font-size="12" font-weight="600" text-anchor="middle">VMM 4</text>
+<line x1="44.0" x2="210.66666666666666" y1="304.0" y2="304.0" stroke="var(--border)"/><text class="f" x="40.0" y="307.0" font-size="9" text-anchor="end">0.01</text>
+<line x1="44.0" x2="210.66666666666666" y1="234.8" y2="234.8" stroke="var(--border)"/><text class="f" x="40.0" y="237.8" font-size="9" text-anchor="end">1</text>
+<line x1="44.0" x2="210.66666666666666" y1="165.5" y2="165.5" stroke="var(--border)"/><text class="f" x="40.0" y="168.5" font-size="9" text-anchor="end">100</text>
+<text class="f" x="50.0" y="318" font-size="9" text-anchor="middle">200</text>
+<text class="f" x="73.8" y="318" font-size="9" text-anchor="middle">60</text>
+<text class="f" x="97.6" y="318" font-size="9" text-anchor="middle">40</text>
+<text class="f" x="121.4" y="318" font-size="9" text-anchor="middle">30</text>
+<text class="f" x="145.2" y="318" font-size="9" text-anchor="middle">24</text>
+<text class="f" x="169.0" y="318" font-size="9" text-anchor="middle">20</text>
+<text class="f" x="192.8" y="318" font-size="9" text-anchor="middle">16</text>
+<g><title>VMM 4, d=200, sng 0: 11.98 kHz, hottest channel 45 (64 %)</title><circle cx="47.5" cy="197.4" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=100, sng 0: 0.01 kHz, hottest channel 39 (100 %)</title><circle cx="59.4" cy="304.0" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=60, sng 0: 0.00 kHz, hottest channel 38 (76 %)</title><circle cx="71.3" cy="304.0" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=50, sng 0: 26.70 kHz, hottest channel 38 (62 %)</title><circle cx="83.2" cy="185.4" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=40, sng 0: 1767.86 kHz, hottest channel 36 (59 %)</title><circle cx="95.1" cy="122.4" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=34, sng 0: 0.00 kHz, no hits</title><circle cx="107.0" cy="304.0" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=30, sng 0: 0.00 kHz, hottest channel 37 (93 %)</title><circle cx="118.9" cy="304.0" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=27, sng 0: 0.03 kHz, hottest channel 37 (88 %)</title><circle cx="130.8" cy="288.8" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=24, sng 0: 0.84 kHz, hottest channel 37 (85 %)</title><circle cx="142.7" cy="237.4" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=22, sng 0: 5.39 kHz, hottest channel 37 (83 %)</title><circle cx="154.6" cy="209.5" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=20, sng 0: 25.59 kHz, hottest channel 37 (79 %)</title><circle cx="166.5" cy="186.0" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=18, sng 0: 112.22 kHz, hottest channel 37 (77 %)</title><circle cx="178.4" cy="163.8" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=16, sng 0: 340.17 kHz, hottest channel 37 (73 %)</title><circle cx="190.3" cy="147.1" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=100, sng 1: 293.21 kHz, hottest channel 40 (33 %)</title><circle cx="64.4" cy="149.4" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=60, sng 1: 0.00 kHz, hottest channel 37 (33 %)</title><circle cx="76.3" cy="304.0" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=50, sng 1: 38.59 kHz, hottest channel 38 (33 %)</title><circle cx="88.2" cy="179.9" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=40, sng 1: 2161.24 kHz, hottest channel 38 (34 %)</title><circle cx="100.1" cy="119.3" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=34, sng 1: 189.41 kHz, hottest channel 38 (33 %)</title><circle cx="112.0" cy="155.9" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=27, sng 1: 14.26 kHz, hottest channel 37 (33 %)</title><circle cx="135.8" cy="194.8" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=22, sng 1: 14.61 kHz, hottest channel 36 (31 %)</title><circle cx="159.6" cy="194.5" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=18, sng 1: 292.75 kHz, hottest channel 36 (30 %)</title><circle cx="183.4" cy="149.4" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=14, sng 1: 2132.34 kHz, hottest channel 36 (27 %)</title><circle cx="207.2" cy="119.6" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<text class="t" x="320.0" y="98" font-size="12" font-weight="600" text-anchor="middle">VMM 7</text>
+<line x1="250.66666666666666" x2="417.3333333333333" y1="304.0" y2="304.0" stroke="var(--border)"/><text class="f" x="246.66666666666666" y="307.0" font-size="9" text-anchor="end">0.01</text>
+<line x1="250.66666666666666" x2="417.3333333333333" y1="234.8" y2="234.8" stroke="var(--border)"/><text class="f" x="246.66666666666666" y="237.8" font-size="9" text-anchor="end">1</text>
+<line x1="250.66666666666666" x2="417.3333333333333" y1="165.5" y2="165.5" stroke="var(--border)"/><text class="f" x="246.66666666666666" y="168.5" font-size="9" text-anchor="end">100</text>
+<text class="f" x="256.6" y="318" font-size="9" text-anchor="middle">200</text>
+<text class="f" x="280.4" y="318" font-size="9" text-anchor="middle">60</text>
+<text class="f" x="304.2" y="318" font-size="9" text-anchor="middle">40</text>
+<text class="f" x="328.0" y="318" font-size="9" text-anchor="middle">30</text>
+<text class="f" x="351.9" y="318" font-size="9" text-anchor="middle">24</text>
+<text class="f" x="375.7" y="318" font-size="9" text-anchor="middle">20</text>
+<text class="f" x="399.5" y="318" font-size="9" text-anchor="middle">16</text>
+<g><title>VMM 7, d=200, sng 0: 819.89 kHz, hottest channel 47 (56 %)</title><circle cx="254.1" cy="133.9" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=100, sng 0: 0.00 kHz, no hits</title><circle cx="266.0" cy="304.0" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=60, sng 0: 15.43 kHz, hottest channel 25 (100 %)</title><circle cx="277.9" cy="193.6" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=50, sng 0: 34.69 kHz, hottest channel 24 (100 %)</title><circle cx="289.8" cy="181.5" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=40, sng 0: 144.28 kHz, hottest channel 24 (86 %)</title><circle cx="301.7" cy="160.0" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=34, sng 0: 547.04 kHz, hottest channel 23 (100 %)</title><circle cx="313.6" cy="140.0" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=30, sng 0: 0.02 kHz, hottest channel 24 (100 %)</title><circle cx="325.5" cy="291.6" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=27, sng 0: 0.00 kHz, hottest channel 24 (100 %)</title><circle cx="337.5" cy="304.0" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=24, sng 0: 0.00 kHz, no hits</title><circle cx="349.4" cy="304.0" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=22, sng 0: 0.00 kHz, hottest channel 10 (78 %)</title><circle cx="361.3" cy="304.0" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=20, sng 0: 0.00 kHz, hottest channel 10 (91 %)</title><circle cx="373.2" cy="304.0" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=18, sng 0: 0.04 kHz, hottest channel 10 (89 %)</title><circle cx="385.1" cy="284.2" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=16, sng 0: 0.37 kHz, hottest channel 10 (87 %)</title><circle cx="397.0" cy="249.6" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=100, sng 1: 0.00 kHz, no hits</title><circle cx="271.0" cy="304.0" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=60, sng 1: 45.85 kHz, hottest channel 25 (33 %)</title><circle cx="282.9" cy="177.3" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=50, sng 1: 79.75 kHz, hottest channel 24 (33 %)</title><circle cx="294.8" cy="168.9" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=40, sng 1: 498.32 kHz, hottest channel 24 (33 %)</title><circle cx="306.7" cy="141.4" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=34, sng 1: 1573.16 kHz, hottest channel 23 (34 %)</title><circle cx="318.6" cy="124.1" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=27, sng 1: 157.65 kHz, hottest channel 23 (33 %)</title><circle cx="342.5" cy="158.7" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=22, sng 1: 1.66 kHz, hottest channel 23 (33 %)</title><circle cx="366.3" cy="227.2" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=18, sng 1: 0.13 kHz, hottest channel 10 (27 %)</title><circle cx="390.1" cy="264.9" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=14, sng 1: 10.17 kHz, hottest channel 10 (28 %)</title><circle cx="413.9" cy="199.9" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<text class="t" x="526.6666666666666" y="98" font-size="12" font-weight="600" text-anchor="middle">VMM 9</text>
+<line x1="457.3333333333333" x2="624.0" y1="304.0" y2="304.0" stroke="var(--border)"/><text class="f" x="453.3333333333333" y="307.0" font-size="9" text-anchor="end">0.01</text>
+<line x1="457.3333333333333" x2="624.0" y1="234.8" y2="234.8" stroke="var(--border)"/><text class="f" x="453.3333333333333" y="237.8" font-size="9" text-anchor="end">1</text>
+<line x1="457.3333333333333" x2="624.0" y1="165.5" y2="165.5" stroke="var(--border)"/><text class="f" x="453.3333333333333" y="168.5" font-size="9" text-anchor="end">100</text>
+<text class="f" x="463.3" y="318" font-size="9" text-anchor="middle">200</text>
+<text class="f" x="487.1" y="318" font-size="9" text-anchor="middle">60</text>
+<text class="f" x="510.9" y="318" font-size="9" text-anchor="middle">40</text>
+<text class="f" x="534.7" y="318" font-size="9" text-anchor="middle">30</text>
+<text class="f" x="558.5" y="318" font-size="9" text-anchor="middle">24</text>
+<text class="f" x="582.3" y="318" font-size="9" text-anchor="middle">20</text>
+<text class="f" x="606.1" y="318" font-size="9" text-anchor="middle">16</text>
+<g><title>VMM 9, d=200, sng 0: 2727.12 kHz, hottest channel 45 (35 %)</title><circle cx="460.8" cy="115.9" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=100, sng 0: 25.65 kHz, hottest channel 25 (57 %)</title><circle cx="472.7" cy="186.0" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=60, sng 0: 688.44 kHz, hottest channel 27 (63 %)</title><circle cx="484.6" cy="136.5" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=50, sng 0: 105.13 kHz, hottest channel 21 (100 %)</title><circle cx="496.5" cy="164.8" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=40, sng 0: 9.36 kHz, hottest channel 21 (100 %)</title><circle cx="508.4" cy="201.2" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=34, sng 0: 0.03 kHz, hottest channel 21 (73 %)</title><circle cx="520.3" cy="285.2" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=30, sng 0: 0.50 kHz, hottest channel 16 (100 %)</title><circle cx="532.2" cy="245.3" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=27, sng 0: 6.03 kHz, hottest channel 16 (100 %)</title><circle cx="544.1" cy="207.8" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=24, sng 0: 49.92 kHz, hottest channel 16 (100 %)</title><circle cx="556.0" cy="176.0" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=22, sng 0: 159.84 kHz, hottest channel 16 (99 %)</title><circle cx="567.9" cy="158.5" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=20, sng 0: 380.63 kHz, hottest channel 16 (99 %)</title><circle cx="579.8" cy="145.5" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=18, sng 0: 737.14 kHz, hottest channel 16 (97 %)</title><circle cx="591.7" cy="135.5" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=16, sng 0: 1013.81 kHz, hottest channel 16 (94 %)</title><circle cx="603.6" cy="130.7" r="3.4" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=100, sng 1: 96.10 kHz, hottest channel 25 (32 %)</title><circle cx="477.7" cy="166.1" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=60, sng 1: 2038.04 kHz, hottest channel 27 (19 %)</title><circle cx="489.6" cy="120.2" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=50, sng 1: 2938.88 kHz, hottest channel 20 (33 %)</title><circle cx="501.5" cy="114.7" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=40, sng 1: 0.00 kHz, no hits</title><circle cx="513.4" cy="304.0" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=34, sng 1: 0.00 kHz, no hits</title><circle cx="525.3" cy="304.0" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=27, sng 1: 336.26 kHz, hottest channel 19 (31 %)</title><circle cx="549.1" cy="147.3" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=22, sng 1: 523.00 kHz, hottest channel 16 (32 %)</title><circle cx="572.9" cy="140.7" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=18, sng 1: 2219.24 kHz, hottest channel 16 (33 %)</title><circle cx="596.7" cy="119.0" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=14, sng 1: 3162.65 kHz, hottest channel 16 (29 %)</title><circle cx="620.5" cy="113.6" r="4.4" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<text class="m" x="320.0" y="348" font-size="11" text-anchor="middle">threshold step d, from very high (left) to low (right)</text>
+</svg><p class="caption">Real data, voltage off, nothing masked. For each chip the rate does <em>not</em> go up smoothly as the threshold goes down: it jumps by orders of magnitude between neighbouring settings. At the low-threshold end, though, a steady rise appears (VMM 4 and VMM 9).</p></div>
+<details><summary>Rate and hottest channel for every threshold step</summary><div style="overflow-x:auto"><table class="bltab"><tr><th></th><th colspan="2">VMM 4</th><th colspan="2">VMM 7</th><th colspan="2">VMM 9</th></tr><tr><th></th><th>sng 0</th><th>sng 1</th><th>sng 0</th><th>sng 1</th><th>sng 0</th><th>sng 1</th></tr><tr><th>d = 200</th><td title="top channels: 45, 43, 54">12 kHz &middot; ch 45 (64%)</td><td class="na">&ndash;</td><td title="top channels: 47, 35, 48">820 kHz &middot; ch 47 (56%)</td><td class="na">&ndash;</td><td title="top channels: 45, 33, 36">2727 kHz &middot; ch 45 (35%)</td><td class="na">&ndash;</td></tr><tr><th>d = 100</th><td title="top channels: 39">&lt; 0.01 kHz &middot; ch 39 (100%)</td><td title="top channels: 40, 39, 41">293 kHz &middot; ch 40 (33%)</td><td>no hits</td><td>no hits</td><td title="top channels: 25, 26, 32">26 kHz &middot; ch 25 (57%)</td><td title="top channels: 25, 26, 24">96 kHz &middot; ch 25 (32%)</td></tr><tr><th>d = 60</th><td title="top channels: 38, 36">&lt; 0.01 kHz &middot; ch 38 (76%)</td><td title="top channels: 37, 38, 39">&lt; 0.01 kHz &middot; ch 37 (33%)</td><td title="top channels: 25, 24">15 kHz &middot; ch 25 (100%)</td><td title="top channels: 25, 24, 26">46 kHz &middot; ch 25 (33%)</td><td title="top channels: 27, 24, 22">688 kHz &middot; ch 27 (63%)</td><td title="top channels: 27, 26, 28">2038 kHz &middot; ch 27 (19%)</td></tr><tr><th>d = 50</th><td title="top channels: 38, 36, 37">27 kHz &middot; ch 38 (62%)</td><td title="top channels: 38, 37, 39">39 kHz &middot; ch 38 (33%)</td><td title="top channels: 24, 25, 23">35 kHz &middot; ch 24 (100%)</td><td title="top channels: 24, 23, 25">80 kHz &middot; ch 24 (33%)</td><td title="top channels: 21, 22, 27">105 kHz &middot; ch 21 (100%)</td><td title="top channels: 20, 21, 19">2939 kHz &middot; ch 20 (33%)</td></tr><tr><th>d = 40</th><td title="top channels: 36, 38">1768 kHz &middot; ch 36 (59%)</td><td title="top channels: 38, 37, 39">2161 kHz &middot; ch 38 (34%)</td><td title="top channels: 24, 23">144 kHz &middot; ch 24 (86%)</td><td title="top channels: 24, 23, 25">498 kHz &middot; ch 24 (33%)</td><td title="top channels: 21">9.36 kHz &middot; ch 21 (100%)</td><td>no hits</td></tr><tr><th>d = 34</th><td>no hits</td><td title="top channels: 38, 37, 39">189 kHz &middot; ch 38 (33%)</td><td title="top channels: 23, 24">547 kHz &middot; ch 23 (100%)</td><td title="top channels: 23, 22, 24">1573 kHz &middot; ch 23 (34%)</td><td title="top channels: 21, 16, 18">0.03 kHz &middot; ch 21 (73%)</td><td>no hits</td></tr><tr><th>d = 30</th><td title="top channels: 37, 35">&lt; 0.01 kHz &middot; ch 37 (93%)</td><td class="na">&ndash;</td><td title="top channels: 24">0.02 kHz &middot; ch 24 (100%)</td><td class="na">&ndash;</td><td title="top channels: 16, 18, 21">0.50 kHz &middot; ch 16 (100%)</td><td class="na">&ndash;</td></tr><tr><th>d = 27</th><td title="top channels: 37, 35">0.03 kHz &middot; ch 37 (88%)</td><td title="top channels: 37, 36, 35">14 kHz &middot; ch 37 (33%)</td><td title="top channels: 24">&lt; 0.01 kHz &middot; ch 24 (100%)</td><td title="top channels: 23, 24, 22">158 kHz &middot; ch 23 (33%)</td><td title="top channels: 16, 18, 17">6.03 kHz &middot; ch 16 (100%)</td><td title="top channels: 19, 18, 20">336 kHz &middot; ch 19 (31%)</td></tr><tr><th>d = 24</th><td title="top channels: 37, 35, 32">0.84 kHz &middot; ch 37 (85%)</td><td class="na">&ndash;</td><td>no hits</td><td class="na">&ndash;</td><td title="top channels: 16, 18, 17">50 kHz &middot; ch 16 (100%)</td><td class="na">&ndash;</td></tr><tr><th>d = 22</th><td title="top channels: 37, 35, 32">5.39 kHz &middot; ch 37 (83%)</td><td title="top channels: 36, 37, 38">15 kHz &middot; ch 36 (31%)</td><td title="top channels: 10, 16">&lt; 0.01 kHz &middot; ch 10 (78%)</td><td title="top channels: 23, 24, 22">1.66 kHz &middot; ch 23 (33%)</td><td title="top channels: 16, 18, 17">160 kHz &middot; ch 16 (99%)</td><td title="top channels: 16, 15, 17">523 kHz &middot; ch 16 (32%)</td></tr><tr><th>d = 20</th><td title="top channels: 37, 35, 32">26 kHz &middot; ch 37 (79%)</td><td class="na">&ndash;</td><td title="top channels: 10, 16, 6">&lt; 0.01 kHz &middot; ch 10 (91%)</td><td class="na">&ndash;</td><td title="top channels: 16, 18, 17">381 kHz &middot; ch 16 (99%)</td><td class="na">&ndash;</td></tr><tr><th>d = 18</th><td title="top channels: 37, 35, 32">112 kHz &middot; ch 37 (77%)</td><td title="top channels: 36, 37, 38">293 kHz &middot; ch 36 (30%)</td><td title="top channels: 10, 16, 6">0.04 kHz &middot; ch 10 (89%)</td><td title="top channels: 10, 9, 11">0.13 kHz &middot; ch 10 (27%)</td><td title="top channels: 16, 18, 17">737 kHz &middot; ch 16 (97%)</td><td title="top channels: 16, 15, 17">2219 kHz &middot; ch 16 (33%)</td></tr><tr><th>d = 16</th><td title="top channels: 37, 35, 32">340 kHz &middot; ch 37 (73%)</td><td class="na">&ndash;</td><td title="top channels: 10, 16, 6">0.37 kHz &middot; ch 10 (87%)</td><td class="na">&ndash;</td><td title="top channels: 16, 18, 17">1014 kHz &middot; ch 16 (94%)</td><td class="na">&ndash;</td></tr><tr><th>d = 14</th><td class="na">&ndash;</td><td title="top channels: 36, 37, 38">2132 kHz &middot; ch 36 (27%)</td><td class="na">&ndash;</td><td title="top channels: 10, 9, 11">10 kHz &middot; ch 10 (28%)</td><td class="na">&ndash;</td><td title="top channels: 16, 17, 15">3163 kHz &middot; ch 16 (29%)</td></tr></table></div></details>
+<div class="viz-card"><svg viewBox="0 0 640 308" role="img" aria-label="Two kinds of noise on the burst chips">
+<text class="t" x="10" y="18" font-size="13" font-weight="600">Two kinds of noise on VMM 4, 7 and 9 (cartoon, not measured)</text>
+<rect x="14" y="32" width="296" height="206" rx="8" fill="var(--bg-elev)" stroke="var(--border)"/>
+<text class="t" x="162" y="52" font-size="12" font-weight="600" text-anchor="middle">A: smooth onset (all chips have it)</text><text class="m" x="162" y="67" font-size="10" text-anchor="middle">the rate rises steadily as the threshold goes down</text>
+<line x1="40" x2="298" y1="208" y2="208" stroke="var(--border)"/>
+<polyline fill="none" stroke="var(--s1)" stroke-width="2.6" points="40.0,208.0 63.5,207.2 86.9,205.9 110.4,204.1 133.8,201.5 157.3,197.6 180.7,191.9 204.2,183.7 227.6,171.6 251.1,153.9 274.5,128.0 298.0,90.2"/>
+<circle cx="40.0" cy="208.0" r="3.6" fill="var(--s1)"/>
+<circle cx="63.5" cy="207.2" r="3.6" fill="var(--s1)"/>
+<circle cx="86.9" cy="205.9" r="3.6" fill="var(--s1)"/>
+<circle cx="110.4" cy="204.1" r="3.6" fill="var(--s1)"/>
+<circle cx="133.8" cy="201.5" r="3.6" fill="var(--s1)"/>
+<circle cx="157.3" cy="197.6" r="3.6" fill="var(--s1)"/>
+<circle cx="180.7" cy="191.9" r="3.6" fill="var(--s1)"/>
+<circle cx="204.2" cy="183.7" r="3.6" fill="var(--s1)"/>
+<circle cx="227.6" cy="171.6" r="3.6" fill="var(--s1)"/>
+<circle cx="251.1" cy="153.9" r="3.6" fill="var(--s1)"/>
+<circle cx="274.5" cy="128.0" r="3.6" fill="var(--s1)"/>
+<circle cx="298.0" cy="90.2" r="3.6" fill="var(--s1)"/>
+<text class="f" x="40" y="222" font-size="10">high threshold</text><text class="f" x="298" y="222" font-size="10" text-anchor="end">low threshold</text>
+<rect x="332" y="32" width="296" height="206" rx="8" fill="var(--bg-elev)" stroke="var(--border)"/>
+<text class="t" x="480" y="52" font-size="12" font-weight="600" text-anchor="middle">B: bursts (these three chips only)</text><text class="m" x="480" y="67" font-size="10" text-anchor="middle">the rate jumps up and down with each new configuration</text>
+<line x1="358" x2="616" y1="208" y2="208" stroke="var(--border)"/>
+<rect x="350.0" y="206.1" width="16" height="1.9" rx="3" fill="var(--s2)" opacity="0.9"/>
+<rect x="373.5" y="195.6" width="16" height="12.4" rx="3" fill="var(--s2)" opacity="0.9"/>
+<rect x="396.9" y="201.8" width="16" height="6.2" rx="3" fill="var(--s3)" opacity="0.9"/>
+<rect x="420.4" y="96.4" width="16" height="111.6" rx="3" fill="var(--s2)" opacity="0.9"/>
+<rect x="443.8" y="206.1" width="16" height="1.9" rx="3" fill="var(--s2)" opacity="0.9"/>
+<rect x="467.3" y="206.1" width="16" height="1.9" rx="3" fill="var(--s2)" opacity="0.9"/>
+<rect x="490.7" y="139.8" width="16" height="68.2" rx="3" fill="var(--s3)" opacity="0.9"/>
+<rect x="514.2" y="206.1" width="16" height="1.9" rx="3" fill="var(--s2)" opacity="0.9"/>
+<rect x="537.6" y="193.1" width="16" height="14.9" rx="3" fill="var(--s2)" opacity="0.9"/>
+<rect x="561.1" y="108.8" width="16" height="99.2" rx="3" fill="var(--s1)" opacity="0.9"/>
+<rect x="584.5" y="206.1" width="16" height="1.9" rx="3" fill="var(--s2)" opacity="0.9"/>
+<rect x="608.0" y="170.8" width="16" height="37.2" rx="3" fill="var(--s1)" opacity="0.9"/>
+<text class="f" x="358" y="222" font-size="10">high threshold</text><text class="f" x="616" y="222" font-size="10" text-anchor="end">low threshold</text>
+<text class="m" x="332" y="252" font-size="11">colour = which channel is hot (changes each time)</text>
+<text class="m" x="14" y="268" font-size="11">A is ordinary noise crossing the threshold. B appears even at very high thresholds (far above any baseline),</text>
+<text class="m" x="14" y="282" font-size="11">so it is not noise crossing a threshold: it looks like a state a channel gets stuck in when configured.</text>
+<text class="m" x="14" y="296" font-size="11">Whether the same configuration gives the same state again has still to be tested.</text>
+</svg><p class="caption">The two behaviours that the figure above contains. The steady rise at low threshold is the same as on the other chips and can be placed on the same scale. The bursts are something else.</p></div>
+
+<div class="stepcard done"><div class="sc-head"><span class="stepn">7</span><strong>The three burst chips, unmasked</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>We repeated the voltage-off scan with VMM 4, 7 and 9 switched back on, at 13 thresholds with the normal read-out (d = 200 down to 16) and 9 with neighbour read-out (d = 100 down to 14), the other chips at d = 50. We also read the temperature of all chips (31 to 38 &deg;C, nothing unusual).</dd><dt>What we saw</dt><dd>Two things. (a) A smooth noise onset like the other chips: VMM 4 passes 1&nbsp;kHz at d = 22 (hottest channels 37 and 35) and VMM 9 at d = 27 (channel 16); VMM 7 shows none down to d = 16. (b) Bursts of up to millions of hits per second that do not follow the threshold: VMM 9 gives 2.7&nbsp;MHz at d = 200, far above any baseline, and VMM 4 gives 0 at d = 60 but 1.8&nbsp;MHz at d = 40. The hot channel changes with each configuration (VMM 4: channel 45, 39, 38/36, then 37/35). Within one run it does not change, and its pulse height is almost constant.</dd><dt>What it tells us</dt><dd>The chips can be placed on the same threshold scale as the rest (the smooth part), and the bursts are not ordinary noise: they look like a state a channel gets stuck in when the chip is configured. We have not yet tested whether applying the same configuration twice gives the same state.</dd><dt>So the next step is</dt><dd>repeat a few configurations several times (a short run, about 15 minutes, with the voltage off) to see whether the burst state is repeatable.</dd></dl></div>
+
+<h2>8. What we know, and what we do not</h2>
 <div class="two">
 <div><h3>We know</h3><ul>
 <li>With no voltage, the electronics are silent at d = 50.</li>
 <li>The chip-to-chip spread of the noise onset (about 16 steps) is an electronics effect.</li>
-<li>VMM 4, 7 and 9 have noisy channels that need no voltage.</li>
+<li>VMM 4, 7 and 9 have noisy channels that need no voltage. Unmasked, they also show an ordinary smooth noise onset (VMM 4 at d = 22, VMM 9 at d = 27) plus bursts whose size and channel change with each configuration.</li>
 <li>VMM 12 and VMM 15 are noisy over many channels without voltage.</li>
 <li>A single channel&rsquo;s noise rate has a bell-shaped curve with a peak.</li>
 <li>With neighbour read-out we can measure a channel&rsquo;s baseline directly. The value used so far (38) is wrong for nearly all channels; the chips differ (medians 48 to 61).</li>
@@ -3701,13 +3858,13 @@
 <li>The baseline of the other half of the channels (still to be covered), and whether the voltage changes the baselines (same measurement with the voltage on).</li>
 <li>The link between ADC counts and millivolts, channel by channel.</li>
 <li>Whether the ADC baseline and the level the threshold acts on are the same thing, and why three channels read very high values (VMM 16 ch 33: 704, VMM 6 ch 14: 186, VMM 14 ch 34: 125).</li>
-<li>Why VMM 4 and 9 burst, and whether the cable, the hybrid or the new firmware is to blame.</li>
+<li>Why VMM 4, 7 and 9 burst, whether the same configuration gives the same burst again, and whether the cable, the hybrid, the chip or the new firmware is to blame.</li>
 <li>Whether the lab noise looks like the beam-hall noise (about 100 times higher in the beam hall).</li>
-<li>The gas, and the measured voltages (they are set by hand and not logged).</li>
+<li>Whether the high voltage changes any of this (the voltage was switched on only after these runs), and what the voltage actually is: it is set by hand and not logged.</li>
 </ul></div>
 </div>
 
-<h2>8. What comes next</h2>
+<h2>9. What comes next</h2>
 <div class="viz-card"><svg viewBox="0 0 640 236" role="img" aria-label="One threshold per chip versus one per channel">
 <text class="t" x="10" y="18" font-size="13" font-weight="600">One threshold for the whole chip, or a small correction for each channel? (cartoon)</text>
 <text class="t" x="14" y="46" font-size="12" font-weight="600">Now: one threshold per chip</text>
@@ -3786,21 +3943,24 @@
 <text class="m" x="14" y="221" font-size="11">correction the channels line up, so the chip's threshold can be lower and the muons that were lost are counted again.</text>
 </svg><p class="caption">Today each chip has one threshold. The next step gives each channel a small correction so that all channels start at the same level (cartoon, not measured).</p></div>
 
-<div class="stepcard next"><div class="sc-head"><span class="stepn">7</span><strong>Put the baselines in millivolts</strong> <span class="pill warn">next, not done yet</span></div><dl><dt>Where we are</dt><dd>Not started. The new slow-control library can already read the chip&rsquo;s monitor for each channel, but the command-line tool does not offer it.</dd><dt>What is needed</dt><dd>A way to call the library: either ask the developer to add a command, or write a small program of our own that calls it (without changing his software). We would test it on one channel of one hybrid first, then run all channels of all hybrids.</dd><dt>What it will tell us</dt><dd>The level of every channel in millivolts. Together with the ADC baselines of step 6 this gives the full chain, threshold setting to millivolts to ADC, channel by channel.</dd><dt>Then</dt><dd>compute the corrections (step 8).</dd></dl></div>
+<div class="stepcard next"><div class="sc-head"><span class="stepn">8</span><strong>Measurements with the high voltage on</strong> <span class="pill warn">next, not done yet</span></div><dl><dt>Where we are</dt><dd>The voltage was switched on after the runs above. This is a proposed plan, not yet started: first a health check of the chambers (chamber 3 had trouble in July), then the noise ladder again with the voltage on for VMM 4, 7 and 9; neighbour read-out with cosmic muons to fill in the channels still without a baseline; a long cosmic run at a safe threshold; and then a threshold scan with muon tracks, about an hour per point.</dd><dt>What is needed</dt><dd>Hours of cosmic muons per point (about 40 tracks per minute per chip is expected, so one hour gives roughly 2400, i.e. an efficiency uncertainty of about 0.6&nbsp;% per chip), the voltage readings in the logbook, and the distances between the three chambers for the tracks. Other gain settings can be added if time allows.</dd><dt>What it will tell us</dt><dd>the first measured efficiency against threshold, chip by chip, plus the baselines of the channels that were still missing and whether the voltage moves them.</dd><dt>Then</dt><dd>on Monday the voltage goes off again for the 15-minute repeat test of step 7, then the millivolt measurement (step 9).</dd></dl></div>
 
-<div class="stepcard later"><div class="sc-head"><span class="stepn">8</span><strong>Compute and apply the corrections, then scan again</strong> <span class="pill">later</span></div><dl><dt>Where we are</dt><dd>Not started.</dd><dt>What is needed</dt><dd>The measurements of steps 6 and 7.</dd><dt>What it will tell us</dt><dd>If the corrections work, the noise onset of all chips lines up and the usable threshold window opens for every chip.</dd><dt>Then</dt><dd>repeat the noise scan with the corrections, voltage on and off, then measure the efficiency (step 9).</dd></dl></div>
+<div class="stepcard next"><div class="sc-head"><span class="stepn">9</span><strong>Put the baselines in millivolts</strong> <span class="pill warn">next, not done yet</span></div><dl><dt>Where we are</dt><dd>Not started. The new slow-control library can already read the chip&rsquo;s monitor for each channel, but the command-line tool does not offer it.</dd><dt>What is needed</dt><dd>A way to call the library: either ask the developer to add a command, or write a small program of our own that calls it (without changing his software). We would test it on one channel of one hybrid first, then run all channels of all hybrids.</dd><dt>What it will tell us</dt><dd>The level of every channel in millivolts. Together with the ADC baselines of step 6 this gives the full chain, threshold setting to millivolts to ADC, channel by channel.</dd><dt>Then</dt><dd>compute the corrections (step 10).</dd></dl></div>
 
-<div class="stepcard later"><div class="sc-head"><span class="stepn">9</span><strong>Measure the efficiency</strong> <span class="pill">later</span></div><dl><dt>Where we are</dt><dd>Not started.</dd><dt>What is needed</dt><dd>A night of cosmic muons at a safe threshold, then the tag-and-probe method: the two outer chambers say a muon went through, and the middle one is asked whether it saw it.</dd><dt>What it will tell us</dt><dd>The efficiency against the threshold, chip by chip: the real answer to the first question.</dd><dt>Then</dt><dd>compare with the beam test and with the DREAM readout.</dd></dl></div>
+<div class="stepcard later"><div class="sc-head"><span class="stepn">10</span><strong>Compute and apply the corrections, then scan again</strong> <span class="pill">later</span></div><dl><dt>Where we are</dt><dd>Not started.</dd><dt>What is needed</dt><dd>The measurements of steps 6 to 9.</dd><dt>What it will tell us</dt><dd>If the corrections work, the noise onset of all chips lines up and the usable threshold window opens for every chip.</dd><dt>Then</dt><dd>repeat the noise scan with the corrections, voltage on and off, then measure the efficiency (step 11).</dd></dl></div>
 
-<h2>9. Where the data and code are</h2>
+<div class="stepcard later"><div class="sc-head"><span class="stepn">11</span><strong>Measure the efficiency</strong> <span class="pill">later</span></div><dl><dt>Where we are</dt><dd>Not started.</dd><dt>What is needed</dt><dd>A night of cosmic muons at a safe threshold, then the tag-and-probe method: the two outer chambers say a muon went through, and the middle one is asked whether it saw it.</dd><dt>What it will tell us</dt><dd>The efficiency against the threshold, chip by chip: the real answer to the first question.</dd><dt>Then</dt><dd>compare with the beam test and with the DREAM readout.</dd></dl></div>
+
+<h2>10. Where the data and code are</h2>
 <table class="runs">
 <tr><th>Item</th><th>Where</th></tr>
 <tr><td>Voltage-on scan: <code>run_4</code> &hellip; <code>run_13</code>; first tests: <code>run_1</code> &hellip; <code>run_3</code></td><td><code>/local/p2/p2data/cosmics_3det_202610/runs/</code> on vmm_daplxa, copied to EOS <code>&hellip;/p2_sps_july/vmm_cosmic_run_oct26/</code></td></tr>
 <tr><td>Voltage-off scan: <code>run_14</code> &hellip; <code>run_23</code> (same configs), <code>run_24</code> &hellip; <code>run_27</code> (nothing masked)</td><td>same place; configs end in <code>m2hvoff_d&lt;d&gt;</code> and <code>m0hvoff_d&lt;d&gt;</code></td></tr>
 <tr><td>Neighbour read-out (sng 1), voltage off: <code>run_28</code> (first test), <code>run_29</code> &hellip; <code>run_32</code> (thresholds 0, &minus;3, &minus;6, &minus;9 from each chip&rsquo;s onset)</td><td>same place; configs <code>&hellip;_cosmic_sng1hvoff_probe / _o0 / _m3 / _m6 / _m9</code>. These runs are large: 2 to 9&nbsp;GB each, about 25&nbsp;GB in total. Analysed on lxplus from the EOS backup, so that the DAQ machine was not loaded</td></tr>
-<tr><td>Tables used for the figures</td><td><code>analysis_noise_scan/</code> and <code>analysis_noise_scan_hvoff/</code> (chip tables, per-channel CSV, voltage on/off comparison), <code>analysis_sng1_hvoff/</code> (baseline of every covered channel, coverage per capture, baseline against noise peak)</td></tr>
+<tr><td>VMM 4, 7, 9 unmasked, voltage off: <code>run_35</code> &hellip; <code>run_47</code> (normal read-out), <code>run_48</code> &hellip; <code>run_56</code> (neighbour read-out)</td><td>same place; configs <code>&hellip;_cosmic_n479hvoff_d&lt;d&gt;</code> and <code>&hellip;_s479hvoff_d&lt;d&gt;</code>. Two stray captures from a software problem at the start are kept apart in <code>orphan_2026-10-23_*</code> (not part of any run)</td></tr>
+<tr><td>Tables used for the figures</td><td><code>analysis_noise_scan/</code> and <code>analysis_noise_scan_hvoff/</code> (chip tables, per-channel CSV, voltage on/off comparison), <code>analysis_n479_hvoff/</code> (rate and hot channels of VMM 4, 7, 9), <code>analysis_sng1_hvoff/</code> (baseline of every covered channel, coverage per capture, baseline against noise peak)</td></tr>
 <tr><td>Chip settings</td><td>4.5&nbsp;mV/fC, 200&nbsp;ns peaking time; only the threshold lines and the masks change between files</td></tr>
-<tr><td>Code and feedback notes</td><td>branch <code>lab-cosmics-oct26</code>, <code>docs/LAB_COSMICS_OBSERVATIONS.md</code> (items 1&ndash;35)</td></tr>
+<tr><td>Code and feedback notes</td><td>branch <code>lab-cosmics-oct26</code>, <code>docs/LAB_COSMICS_OBSERVATIONS.md</code> (items 1&ndash;46)</td></tr>
 </table>
 </div>
   </article>
