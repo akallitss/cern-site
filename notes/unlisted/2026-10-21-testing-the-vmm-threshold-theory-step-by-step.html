@@ -826,6 +826,81 @@ The direct measurement is the vmmsc pedestal calibration, which was never run on
   85–110 DAC long and a small slope error grows into a large baseline error. VMM 6 records ADC values around 10, below the assumed baseline, so the
   recipe does not apply to it.</figcaption>
 </figure>
+
+<h3>Where the 38 ADC comes from</h3>
+<p>Step 2 of the recipe subtracts 38 ADC from every chip. This number is <b>not measured on each chip</b>. It comes from one straight-line
+fit on four P2_OUT chips (VMM 16–19, the ones with pads in the beam), and it is then used for all 18 chips. Here is how that fit works.</p>
+
+<p><b>The idea: one threshold, two rulers.</b> For VMM 16–19 in runs 46 and 48 we know each chip's threshold twice, in two different units:</p>
+<ul>
+  <li><b>T, in DREAM ADC.</b> In Part 1, for each chip we looked for the cut on the DREAM pad spectra that gives the same efficiency as the VMM measured.
+  That cut is a charge. T = 0 would mean "fire on any charge at all", which is the same as saying the threshold sits exactly on the baseline.</li>
+  <li><b>The edge, in VMM ADC.</b> Where the chip's own ADC spectrum starts. The VMM ADC writes the pulse height <i>with the baseline included</i>,
+  so the edge is "the baseline, plus the threshold charge converted to VMM ADC".</li>
+</ul>
+<p>Both describe the same threshold, so they have to be related by a straight line:
+<b>edge = baseline + k × T</b>. The slope k is just how many VMM ADC counts the VMM gives for one DREAM ADC count of charge, about one for every five.
+The number we want, the baseline, is where that line crosses T = 0.</p>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig23_two_rulers.png" alt="Cartoon: the same thresholds marked on a DREAM-charge ruler and on the VMM ADC ruler; zero charge maps to 38 ADC">
+  <figcaption><b>Figure 23.</b> (a) The eight chip/run thresholds marked on both rulers. The VMM ruler is shifted: its zero-charge point is not at 0
+  but at ~38, because the VMM ADC includes the baseline. (b) Why the crossing point is the baseline: as the threshold slides down, the edge slides down
+  with it, and with the threshold on the baseline, the edge would be the baseline itself.</figcaption>
+</figure>
+
+<p><b>The fit.</b> Plotting edge against T for the eight points and drawing the best straight line gives
+<b>edge = 37.7 + 0.196 × T</b>, with a correlation of 0.975. So the line hits T = 0 at <b>37.7 ≈ 38 ADC</b>.</p>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig24_baseline_fit.png" alt="The eight points with the fitted line extended to zero, and the intercept from different subsets of the points">
+  <figcaption><b>Figure 24.</b> (a) The eight points and the fitted line (black); the grey lines are the same fit repeated on resampled sets of the points.
+  No point lies below T ≈ 90, so the last stretch to T = 0 is an extension of the line, not data. (b) The intercept obtained from different subsets of
+  the points. The blue band is the ±5 ADC used as the uncertainty; the orange band is the 40–50 ADC from the November 2025 neighbour hits.</figcaption>
+</figure>
+<p><b>How solid is 38?</b> Repeating the fit in different ways (Figure 24 b):</p>
+<div style="overflow-x:auto">
+<table class="num">
+  <thead><tr><th>fit done on</th><th>intercept (ADC)</th></tr></thead>
+  <tbody>
+    <tr><td>all 8 points (the value used)</td><td>37.7</td></tr>
+    <tr><td>resampled points, middle 68 %</td><td>33 – 41</td></tr>
+    <tr><td>without VMM 19 in run_46</td><td>33.4</td></tr>
+    <tr><td>run_46 points only / run_48 points only</td><td>40.4 / 31.8</td></tr>
+    <tr><td>each chip from its own two points (VMM 16 / 17 / 18 / 19)</td><td>40 / 36 / 44 / 40</td></tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li><b>It is 38 with about ±4–5 ADC of play.</b> That is where the ±5 ADC in section O comes from, and it is the biggest part of the ±6–8 DAC uncertainty on every baseline.</li>
+  <li><b>It leans heavily on VMM 19.</b> Only VMM 19 gives a long lever: its threshold moved from T = 92 (run_46) to T = 276 (run_48, sdt 265).
+  The other three chips have their two points close together, so on their own they pin the line down poorly.</li>
+  <li><b>The lowest point is a suspect one.</b> VMM 19 in run_46 was flooded with noise (284 million hits). Noise hits pile up at the threshold and can pull the edge down.
+  Without that point the intercept drops to ~33.</li>
+  <li><b>An independent hint points slightly higher.</b> In the November 2025 calibration data, the neighbour hits recorded below threshold, which sample the baseline directly,
+  peak at 40–50 ADC. Those are other chambers, but it suggests 38 is, if anything, a little low.</li>
+</ul>
+
+<p><b>What using one number for every chip hides.</b></p>
+<ul>
+  <li><b>The fit only tests VMM 16–19.</b> For P2_IN, P2_MID and VMM 14/15 the 38 is an assumption. VMM 6 shows it fails for at least one chip:
+  it records ADC values around 10, well below 38.</li>
+  <li><b>A shared error moves everything together.</b> If the true value is 33 for all chips, every baseline moves by the same 5.6 DAC.
+  All the d values shift together, but the ranking of the chips stays the same.</li>
+  <li><b>A chip-by-chip error does not.</b> If one chip's ADC baseline is 45 instead of 38, its baseline in DAC comes out ~8 DAC too low, so every
+  threshold d we quote for it is ~8 DAC too high. The stand's noise scan, whose onsets spread by ±8 DAC (section P), suggests this is happening on some chips.</li>
+</ul>
+
+<p><b>How to measure it directly: one short run with neighbour logic on.</b> The VMM has a mode (<code>sng = 1</code>) in which, when a channel fires,
+its two neighbours are read out too, even if they are below threshold. Most of the time a neighbour has little or no signal, so its ADC value is simply
+that channel's baseline. Collect a few thousand of those per channel and the peak of the distribution <i>is</i> the baseline, read straight off,
+with no fit and no assumption. That is how the November 40–50 ADC was obtained.</p>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig25_neighbour_baseline.png" alt="Cartoon of neighbour logic reading out sub-threshold neighbours, and the resulting baseline peak in one channel's spectrum">
+  <figcaption><b>Figure 25.</b> (a) With neighbour logic on, the two channels next to a fired one are read out even below threshold; channels further away are not.
+  (b) Illustration (not data) of one channel's spectrum in such a run: the neighbour hits form a narrow peak at the baseline, and the normal hits start at the threshold.</figcaption>
+</figure>
+<div class="callout ok"><b>For the stand.</b> A few minutes of cosmics (or noise) with <code>sng = 1</code> on all detector chips gives a measured ADC baseline
+for every channel and replaces the shared 38. Together with the vmmsc pedestals (in mV), it calibrates the whole chain channel by channel:
+sdt → mV → VMM ADC. The data rate goes up while it is on, so a short run is enough. It belongs before the cosmic threshold scan.</div>
 </div>
 
 <div class="step">
