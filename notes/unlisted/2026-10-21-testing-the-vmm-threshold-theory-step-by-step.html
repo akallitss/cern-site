@@ -9,7 +9,7 @@
 <meta name="category" content="Analysis">
 <meta name="keywords" content="VMM,DREAM,threshold,efficiency,SPS,P2">
 <meta name="date" content="2026-10-21">
-<meta name="updated" content="2026-10-21">
+<meta name="updated" content="2026-10-23">
 <meta name="visibility" content="unlisted">
 <meta name="robots" content="noindex, nofollow">
 <!-- ======================================================================= -->
@@ -75,7 +75,9 @@ setting, the chips do not sit at the same effective level.</div>
 <div class="callout"><strong>New: <a href="#part2">Part 2</a></strong> explains what <code>sdt</code> is, how one config value turns into
 mV, VMM ADC and fC, where the noise floor is, and how low the thresholds could go with per-channel trimming.<br>
 <strong>New: <a href="#part3">Part 3</a></strong> takes the 29–30 July threshold scan channel by channel. It covers how far each chip can come down,
-how many channels that costs, and what efficiency results.</div>
+how many channels that costs, and what efficiency results.<br>
+<strong>New: <a href="#part4">Part 4</a></strong> explains step by step how each chip's baseline is estimated, how the threshold d is defined,
+how sure those numbers are, and how they set the cosmic threshold scan.</div>
 
 <!-- ================================================================== -->
 <div class="step">
@@ -743,7 +745,7 @@ The open circles stay the real July operating point (4.5 mV/fC, July sdt), so bo
   <li><b>Extend the same scan down to sdt ≈ 170, in steps of 2–3 counts, at 4.5 mV/fC.</b> Then VMM 15, 17 and 18 get a measured noise edge too.
   Capture ~20 s per point rather than 200 packets, so that 1 Hz means 20 hits and not 2. With chambers at HV and the beam off, as on 30 July, it takes about an hour.</li>
   <li><b>Run the vmmsc pedestal and threshold calibration on the P2 hybrids</b> (step 1–2 of the scheme in F). It replaces the inferred chip
-  baselines (±3–5 counts) with measured per-channel ones, and it gives the trims.</li>
+  baselines (±6–8 counts, see <a href="#part4">Part 4</a>) with measured per-channel ones, and it gives the trims.</li>
   <li><b>Then rerun this analysis:</b> per channel, threshold = max(target, quiet point). Mask only what the trim cannot reach, and expect a
   handful of channels on P2_OUT. The scripts are written so that the new scan can be dropped in.</li>
   <li><b>Repeat the scan in the beam, using only the hits between spills</b>, a few minutes per sdt. run_46 already shows how (Figure 14b): same channels as the bench, but the noise onset is 5–10 DAC higher in the beam hall.</li>
@@ -752,6 +754,124 @@ The open circles stay the real July operating point (4.5 mV/fC, July sdt), so bo
 sdt 220 / ≤ 210 / 220 / ≤ 210 / ≤ 210 / 230 on VMM 14–19 at 4.5 mV/fC. With the trim calibration and a lower scan, about 93 % is realistic.
 95 % (DREAM) needs every channel at about 2 fC above its baseline. That is only possible if the channels the scan never reached turn out quieter than the ones it did,
 or if the chamber's gas gain goes up.</div>
+</div>
+
+<!-- ================================================================== -->
+<h2 id="part4" style="margin-top:3rem">Part 4 · The chip baseline and the threshold, step by step (what the cosmic scan is built on)</h2>
+<p class="muted">Parts 2 and 3 use one number per chip, its <b>baseline</b>, and measure every threshold as a distance <b>d</b> above it.
+This part shows where that number comes from, how sure it is, and how it sets the cosmic threshold scan.</p>
+
+<div class="step">
+<h2><span class="step-n">M</span>What the baseline is, and why it has to be inferred</h2>
+<p>The <code>sdt</code> DAC sets one absolute voltage for the whole chip: 0.801 × sdt + 25.2 mV. Each chip's shaper output, however, rests on its
+own DC level, the <b>baseline</b> (pedestal). A pulse fires the chip only if it climbs from that baseline to the threshold. So what matters is the
+<b>gap</b> d = sdt − baseline. The sdt value alone is not the threshold: the same 230 is 48 counts above baseline on VMM 18 and only 29 on VMM 14.</p>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig19_baseline_cartoon.png" alt="Cartoon: two chips with different baselines under one threshold, and the ADC spectra each records">
+  <figcaption><b>Figure 19.</b> (a) One sdt, two chips. The threshold line is the same; the baselines are not, so the same signal clears it by a
+  different margin. (b) What the chip writes out. The VMM ADC records the pulse's peak height, baseline included, but only for pulses above threshold.
+  The spectrum therefore starts with a sharp left edge at the threshold; the baseline itself (~38 ADC) is never recorded.</figcaption>
+</figure>
+<p>That last point is the reason for the whole construction. In beam data the chip reports only hits above threshold, so its baseline can't be read
+off directly. It has to be inferred from where the spectrum <i>starts</i>, which is the threshold, and from how that start moves when sdt changes.
+The direct measurement is the vmmsc pedestal calibration, which was never run on the P2 hybrids. It is now step 1 of the cosmic plan.</p>
+</div>
+
+<div class="step">
+<h2><span class="step-n">N</span>How the baseline is estimated, chip by chip</h2>
+<svg class="schem" viewBox="0 0 860 300" role="img" aria-label="Four-step recipe from the measured ADC edge to the chip baseline in DAC counts">
+  <text x="10" y="24" font-weight="600">Recipe (applied to runs 48, 52, 66, July "opt" settings, 4.5 mV/fC)</text>
+  <rect class="vbox" x="10" y="40" width="195" height="120" rx="8"/>
+  <text x="107" y="64" text-anchor="middle" font-weight="600">1 · edge</text>
+  <text x="107" y="86" text-anchor="middle" font-size="12.5">ADC below which only 1 %</text>
+  <text x="107" y="103" text-anchor="middle" font-size="12.5">of the chip's hits lie</text>
+  <text x="107" y="140" text-anchor="middle" class="vt" font-size="13">VMM 14: 64 ADC</text>
+  <rect class="vbox" x="225" y="40" width="195" height="120" rx="8"/>
+  <text x="322" y="64" text-anchor="middle" font-weight="600">2 · minus baseline</text>
+  <text x="322" y="86" text-anchor="middle" font-size="12.5">ADC baseline = 38</text>
+  <text x="322" y="103" text-anchor="middle" font-size="12.5">(common to all chips)</text>
+  <text x="322" y="140" text-anchor="middle" class="vt" font-size="13">64 − 38 = 26 ADC</text>
+  <rect class="vbox" x="440" y="40" width="195" height="120" rx="8"/>
+  <text x="537" y="64" text-anchor="middle" font-weight="600">3 · into DAC counts</text>
+  <text x="537" y="86" text-anchor="middle" font-size="12.5">÷ 0.9 ADC per DAC</text>
+  <text x="537" y="103" text-anchor="middle" font-size="12.5">(measured slope)</text>
+  <text x="537" y="140" text-anchor="middle" class="vt" font-size="13">26 / 0.9 = 29 DAC</text>
+  <rect class="box" x="655" y="40" width="195" height="120" rx="8"/>
+  <text x="752" y="64" text-anchor="middle" font-weight="600">4 · baseline</text>
+  <text x="752" y="86" text-anchor="middle" font-size="12.5">= sdt − step 3</text>
+  <text x="752" y="103" text-anchor="middle" font-size="12.5">(mean of the 3 runs)</text>
+  <text x="752" y="140" text-anchor="middle" font-size="13" font-weight="600">230 − 29 = 201</text>
+  <path class="wire" d="M205 100 H225 M420 100 H440 M635 100 H655"/>
+  <text x="10" y="196" font-weight="600">Then every threshold is a distance above that baseline:</text>
+  <text x="10" y="222" font-size="13.5">d = sdt − baseline  →  1 DAC = 0.80 mV = 0.9 VMM ADC ≈ 0.18 fC (4.5 mV/fC) ≈ 4.6 DREAM ADC (P2_OUT, 4.5 mV/fC)</text>
+  <text x="10" y="246" font-size="13.5">VMM 14 in July: d = 230 − 201 = <tspan font-weight="600">29 DAC ≈ 26 ADC ≈ 5.3 fC</tspan>;  VMM 18: d = 230 − 183 = <tspan font-weight="600">47 DAC ≈ 8.6 fC</tspan></text>
+  <text x="10" y="272" class="muted" font-size="12.5">The two inputs that are not per-chip measurements: the 38 ADC baseline (Figure 8, right) and the 0.9 slope (Figure 8, left).</text>
+  <text x="10" y="292" class="muted" font-size="12.5">Both were established on the six P2_OUT chips and are assumed for P2_IN and P2_MID.</text>
+</svg>
+<p>Each step, and why it is done this way:</p>
+<ul>
+  <li><b>The edge is the 1 % point of the chip's ADC spectrum, not its lowest value.</b> The spectrum rises sharply at the threshold, so the 1 %
+  point sits on that rise. It is not thrown off by a handful of stray low hits, or by the ADC's every-16th-code wide bins.</li>
+  <li><b>The edge is taken where the chip is not dominated by noise.</b> When the threshold is right on the noise floor, the noise hits pile up at
+  the threshold and drag the 1 % point down. In run_46 (sdt 224), VMM 11's edge is 47 ADC against 60 at sdt 230: 13 ADC for 6 DAC instead of 5.
+  The baselines therefore use only the three runs at the July settings (48, 52, 66), which agree to within 1.6 DAC on every chip.</li>
+  <li><b>One sdt per chip and two calibration constants are enough.</b> The edge moves 0.9 ADC per sdt count on every chip (Figure 8, left),
+  so each chip's edge sits on a line of slope 0.9. Following that line down to the 38 ADC baseline gives the sdt at which the threshold
+  would sit on the baseline. That sdt <i>is</i> the chip's baseline in DAC counts (Figure 20).</li>
+</ul>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig20_edge_to_baseline.png" alt="Measured ADC edge versus sdt per chip, extrapolated down to the 38 ADC baseline">
+  <figcaption><b>Figure 20.</b> Every chip's measured edge (dots), extrapolated down its 0.9 ADC/DAC line to the 38 ADC baseline (▼, labelled with the VMM id).
+  Most chips need a short extrapolation, 20–45 DAC from sdt 230. VMM 4, 7 and 9 (open dots, dashed) only ever ran at sdt 285–300, so their line is
+  85–110 DAC long and a small slope error grows into a large baseline error. VMM 6 records ADC values around 10, below the assumed baseline, so the
+  recipe does not apply to it.</figcaption>
+</figure>
+</div>
+
+<div class="step">
+<h2><span class="step-n">O</span>How sure the baselines are</h2>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig21_baseline_uncertainty.png" alt="Chip baselines with run-to-run and systematic uncertainty, and bench noise at sdt 210 against distance from baseline">
+  <figcaption><b>Figure 21.</b> (a) Baseline per chip. The error bar is the spread over runs 48, 52 and 66; the shaded band is the systematic from a
+  ±5 ADC uncertainty on the 38 ADC baseline and a 0.85–0.95 slope. (b) Independent check from the July bench scan: number of channels above 10 Hz at
+  sdt 210, against how far sdt 210 is above each chip's baseline.</figcaption>
+</figure>
+<ul>
+  <li><b>Statistically the baselines are tight.</b> Run-to-run they agree to ≤ 1.6 DAC.</li>
+  <li><b>The real uncertainty is ±6–8 DAC (±5–7 mV), and it is systematic.</b> It comes from the two shared constants. The 38 ADC was fitted on P2_OUT only;
+  the November sub-threshold neighbour hits put the ADC baseline at 40–50. A different ADC baseline on one chip shifts that chip's baseline by
+  1.1 DAC per ADC. The long extrapolations (VMM 4, 7, 9) are the least certain.</li>
+  <li><b>A chip baseline is the average of 64 channels.</b> Untrimmed, the channels of one chip spread by σ ≈ 3.7 mV ≈ 4.6 DAC (November trim calibration).
+  So at a given d some channels sit 5–10 DAC closer to their own baseline than the chip does. That is why the noise turns on channel by channel
+  over ~10–15 DAC (Part 3, G), and why trimming helps.</li>
+  <li><b>The bench scan agrees with the ranking (Figure 21 b).</b> The five chips furthest above their baseline at sdt 210 (VMM 3, 13, 15, 17, 18,
+  d = 22–30) are completely quiet. The chips at d ≈ 0–10 (VMM 5, 10, 11, 12, 14, 19) have 24–48 noisy channels.
+  The absolute values are a little off: VMM 5, 10 and 12 come out at d ≈ 0, where every channel should fire, yet only 26–48 of their 64 do,
+  and VMM 2 at d ≈ 2 has only 5. Those baselines are probably a few DAC too high, which is within the systematic band.</li>
+</ul>
+<div class="callout warn"><b>In short.</b> The ranking of the chips is right, and the absolute baselines are good to roughly ±5–10 DAC. That is enough to plan a scan,
+but not to set final thresholds. Hence the order of the cosmic plan: measure the pedestals with vmmsc first, then let the noise scan find each chip's floor.</div>
+</div>
+
+<div class="step">
+<h2><span class="step-n">P</span>How this sets the cosmic threshold scan</h2>
+<p>The cosmic scan running on the three-chamber stand steps every chip down from <i>its own</i> baseline, in d, not in raw sdt.</p>
+<ul>
+  <li><b>A common sdt would be wrong twice.</b> The baselines span sdt 180–212, so a common sdt of 200 is below the baseline of eight chips (VMM 2, 5, 7, 10, 11, 12, 14, 19):
+  they would fire continuously and flood the readout. At the same time it would be 20 counts above baseline on VMM 15.</li>
+  <li><b>In July the chips sat anywhere from d ≈ 20 to d ≈ 110.</b> VMM 10 was at 20; VMM 15, 17 and 18 at 43–50; VMM 19 at 61; VMM 4 and 9 above 100. One config value, very different thresholds.</li>
+  <li><b>The grid.</b> Noise scan d = 50, 40, 34, 30, 27, 24, 22, 20, 18, 16; cosmic scan d = 50, 40, 32, 27, 24, 22, 20, 18. Each chip stops where its own noise scan
+  turns noisy, at around d ≈ 20 (the chip-wide noise floor in July was 17–20 ADC ≈ 19–22 DAC above baseline). VMM 6 starts at sdt 230 and steps down by 5.</li>
+</ul>
+<figure>
+  <img src="2026-10-21-testing-the-vmm-threshold-theory-step-by-step_files/fig22_cosmic_scan_grid.png" alt="Planned noise-scan and cosmic-scan sdt values per chip, with July settings and baselines">
+  <figcaption><b>Figure 22.</b> The planned sdt values per chip: noise scan (squares) and cosmic scan (dots), both baseline + d. The bar is the July setting;
+  the grey band is the baseline with its systematic. The grid will be re-centred on the vmmsc pedestals once they are measured.</figcaption>
+</figure>
+<p><b>How the measurement closes the loop.</b> vmmsc gives each channel's pedestal in mV; (pedestal − 25.2) / 0.801 turns it into DAC and replaces the
+inferred chip baselines of Figure 21. The noise scan then shows where each chip and channel really turns on. The cosmic scan measures efficiency against
+d directly, with tag-and-probe between the three chambers. If the recipe here is right, the measured d at which each chip turns noisy should be about the same
+on every chip. If not, the scatter shows by how much these baselines were off.</p>
 </div>
 
 <details>
