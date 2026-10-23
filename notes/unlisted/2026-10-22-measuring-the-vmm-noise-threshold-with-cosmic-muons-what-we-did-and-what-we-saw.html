@@ -5,14 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
 <title>Measuring the VMM noise threshold with cosmic muons: what we did and what we saw</title>
-<meta name="description" content="A picture book of the first lab threshold scan on the three-chamber cosmic stand: why, how, and the first noise results per chip.">
+<meta name="description" content="A picture book of the lab threshold scans on the three-chamber cosmic stand: what we did step by step, with the chamber voltage on and off, and what we found per chip.">
 <meta name="category" content="Detector R&amp;D">
 <meta name="keywords" content="VMM,threshold,noise,cosmics,P2,lab">
 <meta name="date" content="2026-10-22">
-<meta name="updated" content="2026-10-22">
+<meta name="updated" content="2026-10-23">
 <meta name="visibility" content="unlisted">
 <!-- ======================================================================= -->
 <link rel="stylesheet" href="../../assets/site.css">
+
+
+
+
 
 
 
@@ -33,14 +37,22 @@
   svg text.t{fill:var(--fg)} svg text.m{fill:var(--fg-muted)} svg text.f{fill:var(--fg-faint)}
   svg .b0{fill:var(--c0)} svg .b1{fill:var(--c1)} svg .b2{fill:var(--c2)} svg .b3{fill:var(--c3)} svg .b4{fill:var(--c4)} svg .b5{fill:var(--c5)}
   svg text.x0{fill:var(--t0)} svg text.x1{fill:var(--t1)} svg text.x2{fill:var(--t2)} svg text.x3{fill:var(--t3)} svg text.x4{fill:var(--t4)} svg text.x5{fill:var(--t5)}
-  ol.steps{list-style:none;margin:6px 4px;padding:0} ol.steps li{display:flex;gap:12px;align-items:flex-start;margin:0 0 12px}
-  .stepn{flex:none;width:26px;height:26px;border-radius:50%;background:var(--s1);color:#fff;font-weight:650;font-size:14px;display:inline-flex;align-items:center;justify-content:center;margin-top:1px}
   .caption{font-size:13px;color:var(--fg-muted);margin:6px 2px 4px}
   .slider{display:block;margin:6px 4px 10px;font-size:14px} .slider input{width:60%;vertical-align:middle}
   .grid-two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:6px 4px}
   .big{font-size:30px;font-weight:650} .small{font-size:12.5px}
   .tldr{border-left:4px solid var(--s1);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0}
   .tldr li{margin:3px 0}
+  .stepn{flex:none;width:26px;height:26px;border-radius:50%;background:var(--s1);color:#fff;font-weight:650;font-size:14px;display:inline-flex;align-items:center;justify-content:center}
+  .stepcard{border:1px solid var(--border);border-left:5px solid var(--s1);border-radius:8px;background:var(--bg-elev);padding:10px 14px 4px;margin:14px 0}
+  .stepcard.next{border-left-color:var(--s2)} .stepcard.later{border-left-color:var(--fg-faint)}
+  .sc-head{display:flex;gap:10px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
+  .stepcard dl{margin:0;display:grid;grid-template-columns:150px 1fr;gap:4px 12px}
+  .stepcard dt{color:var(--fg-muted);font-size:13.5px} .stepcard dd{margin:0 0 6px;font-size:15px}
+  @media (max-width:640px){.stepcard dl{grid-template-columns:1fr}.stepcard dt{margin-top:4px}}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px} @media (max-width:640px){.two{grid-template-columns:1fr}}
+  .two>div{border:1px solid var(--border);border-radius:8px;padding:8px 14px;background:var(--bg-elev)}
+  .two h3{margin:4px 0 6px}
   table.runs td,table.runs th{padding:4px 8px;font-size:13.5px}
 </style>
 </head>
@@ -62,7 +74,1082 @@
       </div>
     </header>
 
-    <div class="note-body"><p>x</p></div>
+    <div class="note-body">
+<div class="tldr"><strong>In one minute.</strong>
+<ul>
+<li><strong>The question:</strong> how low can we set the threshold of each VMM chip before electronic noise takes over? The beam test could only <em>guess</em> the answer. Here, with cosmic muons, we can <em>measure</em> it.</li>
+<li><strong>What we did, in order:</strong> (1) a first test, which showed a flood of data from a few chips; (2) a noise scan with the chamber voltage on; (3) the same scan with the voltage <em>off</em>, to separate the detector from the electronics; (4) a closer look at single channels.</li>
+<li><strong>What we found:</strong> the chips do <em>not</em> start to be noisy at the same threshold, and this spread stays when the voltage is off, so it comes from the electronics, not the chambers. Three chips (VMM 4, 7, 9) have noisy channels that also stay with the voltage off. And each channel is noisiest right at its own baseline, so channels inside one chip differ too.</li>
+<li><strong>What this means for the next step:</strong> one threshold per chip is not enough. We need to measure the baseline of <em>every channel</em> and correct it. Then we repeat the scan and, only then, measure efficiency.</li>
+</ul></div>
+
+<h2>0. The idea in one picture</h2>
+<p>A VMM channel records a hit when the pulse it sees goes above a <strong>threshold</strong>. If the threshold is high, small muon pulses are missed (low efficiency). If it is low, electronic noise also goes above it (many false hits). Move the slider to feel the trade-off:</p>
+
+<div class="viz-card">
+  <svg id="thr-svg" viewBox="0 0 640 260" role="img" aria-label="Interactive threshold cartoon"></svg>
+  <label class="slider">Threshold: <input id="thr" type="range" min="2" max="60" value="30"> <span id="thr-v"></span></label>
+  <div class="grid-two">
+    <div><span class="muted">Muon signals seen (efficiency)</span><div class="big" id="eff"></div></div>
+    <div><span class="muted">Noise hits per second, relative</span><div class="big" id="noi"></div></div>
+  </div>
+  <p class="muted small">Cartoon with invented shapes: the point is the trade-off, not the numbers.</p>
+</div>
+<script>
+(function(){
+  var svg=document.getElementById('thr-svg'),sl=document.getElementById('thr');
+  var W=640,H=260,l=20,r=20,t=20,b=40,pw=W-l-r,ph=H-t-b,N=80;
+  function noise(x){return Math.exp(-0.5*Math.pow((x-8)/4.2,2));}
+  function sig(x){var u=(x-30)/9; return x<4?0:0.55*Math.exp(-0.5*(u+Math.exp(-u)));}
+  function X(x){return l+pw*x/N;} function Y(y){return t+ph*(1-y/1.05);}
+  function path(f,scale){var p='M'+X(0)+','+Y(0);for(var x=0;x<=N;x+=1){p+=' L'+X(x)+','+Y(f(x)*scale);}return p+' L'+X(N)+','+Y(0)+' Z';}
+  function tailSum(f,from){var s=0,a=0;for(var x=0;x<=N;x+=0.25){var v=f(x);a+=v;if(x>=from)s+=v;}return s/a;}
+  function draw(){
+    var th=+sl.value; document.getElementById('thr-v').textContent=th+' (arbitrary units)';
+    var eff=tailSum(sig,th), noi=tailSum(noise,th);
+    var h='';
+    h+='<path d="'+path(noise,1)+'" fill="var(--s3)" opacity="0.35" stroke="var(--s3)" stroke-width="2"/>';
+    h+='<path d="'+path(sig,1.5)+'" fill="var(--s1)" opacity="0.30" stroke="var(--s1)" stroke-width="2"/>';
+    h+='<rect x="'+X(th)+'" y="'+t+'" width="'+(X(N)-X(th))+'" height="'+ph+'" fill="var(--alert)" opacity="0.08"/>';
+    h+='<line x1="'+X(th)+'" x2="'+X(th)+'" y1="'+t+'" y2="'+(t+ph)+'" stroke="var(--alert)" stroke-width="3"/>';
+    h+='<line x1="'+l+'" x2="'+(W-r)+'" y1="'+(t+ph)+'" y2="'+(t+ph)+'" stroke="var(--border)"/>';
+    h+='<text class="t" x="'+X(8)+'" y="'+(t+ph+16)+'" font-size="12" text-anchor="middle">electronic noise</text>';
+    h+='<text class="t" x="'+X(40)+'" y="'+(t+ph+16)+'" font-size="12" text-anchor="middle">muon signal</text>';
+    h+='<text class="m" x="'+(W/2)+'" y="'+(H-6)+'" font-size="12" text-anchor="middle">pulse height seen by the chip →   (a channel fires when the pulse is right of the red line)</text>';
+    svg.innerHTML=h;
+    document.getElementById('eff').textContent=(100*eff).toFixed(0)+' %';
+    var n=noi; document.getElementById('noi').textContent=n<0.0005?'≈ 0':(n<0.01?(1000*n).toFixed(1)+' ‰':(100*n).toFixed(1)+' %');
+  }
+  sl.addEventListener('input',draw); draw();
+})();
+</script>
+<p>In the SPS beam data the VMM efficiency was about 85&nbsp;% against 95.6&nbsp;% for the DREAM readout of the same chambers, and the analysis said the VMM threshold was probably too high. That was a <em>prediction</em>: the beam gave no time to vary the threshold. In the lab we can, because cosmic muons arrive at a steady, gentle rate and we can wait.</p>
+
+<h2>1. The set-up</h2>
+<div class="viz-card"><svg viewBox="0 0 640 430" role="img" aria-label="Schematic of the three-chamber cosmic stand">
+<line x1="120" y1="44" x2="135" y2="305" stroke="var(--alert)" stroke-width="2"/>
+<line x1="165" y1="44" x2="155" y2="305" stroke="var(--alert)" stroke-width="2"/>
+<line x1="200" y1="44" x2="190" y2="305" stroke="var(--alert)" stroke-width="2"/>
+<text class="m" x="100" y="34" font-size="11">cosmic muons, from the sky</text>
+<text class="t" x="6" y="82" font-size="12" font-weight="600">det3</text><text class="f" x="6" y="95" font-size="10">P2_IN</text>
+<rect x="60" y="70" width="240" height="26" rx="6" fill="var(--s1)" opacity="0.22"/><rect x="60" y="70" width="240" height="26" rx="6" fill="none" stroke="var(--s1)" stroke-width="2"/><text class="m" x="226" y="87" font-size="11">410 / 710 V</text>
+<rect x="336" y="68" width="106" height="30" rx="5" fill="var(--bg-elev)" stroke="var(--border)"/><text class="t" x="389" y="82" font-size="11" text-anchor="middle">H1 H2 H3</text><text class="f" x="389" y="94" font-size="10" text-anchor="middle">VMM 2–7</text>
+<path d="M300 83 H336" stroke="var(--fg-faint)" stroke-width="2"/>
+<path d="M442 83 H470" stroke="var(--fg-faint)" stroke-width="2"/>
+<text class="t" x="6" y="182" font-size="12" font-weight="600">det2</text><text class="f" x="6" y="195" font-size="10">P2_MID</text>
+<rect x="60" y="170" width="240" height="26" rx="6" fill="var(--s1)" opacity="0.22"/><rect x="60" y="170" width="240" height="26" rx="6" fill="none" stroke="var(--s1)" stroke-width="2"/><text class="m" x="226" y="187" font-size="11">410 / 710 V</text>
+<rect x="336" y="168" width="106" height="30" rx="5" fill="var(--bg-elev)" stroke="var(--border)"/><text class="t" x="389" y="182" font-size="11" text-anchor="middle">H4 H5 H6</text><text class="f" x="389" y="194" font-size="10" text-anchor="middle">VMM 8–13</text>
+<path d="M300 183 H336" stroke="var(--fg-faint)" stroke-width="2"/>
+<path d="M442 183 H470" stroke="var(--fg-faint)" stroke-width="2"/>
+<text class="t" x="6" y="282" font-size="12" font-weight="600">det1</text><text class="f" x="6" y="295" font-size="10">P2_OUT</text>
+<rect x="60" y="270" width="240" height="26" rx="6" fill="var(--s1)" opacity="0.22"/><rect x="60" y="270" width="240" height="26" rx="6" fill="none" stroke="var(--s1)" stroke-width="2"/><text class="m" x="226" y="287" font-size="11">410 / 710 V</text>
+<rect x="336" y="268" width="106" height="30" rx="5" fill="var(--bg-elev)" stroke="var(--border)"/><text class="t" x="389" y="282" font-size="11" text-anchor="middle">H7 H8 H9</text><text class="f" x="389" y="294" font-size="10" text-anchor="middle">VMM 14–19</text>
+<path d="M300 283 H336" stroke="var(--fg-faint)" stroke-width="2"/>
+<path d="M442 283 H470" stroke="var(--fg-faint)" stroke-width="2"/>
+<rect x="470" y="60" width="152" height="250" rx="8" fill="var(--bg-elev)" stroke="var(--border)"/><text class="t" x="546" y="90" font-size="13" text-anchor="middle" font-weight="600">ALINX / FEC</text><text class="m" x="546" y="108" font-size="11" text-anchor="middle">collects the 9 hybrids</text><text class="m" x="546" y="124" font-size="11" text-anchor="middle">sends UDP packets</text>
+<path d="M546 310 V350" stroke="var(--fg-faint)" stroke-width="2"/><rect x="470" y="350" width="152" height="56" rx="8" fill="var(--bg-elev)" stroke="var(--border)"/><text class="t" x="546" y="373" font-size="12" text-anchor="middle" font-weight="600">DAQ PC (vmm_daplxa)</text><text class="m" x="546" y="390" font-size="11" text-anchor="middle">dumpcap → pcapng files</text>
+<text class="m" x="6" y="338" font-size="11">Samtec 2 m cables on every connector (the beam test used Hitachi)</text><text class="m" x="6" y="356" font-size="11">no trigger scintillator: the chips decide for themselves when to record</text><text class="m" x="6" y="374" font-size="11">same z spacing as at the SPS beam test: 320 / 630 / 940 mm</text><text class="m" x="6" y="392" font-size="11">voltages: mesh 410 V, drift 710 V, written by hand in the logbook</text>
+</svg><p class="caption">Three chambers stacked like at the beam test. Nine hybrids with two VMM chips each read them out (VMM 2 to 19). The chips decide for themselves when to record a hit; there is no trigger detector.</p></div>
+<p>Two things to keep in mind: the voltages (410&nbsp;V mesh, 710&nbsp;V drift) are set by hand and are not recorded by the DAQ, so we note them in a logbook; and the gas (Ar/isobutane 95/5) is <strong>not yet confirmed</strong>.</p>
+
+<h2>2. A word about the threshold knob</h2>
+<p>The threshold of a chip is a number (<code>sdt</code>, in &ldquo;DAC units&rdquo;, just a counting scale). Each chip rests at a slightly different level, its <strong>baseline</strong>: a threshold below the baseline makes the chip fire all the time. So one common number for all chips is a trap.</p>
+<div class="viz-card"><svg viewBox="0 0 620 280" role="img" aria-label="Estimated baseline per chip with a common threshold of 200">
+<text class="t" x="62" y="18" font-size="13" font-weight="600">The chips do not sit at the same baseline (July estimates, sdt DAC)</text>
+<text class="m" x="62" y="33" font-size="11">VMM 6 had no estimate; VMM 4, 7, 9 are extrapolated</text>
+<line x1="62" x2="500" y1="234.0" y2="234.0" stroke="var(--border)"/><text class="m" x="54" y="238.0" font-size="11" text-anchor="end">170</text>
+<line x1="62" x2="500" y1="196.0" y2="196.0" stroke="var(--border)"/><text class="m" x="54" y="200.0" font-size="11" text-anchor="end">180</text>
+<line x1="62" x2="500" y1="158.0" y2="158.0" stroke="var(--border)"/><text class="m" x="54" y="162.0" font-size="11" text-anchor="end">190</text>
+<line x1="62" x2="500" y1="120.0" y2="120.0" stroke="var(--border)"/><text class="m" x="54" y="124.0" font-size="11" text-anchor="end">200</text>
+<line x1="62" x2="500" y1="82.0" y2="82.0" stroke="var(--border)"/><text class="m" x="54" y="86.0" font-size="11" text-anchor="end">210</text>
+<line x1="62" x2="500" y1="44.0" y2="44.0" stroke="var(--border)"/><text class="m" x="54" y="48.0" font-size="11" text-anchor="end">220</text>
+<rect x="62" y="44" width="438" height="76.0" fill="var(--alert)" opacity="0.10"/>
+<line x1="62" x2="500" y1="120.0" y2="120.0" stroke="var(--alert)" stroke-width="2"/><text class="t" x="508" y="124.0" font-size="11" font-weight="600">common sdt = 200</text>
+<g><title>VMM 2: baseline ≈ 208</title><line x1="74.88235294117646" x2="74.88235294117646" y1="234.0" y2="89.6" stroke="var(--fg-faint)" stroke-width="2"/><circle cx="74.88235294117646" cy="89.6" r="6" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g><text class="m" x="74.88235294117646" y="250" font-size="10" text-anchor="middle">2</text>
+<g><title>VMM 3: baseline ≈ 182</title><line x1="100.64705882352942" x2="100.64705882352942" y1="234.0" y2="188.4" stroke="var(--fg-faint)" stroke-width="2"/><circle cx="100.64705882352942" cy="188.4" r="6" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g><text class="m" x="100.64705882352942" y="250" font-size="10" text-anchor="middle">3</text>
+<g><title>VMM 4: baseline ≈ 199 (extrapolated)</title><line x1="126.41176470588235" x2="126.41176470588235" y1="234.0" y2="123.80000000000001" stroke="var(--fg-faint)" stroke-width="2"/><circle cx="126.41176470588235" cy="123.80000000000001" r="6" fill="var(--surface)" stroke="var(--s1)" stroke-width="2.5"/></g><text class="m" x="126.41176470588235" y="250" font-size="10" text-anchor="middle">4</text>
+<g><title>VMM 5: baseline ≈ 212</title><line x1="152.1764705882353" x2="152.1764705882353" y1="234.0" y2="74.4" stroke="var(--fg-faint)" stroke-width="2"/><circle cx="152.1764705882353" cy="74.4" r="6" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g><text class="m" x="152.1764705882353" y="250" font-size="10" text-anchor="middle">5</text>
+<g><title>VMM 7: baseline ≈ 200 (extrapolated)</title><line x1="177.94117647058823" x2="177.94117647058823" y1="234.0" y2="120.0" stroke="var(--fg-faint)" stroke-width="2"/><circle cx="177.94117647058823" cy="120.0" r="6" fill="var(--surface)" stroke="var(--s1)" stroke-width="2.5"/></g><text class="m" x="177.94117647058823" y="250" font-size="10" text-anchor="middle">7</text>
+<g><title>VMM 8: baseline ≈ 197</title><line x1="203.70588235294116" x2="203.70588235294116" y1="234.0" y2="131.39999999999998" stroke="var(--fg-faint)" stroke-width="2"/><circle cx="203.70588235294116" cy="131.39999999999998" r="6" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g><text class="m" x="203.70588235294116" y="250" font-size="10" text-anchor="middle">8</text>
+<g><title>VMM 9: baseline ≈ 191 (extrapolated)</title><line x1="229.47058823529412" x2="229.47058823529412" y1="234.0" y2="154.20000000000002" stroke="var(--fg-faint)" stroke-width="2"/><circle cx="229.47058823529412" cy="154.20000000000002" r="6" fill="var(--surface)" stroke="var(--s1)" stroke-width="2.5"/></g><text class="m" x="229.47058823529412" y="250" font-size="10" text-anchor="middle">9</text>
+<g><title>VMM 10: baseline ≈ 210</title><line x1="255.23529411764707" x2="255.23529411764707" y1="234.0" y2="82.0" stroke="var(--fg-faint)" stroke-width="2"/><circle cx="255.23529411764707" cy="82.0" r="6" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g><text class="m" x="255.23529411764707" y="250" font-size="10" text-anchor="middle">10</text>
+<g><title>VMM 11: baseline ≈ 204</title><line x1="281.0" x2="281.0" y1="234.0" y2="104.79999999999998" stroke="var(--fg-faint)" stroke-width="2"/><circle cx="281.0" cy="104.79999999999998" r="6" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g><text class="m" x="281.0" y="250" font-size="10" text-anchor="middle">11</text>
+<g><title>VMM 12: baseline ≈ 210</title><line x1="306.7647058823529" x2="306.7647058823529" y1="234.0" y2="82.0" stroke="var(--fg-faint)" stroke-width="2"/><circle cx="306.7647058823529" cy="82.0" r="6" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g><text class="m" x="306.7647058823529" y="250" font-size="10" text-anchor="middle">12</text>
+<g><title>VMM 13: baseline ≈ 188</title><line x1="332.52941176470586" x2="332.52941176470586" y1="234.0" y2="165.60000000000002" stroke="var(--fg-faint)" stroke-width="2"/><circle cx="332.52941176470586" cy="165.60000000000002" r="6" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g><text class="m" x="332.52941176470586" y="250" font-size="10" text-anchor="middle">13</text>
+<g><title>VMM 14: baseline ≈ 201</title><line x1="358.29411764705884" x2="358.29411764705884" y1="234.0" y2="116.2" stroke="var(--fg-faint)" stroke-width="2"/><circle cx="358.29411764705884" cy="116.2" r="6" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g><text class="m" x="358.29411764705884" y="250" font-size="10" text-anchor="middle">14</text>
+<g><title>VMM 15: baseline ≈ 180</title><line x1="384.05882352941177" x2="384.05882352941177" y1="234.0" y2="196.0" stroke="var(--fg-faint)" stroke-width="2"/><circle cx="384.05882352941177" cy="196.0" r="6" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g><text class="m" x="384.05882352941177" y="250" font-size="10" text-anchor="middle">15</text>
+<g><title>VMM 16: baseline ≈ 199</title><line x1="409.8235294117647" x2="409.8235294117647" y1="234.0" y2="123.80000000000001" stroke="var(--fg-faint)" stroke-width="2"/><circle cx="409.8235294117647" cy="123.80000000000001" r="6" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g><text class="m" x="409.8235294117647" y="250" font-size="10" text-anchor="middle">16</text>
+<g><title>VMM 17: baseline ≈ 187</title><line x1="435.5882352941177" x2="435.5882352941177" y1="234.0" y2="169.39999999999998" stroke="var(--fg-faint)" stroke-width="2"/><circle cx="435.5882352941177" cy="169.39999999999998" r="6" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g><text class="m" x="435.5882352941177" y="250" font-size="10" text-anchor="middle">17</text>
+<g><title>VMM 18: baseline ≈ 182</title><line x1="461.3529411764706" x2="461.3529411764706" y1="234.0" y2="188.4" stroke="var(--fg-faint)" stroke-width="2"/><circle cx="461.3529411764706" cy="188.4" r="6" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g><text class="m" x="461.3529411764706" y="250" font-size="10" text-anchor="middle">18</text>
+<g><title>VMM 19: baseline ≈ 204</title><line x1="487.11764705882354" x2="487.11764705882354" y1="234.0" y2="104.79999999999998" stroke="var(--fg-faint)" stroke-width="2"/><circle cx="487.11764705882354" cy="104.79999999999998" r="6" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g><text class="m" x="487.11764705882354" y="250" font-size="10" text-anchor="middle">19</text>
+<text class="m" x="281.0" y="272" font-size="12" text-anchor="middle">VMM number</text>
+</svg><p class="caption">Estimated baselines from the July beam data. With one common threshold of 200, the chips above the band would fire all the time.</p></div>
+<p>That is why the scan is written as <strong>d = threshold &minus; baseline</strong> for each chip: d = 50 is a comfortable margin, d = 16 is close to the noise. These baselines are only <em>estimates</em> from July. Remember this: it turns out to matter.</p>
+
+<h2>3. Step by step</h2>
+<p>Each step below says what we did, what we saw, what it told us, and why the next step follows. Nothing is skipped.</p>
+
+<div class="stepcard done"><div class="sc-head"><span class="stepn">1</span><strong>A first test with the July settings</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>We ran the July chip settings for 2 minutes with the chambers at voltage.</dd><dt>What we saw</dt><dd>1.5&nbsp;GB of data in 2 minutes: about 1.6 million hits per second, almost all from 3 chips (VMM 4, 9 and later 7).</dd><dt>What it tells us</dt><dd>Something fires non-stop on those chips. A scan with this flood would fill the disk and hide the other chips.</dd><dt>So the next step is</dt><dd>find <em>which channels</em> fire, and try to switch them off (mask them).</dd></dl></div>
+
+<div class="stepcard done"><div class="sc-head"><span class="stepn">2</span><strong>Which channels? Try masking</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>We counted hits per channel, switched off the hottest ones, and tried again.</dd><dt>What we saw</dt><dd>A single channel gave nearly everything (VMM 4 ch 49: 99&nbsp;% of that chip). Once masked, the burst jumped to other channels (it &ldquo;walks&rdquo;). Masking whole chips VMM 4 and 9 brought the data from 635 to 5&nbsp;MB per minute.</dd><dt>What it tells us</dt><dd>Masking channel by channel does not work for these chips, so we leave VMM 4 and 9 out of the scan (they give no curve). The others are quiet enough.</dd><dt>So the next step is</dt><dd>scan the threshold on all the other chips.</dd></dl></div>
+<div class="viz-card"><svg viewBox="0 0 640 250" role="img" aria-label="Hot channels before and after masking">
+<text class="t" x="10" y="18" font-size="13" font-weight="600">Mask the hot channels and the burst moves to others</text>
+<text class="m" x="10" y="34" font-size="11">bars: share of the chip's hits (%); number under a bar = channel; only channels above 10% shown</text>
+<text class="t" x="87.5" y="60" font-size="12" text-anchor="middle" font-weight="600">VMM 9, run_1</text><text class="f" x="87.5" y="74" font-size="10" text-anchor="middle">before masking</text>
+<line x1="18.0" x2="157.0" y1="220" y2="220" stroke="var(--border)"/>
+<g><title>channel 41: 32.2% of this chip's hits</title><rect x="28.0" y="178.784" width="19.0" height="41.216" rx="3" fill="var(--s1)"/></g><text class="t" x="37.5" y="174.784" font-size="10" text-anchor="middle">32.2</text><text class="m" x="37.5" y="234" font-size="10" text-anchor="middle">41</text>
+<g><title>channel 63: 19.5% of this chip's hits</title><rect x="53.0" y="195.04" width="19.0" height="24.96" rx="3" fill="var(--s1)"/></g><text class="t" x="62.5" y="191.04" font-size="10" text-anchor="middle">19.5</text><text class="m" x="62.5" y="234" font-size="10" text-anchor="middle">63</text>
+<g><title>channel 33: 17.1% of this chip's hits</title><rect x="78.0" y="198.112" width="19.0" height="21.888" rx="3" fill="var(--s1)"/></g><text class="t" x="87.5" y="194.112" font-size="10" text-anchor="middle">17.1</text><text class="m" x="87.5" y="234" font-size="10" text-anchor="middle">33</text>
+<g><title>channel 44: 15.1% of this chip's hits</title><rect x="103.0" y="200.672" width="19.0" height="19.328" rx="3" fill="var(--s1)"/></g><text class="t" x="112.5" y="196.672" font-size="10" text-anchor="middle">15.1</text><text class="m" x="112.5" y="234" font-size="10" text-anchor="middle">44</text>
+<g><title>channel 42: 13.6% of this chip's hits</title><rect x="128.0" y="202.59199999999998" width="19.0" height="17.408" rx="3" fill="var(--s1)"/></g><text class="t" x="137.5" y="198.59199999999998" font-size="10" text-anchor="middle">13.6</text><text class="m" x="137.5" y="234" font-size="10" text-anchor="middle">42</text>
+<text class="t" x="242.5" y="60" font-size="12" text-anchor="middle" font-weight="600">VMM 9, run_3</text><text class="f" x="242.5" y="74" font-size="10" text-anchor="middle">after masking those five</text>
+<line x1="173.0" x2="312.0" y1="220" y2="220" stroke="var(--border)"/>
+<g><title>channel 20: 82.3% of this chip's hits</title><rect x="211.5" y="114.656" width="28" height="105.344" rx="3" fill="var(--s1)"/></g><text class="t" x="225.5" y="110.656" font-size="10" text-anchor="middle">82.3</text><text class="m" x="225.5" y="234" font-size="10" text-anchor="middle">20</text>
+<g><title>channel 21: 17.2% of this chip's hits</title><rect x="245.5" y="197.984" width="28" height="22.016" rx="3" fill="var(--s1)"/></g><text class="t" x="259.5" y="193.984" font-size="10" text-anchor="middle">17.2</text><text class="m" x="259.5" y="234" font-size="10" text-anchor="middle">21</text>
+<text class="t" x="397.5" y="60" font-size="12" text-anchor="middle" font-weight="600">VMM 4, run_1</text><text class="f" x="397.5" y="74" font-size="10" text-anchor="middle">before masking</text>
+<line x1="328.0" x2="467.0" y1="220" y2="220" stroke="var(--border)"/>
+<g><title>channel 49: 99.2% of this chip's hits</title><rect x="383.5" y="93.024" width="28" height="126.976" rx="3" fill="var(--s1)"/></g><text class="t" x="397.5" y="89.024" font-size="10" text-anchor="middle">99.2</text><text class="m" x="397.5" y="234" font-size="10" text-anchor="middle">49</text>
+<text class="t" x="552.5" y="60" font-size="12" text-anchor="middle" font-weight="600">VMM 4, run_3</text><text class="f" x="552.5" y="74" font-size="10" text-anchor="middle">after masking channel 49</text>
+<line x1="483.0" x2="622.0" y1="220" y2="220" stroke="var(--border)"/>
+<g><title>channel 38: 72.6% of this chip's hits</title><rect x="521.5" y="127.072" width="28" height="92.928" rx="3" fill="var(--s1)"/></g><text class="t" x="535.5" y="123.072" font-size="10" text-anchor="middle">72.6</text><text class="m" x="535.5" y="234" font-size="10" text-anchor="middle">38</text>
+<g><title>channel 36: 27.0% of this chip's hits</title><rect x="555.5" y="185.44" width="28" height="34.56" rx="3" fill="var(--s1)"/></g><text class="t" x="569.5" y="181.44" font-size="10" text-anchor="middle">27</text><text class="m" x="569.5" y="234" font-size="10" text-anchor="middle">36</text>
+</svg><p class="caption">Real counts. Switching off the hot channels did not help: the burst moved to channels 20 and 21 on VMM 9, and 36 and 38 on VMM 4.</p></div>
+
+<div class="stepcard done"><div class="sc-head"><span class="stepn">3</span><strong>Noise scan with the chamber voltage ON</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>Ten threshold steps, d = 50 down to 16, 2 minutes each. The chip settings are the same except the threshold.</dd><dt>What we saw</dt><dd>Almost nothing at d = 50. As d falls, chips switch on one after the other, and then climb very fast. VMM 15 starts at d = 34, VMM 10 only at d = 18.</dd><dt>What it tells us</dt><dd>The chips do not start to be noisy at the same distance above the baselines we assumed (a spread of 16 steps), so our baselines are not right. But is the spread a property of the electronics or of the chambers?</dd><dt>So the next step is</dt><dd>repeat the same scan with the voltage <em>off</em>.</dd></dl></div>
+<div class="viz-card"><svg viewBox="0 0 650 628" role="img" aria-label="Heat map of hit rate per chip against threshold">
+<text class="t" x="26" y="18" font-size="13" font-weight="600">Voltage ON: hit rate per chip (kHz) at each threshold step</text>
+<text class="m" x="26" y="36" font-size="11">columns: threshold step d above the assumed baseline, quiet → noisy</text>
+<text class="m" x="26" y="50" font-size="11">rate from the first 40 MB of each 2-minute point</text>
+<text class="m" x="151.5" y="72" font-size="11" text-anchor="middle">d=50</text>
+<text class="f" x="151.5" y="85" font-size="10" text-anchor="middle">run_4</text>
+<text class="m" x="202.5" y="72" font-size="11" text-anchor="middle">d=40</text>
+<text class="f" x="202.5" y="85" font-size="10" text-anchor="middle">run_5</text>
+<text class="m" x="253.5" y="72" font-size="11" text-anchor="middle">d=34</text>
+<text class="f" x="253.5" y="85" font-size="10" text-anchor="middle">run_6</text>
+<text class="m" x="304.5" y="72" font-size="11" text-anchor="middle">d=30</text>
+<text class="f" x="304.5" y="85" font-size="10" text-anchor="middle">run_7</text>
+<text class="m" x="355.5" y="72" font-size="11" text-anchor="middle">d=27</text>
+<text class="f" x="355.5" y="85" font-size="10" text-anchor="middle">run_8</text>
+<text class="m" x="406.5" y="72" font-size="11" text-anchor="middle">d=24</text>
+<text class="f" x="406.5" y="85" font-size="10" text-anchor="middle">run_9</text>
+<text class="m" x="457.5" y="72" font-size="11" text-anchor="middle">d=22</text>
+<text class="f" x="457.5" y="85" font-size="10" text-anchor="middle">run_10</text>
+<text class="m" x="508.5" y="72" font-size="11" text-anchor="middle">d=20</text>
+<text class="f" x="508.5" y="85" font-size="10" text-anchor="middle">run_11</text>
+<text class="m" x="559.5" y="72" font-size="11" text-anchor="middle">d=18</text>
+<text class="f" x="559.5" y="85" font-size="10" text-anchor="middle">run_12</text>
+<text class="m" x="610.5" y="72" font-size="11" text-anchor="middle">d=16</text>
+<text class="f" x="610.5" y="85" font-size="10" text-anchor="middle">run_13</text>
+<text class="t" x="26" y="111" font-size="12">VMM 2</text>
+<text class="f" x="120" y="111" font-size="9" text-anchor="end">det3 · IN</text>
+<g><title>VMM 2, d=50 (run_4): 0.0358 kHz</title><rect x="127" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="111" font-size="11" text-anchor="middle">0.04</text></g>
+<g><title>VMM 2, d=40 (run_5): 0.0384 kHz</title><rect x="178" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="111" font-size="11" text-anchor="middle">0.04</text></g>
+<g><title>VMM 2, d=34 (run_6): 0.0467 kHz</title><rect x="229" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="111" font-size="11" text-anchor="middle">0.05</text></g>
+<g><title>VMM 2, d=30 (run_7): 0.0345 kHz</title><rect x="280" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="111" font-size="11" text-anchor="middle">0.03</text></g>
+<g><title>VMM 2, d=27 (run_8): 0.0575 kHz</title><rect x="331" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="355.5" y="111" font-size="11" text-anchor="middle">0.06</text></g>
+<g><title>VMM 2, d=24 (run_9): 0.0279 kHz</title><rect x="382" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="406.5" y="111" font-size="11" text-anchor="middle">0.03</text></g>
+<g><title>VMM 2, d=22 (run_10): 0.0323 kHz</title><rect x="433" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="457.5" y="111" font-size="11" text-anchor="middle">0.03</text></g>
+<g><title>VMM 2, d=20 (run_11): 0.0245 kHz</title><rect x="484" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="508.5" y="111" font-size="11" text-anchor="middle">0.02</text></g>
+<g><title>VMM 2, d=18 (run_12): 0.0815 kHz</title><rect x="535" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="559.5" y="111" font-size="11" text-anchor="middle">0.08</text></g>
+<g><title>VMM 2, d=16 (run_13): 0.3276 kHz</title><rect x="586" y="95" width="49" height="23" rx="3" class="b1"/><text class="x1" x="610.5" y="111" font-size="11" text-anchor="middle">0.33</text></g>
+<text class="t" x="26" y="136" font-size="12">VMM 3</text>
+<text class="f" x="120" y="136" font-size="9" text-anchor="end">det3 · IN</text>
+<g><title>VMM 3, d=50 (run_4): 0.0407 kHz</title><rect x="127" y="120" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="136" font-size="11" text-anchor="middle">0.04</text></g>
+<g><title>VMM 3, d=40 (run_5): 0.0457 kHz</title><rect x="178" y="120" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="136" font-size="11" text-anchor="middle">0.05</text></g>
+<g><title>VMM 3, d=34 (run_6): 0.0607 kHz</title><rect x="229" y="120" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="136" font-size="11" text-anchor="middle">0.06</text></g>
+<g><title>VMM 3, d=30 (run_7): 0.2577 kHz</title><rect x="280" y="120" width="49" height="23" rx="3" class="b1"/><text class="x1" x="304.5" y="136" font-size="11" text-anchor="middle">0.26</text></g>
+<g><title>VMM 3, d=27 (run_8): 3.8874 kHz</title><rect x="331" y="120" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="355.5" y="136" font-size="11" text-anchor="middle">3.9</text></g>
+<g><title>VMM 3, d=24 (run_9): 37.5668 kHz</title><rect x="382" y="120" width="49" height="23" rx="3" class="b3"/><text class="x3" x="406.5" y="136" font-size="11" text-anchor="middle">37.6</text></g>
+<g><title>VMM 3, d=22 (run_10): 129.805 kHz</title><rect x="433" y="120" width="49" height="23" rx="3" class="b4"/><text class="x4" x="457.5" y="136" font-size="11" text-anchor="middle">130</text></g>
+<g><title>VMM 3, d=20 (run_11): 357.915 kHz</title><rect x="484" y="120" width="49" height="23" rx="3" class="b4"/><text class="x4" x="508.5" y="136" font-size="11" text-anchor="middle">358</text></g>
+<g><title>VMM 3, d=18 (run_12): 814.979 kHz</title><rect x="535" y="120" width="49" height="23" rx="3" class="b4"/><text class="x4" x="559.5" y="136" font-size="11" text-anchor="middle">815</text></g>
+<g><title>VMM 3, d=16 (run_13): 1536.91 kHz</title><rect x="586" y="120" width="49" height="23" rx="3" class="b5"/><text class="x5" x="610.5" y="136" font-size="11" text-anchor="middle">1537</text></g>
+<text class="t" x="26" y="161" font-size="12">VMM 4</text>
+<text class="f" x="120" y="161" font-size="9" text-anchor="end">det3 · IN</text>
+<rect x="126" y="145" width="508" height="23" rx="3" fill="url(#hatch)" stroke="var(--border)"/>
+<text class="m" x="381.0" y="161" font-size="11" text-anchor="middle">fully masked: hopping burst (section 4)</text>
+<text class="t" x="26" y="186" font-size="12">VMM 5</text>
+<text class="f" x="120" y="186" font-size="9" text-anchor="end">det3 · IN</text>
+<g><title>VMM 5, d=50 (run_4): 0.0371 kHz</title><rect x="127" y="170" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="186" font-size="11" text-anchor="middle">0.04</text></g>
+<g><title>VMM 5, d=40 (run_5): 0.0464 kHz</title><rect x="178" y="170" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="186" font-size="11" text-anchor="middle">0.05</text></g>
+<g><title>VMM 5, d=34 (run_6): 0.089 kHz</title><rect x="229" y="170" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="186" font-size="11" text-anchor="middle">0.09</text></g>
+<g><title>VMM 5, d=30 (run_7): 0.6063 kHz</title><rect x="280" y="170" width="49" height="23" rx="3" class="b1"/><text class="x1" x="304.5" y="186" font-size="11" text-anchor="middle">0.61</text></g>
+<g><title>VMM 5, d=27 (run_8): 7.2775 kHz</title><rect x="331" y="170" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="355.5" y="186" font-size="11" text-anchor="middle">7.3</text></g>
+<g><title>VMM 5, d=24 (run_9): 62.1565 kHz</title><rect x="382" y="170" width="49" height="23" rx="3" class="b3"/><text class="x3" x="406.5" y="186" font-size="11" text-anchor="middle">62.2</text></g>
+<g><title>VMM 5, d=22 (run_10): 181.119 kHz</title><rect x="433" y="170" width="49" height="23" rx="3" class="b4"/><text class="x4" x="457.5" y="186" font-size="11" text-anchor="middle">181</text></g>
+<g><title>VMM 5, d=20 (run_11): 416.002 kHz</title><rect x="484" y="170" width="49" height="23" rx="3" class="b4"/><text class="x4" x="508.5" y="186" font-size="11" text-anchor="middle">416</text></g>
+<g><title>VMM 5, d=18 (run_12): 0.3261 kHz</title><rect x="535" y="170" width="49" height="23" rx="3" class="b1"/><text class="x1" x="559.5" y="186" font-size="11" text-anchor="middle">0.33</text></g>
+<g><title>VMM 5, d=16 (run_13): 2.8898 kHz</title><rect x="586" y="170" width="49" height="23" rx="3" class="b2"/><text class="x2" x="610.5" y="186" font-size="11" text-anchor="middle">2.9</text></g>
+<text class="t" x="26" y="211" font-size="12">VMM 6*</text>
+<text class="f" x="120" y="211" font-size="9" text-anchor="end">det3 · IN</text>
+<g><title>VMM 6, d=50 (run_4): 0.0376 kHz</title><rect x="127" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="211" font-size="11" text-anchor="middle">0.04</text></g>
+<g><title>VMM 6, d=40 (run_5): 0.0395 kHz</title><rect x="178" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="211" font-size="11" text-anchor="middle">0.04</text></g>
+<g><title>VMM 6, d=34 (run_6): 0.0366 kHz</title><rect x="229" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="211" font-size="11" text-anchor="middle">0.04</text></g>
+<g><title>VMM 6, d=30 (run_7): 0.0271 kHz</title><rect x="280" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="211" font-size="11" text-anchor="middle">0.03</text></g>
+<g><title>VMM 6, d=27 (run_8): 0.0471 kHz</title><rect x="331" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="355.5" y="211" font-size="11" text-anchor="middle">0.05</text></g>
+<g><title>VMM 6, d=24 (run_9): 0.0206 kHz</title><rect x="382" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="406.5" y="211" font-size="11" text-anchor="middle">0.02</text></g>
+<g><title>VMM 6, d=22 (run_10): 0.0184 kHz</title><rect x="433" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="457.5" y="211" font-size="11" text-anchor="middle">0.02</text></g>
+<g><title>VMM 6, d=20 (run_11): 0.0258 kHz</title><rect x="484" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="508.5" y="211" font-size="11" text-anchor="middle">0.03</text></g>
+<g><title>VMM 6, d=18 (run_12): 0.0168 kHz</title><rect x="535" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="559.5" y="211" font-size="11" text-anchor="middle">0.02</text></g>
+<g><title>VMM 6, d=16 (run_13): 0.0157 kHz</title><rect x="586" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="610.5" y="211" font-size="11" text-anchor="middle">0.02</text></g>
+<text class="t" x="26" y="236" font-size="12">VMM 7</text>
+<text class="f" x="120" y="236" font-size="9" text-anchor="end">det3 · IN</text>
+<g><title>VMM 7, d=50 (run_4): 0.0354 kHz</title><rect x="127" y="220" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="236" font-size="11" text-anchor="middle">0.04</text></g>
+<g><title>VMM 7, d=40 (run_5): 10.9248 kHz</title><rect x="178" y="220" width="49" height="23" rx="3" class="b3" stroke="var(--alert)" stroke-width="2.5"/><text class="x3" x="202.5" y="236" font-size="11" text-anchor="middle">10.9</text></g>
+<g><title>VMM 7, d=34 (run_6): 489.173 kHz</title><rect x="229" y="220" width="49" height="23" rx="3" class="b4"/><text class="x4" x="253.5" y="236" font-size="11" text-anchor="middle">489</text></g>
+<g><title>VMM 7, d=30 (run_7): 332.356 kHz</title><rect x="280" y="220" width="49" height="23" rx="3" class="b4"/><text class="x4" x="304.5" y="236" font-size="11" text-anchor="middle">332</text></g>
+<g><title>VMM 7, d=27 (run_8): 60.4013 kHz</title><rect x="331" y="220" width="49" height="23" rx="3" class="b3"/><text class="x3" x="355.5" y="236" font-size="11" text-anchor="middle">60.4</text></g>
+<g><title>VMM 7, d=24 (run_9): 4.2248 kHz</title><rect x="382" y="220" width="49" height="23" rx="3" class="b2"/><text class="x2" x="406.5" y="236" font-size="11" text-anchor="middle">4.2</text></g>
+<g><title>VMM 7, d=22 (run_10): 0.5096 kHz</title><rect x="433" y="220" width="49" height="23" rx="3" class="b1"/><text class="x1" x="457.5" y="236" font-size="11" text-anchor="middle">0.51</text></g>
+<g><title>VMM 7, d=20 (run_11): 0.038 kHz</title><rect x="484" y="220" width="49" height="23" rx="3" class="b0"/><text class="x0" x="508.5" y="236" font-size="11" text-anchor="middle">0.04</text></g>
+<g><title>VMM 7, d=18 (run_12): 0.0544 kHz</title><rect x="535" y="220" width="49" height="23" rx="3" class="b0"/><text class="x0" x="559.5" y="236" font-size="11" text-anchor="middle">0.05</text></g>
+<g><title>VMM 7, d=16 (run_13): 0.3747 kHz</title><rect x="586" y="220" width="49" height="23" rx="3" class="b1"/><text class="x1" x="610.5" y="236" font-size="11" text-anchor="middle">0.37</text></g>
+<text class="t" x="26" y="261" font-size="12">VMM 8</text>
+<text class="f" x="120" y="261" font-size="9" text-anchor="end">det2 · MID</text>
+<g><title>VMM 8, d=50 (run_4): 0.0147 kHz</title><rect x="127" y="245" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="261" font-size="11" text-anchor="middle">0.01</text></g>
+<g><title>VMM 8, d=40 (run_5): 0.0173 kHz</title><rect x="178" y="245" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="261" font-size="11" text-anchor="middle">0.02</text></g>
+<g><title>VMM 8, d=34 (run_6): 0.0223 kHz</title><rect x="229" y="245" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="261" font-size="11" text-anchor="middle">0.02</text></g>
+<g><title>VMM 8, d=30 (run_7): 0.0159 kHz</title><rect x="280" y="245" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="261" font-size="11" text-anchor="middle">0.02</text></g>
+<g><title>VMM 8, d=27 (run_8): 0.1895 kHz</title><rect x="331" y="245" width="49" height="23" rx="3" class="b1"/><text class="x1" x="355.5" y="261" font-size="11" text-anchor="middle">0.19</text></g>
+<g><title>VMM 8, d=24 (run_9): 2.2131 kHz</title><rect x="382" y="245" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="406.5" y="261" font-size="11" text-anchor="middle">2.2</text></g>
+<g><title>VMM 8, d=22 (run_10): 10.0589 kHz</title><rect x="433" y="245" width="49" height="23" rx="3" class="b3"/><text class="x3" x="457.5" y="261" font-size="11" text-anchor="middle">10.1</text></g>
+<g><title>VMM 8, d=20 (run_11): 34.593 kHz</title><rect x="484" y="245" width="49" height="23" rx="3" class="b3"/><text class="x3" x="508.5" y="261" font-size="11" text-anchor="middle">34.6</text></g>
+<g><title>VMM 8, d=18 (run_12): 101.882 kHz</title><rect x="535" y="245" width="49" height="23" rx="3" class="b4"/><text class="x4" x="559.5" y="261" font-size="11" text-anchor="middle">102</text></g>
+<g><title>VMM 8, d=16 (run_13): 246.989 kHz</title><rect x="586" y="245" width="49" height="23" rx="3" class="b4"/><text class="x4" x="610.5" y="261" font-size="11" text-anchor="middle">247</text></g>
+<text class="t" x="26" y="286" font-size="12">VMM 9</text>
+<text class="f" x="120" y="286" font-size="9" text-anchor="end">det2 · MID</text>
+<rect x="126" y="270" width="508" height="23" rx="3" fill="url(#hatch)" stroke="var(--border)"/>
+<text class="m" x="381.0" y="286" font-size="11" text-anchor="middle">fully masked: hopping burst (section 4)</text>
+<text class="t" x="26" y="311" font-size="12">VMM 10</text>
+<text class="f" x="120" y="311" font-size="9" text-anchor="end">det2 · MID</text>
+<g><title>VMM 10, d=50 (run_4): 0.0268 kHz</title><rect x="127" y="295" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="311" font-size="11" text-anchor="middle">0.03</text></g>
+<g><title>VMM 10, d=40 (run_5): 0.0299 kHz</title><rect x="178" y="295" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="311" font-size="11" text-anchor="middle">0.03</text></g>
+<g><title>VMM 10, d=34 (run_6): 0.0299 kHz</title><rect x="229" y="295" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="311" font-size="11" text-anchor="middle">0.03</text></g>
+<g><title>VMM 10, d=30 (run_7): 0.0238 kHz</title><rect x="280" y="295" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="311" font-size="11" text-anchor="middle">0.02</text></g>
+<g><title>VMM 10, d=27 (run_8): 0.0327 kHz</title><rect x="331" y="295" width="49" height="23" rx="3" class="b0"/><text class="x0" x="355.5" y="311" font-size="11" text-anchor="middle">0.03</text></g>
+<g><title>VMM 10, d=24 (run_9): 0.0292 kHz</title><rect x="382" y="295" width="49" height="23" rx="3" class="b0"/><text class="x0" x="406.5" y="311" font-size="11" text-anchor="middle">0.03</text></g>
+<g><title>VMM 10, d=22 (run_10): 0.1271 kHz</title><rect x="433" y="295" width="49" height="23" rx="3" class="b1"/><text class="x1" x="457.5" y="311" font-size="11" text-anchor="middle">0.13</text></g>
+<g><title>VMM 10, d=20 (run_11): 0.8604 kHz</title><rect x="484" y="295" width="49" height="23" rx="3" class="b1"/><text class="x1" x="508.5" y="311" font-size="11" text-anchor="middle">0.86</text></g>
+<g><title>VMM 10, d=18 (run_12): 4.8508 kHz</title><rect x="535" y="295" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="559.5" y="311" font-size="11" text-anchor="middle">4.9</text></g>
+<g><title>VMM 10, d=16 (run_13): 24.3974 kHz</title><rect x="586" y="295" width="49" height="23" rx="3" class="b3"/><text class="x3" x="610.5" y="311" font-size="11" text-anchor="middle">24.4</text></g>
+<text class="t" x="26" y="336" font-size="12">VMM 11</text>
+<text class="f" x="120" y="336" font-size="9" text-anchor="end">det2 · MID</text>
+<g><title>VMM 11, d=50 (run_4): 0.0143 kHz</title><rect x="127" y="320" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="336" font-size="11" text-anchor="middle">0.01</text></g>
+<g><title>VMM 11, d=40 (run_5): 0.0168 kHz</title><rect x="178" y="320" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="336" font-size="11" text-anchor="middle">0.02</text></g>
+<g><title>VMM 11, d=34 (run_6): 0.0198 kHz</title><rect x="229" y="320" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="336" font-size="11" text-anchor="middle">0.02</text></g>
+<g><title>VMM 11, d=30 (run_7): 0.0139 kHz</title><rect x="280" y="320" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="336" font-size="11" text-anchor="middle">0.01</text></g>
+<g><title>VMM 11, d=27 (run_8): 0.0276 kHz</title><rect x="331" y="320" width="49" height="23" rx="3" class="b0"/><text class="x0" x="355.5" y="336" font-size="11" text-anchor="middle">0.03</text></g>
+<g><title>VMM 11, d=24 (run_9): 0.2502 kHz</title><rect x="382" y="320" width="49" height="23" rx="3" class="b1"/><text class="x1" x="406.5" y="336" font-size="11" text-anchor="middle">0.25</text></g>
+<g><title>VMM 11, d=22 (run_10): 1.7973 kHz</title><rect x="433" y="320" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="457.5" y="336" font-size="11" text-anchor="middle">1.8</text></g>
+<g><title>VMM 11, d=20 (run_11): 10.4804 kHz</title><rect x="484" y="320" width="49" height="23" rx="3" class="b3"/><text class="x3" x="508.5" y="336" font-size="11" text-anchor="middle">10.5</text></g>
+<g><title>VMM 11, d=18 (run_12): 41.6346 kHz</title><rect x="535" y="320" width="49" height="23" rx="3" class="b3"/><text class="x3" x="559.5" y="336" font-size="11" text-anchor="middle">41.6</text></g>
+<g><title>VMM 11, d=16 (run_13): 148.502 kHz</title><rect x="586" y="320" width="49" height="23" rx="3" class="b4"/><text class="x4" x="610.5" y="336" font-size="11" text-anchor="middle">149</text></g>
+<text class="t" x="26" y="361" font-size="12">VMM 12</text>
+<text class="f" x="120" y="361" font-size="9" text-anchor="end">det2 · MID</text>
+<g><title>VMM 12, d=50 (run_4): 0.0184 kHz</title><rect x="127" y="345" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="361" font-size="11" text-anchor="middle">0.02</text></g>
+<g><title>VMM 12, d=40 (run_5): 0.0216 kHz</title><rect x="178" y="345" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="361" font-size="11" text-anchor="middle">0.02</text></g>
+<g><title>VMM 12, d=34 (run_6): 0.0605 kHz</title><rect x="229" y="345" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="361" font-size="11" text-anchor="middle">0.06</text></g>
+<g><title>VMM 12, d=30 (run_7): 3.4393 kHz</title><rect x="280" y="345" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="304.5" y="361" font-size="11" text-anchor="middle">3.4</text></g>
+<g><title>VMM 12, d=27 (run_8): 50.8794 kHz</title><rect x="331" y="345" width="49" height="23" rx="3" class="b3"/><text class="x3" x="355.5" y="361" font-size="11" text-anchor="middle">50.9</text></g>
+<g><title>VMM 12, d=24 (run_9): 395.252 kHz</title><rect x="382" y="345" width="49" height="23" rx="3" class="b4"/><text class="x4" x="406.5" y="361" font-size="11" text-anchor="middle">395</text></g>
+<g><title>VMM 12, d=22 (run_10): 1197.76 kHz</title><rect x="433" y="345" width="49" height="23" rx="3" class="b5"/><text class="x5" x="457.5" y="361" font-size="11" text-anchor="middle">1198</text></g>
+<g><title>VMM 12, d=20 (run_11): 2960.24 kHz</title><rect x="484" y="345" width="49" height="23" rx="3" class="b5"/><text class="x5" x="508.5" y="361" font-size="11" text-anchor="middle">2960</text></g>
+<g><title>VMM 12, d=18 (run_12): 1768.6 kHz</title><rect x="535" y="345" width="49" height="23" rx="3" class="b5"/><text class="x5" x="559.5" y="361" font-size="11" text-anchor="middle">1769</text></g>
+<g><title>VMM 12, d=16 (run_13): 3142.34 kHz</title><rect x="586" y="345" width="49" height="23" rx="3" class="b5"/><text class="x5" x="610.5" y="361" font-size="11" text-anchor="middle">3142</text></g>
+<text class="t" x="26" y="386" font-size="12">VMM 13</text>
+<text class="f" x="120" y="386" font-size="9" text-anchor="end">det2 · MID</text>
+<g><title>VMM 13, d=50 (run_4): 0.0217 kHz</title><rect x="127" y="370" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="386" font-size="11" text-anchor="middle">0.02</text></g>
+<g><title>VMM 13, d=40 (run_5): 0.0244 kHz</title><rect x="178" y="370" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="386" font-size="11" text-anchor="middle">0.02</text></g>
+<g><title>VMM 13, d=34 (run_6): 0.0277 kHz</title><rect x="229" y="370" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="386" font-size="11" text-anchor="middle">0.03</text></g>
+<g><title>VMM 13, d=30 (run_7): 0.0236 kHz</title><rect x="280" y="370" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="386" font-size="11" text-anchor="middle">0.02</text></g>
+<g><title>VMM 13, d=27 (run_8): 0.1207 kHz</title><rect x="331" y="370" width="49" height="23" rx="3" class="b1"/><text class="x1" x="355.5" y="386" font-size="11" text-anchor="middle">0.12</text></g>
+<g><title>VMM 13, d=24 (run_9): 1.524 kHz</title><rect x="382" y="370" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="406.5" y="386" font-size="11" text-anchor="middle">1.5</text></g>
+<g><title>VMM 13, d=22 (run_10): 7.8521 kHz</title><rect x="433" y="370" width="49" height="23" rx="3" class="b2"/><text class="x2" x="457.5" y="386" font-size="11" text-anchor="middle">7.9</text></g>
+<g><title>VMM 13, d=20 (run_11): 35.0532 kHz</title><rect x="484" y="370" width="49" height="23" rx="3" class="b3"/><text class="x3" x="508.5" y="386" font-size="11" text-anchor="middle">35.1</text></g>
+<g><title>VMM 13, d=18 (run_12): 131.3 kHz</title><rect x="535" y="370" width="49" height="23" rx="3" class="b4"/><text class="x4" x="559.5" y="386" font-size="11" text-anchor="middle">131</text></g>
+<g><title>VMM 13, d=16 (run_13): 352.575 kHz</title><rect x="586" y="370" width="49" height="23" rx="3" class="b4"/><text class="x4" x="610.5" y="386" font-size="11" text-anchor="middle">353</text></g>
+<text class="t" x="26" y="411" font-size="12">VMM 14</text>
+<text class="f" x="120" y="411" font-size="9" text-anchor="end">det1 · OUT</text>
+<g><title>VMM 14, d=50 (run_4): 0.0558 kHz</title><rect x="127" y="395" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="411" font-size="11" text-anchor="middle">0.06</text></g>
+<g><title>VMM 14, d=40 (run_5): 0.0617 kHz</title><rect x="178" y="395" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="411" font-size="11" text-anchor="middle">0.06</text></g>
+<g><title>VMM 14, d=34 (run_6): 0.2305 kHz</title><rect x="229" y="395" width="49" height="23" rx="3" class="b1"/><text class="x1" x="253.5" y="411" font-size="11" text-anchor="middle">0.23</text></g>
+<g><title>VMM 14, d=30 (run_7): 4.6539 kHz</title><rect x="280" y="395" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="304.5" y="411" font-size="11" text-anchor="middle">4.7</text></g>
+<g><title>VMM 14, d=27 (run_8): 31.7796 kHz</title><rect x="331" y="395" width="49" height="23" rx="3" class="b3"/><text class="x3" x="355.5" y="411" font-size="11" text-anchor="middle">31.8</text></g>
+<g><title>VMM 14, d=24 (run_9): 154.423 kHz</title><rect x="382" y="395" width="49" height="23" rx="3" class="b4"/><text class="x4" x="406.5" y="411" font-size="11" text-anchor="middle">154</text></g>
+<g><title>VMM 14, d=22 (run_10): 329.488 kHz</title><rect x="433" y="395" width="49" height="23" rx="3" class="b4"/><text class="x4" x="457.5" y="411" font-size="11" text-anchor="middle">329</text></g>
+<g><title>VMM 14, d=20 (run_11): 696.143 kHz</title><rect x="484" y="395" width="49" height="23" rx="3" class="b4"/><text class="x4" x="508.5" y="411" font-size="11" text-anchor="middle">696</text></g>
+<g><title>VMM 14, d=18 (run_12): 441.601 kHz</title><rect x="535" y="395" width="49" height="23" rx="3" class="b4"/><text class="x4" x="559.5" y="411" font-size="11" text-anchor="middle">442</text></g>
+<g><title>VMM 14, d=16 (run_13): 1091.87 kHz</title><rect x="586" y="395" width="49" height="23" rx="3" class="b5"/><text class="x5" x="610.5" y="411" font-size="11" text-anchor="middle">1092</text></g>
+<text class="t" x="26" y="436" font-size="12">VMM 15</text>
+<text class="f" x="120" y="436" font-size="9" text-anchor="end">det1 · OUT</text>
+<g><title>VMM 15, d=50 (run_4): 0.1288 kHz</title><rect x="127" y="420" width="49" height="23" rx="3" class="b1"/><text class="x1" x="151.5" y="436" font-size="11" text-anchor="middle">0.13</text></g>
+<g><title>VMM 15, d=40 (run_5): 0.1506 kHz</title><rect x="178" y="420" width="49" height="23" rx="3" class="b1"/><text class="x1" x="202.5" y="436" font-size="11" text-anchor="middle">0.15</text></g>
+<g><title>VMM 15, d=34 (run_6): 3.9441 kHz</title><rect x="229" y="420" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="253.5" y="436" font-size="11" text-anchor="middle">3.9</text></g>
+<g><title>VMM 15, d=30 (run_7): 110.673 kHz</title><rect x="280" y="420" width="49" height="23" rx="3" class="b4"/><text class="x4" x="304.5" y="436" font-size="11" text-anchor="middle">111</text></g>
+<g><title>VMM 15, d=27 (run_8): 532.857 kHz</title><rect x="331" y="420" width="49" height="23" rx="3" class="b4"/><text class="x4" x="355.5" y="436" font-size="11" text-anchor="middle">533</text></g>
+<g><title>VMM 15, d=24 (run_9): 1284.53 kHz</title><rect x="382" y="420" width="49" height="23" rx="3" class="b5"/><text class="x5" x="406.5" y="436" font-size="11" text-anchor="middle">1285</text></g>
+<g><title>VMM 15, d=22 (run_10): 2120.12 kHz</title><rect x="433" y="420" width="49" height="23" rx="3" class="b5"/><text class="x5" x="457.5" y="436" font-size="11" text-anchor="middle">2120</text></g>
+<g><title>VMM 15, d=20 (run_11): 2777.16 kHz</title><rect x="484" y="420" width="49" height="23" rx="3" class="b5"/><text class="x5" x="508.5" y="436" font-size="11" text-anchor="middle">2777</text></g>
+<g><title>VMM 15, d=18 (run_12): 3651.86 kHz</title><rect x="535" y="420" width="49" height="23" rx="3" class="b5"/><text class="x5" x="559.5" y="436" font-size="11" text-anchor="middle">3652</text></g>
+<g><title>VMM 15, d=16 (run_13): 5153.04 kHz</title><rect x="586" y="420" width="49" height="23" rx="3" class="b5"/><text class="x5" x="610.5" y="436" font-size="11" text-anchor="middle">5153</text></g>
+<text class="t" x="26" y="461" font-size="12">VMM 16</text>
+<text class="f" x="120" y="461" font-size="9" text-anchor="end">det1 · OUT</text>
+<g><title>VMM 16, d=50 (run_4): 0.0639 kHz</title><rect x="127" y="445" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="461" font-size="11" text-anchor="middle">0.06</text></g>
+<g><title>VMM 16, d=40 (run_5): 0.0755 kHz</title><rect x="178" y="445" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="461" font-size="11" text-anchor="middle">0.08</text></g>
+<g><title>VMM 16, d=34 (run_6): 0.0839 kHz</title><rect x="229" y="445" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="461" font-size="11" text-anchor="middle">0.08</text></g>
+<g><title>VMM 16, d=30 (run_7): 0.1078 kHz</title><rect x="280" y="445" width="49" height="23" rx="3" class="b1"/><text class="x1" x="304.5" y="461" font-size="11" text-anchor="middle">0.11</text></g>
+<g><title>VMM 16, d=27 (run_8): 0.1351 kHz</title><rect x="331" y="445" width="49" height="23" rx="3" class="b1"/><text class="x1" x="355.5" y="461" font-size="11" text-anchor="middle">0.14</text></g>
+<g><title>VMM 16, d=24 (run_9): 0.3204 kHz</title><rect x="382" y="445" width="49" height="23" rx="3" class="b1"/><text class="x1" x="406.5" y="461" font-size="11" text-anchor="middle">0.32</text></g>
+<g><title>VMM 16, d=22 (run_10): 1.8203 kHz</title><rect x="433" y="445" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="457.5" y="461" font-size="11" text-anchor="middle">1.8</text></g>
+<g><title>VMM 16, d=20 (run_11): 9.3991 kHz</title><rect x="484" y="445" width="49" height="23" rx="3" class="b2"/><text class="x2" x="508.5" y="461" font-size="11" text-anchor="middle">9.4</text></g>
+<g><title>VMM 16, d=18 (run_12): 43.9836 kHz</title><rect x="535" y="445" width="49" height="23" rx="3" class="b3"/><text class="x3" x="559.5" y="461" font-size="11" text-anchor="middle">44.0</text></g>
+<g><title>VMM 16, d=16 (run_13): 160.979 kHz</title><rect x="586" y="445" width="49" height="23" rx="3" class="b4"/><text class="x4" x="610.5" y="461" font-size="11" text-anchor="middle">161</text></g>
+<text class="t" x="26" y="486" font-size="12">VMM 17</text>
+<text class="f" x="120" y="486" font-size="9" text-anchor="end">det1 · OUT</text>
+<g><title>VMM 17, d=50 (run_4): 0.0878 kHz</title><rect x="127" y="470" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="486" font-size="11" text-anchor="middle">0.09</text></g>
+<g><title>VMM 17, d=40 (run_5): 0.0941 kHz</title><rect x="178" y="470" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="486" font-size="11" text-anchor="middle">0.09</text></g>
+<g><title>VMM 17, d=34 (run_6): 0.1146 kHz</title><rect x="229" y="470" width="49" height="23" rx="3" class="b1"/><text class="x1" x="253.5" y="486" font-size="11" text-anchor="middle">0.11</text></g>
+<g><title>VMM 17, d=30 (run_7): 0.114 kHz</title><rect x="280" y="470" width="49" height="23" rx="3" class="b1"/><text class="x1" x="304.5" y="486" font-size="11" text-anchor="middle">0.11</text></g>
+<g><title>VMM 17, d=27 (run_8): 0.4635 kHz</title><rect x="331" y="470" width="49" height="23" rx="3" class="b1"/><text class="x1" x="355.5" y="486" font-size="11" text-anchor="middle">0.46</text></g>
+<g><title>VMM 17, d=24 (run_9): 4.2181 kHz</title><rect x="382" y="470" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="406.5" y="486" font-size="11" text-anchor="middle">4.2</text></g>
+<g><title>VMM 17, d=22 (run_10): 18.9676 kHz</title><rect x="433" y="470" width="49" height="23" rx="3" class="b3"/><text class="x3" x="457.5" y="486" font-size="11" text-anchor="middle">19.0</text></g>
+<g><title>VMM 17, d=20 (run_11): 67.4296 kHz</title><rect x="484" y="470" width="49" height="23" rx="3" class="b3"/><text class="x3" x="508.5" y="486" font-size="11" text-anchor="middle">67.4</text></g>
+<g><title>VMM 17, d=18 (run_12): 189.75 kHz</title><rect x="535" y="470" width="49" height="23" rx="3" class="b4"/><text class="x4" x="559.5" y="486" font-size="11" text-anchor="middle">190</text></g>
+<g><title>VMM 17, d=16 (run_13): 450.849 kHz</title><rect x="586" y="470" width="49" height="23" rx="3" class="b4"/><text class="x4" x="610.5" y="486" font-size="11" text-anchor="middle">451</text></g>
+<text class="t" x="26" y="511" font-size="12">VMM 18</text>
+<text class="f" x="120" y="511" font-size="9" text-anchor="end">det1 · OUT</text>
+<g><title>VMM 18, d=50 (run_4): 0.0837 kHz</title><rect x="127" y="495" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="511" font-size="11" text-anchor="middle">0.08</text></g>
+<g><title>VMM 18, d=40 (run_5): 0.0874 kHz</title><rect x="178" y="495" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="511" font-size="11" text-anchor="middle">0.09</text></g>
+<g><title>VMM 18, d=34 (run_6): 0.0848 kHz</title><rect x="229" y="495" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="511" font-size="11" text-anchor="middle">0.08</text></g>
+<g><title>VMM 18, d=30 (run_7): 0.0986 kHz</title><rect x="280" y="495" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="511" font-size="11" text-anchor="middle">0.10</text></g>
+<g><title>VMM 18, d=27 (run_8): 0.1504 kHz</title><rect x="331" y="495" width="49" height="23" rx="3" class="b1"/><text class="x1" x="355.5" y="511" font-size="11" text-anchor="middle">0.15</text></g>
+<g><title>VMM 18, d=24 (run_9): 0.8984 kHz</title><rect x="382" y="495" width="49" height="23" rx="3" class="b1"/><text class="x1" x="406.5" y="511" font-size="11" text-anchor="middle">0.90</text></g>
+<g><title>VMM 18, d=22 (run_10): 4.4873 kHz</title><rect x="433" y="495" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="457.5" y="511" font-size="11" text-anchor="middle">4.5</text></g>
+<g><title>VMM 18, d=20 (run_11): 20.962 kHz</title><rect x="484" y="495" width="49" height="23" rx="3" class="b3"/><text class="x3" x="508.5" y="511" font-size="11" text-anchor="middle">21.0</text></g>
+<g><title>VMM 18, d=18 (run_12): 79.8795 kHz</title><rect x="535" y="495" width="49" height="23" rx="3" class="b3"/><text class="x3" x="559.5" y="511" font-size="11" text-anchor="middle">79.9</text></g>
+<g><title>VMM 18, d=16 (run_13): 270.509 kHz</title><rect x="586" y="495" width="49" height="23" rx="3" class="b4"/><text class="x4" x="610.5" y="511" font-size="11" text-anchor="middle">271</text></g>
+<text class="t" x="26" y="536" font-size="12">VMM 19</text>
+<text class="f" x="120" y="536" font-size="9" text-anchor="end">det1 · OUT</text>
+<g><title>VMM 19, d=50 (run_4): 0.0989 kHz</title><rect x="127" y="520" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="536" font-size="11" text-anchor="middle">0.10</text></g>
+<g><title>VMM 19, d=40 (run_5): 0.1071 kHz</title><rect x="178" y="520" width="49" height="23" rx="3" class="b1"/><text class="x1" x="202.5" y="536" font-size="11" text-anchor="middle">0.11</text></g>
+<g><title>VMM 19, d=34 (run_6): 0.2115 kHz</title><rect x="229" y="520" width="49" height="23" rx="3" class="b1"/><text class="x1" x="253.5" y="536" font-size="11" text-anchor="middle">0.21</text></g>
+<g><title>VMM 19, d=30 (run_7): 3.2682 kHz</title><rect x="280" y="520" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="304.5" y="536" font-size="11" text-anchor="middle">3.3</text></g>
+<g><title>VMM 19, d=27 (run_8): 25.7498 kHz</title><rect x="331" y="520" width="49" height="23" rx="3" class="b3"/><text class="x3" x="355.5" y="536" font-size="11" text-anchor="middle">25.7</text></g>
+<g><title>VMM 19, d=24 (run_9): 132.511 kHz</title><rect x="382" y="520" width="49" height="23" rx="3" class="b4"/><text class="x4" x="406.5" y="536" font-size="11" text-anchor="middle">133</text></g>
+<g><title>VMM 19, d=22 (run_10): 323.09 kHz</title><rect x="433" y="520" width="49" height="23" rx="3" class="b4"/><text class="x4" x="457.5" y="536" font-size="11" text-anchor="middle">323</text></g>
+<g><title>VMM 19, d=20 (run_11): 692.321 kHz</title><rect x="484" y="520" width="49" height="23" rx="3" class="b4"/><text class="x4" x="508.5" y="536" font-size="11" text-anchor="middle">692</text></g>
+<g><title>VMM 19, d=18 (run_12): 1248.86 kHz</title><rect x="535" y="520" width="49" height="23" rx="3" class="b5"/><text class="x5" x="559.5" y="536" font-size="11" text-anchor="middle">1249</text></g>
+<g><title>VMM 19, d=16 (run_13): 2196.68 kHz</title><rect x="586" y="520" width="49" height="23" rx="3" class="b5"/><text class="x5" x="610.5" y="536" font-size="11" text-anchor="middle">2197</text></g>
+<text class="m" x="26" y="576" font-size="11">kHz</text>
+<rect x="126" y="564" width="20" height="14" rx="3" class="b0"/><text class="m" x="152" y="575" font-size="11">&lt; 0.1</text>
+<rect x="216" y="564" width="20" height="14" rx="3" class="b1"/><text class="m" x="242" y="575" font-size="11">0.1 – 1</text>
+<rect x="306" y="564" width="20" height="14" rx="3" class="b2"/><text class="m" x="332" y="575" font-size="11">1 – 10</text>
+<rect x="396" y="564" width="20" height="14" rx="3" class="b3"/><text class="m" x="422" y="575" font-size="11">10 – 100</text>
+<rect x="486" y="564" width="20" height="14" rx="3" class="b4"/><text class="m" x="512" y="575" font-size="11">100 – 1000</text>
+<rect x="576" y="564" width="20" height="14" rx="3" class="b5"/><text class="m" x="602" y="575" font-size="11">&gt; 1000</text>
+<rect x="126" y="588" width="20" height="14" rx="3" fill="none" stroke="var(--alert)" stroke-width="2.5"/><text class="m" x="152" y="599" font-size="11">first step above 1 kHz</text>
+<text class="f" x="26" y="622" font-size="10">* VMM 6: sdt fixed at 230 at every step (no baseline estimate), so d does not apply to it.</text>
+<defs><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="var(--fg-faint)" stroke-width="2"/></pattern></defs>
+</svg><p class="caption">Real hit rates. Each row is a chip, each column a threshold step (quiet on the left). The orange outline is the first step above 1&nbsp;kHz. Hover a cell for the number.</p></div>
+
+<h2>4. Why switch the voltage off?</h2>
+<p>With the voltage on, a hit can come from the electronics <em>or</em> from the detector (a muon, a discharge, small pad noise). With the voltage off, the gas gives no signal, so every hit must come from the electronics. Doing the same scan twice separates the two.</p>
+<div class="viz-card"><svg viewBox="0 0 640 330" role="img" aria-label="Where noise can come from, voltage on and off">
+<text class="t" x="10" y="20" font-size="13" font-weight="600">Scan 1: voltage ON</text>
+<rect x="10" y="34" width="170" height="92" rx="8" fill="var(--s1)" opacity="0.2" stroke="var(--s1)" stroke-width="2"/><text class="t" x="95" y="58" font-size="12" text-anchor="middle" font-weight="600">chamber (gas + pads)</text>
+<text class="m" x="95" y="78" font-size="11" text-anchor="middle">voltage on: the gas multiplies</text><text class="m" x="95" y="93" font-size="11" text-anchor="middle">charge, so pads can give</text><text class="m" x="95" y="108" font-size="11" text-anchor="middle">signals, sparks, small noise</text>
+<path d="M180 80 H222" stroke="var(--fg-faint)" stroke-width="3"/><text class="f" x="201" y="72" font-size="10" text-anchor="middle">cable</text>
+<rect x="222" y="34" width="190" height="92" rx="8" fill="var(--s2)" opacity="0.20" stroke="var(--s2)" stroke-width="2"/><text class="t" x="317" y="58" font-size="12" text-anchor="middle" font-weight="600">hybrid + VMM chip</text><text class="m" x="317" y="78" font-size="11" text-anchor="middle">64 channels, each with a</text><text class="m" x="317" y="93" font-size="11" text-anchor="middle">threshold; its own electronic</text><text class="m" x="317" y="108" font-size="11" text-anchor="middle">noise is always there</text>
+<path d="M412 80 H440" stroke="var(--fg-faint)" stroke-width="3"/>
+<rect x="440" y="50" width="190" height="60" rx="8" fill="var(--bg-elev)" stroke="var(--border)"/><text class="t" x="535" y="76" font-size="12" text-anchor="middle" font-weight="600">hits we count</text><text class="m" x="535" y="94" font-size="11" text-anchor="middle">detector + electronics</text>
+<text class="t" x="10" y="170" font-size="13" font-weight="600">Scan 2: voltage OFF (same chip settings)</text>
+<rect x="10" y="184" width="170" height="92" rx="8" fill="var(--border)" opacity="0.55" stroke="var(--fg-faint)" stroke-width="2"/><text class="t" x="95" y="208" font-size="12" text-anchor="middle" font-weight="600">chamber (gas + pads)</text>
+<text class="m" x="95" y="228" font-size="11" text-anchor="middle">voltage off: no gas gain,</text><text class="m" x="95" y="243" font-size="11" text-anchor="middle">the pads give no signals</text><text class="m" x="95" y="258" font-size="11" text-anchor="middle">at all</text>
+<path d="M180 230 H222" stroke="var(--fg-faint)" stroke-width="3"/><text class="f" x="201" y="222" font-size="10" text-anchor="middle">cable</text>
+<rect x="222" y="184" width="190" height="92" rx="8" fill="var(--s2)" opacity="0.20" stroke="var(--s2)" stroke-width="2"/><text class="t" x="317" y="208" font-size="12" text-anchor="middle" font-weight="600">hybrid + VMM chip</text><text class="m" x="317" y="228" font-size="11" text-anchor="middle">64 channels, each with a</text><text class="m" x="317" y="243" font-size="11" text-anchor="middle">threshold; its own electronic</text><text class="m" x="317" y="258" font-size="11" text-anchor="middle">noise is always there</text>
+<path d="M412 230 H440" stroke="var(--fg-faint)" stroke-width="3"/>
+<rect x="440" y="200" width="190" height="60" rx="8" fill="var(--bg-elev)" stroke="var(--border)"/><text class="t" x="535" y="226" font-size="12" text-anchor="middle" font-weight="600">hits we count</text><text class="m" x="535" y="244" font-size="11" text-anchor="middle">electronics only</text>
+<text class="m" x="10" y="318" font-size="11">Compare the two: what disappears needs the detector; what stays comes from the chip, the hybrid or the cable.</text>
+</svg><p class="caption">The idea of the two scans. Same chips, same settings, same cables; only the chamber voltage changes.</p></div>
+
+<div class="stepcard done"><div class="sc-head"><span class="stepn">4</span><strong>The same scan with the voltage OFF</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>You switched all six high-voltage channels off by hand. We ran the same ten steps, and then four more steps with nothing masked at all, to see the burst chips.</dd><dt>What we saw</dt><dd>At d = 50 every chip is at zero. Chips start to fire in nearly the same order as before, usually 0 to 6 steps later (VMM 5 is the biggest exception). VMM 4, 7 and 9 still burst. Some channels are still noisy.</dd><dt>What it tells us</dt><dd>The spread between chips and the bursts are properties of the electronics (chip, hybrid or cable). The small background at d = 50 and most noisy channels need the detector.</dd><dt>So the next step is</dt><dd>understand a strange feature we saw: some chips&rsquo; rate <em>falls</em> when we lower the threshold further.</dd></dl></div>
+<div class="viz-card"><svg viewBox="0 0 650 628" role="img" aria-label="Heat map of hit rate per chip against threshold">
+<text class="t" x="26" y="18" font-size="13" font-weight="600">Voltage OFF: hit rate per chip (kHz) at each threshold step</text>
+<text class="m" x="26" y="36" font-size="11">columns: threshold step d above the assumed baseline, quiet → noisy</text>
+<text class="m" x="26" y="50" font-size="11">rate from the first 40 MB of each 2-minute point</text>
+<text class="m" x="151.5" y="72" font-size="11" text-anchor="middle">d=50</text>
+<text class="f" x="151.5" y="85" font-size="10" text-anchor="middle">run_14</text>
+<text class="m" x="202.5" y="72" font-size="11" text-anchor="middle">d=40</text>
+<text class="f" x="202.5" y="85" font-size="10" text-anchor="middle">run_15</text>
+<text class="m" x="253.5" y="72" font-size="11" text-anchor="middle">d=34</text>
+<text class="f" x="253.5" y="85" font-size="10" text-anchor="middle">run_16</text>
+<text class="m" x="304.5" y="72" font-size="11" text-anchor="middle">d=30</text>
+<text class="f" x="304.5" y="85" font-size="10" text-anchor="middle">run_17</text>
+<text class="m" x="355.5" y="72" font-size="11" text-anchor="middle">d=27</text>
+<text class="f" x="355.5" y="85" font-size="10" text-anchor="middle">run_18</text>
+<text class="m" x="406.5" y="72" font-size="11" text-anchor="middle">d=24</text>
+<text class="f" x="406.5" y="85" font-size="10" text-anchor="middle">run_19</text>
+<text class="m" x="457.5" y="72" font-size="11" text-anchor="middle">d=22</text>
+<text class="f" x="457.5" y="85" font-size="10" text-anchor="middle">run_20</text>
+<text class="m" x="508.5" y="72" font-size="11" text-anchor="middle">d=20</text>
+<text class="f" x="508.5" y="85" font-size="10" text-anchor="middle">run_21</text>
+<text class="m" x="559.5" y="72" font-size="11" text-anchor="middle">d=18</text>
+<text class="f" x="559.5" y="85" font-size="10" text-anchor="middle">run_22</text>
+<text class="m" x="610.5" y="72" font-size="11" text-anchor="middle">d=16</text>
+<text class="f" x="610.5" y="85" font-size="10" text-anchor="middle">run_23</text>
+<text class="t" x="26" y="111" font-size="12">VMM 2</text>
+<text class="f" x="120" y="111" font-size="9" text-anchor="end">det3 · IN</text>
+<g><title>VMM 2, d=50 (run_14): 0 kHz</title><rect x="127" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="111" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 2, d=40 (run_15): 0 kHz</title><rect x="178" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="111" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 2, d=34 (run_16): 0 kHz</title><rect x="229" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="111" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 2, d=30 (run_17): 0 kHz</title><rect x="280" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="111" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 2, d=27 (run_18): 0 kHz</title><rect x="331" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="355.5" y="111" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 2, d=24 (run_19): 0 kHz</title><rect x="382" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="406.5" y="111" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 2, d=22 (run_20): 0 kHz</title><rect x="433" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="457.5" y="111" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 2, d=20 (run_21): 0 kHz</title><rect x="484" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="508.5" y="111" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 2, d=18 (run_22): 0.0015 kHz</title><rect x="535" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="559.5" y="111" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 2, d=16 (run_23): 0.0335 kHz</title><rect x="586" y="95" width="49" height="23" rx="3" class="b0"/><text class="x0" x="610.5" y="111" font-size="11" text-anchor="middle">0.03</text></g>
+<text class="t" x="26" y="136" font-size="12">VMM 3</text>
+<text class="f" x="120" y="136" font-size="9" text-anchor="end">det3 · IN</text>
+<g><title>VMM 3, d=50 (run_14): 0 kHz</title><rect x="127" y="120" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="136" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 3, d=40 (run_15): 0 kHz</title><rect x="178" y="120" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="136" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 3, d=34 (run_16): 0 kHz</title><rect x="229" y="120" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="136" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 3, d=30 (run_17): 0.0159 kHz</title><rect x="280" y="120" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="136" font-size="11" text-anchor="middle">0.02</text></g>
+<g><title>VMM 3, d=27 (run_18): 0.3677 kHz</title><rect x="331" y="120" width="49" height="23" rx="3" class="b1"/><text class="x1" x="355.5" y="136" font-size="11" text-anchor="middle">0.37</text></g>
+<g><title>VMM 3, d=24 (run_19): 5.6811 kHz</title><rect x="382" y="120" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="406.5" y="136" font-size="11" text-anchor="middle">5.7</text></g>
+<g><title>VMM 3, d=22 (run_20): 26.0999 kHz</title><rect x="433" y="120" width="49" height="23" rx="3" class="b3"/><text class="x3" x="457.5" y="136" font-size="11" text-anchor="middle">26.1</text></g>
+<g><title>VMM 3, d=20 (run_21): 88.7698 kHz</title><rect x="484" y="120" width="49" height="23" rx="3" class="b3"/><text class="x3" x="508.5" y="136" font-size="11" text-anchor="middle">88.8</text></g>
+<g><title>VMM 3, d=18 (run_22): 273.9 kHz</title><rect x="535" y="120" width="49" height="23" rx="3" class="b4"/><text class="x4" x="559.5" y="136" font-size="11" text-anchor="middle">274</text></g>
+<g><title>VMM 3, d=16 (run_23): 673.845 kHz</title><rect x="586" y="120" width="49" height="23" rx="3" class="b4"/><text class="x4" x="610.5" y="136" font-size="11" text-anchor="middle">674</text></g>
+<text class="t" x="26" y="161" font-size="12">VMM 4</text>
+<text class="f" x="120" y="161" font-size="9" text-anchor="end">det3 · IN</text>
+<rect x="126" y="145" width="508" height="23" rx="3" fill="url(#hatch)" stroke="var(--border)"/>
+<text class="m" x="381.0" y="161" font-size="11" text-anchor="middle">fully masked: hopping burst (section 4)</text>
+<text class="t" x="26" y="186" font-size="12">VMM 5</text>
+<text class="f" x="120" y="186" font-size="9" text-anchor="end">det3 · IN</text>
+<g><title>VMM 5, d=50 (run_14): 0 kHz</title><rect x="127" y="170" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="186" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 5, d=40 (run_15): 0 kHz</title><rect x="178" y="170" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="186" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 5, d=34 (run_16): 0 kHz</title><rect x="229" y="170" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="186" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 5, d=30 (run_17): 0 kHz</title><rect x="280" y="170" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="186" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 5, d=27 (run_18): 0 kHz</title><rect x="331" y="170" width="49" height="23" rx="3" class="b0"/><text class="x0" x="355.5" y="186" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 5, d=24 (run_19): 0.0002 kHz</title><rect x="382" y="170" width="49" height="23" rx="3" class="b0"/><text class="x0" x="406.5" y="186" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 5, d=22 (run_20): 0.0003 kHz</title><rect x="433" y="170" width="49" height="23" rx="3" class="b0"/><text class="x0" x="457.5" y="186" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 5, d=20 (run_21): 0.0112 kHz</title><rect x="484" y="170" width="49" height="23" rx="3" class="b0"/><text class="x0" x="508.5" y="186" font-size="11" text-anchor="middle">0.01</text></g>
+<g><title>VMM 5, d=18 (run_22): 0.121 kHz</title><rect x="535" y="170" width="49" height="23" rx="3" class="b1"/><text class="x1" x="559.5" y="186" font-size="11" text-anchor="middle">0.12</text></g>
+<g><title>VMM 5, d=16 (run_23): 1.5621 kHz</title><rect x="586" y="170" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="610.5" y="186" font-size="11" text-anchor="middle">1.6</text></g>
+<text class="t" x="26" y="211" font-size="12">VMM 6*</text>
+<text class="f" x="120" y="211" font-size="9" text-anchor="end">det3 · IN</text>
+<g><title>VMM 6, d=50 (run_14): 0 kHz</title><rect x="127" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="211" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 6, d=40 (run_15): 0 kHz</title><rect x="178" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="211" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 6, d=34 (run_16): 0 kHz</title><rect x="229" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="211" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 6, d=30 (run_17): 0 kHz</title><rect x="280" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="211" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 6, d=27 (run_18): 0 kHz</title><rect x="331" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="355.5" y="211" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 6, d=24 (run_19): 0 kHz</title><rect x="382" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="406.5" y="211" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 6, d=22 (run_20): 0 kHz</title><rect x="433" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="457.5" y="211" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 6, d=20 (run_21): 0 kHz</title><rect x="484" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="508.5" y="211" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 6, d=18 (run_22): 0 kHz</title><rect x="535" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="559.5" y="211" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 6, d=16 (run_23): 0 kHz</title><rect x="586" y="195" width="49" height="23" rx="3" class="b0"/><text class="x0" x="610.5" y="211" font-size="11" text-anchor="middle">0.00</text></g>
+<text class="t" x="26" y="236" font-size="12">VMM 7</text>
+<text class="f" x="120" y="236" font-size="9" text-anchor="end">det3 · IN</text>
+<g><title>VMM 7, d=50 (run_14): 0.0001 kHz</title><rect x="127" y="220" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="236" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 7, d=40 (run_15): 17.9937 kHz</title><rect x="178" y="220" width="49" height="23" rx="3" class="b3" stroke="var(--alert)" stroke-width="2.5"/><text class="x3" x="202.5" y="236" font-size="11" text-anchor="middle">18.0</text></g>
+<g><title>VMM 7, d=34 (run_16): 565.755 kHz</title><rect x="229" y="220" width="49" height="23" rx="3" class="b4"/><text class="x4" x="253.5" y="236" font-size="11" text-anchor="middle">566</text></g>
+<g><title>VMM 7, d=30 (run_17): 269.258 kHz</title><rect x="280" y="220" width="49" height="23" rx="3" class="b4"/><text class="x4" x="304.5" y="236" font-size="11" text-anchor="middle">269</text></g>
+<g><title>VMM 7, d=27 (run_18): 0 kHz</title><rect x="331" y="220" width="49" height="23" rx="3" class="b0"/><text class="x0" x="355.5" y="236" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 7, d=24 (run_19): 0 kHz</title><rect x="382" y="220" width="49" height="23" rx="3" class="b0"/><text class="x0" x="406.5" y="236" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 7, d=22 (run_20): 0.0002 kHz</title><rect x="433" y="220" width="49" height="23" rx="3" class="b0"/><text class="x0" x="457.5" y="236" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 7, d=20 (run_21): 0.0027 kHz</title><rect x="484" y="220" width="49" height="23" rx="3" class="b0"/><text class="x0" x="508.5" y="236" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 7, d=18 (run_22): 0.0355 kHz</title><rect x="535" y="220" width="49" height="23" rx="3" class="b0"/><text class="x0" x="559.5" y="236" font-size="11" text-anchor="middle">0.04</text></g>
+<g><title>VMM 7, d=16 (run_23): 0.3546 kHz</title><rect x="586" y="220" width="49" height="23" rx="3" class="b1"/><text class="x1" x="610.5" y="236" font-size="11" text-anchor="middle">0.35</text></g>
+<text class="t" x="26" y="261" font-size="12">VMM 8</text>
+<text class="f" x="120" y="261" font-size="9" text-anchor="end">det2 · MID</text>
+<g><title>VMM 8, d=50 (run_14): 0 kHz</title><rect x="127" y="245" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="261" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 8, d=40 (run_15): 0 kHz</title><rect x="178" y="245" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="261" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 8, d=34 (run_16): 0 kHz</title><rect x="229" y="245" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="261" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 8, d=30 (run_17): 0.0001 kHz</title><rect x="280" y="245" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="261" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 8, d=27 (run_18): 0.0024 kHz</title><rect x="331" y="245" width="49" height="23" rx="3" class="b0"/><text class="x0" x="355.5" y="261" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 8, d=24 (run_19): 0.078 kHz</title><rect x="382" y="245" width="49" height="23" rx="3" class="b0"/><text class="x0" x="406.5" y="261" font-size="11" text-anchor="middle">0.08</text></g>
+<g><title>VMM 8, d=22 (run_20): 0.5188 kHz</title><rect x="433" y="245" width="49" height="23" rx="3" class="b1"/><text class="x1" x="457.5" y="261" font-size="11" text-anchor="middle">0.52</text></g>
+<g><title>VMM 8, d=20 (run_21): 2.8255 kHz</title><rect x="484" y="245" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="508.5" y="261" font-size="11" text-anchor="middle">2.8</text></g>
+<g><title>VMM 8, d=18 (run_22): 11.4775 kHz</title><rect x="535" y="245" width="49" height="23" rx="3" class="b3"/><text class="x3" x="559.5" y="261" font-size="11" text-anchor="middle">11.5</text></g>
+<g><title>VMM 8, d=16 (run_23): 44.6493 kHz</title><rect x="586" y="245" width="49" height="23" rx="3" class="b3"/><text class="x3" x="610.5" y="261" font-size="11" text-anchor="middle">44.6</text></g>
+<text class="t" x="26" y="286" font-size="12">VMM 9</text>
+<text class="f" x="120" y="286" font-size="9" text-anchor="end">det2 · MID</text>
+<rect x="126" y="270" width="508" height="23" rx="3" fill="url(#hatch)" stroke="var(--border)"/>
+<text class="m" x="381.0" y="286" font-size="11" text-anchor="middle">fully masked: hopping burst (section 4)</text>
+<text class="t" x="26" y="311" font-size="12">VMM 10</text>
+<text class="f" x="120" y="311" font-size="9" text-anchor="end">det2 · MID</text>
+<g><title>VMM 10, d=50 (run_14): 0 kHz</title><rect x="127" y="295" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="311" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 10, d=40 (run_15): 0 kHz</title><rect x="178" y="295" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="311" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 10, d=34 (run_16): 0 kHz</title><rect x="229" y="295" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="311" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 10, d=30 (run_17): 0 kHz</title><rect x="280" y="295" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="311" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 10, d=27 (run_18): 0.0001 kHz</title><rect x="331" y="295" width="49" height="23" rx="3" class="b0"/><text class="x0" x="355.5" y="311" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 10, d=24 (run_19): 0.0049 kHz</title><rect x="382" y="295" width="49" height="23" rx="3" class="b0"/><text class="x0" x="406.5" y="311" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 10, d=22 (run_20): 0.0513 kHz</title><rect x="433" y="295" width="49" height="23" rx="3" class="b0"/><text class="x0" x="457.5" y="311" font-size="11" text-anchor="middle">0.05</text></g>
+<g><title>VMM 10, d=20 (run_21): 0.4514 kHz</title><rect x="484" y="295" width="49" height="23" rx="3" class="b1"/><text class="x1" x="508.5" y="311" font-size="11" text-anchor="middle">0.45</text></g>
+<g><title>VMM 10, d=18 (run_22): 3.3317 kHz</title><rect x="535" y="295" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="559.5" y="311" font-size="11" text-anchor="middle">3.3</text></g>
+<g><title>VMM 10, d=16 (run_23): 16.4224 kHz</title><rect x="586" y="295" width="49" height="23" rx="3" class="b3"/><text class="x3" x="610.5" y="311" font-size="11" text-anchor="middle">16.4</text></g>
+<text class="t" x="26" y="336" font-size="12">VMM 11</text>
+<text class="f" x="120" y="336" font-size="9" text-anchor="end">det2 · MID</text>
+<g><title>VMM 11, d=50 (run_14): 0 kHz</title><rect x="127" y="320" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="336" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 11, d=40 (run_15): 0 kHz</title><rect x="178" y="320" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="336" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 11, d=34 (run_16): 0 kHz</title><rect x="229" y="320" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="336" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 11, d=30 (run_17): 0.0001 kHz</title><rect x="280" y="320" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="336" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 11, d=27 (run_18): 0.0023 kHz</title><rect x="331" y="320" width="49" height="23" rx="3" class="b0"/><text class="x0" x="355.5" y="336" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 11, d=24 (run_19): 0.0936 kHz</title><rect x="382" y="320" width="49" height="23" rx="3" class="b0"/><text class="x0" x="406.5" y="336" font-size="11" text-anchor="middle">0.09</text></g>
+<g><title>VMM 11, d=22 (run_20): 0.8545 kHz</title><rect x="433" y="320" width="49" height="23" rx="3" class="b1"/><text class="x1" x="457.5" y="336" font-size="11" text-anchor="middle">0.85</text></g>
+<g><title>VMM 11, d=20 (run_21): 5.7167 kHz</title><rect x="484" y="320" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="508.5" y="336" font-size="11" text-anchor="middle">5.7</text></g>
+<g><title>VMM 11, d=18 (run_22): 26.9711 kHz</title><rect x="535" y="320" width="49" height="23" rx="3" class="b3"/><text class="x3" x="559.5" y="336" font-size="11" text-anchor="middle">27.0</text></g>
+<g><title>VMM 11, d=16 (run_23): 106.964 kHz</title><rect x="586" y="320" width="49" height="23" rx="3" class="b4"/><text class="x4" x="610.5" y="336" font-size="11" text-anchor="middle">107</text></g>
+<text class="t" x="26" y="361" font-size="12">VMM 12</text>
+<text class="f" x="120" y="361" font-size="9" text-anchor="end">det2 · MID</text>
+<g><title>VMM 12, d=50 (run_14): 0 kHz</title><rect x="127" y="345" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="361" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 12, d=40 (run_15): 0 kHz</title><rect x="178" y="345" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="361" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 12, d=34 (run_16): 0.0011 kHz</title><rect x="229" y="345" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="361" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 12, d=30 (run_17): 0.1294 kHz</title><rect x="280" y="345" width="49" height="23" rx="3" class="b1"/><text class="x1" x="304.5" y="361" font-size="11" text-anchor="middle">0.13</text></g>
+<g><title>VMM 12, d=27 (run_18): 2.6114 kHz</title><rect x="331" y="345" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="355.5" y="361" font-size="11" text-anchor="middle">2.6</text></g>
+<g><title>VMM 12, d=24 (run_19): 30.522 kHz</title><rect x="382" y="345" width="49" height="23" rx="3" class="b3"/><text class="x3" x="406.5" y="361" font-size="11" text-anchor="middle">30.5</text></g>
+<g><title>VMM 12, d=22 (run_20): 132.573 kHz</title><rect x="433" y="345" width="49" height="23" rx="3" class="b4"/><text class="x4" x="457.5" y="361" font-size="11" text-anchor="middle">133</text></g>
+<g><title>VMM 12, d=20 (run_21): 451.796 kHz</title><rect x="484" y="345" width="49" height="23" rx="3" class="b4"/><text class="x4" x="508.5" y="361" font-size="11" text-anchor="middle">452</text></g>
+<g><title>VMM 12, d=18 (run_22): 1349.85 kHz</title><rect x="535" y="345" width="49" height="23" rx="3" class="b5"/><text class="x5" x="559.5" y="361" font-size="11" text-anchor="middle">1350</text></g>
+<g><title>VMM 12, d=16 (run_23): 3157.25 kHz</title><rect x="586" y="345" width="49" height="23" rx="3" class="b5"/><text class="x5" x="610.5" y="361" font-size="11" text-anchor="middle">3157</text></g>
+<text class="t" x="26" y="386" font-size="12">VMM 13</text>
+<text class="f" x="120" y="386" font-size="9" text-anchor="end">det2 · MID</text>
+<g><title>VMM 13, d=50 (run_14): 0 kHz</title><rect x="127" y="370" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="386" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 13, d=40 (run_15): 0 kHz</title><rect x="178" y="370" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="386" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 13, d=34 (run_16): 0 kHz</title><rect x="229" y="370" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="386" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 13, d=30 (run_17): 0.0022 kHz</title><rect x="280" y="370" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="386" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 13, d=27 (run_18): 0.0674 kHz</title><rect x="331" y="370" width="49" height="23" rx="3" class="b0"/><text class="x0" x="355.5" y="386" font-size="11" text-anchor="middle">0.07</text></g>
+<g><title>VMM 13, d=24 (run_19): 1.2744 kHz</title><rect x="382" y="370" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="406.5" y="386" font-size="11" text-anchor="middle">1.3</text></g>
+<g><title>VMM 13, d=22 (run_20): 7.4175 kHz</title><rect x="433" y="370" width="49" height="23" rx="3" class="b2"/><text class="x2" x="457.5" y="386" font-size="11" text-anchor="middle">7.4</text></g>
+<g><title>VMM 13, d=20 (run_21): 32.5922 kHz</title><rect x="484" y="370" width="49" height="23" rx="3" class="b3"/><text class="x3" x="508.5" y="386" font-size="11" text-anchor="middle">32.6</text></g>
+<g><title>VMM 13, d=18 (run_22): 124.403 kHz</title><rect x="535" y="370" width="49" height="23" rx="3" class="b4"/><text class="x4" x="559.5" y="386" font-size="11" text-anchor="middle">124</text></g>
+<g><title>VMM 13, d=16 (run_23): 332.998 kHz</title><rect x="586" y="370" width="49" height="23" rx="3" class="b4"/><text class="x4" x="610.5" y="386" font-size="11" text-anchor="middle">333</text></g>
+<text class="t" x="26" y="411" font-size="12">VMM 14</text>
+<text class="f" x="120" y="411" font-size="9" text-anchor="end">det1 · OUT</text>
+<g><title>VMM 14, d=50 (run_14): 0 kHz</title><rect x="127" y="395" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="411" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 14, d=40 (run_15): 0 kHz</title><rect x="178" y="395" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="411" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 14, d=34 (run_16): 0 kHz</title><rect x="229" y="395" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="411" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 14, d=30 (run_17): 0.007 kHz</title><rect x="280" y="395" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="411" font-size="11" text-anchor="middle">0.01</text></g>
+<g><title>VMM 14, d=27 (run_18): 0.1774 kHz</title><rect x="331" y="395" width="49" height="23" rx="3" class="b1"/><text class="x1" x="355.5" y="411" font-size="11" text-anchor="middle">0.18</text></g>
+<g><title>VMM 14, d=24 (run_19): 2.7493 kHz</title><rect x="382" y="395" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="406.5" y="411" font-size="11" text-anchor="middle">2.7</text></g>
+<g><title>VMM 14, d=22 (run_20): 10.7953 kHz</title><rect x="433" y="395" width="49" height="23" rx="3" class="b3"/><text class="x3" x="457.5" y="411" font-size="11" text-anchor="middle">10.8</text></g>
+<g><title>VMM 14, d=20 (run_21): 53.0083 kHz</title><rect x="484" y="395" width="49" height="23" rx="3" class="b3"/><text class="x3" x="508.5" y="411" font-size="11" text-anchor="middle">53.0</text></g>
+<g><title>VMM 14, d=18 (run_22): 174.837 kHz</title><rect x="535" y="395" width="49" height="23" rx="3" class="b4"/><text class="x4" x="559.5" y="411" font-size="11" text-anchor="middle">175</text></g>
+<g><title>VMM 14, d=16 (run_23): 570.357 kHz</title><rect x="586" y="395" width="49" height="23" rx="3" class="b4"/><text class="x4" x="610.5" y="411" font-size="11" text-anchor="middle">570</text></g>
+<text class="t" x="26" y="436" font-size="12">VMM 15</text>
+<text class="f" x="120" y="436" font-size="9" text-anchor="end">det1 · OUT</text>
+<g><title>VMM 15, d=50 (run_14): 0 kHz</title><rect x="127" y="420" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="436" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 15, d=40 (run_15): 0.0004 kHz</title><rect x="178" y="420" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="436" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 15, d=34 (run_16): 1.5144 kHz</title><rect x="229" y="420" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="253.5" y="436" font-size="11" text-anchor="middle">1.5</text></g>
+<g><title>VMM 15, d=30 (run_17): 65.6285 kHz</title><rect x="280" y="420" width="49" height="23" rx="3" class="b3"/><text class="x3" x="304.5" y="436" font-size="11" text-anchor="middle">65.6</text></g>
+<g><title>VMM 15, d=27 (run_18): 397.749 kHz</title><rect x="331" y="420" width="49" height="23" rx="3" class="b4"/><text class="x4" x="355.5" y="436" font-size="11" text-anchor="middle">398</text></g>
+<g><title>VMM 15, d=24 (run_19): 701.377 kHz</title><rect x="382" y="420" width="49" height="23" rx="3" class="b4"/><text class="x4" x="406.5" y="436" font-size="11" text-anchor="middle">701</text></g>
+<g><title>VMM 15, d=22 (run_20): 725.3 kHz</title><rect x="433" y="420" width="49" height="23" rx="3" class="b4"/><text class="x4" x="457.5" y="436" font-size="11" text-anchor="middle">725</text></g>
+<g><title>VMM 15, d=20 (run_21): 1238.42 kHz</title><rect x="484" y="420" width="49" height="23" rx="3" class="b5"/><text class="x5" x="508.5" y="436" font-size="11" text-anchor="middle">1238</text></g>
+<g><title>VMM 15, d=18 (run_22): 2352.48 kHz</title><rect x="535" y="420" width="49" height="23" rx="3" class="b5"/><text class="x5" x="559.5" y="436" font-size="11" text-anchor="middle">2352</text></g>
+<g><title>VMM 15, d=16 (run_23): 4339.05 kHz</title><rect x="586" y="420" width="49" height="23" rx="3" class="b5"/><text class="x5" x="610.5" y="436" font-size="11" text-anchor="middle">4339</text></g>
+<text class="t" x="26" y="461" font-size="12">VMM 16</text>
+<text class="f" x="120" y="461" font-size="9" text-anchor="end">det1 · OUT</text>
+<g><title>VMM 16, d=50 (run_14): 0 kHz</title><rect x="127" y="445" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="461" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 16, d=40 (run_15): 0 kHz</title><rect x="178" y="445" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="461" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 16, d=34 (run_16): 0 kHz</title><rect x="229" y="445" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="461" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 16, d=30 (run_17): 0 kHz</title><rect x="280" y="445" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="461" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 16, d=27 (run_18): 0.0005 kHz</title><rect x="331" y="445" width="49" height="23" rx="3" class="b0"/><text class="x0" x="355.5" y="461" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 16, d=24 (run_19): 0.0326 kHz</title><rect x="382" y="445" width="49" height="23" rx="3" class="b0"/><text class="x0" x="406.5" y="461" font-size="11" text-anchor="middle">0.03</text></g>
+<g><title>VMM 16, d=22 (run_20): 0.2398 kHz</title><rect x="433" y="445" width="49" height="23" rx="3" class="b1"/><text class="x1" x="457.5" y="461" font-size="11" text-anchor="middle">0.24</text></g>
+<g><title>VMM 16, d=20 (run_21): 1.7191 kHz</title><rect x="484" y="445" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="508.5" y="461" font-size="11" text-anchor="middle">1.7</text></g>
+<g><title>VMM 16, d=18 (run_22): 9.5449 kHz</title><rect x="535" y="445" width="49" height="23" rx="3" class="b2"/><text class="x2" x="559.5" y="461" font-size="11" text-anchor="middle">9.5</text></g>
+<g><title>VMM 16, d=16 (run_23): 47.0811 kHz</title><rect x="586" y="445" width="49" height="23" rx="3" class="b3"/><text class="x3" x="610.5" y="461" font-size="11" text-anchor="middle">47.1</text></g>
+<text class="t" x="26" y="486" font-size="12">VMM 17</text>
+<text class="f" x="120" y="486" font-size="9" text-anchor="end">det1 · OUT</text>
+<g><title>VMM 17, d=50 (run_14): 0 kHz</title><rect x="127" y="470" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="486" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 17, d=40 (run_15): 0 kHz</title><rect x="178" y="470" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="486" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 17, d=34 (run_16): 0 kHz</title><rect x="229" y="470" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="486" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 17, d=30 (run_17): 0.003 kHz</title><rect x="280" y="470" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="486" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 17, d=27 (run_18): 0.0659 kHz</title><rect x="331" y="470" width="49" height="23" rx="3" class="b0"/><text class="x0" x="355.5" y="486" font-size="11" text-anchor="middle">0.07</text></g>
+<g><title>VMM 17, d=24 (run_19): 1.152 kHz</title><rect x="382" y="470" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="406.5" y="486" font-size="11" text-anchor="middle">1.2</text></g>
+<g><title>VMM 17, d=22 (run_20): 5.6548 kHz</title><rect x="433" y="470" width="49" height="23" rx="3" class="b2"/><text class="x2" x="457.5" y="486" font-size="11" text-anchor="middle">5.7</text></g>
+<g><title>VMM 17, d=20 (run_21): 25.2745 kHz</title><rect x="484" y="470" width="49" height="23" rx="3" class="b3"/><text class="x3" x="508.5" y="486" font-size="11" text-anchor="middle">25.3</text></g>
+<g><title>VMM 17, d=18 (run_22): 83.5698 kHz</title><rect x="535" y="470" width="49" height="23" rx="3" class="b3"/><text class="x3" x="559.5" y="486" font-size="11" text-anchor="middle">83.6</text></g>
+<g><title>VMM 17, d=16 (run_23): 241.758 kHz</title><rect x="586" y="470" width="49" height="23" rx="3" class="b4"/><text class="x4" x="610.5" y="486" font-size="11" text-anchor="middle">242</text></g>
+<text class="t" x="26" y="511" font-size="12">VMM 18</text>
+<text class="f" x="120" y="511" font-size="9" text-anchor="end">det1 · OUT</text>
+<g><title>VMM 18, d=50 (run_14): 0 kHz</title><rect x="127" y="495" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="511" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 18, d=40 (run_15): 0 kHz</title><rect x="178" y="495" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="511" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 18, d=34 (run_16): 0 kHz</title><rect x="229" y="495" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="511" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 18, d=30 (run_17): 0.0002 kHz</title><rect x="280" y="495" width="49" height="23" rx="3" class="b0"/><text class="x0" x="304.5" y="511" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 18, d=27 (run_18): 0.0085 kHz</title><rect x="331" y="495" width="49" height="23" rx="3" class="b0"/><text class="x0" x="355.5" y="511" font-size="11" text-anchor="middle">0.01</text></g>
+<g><title>VMM 18, d=24 (run_19): 0.2053 kHz</title><rect x="382" y="495" width="49" height="23" rx="3" class="b1"/><text class="x1" x="406.5" y="511" font-size="11" text-anchor="middle">0.21</text></g>
+<g><title>VMM 18, d=22 (run_20): 1.1212 kHz</title><rect x="433" y="495" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="457.5" y="511" font-size="11" text-anchor="middle">1.1</text></g>
+<g><title>VMM 18, d=20 (run_21): 6.1779 kHz</title><rect x="484" y="495" width="49" height="23" rx="3" class="b2"/><text class="x2" x="508.5" y="511" font-size="11" text-anchor="middle">6.2</text></g>
+<g><title>VMM 18, d=18 (run_22): 24.5282 kHz</title><rect x="535" y="495" width="49" height="23" rx="3" class="b3"/><text class="x3" x="559.5" y="511" font-size="11" text-anchor="middle">24.5</text></g>
+<g><title>VMM 18, d=16 (run_23): 102.759 kHz</title><rect x="586" y="495" width="49" height="23" rx="3" class="b4"/><text class="x4" x="610.5" y="511" font-size="11" text-anchor="middle">103</text></g>
+<text class="t" x="26" y="536" font-size="12">VMM 19</text>
+<text class="f" x="120" y="536" font-size="9" text-anchor="end">det1 · OUT</text>
+<g><title>VMM 19, d=50 (run_14): 0 kHz</title><rect x="127" y="520" width="49" height="23" rx="3" class="b0"/><text class="x0" x="151.5" y="536" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 19, d=40 (run_15): 0 kHz</title><rect x="178" y="520" width="49" height="23" rx="3" class="b0"/><text class="x0" x="202.5" y="536" font-size="11" text-anchor="middle">0.00</text></g>
+<g><title>VMM 19, d=34 (run_16): 0.009 kHz</title><rect x="229" y="520" width="49" height="23" rx="3" class="b0"/><text class="x0" x="253.5" y="536" font-size="11" text-anchor="middle">0.01</text></g>
+<g><title>VMM 19, d=30 (run_17): 0.3994 kHz</title><rect x="280" y="520" width="49" height="23" rx="3" class="b1"/><text class="x1" x="304.5" y="536" font-size="11" text-anchor="middle">0.40</text></g>
+<g><title>VMM 19, d=27 (run_18): 4.8024 kHz</title><rect x="331" y="520" width="49" height="23" rx="3" class="b2" stroke="var(--alert)" stroke-width="2.5"/><text class="x2" x="355.5" y="536" font-size="11" text-anchor="middle">4.8</text></g>
+<g><title>VMM 19, d=24 (run_19): 36.5945 kHz</title><rect x="382" y="520" width="49" height="23" rx="3" class="b3"/><text class="x3" x="406.5" y="536" font-size="11" text-anchor="middle">36.6</text></g>
+<g><title>VMM 19, d=22 (run_20): 110.691 kHz</title><rect x="433" y="520" width="49" height="23" rx="3" class="b4"/><text class="x4" x="457.5" y="536" font-size="11" text-anchor="middle">111</text></g>
+<g><title>VMM 19, d=20 (run_21): 310.464 kHz</title><rect x="484" y="520" width="49" height="23" rx="3" class="b4"/><text class="x4" x="508.5" y="536" font-size="11" text-anchor="middle">310</text></g>
+<g><title>VMM 19, d=18 (run_22): 633.879 kHz</title><rect x="535" y="520" width="49" height="23" rx="3" class="b4"/><text class="x4" x="559.5" y="536" font-size="11" text-anchor="middle">634</text></g>
+<g><title>VMM 19, d=16 (run_23): 1378.55 kHz</title><rect x="586" y="520" width="49" height="23" rx="3" class="b5"/><text class="x5" x="610.5" y="536" font-size="11" text-anchor="middle">1379</text></g>
+<text class="m" x="26" y="576" font-size="11">kHz</text>
+<rect x="126" y="564" width="20" height="14" rx="3" class="b0"/><text class="m" x="152" y="575" font-size="11">&lt; 0.1</text>
+<rect x="216" y="564" width="20" height="14" rx="3" class="b1"/><text class="m" x="242" y="575" font-size="11">0.1 – 1</text>
+<rect x="306" y="564" width="20" height="14" rx="3" class="b2"/><text class="m" x="332" y="575" font-size="11">1 – 10</text>
+<rect x="396" y="564" width="20" height="14" rx="3" class="b3"/><text class="m" x="422" y="575" font-size="11">10 – 100</text>
+<rect x="486" y="564" width="20" height="14" rx="3" class="b4"/><text class="m" x="512" y="575" font-size="11">100 – 1000</text>
+<rect x="576" y="564" width="20" height="14" rx="3" class="b5"/><text class="m" x="602" y="575" font-size="11">&gt; 1000</text>
+<rect x="126" y="588" width="20" height="14" rx="3" fill="none" stroke="var(--alert)" stroke-width="2.5"/><text class="m" x="152" y="599" font-size="11">first step above 1 kHz</text>
+<text class="f" x="26" y="622" font-size="10">* VMM 6: silent at every step with the voltage off (no hits at all), so it shows 0.00.</text>
+<defs><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="var(--fg-faint)" stroke-width="2"/></pattern></defs>
+</svg><p class="caption">Real hit rates with the voltage off, same layout as before. VMM 4 and 9 are masked as in the first scan.</p></div>
+<div class="viz-card"><svg viewBox="0 0 620 450" role="img" aria-label="First step above 1 kHz, HV on and HV off">
+<text class="t" x="20" y="18" font-size="13" font-weight="600">Where does each chip start to fire (&gt; 1 kHz)? Voltage on and voltage off</text>
+<text class="m" x="20" y="34" font-size="11">same chip settings in both scans; further left = the chip starts firing earlier</text>
+<line x1="100.0" x2="100.0" y1="48" y2="386" stroke="var(--border)"/><text class="m" x="100.0" y="402" font-size="11" text-anchor="middle">d=50</text>
+<line x1="211.11111111111111" x2="211.11111111111111" y1="48" y2="386" stroke="var(--border)"/><text class="m" x="211.11111111111111" y="402" font-size="11" text-anchor="middle">d=40</text>
+<line x1="322.22222222222223" x2="322.22222222222223" y1="48" y2="386" stroke="var(--border)"/><text class="m" x="322.22222222222223" y="402" font-size="11" text-anchor="middle">d=30</text>
+<line x1="433.3333333333333" x2="433.3333333333333" y1="48" y2="386" stroke="var(--border)"/><text class="m" x="433.3333333333333" y="402" font-size="11" text-anchor="middle">d=20</text>
+<text class="t" x="88" y="71" font-size="12" text-anchor="end">VMM 7</text>
+<line x1="211.11111111111111" x2="211.11111111111111" y1="67" y2="67" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 7, HV on: first above 1 kHz at d=40</title><circle cx="211.11111111111111" cy="67" r="6" fill="var(--s1)"/></g>
+<g><title>VMM 7, HV off: first above 1 kHz at d=40</title><circle cx="211.11111111111111" cy="67" r="9.5" fill="none" stroke="var(--s2)" stroke-width="3"/></g>
+<text class="t" x="88" y="93" font-size="12" text-anchor="end">VMM 15</text>
+<line x1="277.77777777777777" x2="277.77777777777777" y1="89" y2="89" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 15, HV on: first above 1 kHz at d=34</title><circle cx="277.77777777777777" cy="89" r="6" fill="var(--s1)"/></g>
+<g><title>VMM 15, HV off: first above 1 kHz at d=34</title><circle cx="277.77777777777777" cy="89" r="9.5" fill="none" stroke="var(--s2)" stroke-width="3"/></g>
+<text class="t" x="88" y="115" font-size="12" text-anchor="end">VMM 12</text>
+<line x1="322.22222222222223" x2="355.55555555555554" y1="111" y2="111" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 12, HV on: first above 1 kHz at d=30</title><circle cx="322.22222222222223" cy="111" r="6" fill="var(--s1)"/></g>
+<g><title>VMM 12, HV off: first above 1 kHz at d=27</title><circle cx="355.55555555555554" cy="111" r="9.5" fill="none" stroke="var(--s2)" stroke-width="3"/></g>
+<text class="t" x="88" y="137" font-size="12" text-anchor="end">VMM 19</text>
+<line x1="322.22222222222223" x2="355.55555555555554" y1="133" y2="133" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 19, HV on: first above 1 kHz at d=30</title><circle cx="322.22222222222223" cy="133" r="6" fill="var(--s1)"/></g>
+<g><title>VMM 19, HV off: first above 1 kHz at d=27</title><circle cx="355.55555555555554" cy="133" r="9.5" fill="none" stroke="var(--s2)" stroke-width="3"/></g>
+<text class="t" x="88" y="159" font-size="12" text-anchor="end">VMM 14</text>
+<line x1="322.22222222222223" x2="388.8888888888889" y1="155" y2="155" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 14, HV on: first above 1 kHz at d=30</title><circle cx="322.22222222222223" cy="155" r="6" fill="var(--s1)"/></g>
+<g><title>VMM 14, HV off: first above 1 kHz at d=24</title><circle cx="388.8888888888889" cy="155" r="9.5" fill="none" stroke="var(--s2)" stroke-width="3"/></g>
+<text class="t" x="88" y="181" font-size="12" text-anchor="end">VMM 3</text>
+<line x1="355.55555555555554" x2="388.8888888888889" y1="177" y2="177" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 3, HV on: first above 1 kHz at d=27</title><circle cx="355.55555555555554" cy="177" r="6" fill="var(--s1)"/></g>
+<g><title>VMM 3, HV off: first above 1 kHz at d=24</title><circle cx="388.8888888888889" cy="177" r="9.5" fill="none" stroke="var(--s2)" stroke-width="3"/></g>
+<text class="t" x="88" y="203" font-size="12" text-anchor="end">VMM 5</text>
+<line x1="355.55555555555554" x2="477.77777777777777" y1="199" y2="199" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 5, HV on: first above 1 kHz at d=27</title><circle cx="355.55555555555554" cy="199" r="6" fill="var(--s1)"/></g>
+<g><title>VMM 5, HV off: first above 1 kHz at d=16</title><circle cx="477.77777777777777" cy="199" r="9.5" fill="none" stroke="var(--s2)" stroke-width="3"/></g>
+<text class="t" x="88" y="225" font-size="12" text-anchor="end">VMM 13</text>
+<line x1="388.8888888888889" x2="388.8888888888889" y1="221" y2="221" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 13, HV on: first above 1 kHz at d=24</title><circle cx="388.8888888888889" cy="221" r="6" fill="var(--s1)"/></g>
+<g><title>VMM 13, HV off: first above 1 kHz at d=24</title><circle cx="388.8888888888889" cy="221" r="9.5" fill="none" stroke="var(--s2)" stroke-width="3"/></g>
+<text class="t" x="88" y="247" font-size="12" text-anchor="end">VMM 17</text>
+<line x1="388.8888888888889" x2="388.8888888888889" y1="243" y2="243" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 17, HV on: first above 1 kHz at d=24</title><circle cx="388.8888888888889" cy="243" r="6" fill="var(--s1)"/></g>
+<g><title>VMM 17, HV off: first above 1 kHz at d=24</title><circle cx="388.8888888888889" cy="243" r="9.5" fill="none" stroke="var(--s2)" stroke-width="3"/></g>
+<text class="t" x="88" y="269" font-size="12" text-anchor="end">VMM 8</text>
+<line x1="388.8888888888889" x2="433.3333333333333" y1="265" y2="265" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 8, HV on: first above 1 kHz at d=24</title><circle cx="388.8888888888889" cy="265" r="6" fill="var(--s1)"/></g>
+<g><title>VMM 8, HV off: first above 1 kHz at d=20</title><circle cx="433.3333333333333" cy="265" r="9.5" fill="none" stroke="var(--s2)" stroke-width="3"/></g>
+<text class="t" x="88" y="291" font-size="12" text-anchor="end">VMM 18</text>
+<line x1="411.1111111111111" x2="411.1111111111111" y1="287" y2="287" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 18, HV on: first above 1 kHz at d=22</title><circle cx="411.1111111111111" cy="287" r="6" fill="var(--s1)"/></g>
+<g><title>VMM 18, HV off: first above 1 kHz at d=22</title><circle cx="411.1111111111111" cy="287" r="9.5" fill="none" stroke="var(--s2)" stroke-width="3"/></g>
+<text class="t" x="88" y="313" font-size="12" text-anchor="end">VMM 11</text>
+<line x1="411.1111111111111" x2="433.3333333333333" y1="309" y2="309" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 11, HV on: first above 1 kHz at d=22</title><circle cx="411.1111111111111" cy="309" r="6" fill="var(--s1)"/></g>
+<g><title>VMM 11, HV off: first above 1 kHz at d=20</title><circle cx="433.3333333333333" cy="309" r="9.5" fill="none" stroke="var(--s2)" stroke-width="3"/></g>
+<text class="t" x="88" y="335" font-size="12" text-anchor="end">VMM 16</text>
+<line x1="411.1111111111111" x2="433.3333333333333" y1="331" y2="331" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 16, HV on: first above 1 kHz at d=22</title><circle cx="411.1111111111111" cy="331" r="6" fill="var(--s1)"/></g>
+<g><title>VMM 16, HV off: first above 1 kHz at d=20</title><circle cx="433.3333333333333" cy="331" r="9.5" fill="none" stroke="var(--s2)" stroke-width="3"/></g>
+<text class="t" x="88" y="357" font-size="12" text-anchor="end">VMM 10</text>
+<line x1="455.55555555555554" x2="455.55555555555554" y1="353" y2="353" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 10, HV on: first above 1 kHz at d=18</title><circle cx="455.55555555555554" cy="353" r="6" fill="var(--s1)"/></g>
+<g><title>VMM 10, HV off: first above 1 kHz at d=18</title><circle cx="455.55555555555554" cy="353" r="9.5" fill="none" stroke="var(--s2)" stroke-width="3"/></g>
+<text class="t" x="88" y="379" font-size="12" text-anchor="end">VMM 2</text>
+<line x1="500.0" x2="500.0" y1="375" y2="375" stroke="var(--fg-faint)" stroke-width="2"/>
+<text class="m" x="512.0" y="379" font-size="10">on: never</text>
+<text class="m" x="562.0" y="379" font-size="10">off: never</text>
+<circle cx="100" cy="424" r="6" fill="var(--s1)"/><text class="m" x="112" y="428" font-size="11">HV on</text><circle cx="200" cy="424" r="9.5" fill="none" stroke="var(--s2)" stroke-width="3"/><text class="m" x="216" y="428" font-size="11">HV off (ring)</text>
+</svg><p class="caption">The first step above 1&nbsp;kHz for each chip, voltage on (blue dot) and off (orange ring). Where they sit together, the ring surrounds the dot. The order of the chips is almost the same, and the spread of about 16 steps is still there with the voltage off.</p></div>
+<div class="viz-card"><svg viewBox="0 0 640 320" role="img" aria-label="Data per minute, HV on and off">
+<text class="t" x="20" y="18" font-size="13" font-weight="600">Data written per minute, all chips together</text>
+<rect x="62" y="28" width="14" height="10" rx="2" fill="var(--s1)"/><text class="m" x="82" y="37" font-size="11">HV on</text><rect x="142" y="28" width="14" height="10" rx="2" fill="var(--s2)"/><text class="m" x="162" y="37" font-size="11">HV off</text>
+<line x1="62" x2="620" y1="268.0" y2="268.0" stroke="var(--border)"/><text class="m" x="54" y="272.0" font-size="11" text-anchor="end">1 MB</text>
+<line x1="62" x2="620" y1="213.5" y2="213.5" stroke="var(--border)"/><text class="m" x="54" y="217.5" font-size="11" text-anchor="end">10 MB</text>
+<line x1="62" x2="620" y1="159.0" y2="159.0" stroke="var(--border)"/><text class="m" x="54" y="163.0" font-size="11" text-anchor="end">100 MB</text>
+<line x1="62" x2="620" y1="104.5" y2="104.5" stroke="var(--border)"/><text class="m" x="54" y="108.5" font-size="11" text-anchor="end">1,000 MB</text>
+<line x1="62" x2="620" y1="50.0" y2="50.0" stroke="var(--border)"/><text class="m" x="54" y="54.0" font-size="11" text-anchor="end">10,000 MB</text>
+<g><title>d=50, HV on: 5 MB/min</title><rect x="66.0" y="229.90613476368696" width="22.9" height="38.093865236313036" rx="2" fill="var(--s1)"/></g><text class="m" x="77.95" y="225.90613476368696" font-size="9" text-anchor="middle">5</text>
+<g><title>d=50, HV off: 5 MB/min</title><rect x="89.9" y="229.90613476368696" width="22.9" height="38.093865236313036" rx="2" fill="var(--s2)"/></g><text class="m" x="101.85000000000001" y="225.90613476368696" font-size="9" text-anchor="middle">5</text>
+<text class="m" x="89.9" y="284" font-size="11" text-anchor="middle">50</text>
+<g><title>d=40, HV on: 9 MB/min</title><rect x="121.8" y="215.9937832355568" width="22.9" height="52.006216764443195" rx="2" fill="var(--s1)"/></g><text class="m" x="133.75" y="211.9937832355568" font-size="9" text-anchor="middle">9</text>
+<g><title>d=40, HV off: 11 MB/min</title><rect x="145.7" y="211.24409865887674" width="22.9" height="56.75590134112326" rx="2" fill="var(--s2)"/></g><text class="m" x="157.64999999999998" y="207.24409865887674" font-size="9" text-anchor="middle">11</text>
+<text class="m" x="145.7" y="284" font-size="11" text-anchor="middle">40</text>
+<g><title>d=34, HV on: 179 MB/min</title><rect x="177.6" y="145.2195098115958" width="22.9" height="122.7804901884042" rx="2" fill="var(--s1)"/></g><text class="m" x="189.54999999999998" y="141.2195098115958" font-size="9" text-anchor="middle">179</text>
+<g><title>d=34, HV off: 206 MB/min</title><rect x="201.5" y="141.89423648988117" width="22.9" height="126.10576351011883" rx="2" fill="var(--s2)"/></g><text class="m" x="213.45" y="137.89423648988117" font-size="9" text-anchor="middle">206</text>
+<text class="m" x="201.5" y="284" font-size="11" text-anchor="middle">34</text>
+<g><title>d=30, HV on: 185 MB/min</title><rect x="233.39999999999998" y="144.43914080203575" width="22.9" height="123.56085919796425" rx="2" fill="var(--s1)"/></g><text class="m" x="245.34999999999997" y="140.43914080203575" font-size="9" text-anchor="middle">185</text>
+<g><title>d=30, HV off: 136 MB/min</title><rect x="257.29999999999995" y="151.72212949382316" width="22.9" height="116.27787050617684" rx="2" fill="var(--s2)"/></g><text class="m" x="269.24999999999994" y="147.72212949382316" font-size="9" text-anchor="middle">136</text>
+<text class="m" x="257.29999999999995" y="284" font-size="11" text-anchor="middle">30</text>
+<g><title>d=27, HV on: 267 MB/min</title><rect x="289.2" y="135.75513625563065" width="22.9" height="132.24486374436935" rx="2" fill="var(--s1)"/></g><text class="m" x="301.15" y="131.75513625563065" font-size="9" text-anchor="middle">267</text>
+<g><title>d=27, HV off: 153 MB/min</title><rect x="313.09999999999997" y="148.93431702044086" width="22.9" height="119.06568297955914" rx="2" fill="var(--s2)"/></g><text class="m" x="325.04999999999995" y="144.93431702044086" font-size="9" text-anchor="middle">153</text>
+<text class="m" x="313.09999999999997" y="284" font-size="11" text-anchor="middle">27</text>
+<g><title>d=24, HV on: 752 MB/min</title><rect x="345.0" y="111.2461276877555" width="22.9" height="156.75387231224448" rx="2" fill="var(--s1)"/></g><text class="m" x="356.95" y="107.2461276877555" font-size="9" text-anchor="middle">752</text>
+<g><title>d=24, HV off: 291 MB/min</title><rect x="368.9" y="133.71783210026805" width="22.9" height="134.28216789973195" rx="2" fill="var(--s2)"/></g><text class="m" x="380.84999999999997" y="129.71783210026805" font-size="9" text-anchor="middle">291</text>
+<text class="m" x="368.9" y="284" font-size="11" text-anchor="middle">24</text>
+<g><title>d=22, HV on: 1530 MB/min</title><rect x="400.79999999999995" y="94.43431702044086" width="22.9" height="173.56568297955914" rx="2" fill="var(--s1)"/></g><text class="m" x="412.74999999999994" y="90.43431702044086" font-size="9" text-anchor="middle">1.5k</text>
+<g><title>d=22, HV off: 379 MB/min</title><rect x="424.69999999999993" y="127.46416305674006" width="22.9" height="140.53583694325994" rx="2" fill="var(--s2)"/></g><text class="m" x="436.6499999999999" y="123.46416305674006" font-size="9" text-anchor="middle">379</text>
+<text class="m" x="424.69999999999993" y="284" font-size="11" text-anchor="middle">22</text>
+<g><title>d=20, HV on: 2867 MB/min</title><rect x="456.59999999999997" y="79.57019073441658" width="22.9" height="188.4298092655834" rx="2" fill="var(--s1)"/></g><text class="m" x="468.54999999999995" y="75.57019073441658" font-size="9" text-anchor="middle">2.9k</text>
+<g><title>d=20, HV off: 781 MB/min</title><rect x="480.49999999999994" y="110.35051865368713" width="22.9" height="157.64948134631288" rx="2" fill="var(--s2)"/></g><text class="m" x="492.44999999999993" y="106.35051865368713" font-size="9" text-anchor="middle">781</text>
+<text class="m" x="480.49999999999994" y="284" font-size="11" text-anchor="middle">20</text>
+<g><title>d=18, HV on: 2560 MB/min</title><rect x="512.4" y="82.2509218905042" width="22.9" height="185.7490781094958" rx="2" fill="var(--s1)"/></g><text class="m" x="524.35" y="78.2509218905042" font-size="9" text-anchor="middle">2.6k</text>
+<g><title>d=18, HV off: 1778 MB/min</title><rect x="536.3" y="90.87871926343638" width="22.9" height="177.12128073656362" rx="2" fill="var(--s2)"/></g><text class="m" x="548.25" y="86.87871926343638" font-size="9" text-anchor="middle">1.8k</text>
+<text class="m" x="536.3" y="284" font-size="11" text-anchor="middle">18</text>
+<g><title>d=16, HV on: 4300 MB/min</title><rect x="568.2" y="69.97596917091252" width="22.9" height="198.02403082908748" rx="2" fill="var(--s1)"/></g><text class="m" x="580.1500000000001" y="65.97596917091252" font-size="9" text-anchor="middle">4.3k</text>
+<g><title>d=16, HV off: 3537 MB/min</title><rect x="592.1" y="74.59938924009606" width="22.9" height="193.40061075990394" rx="2" fill="var(--s2)"/></g><text class="m" x="604.0500000000001" y="70.59938924009606" font-size="9" text-anchor="middle">3.5k</text>
+<text class="m" x="592.1" y="284" font-size="11" text-anchor="middle">16</text>
+<text class="m" x="341.0" y="310" font-size="12" text-anchor="middle">threshold step d: quiet → noisy</text>
+</svg><p class="caption">Data per minute, voltage on and off. At moderate thresholds the voltage adds a lot of hits; at the lowest thresholds the electronics dominate and the two get closer.</p></div>
+<div class="viz-card"><svg viewBox="0 0 640 270" role="img" aria-label="Unmasked chips with the HV off">
+<text class="t" x="10" y="18" font-size="13" font-weight="600">Nothing masked, HV off: the three burst chips still burst</text>
+<text class="m" x="10" y="34" font-size="11">kHz per chip on a log scale; x: threshold step d</text>
+<text class="t" x="113.33333333333333" y="54" font-size="12" font-weight="600" text-anchor="middle">VMM 4</text>
+<line x1="44.0" x2="210.66666666666666" y1="218.0" y2="218.0" stroke="var(--border)"/><text class="m" x="40.0" y="222.0" font-size="10" text-anchor="end">0.01</text>
+<line x1="44.0" x2="210.66666666666666" y1="161.0357690673457" y2="161.0357690673457" stroke="var(--border)"/><text class="m" x="40.0" y="165.0357690673457" font-size="10" text-anchor="end">1</text>
+<line x1="44.0" x2="210.66666666666666" y1="104.07153813469145" y2="104.07153813469145" stroke="var(--border)"/><text class="m" x="40.0" y="108.07153813469145" font-size="10" text-anchor="end">100</text>
+<g><title>VMM 4, d=50: 68.7073 kHz</title><rect x="50.0" y="108.71404086034497" width="30.666666666666664" height="109.28595913965503" rx="3" fill="var(--s2)"/></g><text class="t" x="65.33333333333333" y="104.71404086034497" font-size="10" text-anchor="middle">69</text><text class="m" x="65.33333333333333" y="233" font-size="10" text-anchor="middle">50</text>
+<g><title>VMM 4, d=40: 1708.99 kHz</title><rect x="86.66666666666666" y="68.96048847730046" width="30.666666666666664" height="149.03951152269954" rx="3" fill="var(--s2)"/></g><text class="t" x="101.99999999999999" y="64.96048847730046" font-size="10" text-anchor="middle">1709</text><text class="m" x="101.99999999999999" y="233" font-size="10" text-anchor="middle">40</text>
+<g><title>VMM 4, d=34: 383.487 kHz</title><rect x="123.33333333333333" y="87.44509127753722" width="30.666666666666664" height="130.55490872246278" rx="3" fill="var(--s2)"/></g><text class="t" x="138.66666666666666" y="83.44509127753722" font-size="10" text-anchor="middle">383</text><text class="m" x="138.66666666666666" y="233" font-size="10" text-anchor="middle">34</text>
+<g><title>VMM 4, d=30: 33.0078 kHz</title><rect x="160.0" y="117.78235631031112" width="30.666666666666664" height="100.21764368968888" rx="3" fill="var(--s2)"/></g><text class="t" x="175.33333333333334" y="113.78235631031112" font-size="10" text-anchor="middle">33</text><text class="m" x="175.33333333333334" y="233" font-size="10" text-anchor="middle">30</text>
+<text class="t" x="320.0" y="54" font-size="12" font-weight="600" text-anchor="middle">VMM 7</text>
+<line x1="250.66666666666666" x2="417.3333333333333" y1="218.0" y2="218.0" stroke="var(--border)"/><text class="m" x="246.66666666666666" y="222.0" font-size="10" text-anchor="end">0.01</text>
+<line x1="250.66666666666666" x2="417.3333333333333" y1="161.0357690673457" y2="161.0357690673457" stroke="var(--border)"/><text class="m" x="246.66666666666666" y="165.0357690673457" font-size="10" text-anchor="end">1</text>
+<line x1="250.66666666666666" x2="417.3333333333333" y1="104.07153813469145" y2="104.07153813469145" stroke="var(--border)"/><text class="m" x="246.66666666666666" y="108.07153813469145" font-size="10" text-anchor="end">100</text>
+<g><title>VMM 7, d=50: 53.1195 kHz</title><rect x="256.66666666666663" y="111.89688604358065" width="30.666666666666664" height="106.10311395641935" rx="3" fill="var(--s2)"/></g><text class="t" x="271.99999999999994" y="107.89688604358065" font-size="10" text-anchor="middle">53</text><text class="m" x="271.99999999999994" y="233" font-size="10" text-anchor="middle">50</text>
+<g><title>VMM 7, d=40: 79.5338 kHz</title><rect x="293.3333333333333" y="106.90403516240019" width="30.666666666666664" height="111.09596483759981" rx="3" fill="var(--s2)"/></g><text class="t" x="308.66666666666663" y="102.90403516240019" font-size="10" text-anchor="middle">80</text><text class="m" x="308.66666666666663" y="233" font-size="10" text-anchor="middle">40</text>
+<g><title>VMM 7, d=34: 0.6556 kHz</title><rect x="329.99999999999994" y="166.25827981077532" width="30.666666666666664" height="51.74172018922468" rx="3" fill="var(--s2)"/></g><text class="t" x="345.33333333333326" y="162.25827981077532" font-size="10" text-anchor="middle">1</text><text class="m" x="345.33333333333326" y="233" font-size="10" text-anchor="middle">34</text>
+<g><title>VMM 7, d=30: 0.0075 kHz</title><rect x="366.66666666666663" y="218.0" width="30.666666666666664" height="0" rx="3" fill="var(--s2)"/></g><text class="t" x="381.99999999999994" y="214.0" font-size="10" text-anchor="middle">0</text><text class="m" x="381.99999999999994" y="233" font-size="10" text-anchor="middle">30</text>
+<text class="t" x="526.6666666666666" y="54" font-size="12" font-weight="600" text-anchor="middle">VMM 9</text>
+<line x1="457.3333333333333" x2="624.0" y1="218.0" y2="218.0" stroke="var(--border)"/><text class="m" x="453.3333333333333" y="222.0" font-size="10" text-anchor="end">0.01</text>
+<line x1="457.3333333333333" x2="624.0" y1="161.0357690673457" y2="161.0357690673457" stroke="var(--border)"/><text class="m" x="453.3333333333333" y="165.0357690673457" font-size="10" text-anchor="end">1</text>
+<line x1="457.3333333333333" x2="624.0" y1="104.07153813469145" y2="104.07153813469145" stroke="var(--border)"/><text class="m" x="453.3333333333333" y="108.07153813469145" font-size="10" text-anchor="end">100</text>
+<g><title>VMM 9, d=50: 1101.5 kHz</title><rect x="463.3333333333333" y="74.39363209393414" width="30.666666666666664" height="143.60636790606586" rx="3" fill="var(--s2)"/></g><text class="t" x="478.66666666666663" y="70.39363209393414" font-size="10" text-anchor="middle">1101</text><text class="m" x="478.66666666666663" y="233" font-size="10" text-anchor="middle">50</text>
+<g><title>VMM 9, d=40: 143.64 kHz</title><rect x="500.0" y="99.59200213287522" width="30.666666666666664" height="118.40799786712478" rx="3" fill="var(--s2)"/></g><text class="t" x="515.3333333333334" y="95.59200213287522" font-size="10" text-anchor="middle">144</text><text class="m" x="515.3333333333334" y="233" font-size="10" text-anchor="middle">40</text>
+<g><title>VMM 9, d=34: 856.858 kHz</title><rect x="536.6666666666666" y="77.50032182646302" width="30.666666666666664" height="140.49967817353698" rx="3" fill="var(--s2)"/></g><text class="t" x="552.0" y="73.50032182646302" font-size="10" text-anchor="middle">857</text><text class="m" x="552.0" y="233" font-size="10" text-anchor="middle">34</text>
+<g><title>VMM 9, d=30: 423.501 kHz</title><rect x="573.3333333333333" y="86.2174063520471" width="30.666666666666664" height="131.7825936479529" rx="3" fill="var(--s2)"/></g><text class="t" x="588.6666666666666" y="82.2174063520471" font-size="10" text-anchor="middle">424</text><text class="m" x="588.6666666666666" y="233" font-size="10" text-anchor="middle">30</text>
+</svg><p class="caption">The three burst chips with nothing masked and the voltage off. They burst all the same, so the cause is not the pads: it is the chip, the hybrid or the cable.</p></div>
+<div class="viz-card"><svg viewBox="0 0 620 444" role="img" aria-label="Which noisy channels need the voltage">
+<text class="t" x="20" y="18" font-size="13" font-weight="600">Noisy channels: do they need the voltage?</text>
+<rect x="80" y="28" width="14" height="10" rx="2" fill="var(--s1)"/><text class="m" x="100" y="37" font-size="11">gone with HV off</text><rect x="220" y="28" width="14" height="10" rx="2" fill="var(--fg-faint)"/><text class="m" x="240" y="37" font-size="11">weaker</text><rect x="310" y="28" width="14" height="10" rx="2" fill="var(--s2)"/><text class="m" x="330" y="37" font-size="11">still there with HV off</text>
+<text class="f" x="20" y="52" font-size="10">each unit = one channel at one threshold step that fired with HV on</text>
+<text class="t" x="70" y="72" font-size="12" text-anchor="end">VMM 2</text>
+<g><title>VMM 2: 133 channel-steps HV-dependent</title><rect x="80" y="60" width="177.5" height="17" rx="2" fill="var(--s1)"/></g>
+<text x="169.25" y="73" font-size="10" text-anchor="middle" fill="#fff">133</text>
+<g><title>VMM 2: 1 channel-steps partly</title><rect x="258.5" y="60" width="1" height="17" rx="2" fill="var(--fg-faint)"/></g>
+<text class="t" x="70" y="94" font-size="12" text-anchor="end">VMM 3</text>
+<g><title>VMM 3: 165 channel-steps HV-dependent</title><rect x="80" y="82" width="220.44736842105263" height="17" rx="2" fill="var(--s1)"/></g>
+<text x="190.7236842105263" y="95" font-size="10" text-anchor="middle" fill="#fff">165</text>
+<g><title>VMM 3: 88 channel-steps partly</title><rect x="301.4473684210526" y="82" width="117.10526315789474" height="17" rx="2" fill="var(--fg-faint)"/></g>
+<text x="360.5" y="95" font-size="10" text-anchor="middle" fill="#fff">88</text>
+<g><title>VMM 3: 1 channel-steps HV-independent</title><rect x="419.55263157894734" y="82" width="1" height="17" rx="2" fill="var(--s2)"/></g>
+<text class="t" x="70" y="116" font-size="12" text-anchor="end">VMM 5</text>
+<g><title>VMM 5: 142 channel-steps HV-dependent</title><rect x="80" y="104" width="189.57894736842104" height="17" rx="2" fill="var(--s1)"/></g>
+<text x="175.28947368421052" y="117" font-size="10" text-anchor="middle" fill="#fff">142</text>
+<g><title>VMM 5: 5 channel-steps partly</title><rect x="270.57894736842104" y="104" width="5.7105263157894735" height="17" rx="2" fill="var(--fg-faint)"/></g>
+<g><title>VMM 5: 4 channel-steps HV-independent</title><rect x="277.2894736842105" y="104" width="4.368421052631579" height="17" rx="2" fill="var(--s2)"/></g>
+<text class="t" x="70" y="138" font-size="12" text-anchor="end">VMM 6</text>
+<g><title>VMM 6: 130 channel-steps HV-dependent</title><rect x="80" y="126" width="173.47368421052633" height="17" rx="2" fill="var(--s1)"/></g>
+<text x="167.23684210526318" y="139" font-size="10" text-anchor="middle" fill="#fff">130</text>
+<text class="t" x="70" y="160" font-size="12" text-anchor="end">VMM 7</text>
+<g><title>VMM 7: 75 channel-steps HV-dependent</title><rect x="80" y="148" width="99.65789473684211" height="17" rx="2" fill="var(--s1)"/></g>
+<text x="130.32894736842104" y="161" font-size="10" text-anchor="middle" fill="#fff">75</text>
+<g><title>VMM 7: 6 channel-steps HV-independent</title><rect x="180.6578947368421" y="148" width="7.052631578947368" height="17" rx="2" fill="var(--s2)"/></g>
+<text class="t" x="70" y="182" font-size="12" text-anchor="end">VMM 8</text>
+<g><title>VMM 8: 140 channel-steps HV-dependent</title><rect x="80" y="170" width="186.89473684210526" height="17" rx="2" fill="var(--s1)"/></g>
+<text x="173.94736842105263" y="183" font-size="10" text-anchor="middle" fill="#fff">140</text>
+<g><title>VMM 8: 4 channel-steps partly</title><rect x="267.89473684210526" y="170" width="4.368421052631579" height="17" rx="2" fill="var(--fg-faint)"/></g>
+<text class="t" x="70" y="204" font-size="12" text-anchor="end">VMM 10</text>
+<g><title>VMM 10: 86 channel-steps HV-dependent</title><rect x="80" y="192" width="114.42105263157895" height="17" rx="2" fill="var(--s1)"/></g>
+<text x="137.71052631578948" y="205" font-size="10" text-anchor="middle" fill="#fff">86</text>
+<g><title>VMM 10: 1 channel-steps partly</title><rect x="195.42105263157896" y="192" width="1" height="17" rx="2" fill="var(--fg-faint)"/></g>
+<g><title>VMM 10: 8 channel-steps HV-independent</title><rect x="196.76315789473685" y="192" width="9.736842105263158" height="17" rx="2" fill="var(--s2)"/></g>
+<text class="t" x="70" y="226" font-size="12" text-anchor="end">VMM 11</text>
+<g><title>VMM 11: 100 channel-steps HV-dependent</title><rect x="80" y="214" width="133.21052631578948" height="17" rx="2" fill="var(--s1)"/></g>
+<text x="147.10526315789474" y="227" font-size="10" text-anchor="middle" fill="#fff">100</text>
+<g><title>VMM 11: 21 channel-steps partly</title><rect x="214.21052631578948" y="214" width="27.18421052631579" height="17" rx="2" fill="var(--fg-faint)"/></g>
+<text x="228.30263157894737" y="227" font-size="10" text-anchor="middle" fill="#fff">21</text>
+<g><title>VMM 11: 11 channel-steps HV-independent</title><rect x="242.39473684210526" y="214" width="13.763157894736842" height="17" rx="2" fill="var(--s2)"/></g>
+<text class="t" x="70" y="248" font-size="12" text-anchor="end">VMM 12</text>
+<g><title>VMM 12: 183 channel-steps HV-dependent</title><rect x="80" y="236" width="244.60526315789474" height="17" rx="2" fill="var(--s1)"/></g>
+<text x="202.80263157894737" y="249" font-size="10" text-anchor="middle" fill="#fff">183</text>
+<g><title>VMM 12: 5 channel-steps partly</title><rect x="325.60526315789474" y="236" width="5.7105263157894735" height="17" rx="2" fill="var(--fg-faint)"/></g>
+<g><title>VMM 12: 156 channel-steps HV-independent</title><rect x="332.3157894736842" y="236" width="208.3684210526316" height="17" rx="2" fill="var(--s2)"/></g>
+<text x="437.0" y="249" font-size="10" text-anchor="middle" fill="#fff">156</text>
+<text class="t" x="70" y="270" font-size="12" text-anchor="end">VMM 13</text>
+<g><title>VMM 13: 118 channel-steps HV-dependent</title><rect x="80" y="258" width="157.3684210526316" height="17" rx="2" fill="var(--s1)"/></g>
+<text x="159.18421052631578" y="271" font-size="10" text-anchor="middle" fill="#fff">118</text>
+<g><title>VMM 13: 1 channel-steps partly</title><rect x="238.3684210526316" y="258" width="1" height="17" rx="2" fill="var(--fg-faint)"/></g>
+<g><title>VMM 13: 43 channel-steps HV-independent</title><rect x="239.71052631578948" y="258" width="56.71052631578947" height="17" rx="2" fill="var(--s2)"/></g>
+<text x="268.5657894736842" y="271" font-size="10" text-anchor="middle" fill="#fff">43</text>
+<text class="t" x="70" y="292" font-size="12" text-anchor="end">VMM 14</text>
+<g><title>VMM 14: 189 channel-steps HV-dependent</title><rect x="80" y="280" width="252.6578947368421" height="17" rx="2" fill="var(--s1)"/></g>
+<text x="206.82894736842104" y="293" font-size="10" text-anchor="middle" fill="#fff">189</text>
+<g><title>VMM 14: 111 channel-steps partly</title><rect x="333.6578947368421" y="280" width="147.97368421052633" height="17" rx="2" fill="var(--fg-faint)"/></g>
+<text x="408.14473684210526" y="293" font-size="10" text-anchor="middle" fill="#fff">111</text>
+<g><title>VMM 14: 8 channel-steps HV-independent</title><rect x="482.63157894736844" y="280" width="9.736842105263158" height="17" rx="2" fill="var(--s2)"/></g>
+<text class="t" x="70" y="314" font-size="12" text-anchor="end">VMM 15</text>
+<g><title>VMM 15: 194 channel-steps HV-dependent</title><rect x="80" y="302" width="259.36842105263156" height="17" rx="2" fill="var(--s1)"/></g>
+<text x="210.18421052631578" y="315" font-size="10" text-anchor="middle" fill="#fff">194</text>
+<g><title>VMM 15: 54 channel-steps partly</title><rect x="340.36842105263156" y="302" width="71.47368421052632" height="17" rx="2" fill="var(--fg-faint)"/></g>
+<text x="376.60526315789474" y="315" font-size="10" text-anchor="middle" fill="#fff">54</text>
+<g><title>VMM 15: 132 channel-steps HV-independent</title><rect x="412.84210526315786" y="302" width="176.1578947368421" height="17" rx="2" fill="var(--s2)"/></g>
+<text x="501.4210526315789" y="315" font-size="10" text-anchor="middle" fill="#fff">132</text>
+<text class="t" x="70" y="336" font-size="12" text-anchor="end">VMM 16</text>
+<g><title>VMM 16: 194 channel-steps HV-dependent</title><rect x="80" y="324" width="259.36842105263156" height="17" rx="2" fill="var(--s1)"/></g>
+<text x="210.18421052631578" y="337" font-size="10" text-anchor="middle" fill="#fff">194</text>
+<g><title>VMM 16: 41 channel-steps partly</title><rect x="340.36842105263156" y="324" width="54.026315789473685" height="17" rx="2" fill="var(--fg-faint)"/></g>
+<text x="367.8815789473684" y="337" font-size="10" text-anchor="middle" fill="#fff">41</text>
+<text class="t" x="70" y="358" font-size="12" text-anchor="end">VMM 17</text>
+<g><title>VMM 17: 198 channel-steps HV-dependent</title><rect x="80" y="346" width="264.7368421052632" height="17" rx="2" fill="var(--s1)"/></g>
+<text x="212.8684210526316" y="359" font-size="10" text-anchor="middle" fill="#fff">198</text>
+<g><title>VMM 17: 41 channel-steps partly</title><rect x="345.7368421052632" y="346" width="54.026315789473685" height="17" rx="2" fill="var(--fg-faint)"/></g>
+<text x="373.25" y="359" font-size="10" text-anchor="middle" fill="#fff">41</text>
+<g><title>VMM 17: 1 channel-steps HV-independent</title><rect x="400.7631578947369" y="346" width="1" height="17" rx="2" fill="var(--s2)"/></g>
+<text class="t" x="70" y="380" font-size="12" text-anchor="end">VMM 18</text>
+<g><title>VMM 18: 200 channel-steps HV-dependent</title><rect x="80" y="368" width="267.42105263157896" height="17" rx="2" fill="var(--s1)"/></g>
+<text x="214.21052631578948" y="381" font-size="10" text-anchor="middle" fill="#fff">200</text>
+<g><title>VMM 18: 77 channel-steps partly</title><rect x="348.42105263157896" y="368" width="102.34210526315789" height="17" rx="2" fill="var(--fg-faint)"/></g>
+<text x="400.0921052631579" y="381" font-size="10" text-anchor="middle" fill="#fff">77</text>
+<text class="t" x="70" y="402" font-size="12" text-anchor="end">VMM 19</text>
+<g><title>VMM 19: 248 channel-steps HV-dependent</title><rect x="80" y="390" width="331.8421052631579" height="17" rx="2" fill="var(--s1)"/></g>
+<text x="246.42105263157896" y="403" font-size="10" text-anchor="middle" fill="#fff">248</text>
+<g><title>VMM 19: 104 channel-steps partly</title><rect x="412.8421052631579" y="390" width="138.57894736842104" height="17" rx="2" fill="var(--fg-faint)"/></g>
+<text x="482.63157894736844" y="403" font-size="10" text-anchor="middle" fill="#fff">104</text>
+<g><title>VMM 19: 13 channel-steps HV-independent</title><rect x="552.421052631579" y="390" width="16.44736842105263" height="17" rx="2" fill="var(--s2)"/></g>
+</svg><p class="caption">Channel by channel: for every channel that fired with the voltage on, did it still fire with the voltage off? Most disappear (blue). VMM 12 and VMM 15 keep many channels (orange): the whole chip is noisy by itself.</p></div>
+
+<h2>5. The strange curves, explained</h2>
+<p>In the voltage-on scan, some chips got <em>quieter</em> at the lowest thresholds (for example VMM 5: 416&nbsp;kHz at d = 20, then 0.3&nbsp;kHz at d = 18). Lowering a threshold should never give fewer hits&hellip; unless we look at <em>one channel</em> at a time.</p>
+<div class="viz-card"><svg viewBox="0 0 640 372" role="img" aria-label="Why a channel fires most when the threshold is at its baseline">
+<text class="t" x="10" y="18" font-size="13" font-weight="600">Why a channel fires most when the threshold sits at its own baseline (cartoon)</text>
+<rect x="14.0" y="36" width="200.0" height="188" rx="8" fill="var(--bg-elev)" stroke="var(--border)"/>
+<text class="t" x="114.0" y="56" font-size="12" font-weight="600" text-anchor="middle">A: threshold well above</text>
+<text class="m" x="114.0" y="71" font-size="10" text-anchor="middle">noise almost never reaches it</text>
+<polyline fill="none" stroke="var(--s1)" stroke-width="1.6" points="22.0,130.0 24.1,144.7 26.1,133.5 28.2,120.0 30.3,130.7 32.3,146.3 34.4,139.8 36.5,129.6 38.5,116.6 40.6,137.2 42.7,149.5 44.7,132.2 46.8,125.5 48.9,109.1 50.9,106.7 53.0,118.4 55.1,126.9 57.1,97.5 59.2,115.6 61.3,131.5 63.3,144.5 65.4,136.8 67.5,132.0 69.6,135.2 71.6,133.6 73.7,128.7 75.8,121.0 77.8,111.9 79.9,117.5 82.0,144.6 84.0,129.6 86.1,146.8 88.2,141.3 90.2,153.9 92.3,143.1 94.4,146.6 96.4,136.5 98.5,94.0 100.6,110.8 102.6,109.3 104.7,134.5 106.8,135.9 108.8,125.3 110.9,128.5 113.0,124.8 115.0,125.9 117.1,139.8 119.2,128.6 121.2,139.0 123.3,112.5 125.4,126.4 127.4,119.8 129.5,124.4 131.6,115.5 133.6,129.2 135.7,117.6 137.8,124.7 139.8,111.9 141.9,112.6 144.0,118.7 146.0,133.2 148.1,122.5 150.2,120.3 152.2,104.9 154.3,120.7 156.4,118.3 158.4,117.4 160.5,119.7 162.6,121.8 164.7,123.3 166.7,133.5 168.8,144.1 170.9,142.5 172.9,129.8 175.0,111.8 177.1,108.2 179.1,105.4 181.2,107.1 183.3,109.0 185.3,116.3 187.4,113.2 189.5,99.5 191.5,117.1 193.6,131.3 195.7,107.2 197.7,114.5 199.8,109.8 201.9,108.4 203.9,131.8 206.0,101.8"/>
+<line x1="20.0" x2="208.0" y1="87.1" y2="87.1" stroke="var(--alert)" stroke-width="2.5" stroke-dasharray="6 4"/>
+<text class="t" x="114.0" y="214" font-size="12" text-anchor="middle" font-weight="600">quiet</text>
+<rect x="220.0" y="36" width="200.0" height="188" rx="8" fill="var(--bg-elev)" stroke="var(--border)"/>
+<text class="t" x="320.0" y="56" font-size="12" font-weight="600" text-anchor="middle">B: threshold at the baseline</text>
+<text class="m" x="320.0" y="71" font-size="10" text-anchor="middle">noise crosses it all the time</text>
+<polyline fill="none" stroke="var(--s1)" stroke-width="1.6" points="228.0,130.0 230.1,144.7 232.1,133.5 234.2,120.0 236.3,130.7 238.3,146.3 240.4,139.8 242.5,129.6 244.5,116.6 246.6,137.2 248.7,149.5 250.7,132.2 252.8,125.5 254.9,109.1 256.9,106.7 259.0,118.4 261.1,126.9 263.1,97.5 265.2,115.6 267.3,131.5 269.3,144.5 271.4,136.8 273.5,132.0 275.6,135.2 277.6,133.6 279.7,128.7 281.8,121.0 283.8,111.9 285.9,117.5 288.0,144.6 290.0,129.6 292.1,146.8 294.2,141.3 296.2,153.9 298.3,143.1 300.4,146.6 302.4,136.5 304.5,94.0 306.6,110.8 308.6,109.3 310.7,134.5 312.8,135.9 314.8,125.3 316.9,128.5 319.0,124.8 321.0,125.9 323.1,139.8 325.2,128.6 327.2,139.0 329.3,112.5 331.4,126.4 333.4,119.8 335.5,124.4 337.6,115.5 339.6,129.2 341.7,117.6 343.8,124.7 345.8,111.9 347.9,112.6 350.0,118.7 352.0,133.2 354.1,122.5 356.2,120.3 358.2,104.9 360.3,120.7 362.4,118.3 364.4,117.4 366.5,119.7 368.6,121.8 370.7,123.3 372.7,133.5 374.8,144.1 376.9,142.5 378.9,129.8 381.0,111.8 383.1,108.2 385.1,105.4 387.2,107.1 389.3,109.0 391.3,116.3 393.4,113.2 395.5,99.5 397.5,117.1 399.6,131.3 401.7,107.2 403.7,114.5 405.8,109.8 407.9,108.4 409.9,131.8 412.0,101.8"/>
+<line x1="226.0" x2="414.0" y1="125.7" y2="125.7" stroke="var(--alert)" stroke-width="2.5" stroke-dasharray="6 4"/>
+<circle cx="234.2" cy="125.7" r="3.5" fill="var(--alert)"/>
+<circle cx="244.5" cy="125.7" r="3.5" fill="var(--alert)"/>
+<circle cx="252.8" cy="125.7" r="3.5" fill="var(--alert)"/>
+<circle cx="263.1" cy="125.7" r="3.5" fill="var(--alert)"/>
+<circle cx="281.8" cy="125.7" r="3.5" fill="var(--alert)"/>
+<circle cx="304.5" cy="125.7" r="3.5" fill="var(--alert)"/>
+<circle cx="314.8" cy="125.7" r="3.5" fill="var(--alert)"/>
+<circle cx="319.0" cy="125.7" r="3.5" fill="var(--alert)"/>
+<circle cx="329.3" cy="125.7" r="3.5" fill="var(--alert)"/>
+<circle cx="333.4" cy="125.7" r="3.5" fill="var(--alert)"/>
+<circle cx="341.7" cy="125.7" r="3.5" fill="var(--alert)"/>
+<circle cx="354.1" cy="125.7" r="3.5" fill="var(--alert)"/>
+<circle cx="381.0" cy="125.7" r="3.5" fill="var(--alert)"/>
+<circle cx="401.7" cy="125.7" r="3.5" fill="var(--alert)"/>
+<circle cx="412.0" cy="125.7" r="3.5" fill="var(--alert)"/>
+<text class="t" x="320.0" y="214" font-size="12" text-anchor="middle" font-weight="600">many hits</text>
+<rect x="426.0" y="36" width="200.0" height="188" rx="8" fill="var(--bg-elev)" stroke="var(--border)"/>
+<text class="t" x="526.0" y="56" font-size="12" font-weight="600" text-anchor="middle">C: threshold well below</text>
+<text class="m" x="526.0" y="71" font-size="10" text-anchor="middle">always above it: no new crossings</text>
+<polyline fill="none" stroke="var(--s1)" stroke-width="1.6" points="434.0,130.0 436.1,144.7 438.1,133.5 440.2,120.0 442.3,130.7 444.3,146.3 446.4,139.8 448.5,129.6 450.5,116.6 452.6,137.2 454.7,149.5 456.7,132.2 458.8,125.5 460.9,109.1 462.9,106.7 465.0,118.4 467.1,126.9 469.1,97.5 471.2,115.6 473.3,131.5 475.3,144.5 477.4,136.8 479.5,132.0 481.6,135.2 483.6,133.6 485.7,128.7 487.8,121.0 489.8,111.9 491.9,117.5 494.0,144.6 496.0,129.6 498.1,146.8 500.2,141.3 502.2,153.9 504.3,143.1 506.4,146.6 508.4,136.5 510.5,94.0 512.6,110.8 514.6,109.3 516.7,134.5 518.8,135.9 520.8,125.3 522.9,128.5 525.0,124.8 527.0,125.9 529.1,139.8 531.2,128.6 533.2,139.0 535.3,112.5 537.4,126.4 539.4,119.8 541.5,124.4 543.6,115.5 545.6,129.2 547.7,117.6 549.8,124.7 551.8,111.9 553.9,112.6 556.0,118.7 558.0,133.2 560.1,122.5 562.2,120.3 564.2,104.9 566.3,120.7 568.4,118.3 570.4,117.4 572.5,119.7 574.6,121.8 576.7,123.3 578.7,133.5 580.8,144.1 582.9,142.5 584.9,129.8 587.0,111.8 589.1,108.2 591.1,105.4 593.2,107.1 595.3,109.0 597.3,116.3 599.4,113.2 601.5,99.5 603.5,117.1 605.6,131.3 607.7,107.2 609.7,114.5 611.8,109.8 613.9,108.4 615.9,131.8 618.0,101.8"/>
+<line x1="432.0" x2="620.0" y1="172.9" y2="172.9" stroke="var(--alert)" stroke-width="2.5" stroke-dasharray="6 4"/>
+<text class="t" x="526.0" y="214" font-size="12" text-anchor="middle" font-weight="600">quiet again</text>
+<text class="m" x="14" y="242" font-size="11">blue: the channel's baseline wobbling with electronic noise. Red dashed: the threshold. Red dots: a hit is recorded</text>
+<text class="m" x="14" y="256" font-size="11">each time the blue line crosses the threshold going up.</text>
+<line x1="120" x2="520" y1="342" y2="342" stroke="var(--border)"/>
+<polyline fill="none" stroke="var(--s1)" stroke-width="2.5" points="120.0,342.0 124.0,342.0 128.0,342.0 132.0,342.0 136.0,341.9 140.0,341.9 144.0,341.9 148.0,341.9 152.0,341.8 156.0,341.8 160.0,341.7 164.0,341.6 168.0,341.5 172.0,341.4 176.0,341.2 180.0,341.0 184.0,340.8 188.0,340.5 192.0,340.1 196.0,339.7 200.0,339.2 204.0,338.6 208.0,337.9 212.0,337.1 216.0,336.3 220.0,335.2 224.0,334.1 228.0,332.8 232.0,331.4 236.0,329.8 240.0,328.1 244.0,326.3 248.0,324.3 252.0,322.2 256.0,320.0 260.0,317.7 264.0,315.3 268.0,312.9 272.0,310.5 276.0,308.1 280.0,305.7 284.0,303.4 288.0,301.3 292.0,299.3 296.0,297.4 300.0,295.8 304.0,294.5 308.0,293.4 312.0,292.6 316.0,292.2 320.0,292.0 324.0,292.2 328.0,292.6 332.0,293.4 336.0,294.5 340.0,295.8 344.0,297.4 348.0,299.3 352.0,301.3 356.0,303.4 360.0,305.7 364.0,308.1 368.0,310.5 372.0,312.9 376.0,315.3 380.0,317.7 384.0,320.0 388.0,322.2 392.0,324.3 396.0,326.3 400.0,328.1 404.0,329.8 408.0,331.4 412.0,332.8 416.0,334.1 420.0,335.2 424.0,336.3 428.0,337.1 432.0,337.9 436.0,338.6 440.0,339.2 444.0,339.7 448.0,340.1 452.0,340.5 456.0,340.8 460.0,341.0 464.0,341.2 468.0,341.4 472.0,341.5 476.0,341.6 480.0,341.7 484.0,341.8 488.0,341.8 492.0,341.9 496.0,341.9 500.0,341.9 504.0,341.9 508.0,342.0 512.0,342.0 516.0,342.0 520.0,342.0"/>
+<circle cx="170.0" cy="341.4" r="5" fill="var(--alert)"/><text class="t" x="170.0" y="333.4" font-size="11" text-anchor="middle">A</text>
+<circle cx="305.0" cy="294.2" r="5" fill="var(--alert)"/><text class="t" x="305.0" y="286.2" font-size="11" text-anchor="middle">B</text>
+<circle cx="470.0" cy="341.4" r="5" fill="var(--alert)"/><text class="t" x="470.0" y="333.4" font-size="11" text-anchor="middle">C</text>
+<text class="m" x="110" y="318" font-size="11" text-anchor="end">hits per second</text>
+<text class="m" x="320.0" y="356" font-size="11" text-anchor="middle">threshold: high ← → low. The peak is the channel's own baseline.</text>
+</svg><p class="caption">A channel records a hit each time its (noisy) baseline crosses the threshold going up. Far above, the noise rarely reaches it. Far below, the channel is always above the threshold, so there are no new crossings. The most crossings happen when the threshold sits at the channel&rsquo;s own baseline.</p></div>
+<div class="viz-card"><svg viewBox="0 0 640 346" role="img" aria-label="Hit rate of single channels against threshold">
+<text class="t" x="20" y="18" font-size="13" font-weight="600">One channel, many thresholds: the rate rises, peaks, and falls again</text>
+<text class="m" x="20" y="34" font-size="11">real data; hits per second of one channel (log scale; points at 1 Hz mean 1 Hz or fewer)</text>
+<circle cx="76" cy="52" r="5" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/><text class="m" x="86" y="56" font-size="11">VMM 7 ch 23, HV on</text>
+<circle cx="246" cy="52" r="5" fill="var(--surface)" stroke="var(--s1)" stroke-width="2.5"/><text class="m" x="256" y="56" font-size="11">VMM 7 ch 23, HV off</text>
+<circle cx="416" cy="52" r="5" fill="var(--s2)" stroke="var(--s2)" stroke-width="2.5"/><text class="m" x="426" y="56" font-size="11">VMM 5 ch 46, HV on</text>
+<line x1="70" x2="620" y1="296.0" y2="296.0" stroke="var(--border)"/><text class="m" x="62" y="300.0" font-size="11" text-anchor="end">1</text>
+<line x1="70" x2="620" y1="260.0" y2="260.0" stroke="var(--border)"/><text class="m" x="62" y="264.0" font-size="11" text-anchor="end">10</text>
+<line x1="70" x2="620" y1="224.00000000000003" y2="224.00000000000003" stroke="var(--border)"/><text class="m" x="62" y="228.00000000000003" font-size="11" text-anchor="end">100</text>
+<line x1="70" x2="620" y1="188.0" y2="188.0" stroke="var(--border)"/><text class="m" x="62" y="192.0" font-size="11" text-anchor="end">1,000</text>
+<line x1="70" x2="620" y1="152.0" y2="152.0" stroke="var(--border)"/><text class="m" x="62" y="156.0" font-size="11" text-anchor="end">10,000</text>
+<line x1="70" x2="620" y1="116.0" y2="116.0" stroke="var(--border)"/><text class="m" x="62" y="120.0" font-size="11" text-anchor="end">100,000</text>
+<line x1="70" x2="620" y1="80.0" y2="80.0" stroke="var(--border)"/><text class="m" x="62" y="84.0" font-size="11" text-anchor="end">1,000,000</text>
+<text class="m" x="70.0" y="312" font-size="11" text-anchor="middle">50</text>
+<text class="m" x="231.76470588235293" y="312" font-size="11" text-anchor="middle">40</text>
+<text class="m" x="328.8235294117647" y="312" font-size="11" text-anchor="middle">34</text>
+<text class="m" x="393.52941176470586" y="312" font-size="11" text-anchor="middle">30</text>
+<text class="m" x="442.05882352941177" y="312" font-size="11" text-anchor="middle">27</text>
+<text class="m" x="490.5882352941176" y="312" font-size="11" text-anchor="middle">24</text>
+<text class="m" x="522.9411764705883" y="312" font-size="11" text-anchor="middle">22</text>
+<text class="m" x="555.2941176470588" y="312" font-size="11" text-anchor="middle">20</text>
+<text class="m" x="587.6470588235294" y="312" font-size="11" text-anchor="middle">18</text>
+<text class="m" x="620.0" y="312" font-size="11" text-anchor="middle">16</text>
+<text class="m" x="345.0" y="338" font-size="12" text-anchor="middle">threshold step d (quiet → noisy)</text>
+<polyline fill="none" stroke="var(--s1)" stroke-width="2.5" points="70.0,286.2 231.8,150.7 328.8,91.2 393.5,97.2 442.1,123.9 490.6,165.5 522.9,199.0 555.3,244.5 587.6,270.3 620.0,283.4"/>
+<g><title>VMM 7 ch 23, HV on, d=50: 2 Hz</title><circle cx="70.0" cy="286.2" r="4.5" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g>
+<g><title>VMM 7 ch 23, HV on, d=40: 10895 Hz</title><circle cx="231.8" cy="150.7" r="4.5" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g>
+<g><title>VMM 7 ch 23, HV on, d=34: 489137 Hz</title><circle cx="328.8" cy="91.2" r="4.5" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g>
+<g><title>VMM 7 ch 23, HV on, d=30: 332345 Hz</title><circle cx="393.5" cy="97.2" r="4.5" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g>
+<g><title>VMM 7 ch 23, HV on, d=27: 60359 Hz</title><circle cx="442.1" cy="123.9" r="4.5" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g>
+<g><title>VMM 7 ch 23, HV on, d=24: 4219 Hz</title><circle cx="490.6" cy="165.5" r="4.5" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g>
+<g><title>VMM 7 ch 23, HV on, d=22: 496 Hz</title><circle cx="522.9" cy="199.0" r="4.5" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g>
+<g><title>VMM 7 ch 23, HV on, d=20: 27 Hz</title><circle cx="555.3" cy="244.5" r="4.5" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g>
+<g><title>VMM 7 ch 23, HV on, d=18: 5 Hz</title><circle cx="587.6" cy="270.3" r="4.5" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g>
+<g><title>VMM 7 ch 23, HV on, d=16: 2 Hz</title><circle cx="620.0" cy="283.4" r="4.5" fill="var(--s1)" stroke="var(--s1)" stroke-width="2.5"/></g>
+<polyline fill="none" stroke="var(--s1)" stroke-width="2.5" stroke-dasharray="6 4" points="70.0,296.0 231.8,142.8 328.8,88.9 393.5,100.5"/>
+<g><title>VMM 7 ch 23, HV off, d=50: 0 Hz</title><circle cx="70.0" cy="296.0" r="4.5" fill="var(--surface)" stroke="var(--s1)" stroke-width="2.5"/></g>
+<g><title>VMM 7 ch 23, HV off, d=40: 17994 Hz</title><circle cx="231.8" cy="142.8" r="4.5" fill="var(--surface)" stroke="var(--s1)" stroke-width="2.5"/></g>
+<g><title>VMM 7 ch 23, HV off, d=34: 565755 Hz</title><circle cx="328.8" cy="88.9" r="4.5" fill="var(--surface)" stroke="var(--s1)" stroke-width="2.5"/></g>
+<g><title>VMM 7 ch 23, HV off, d=30: 269258 Hz</title><circle cx="393.5" cy="100.5" r="4.5" fill="var(--surface)" stroke="var(--s1)" stroke-width="2.5"/></g>
+<polyline fill="none" stroke="var(--s2)" stroke-width="2.5" points="70.0,295.1 231.8,290.3 328.8,258.6 393.5,196.7 442.1,157.1 490.6,123.4 522.9,106.7 555.3,93.7"/>
+<g><title>VMM 5 ch 46, HV on, d=50: 1 Hz</title><circle cx="70.0" cy="295.1" r="4.5" fill="var(--s2)" stroke="var(--s2)" stroke-width="2.5"/></g>
+<g><title>VMM 5 ch 46, HV on, d=40: 1 Hz</title><circle cx="231.8" cy="290.3" r="4.5" fill="var(--s2)" stroke="var(--s2)" stroke-width="2.5"/></g>
+<g><title>VMM 5 ch 46, HV on, d=34: 11 Hz</title><circle cx="328.8" cy="258.6" r="4.5" fill="var(--s2)" stroke="var(--s2)" stroke-width="2.5"/></g>
+<g><title>VMM 5 ch 46, HV on, d=30: 574 Hz</title><circle cx="393.5" cy="196.7" r="4.5" fill="var(--s2)" stroke="var(--s2)" stroke-width="2.5"/></g>
+<g><title>VMM 5 ch 46, HV on, d=27: 7194 Hz</title><circle cx="442.1" cy="157.1" r="4.5" fill="var(--s2)" stroke="var(--s2)" stroke-width="2.5"/></g>
+<g><title>VMM 5 ch 46, HV on, d=24: 62130 Hz</title><circle cx="490.6" cy="123.4" r="4.5" fill="var(--s2)" stroke="var(--s2)" stroke-width="2.5"/></g>
+<g><title>VMM 5 ch 46, HV on, d=22: 181089 Hz</title><circle cx="522.9" cy="106.7" r="4.5" fill="var(--s2)" stroke="var(--s2)" stroke-width="2.5"/></g>
+<g><title>VMM 5 ch 46, HV on, d=20: 415938 Hz</title><circle cx="555.3" cy="93.7" r="4.5" fill="var(--s2)" stroke="var(--s2)" stroke-width="2.5"/></g>
+<text class="t" x="328.8235294117647" y="81.18050143884228" font-size="11" text-anchor="middle">peak</text>
+<text class="t" x="555.2941176470588" y="83.71497042802775" font-size="11" text-anchor="middle">peak</text>
+</svg><p class="caption">Real data: single channels follow that bell shape. VMM 7 channel 23 peaks at d = 34 and VMM 5 channel 46 at d = 20, with or without voltage. The place of the peak is the baseline of that channel.</p></div>
+
+<div class="stepcard done"><div class="sc-head"><span class="stepn">5</span><strong>Look at single channels</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>We followed individual channels across the threshold steps.</dd><dt>What we saw</dt><dd>Each channel has a bell-shaped curve with a peak. Different channels of the same chip peak at different steps (for VMM 7: channel 23 peaks at step 34, while channel 10 is still rising at step 16).</dd><dt>What it tells us</dt><dd>Inside one chip the channels have different baselines. One high channel can make the whole chip look noisy, and a single threshold per chip cannot suit all channels. This is a probable explanation; we have not yet measured the baselines directly.</dd><dt>So the next step is</dt><dd>measure the baseline of every channel directly, and correct each channel.</dd></dl></div>
+
+<h2>6. What we know, and what we do not</h2>
+<div class="two">
+<div><h3>We know</h3><ul>
+<li>With no voltage, the electronics are silent at d = 50.</li>
+<li>The chip-to-chip spread of the noise onset (about 16 steps) is an electronics effect.</li>
+<li>VMM 4, 7 and 9 have noisy channels that need no voltage.</li>
+<li>VMM 12 and VMM 15 are noisy over many channels without voltage.</li>
+<li>A channel&rsquo;s rate peaks at its own baseline.</li>
+</ul></div>
+<div><h3>We do not know yet</h3><ul>
+<li>The <strong>efficiency</strong>: this was the noise side only.</li>
+<li>The real baseline of each channel (we only guessed it from the peaks).</li>
+<li>Why VMM 4 and 9 burst, and whether the cable, the hybrid or the new firmware is to blame.</li>
+<li>Whether the lab noise looks like the beam-hall noise (about 100 times higher in the beam hall).</li>
+<li>The gas, and the measured voltages (they are set by hand and not logged).</li>
+</ul></div>
+</div>
+
+<h2>7. What comes next</h2>
+<div class="viz-card"><svg viewBox="0 0 640 236" role="img" aria-label="One threshold per chip versus one per channel">
+<text class="t" x="10" y="18" font-size="13" font-weight="600">One threshold for the whole chip, or a small correction for each channel? (cartoon)</text>
+<text class="t" x="14" y="46" font-size="12" font-weight="600">Now: one threshold per chip</text>
+<rect x="18.0" y="89.0" width="6" height="71.0" rx="2" fill="var(--s1)"/>
+<rect x="27.3" y="76.2" width="6" height="83.8" rx="2" fill="var(--s1)"/>
+<rect x="36.6" y="100.2" width="6" height="59.8" rx="2" fill="var(--s1)"/>
+<rect x="45.9" y="79.1" width="6" height="80.9" rx="2" fill="var(--s1)"/>
+<rect x="55.2" y="92.9" width="6" height="67.1" rx="2" fill="var(--s1)"/>
+<rect x="64.5" y="92.9" width="6" height="67.1" rx="2" fill="var(--s1)"/>
+<rect x="73.8" y="69.1" width="6" height="90.9" rx="2" fill="var(--s1)"/>
+<rect x="83.1" y="88.3" width="6" height="71.7" rx="2" fill="var(--s1)"/>
+<rect x="92.4" y="90.5" width="6" height="69.5" rx="2" fill="var(--s1)"/>
+<rect x="101.7" y="82.0" width="6" height="78.0" rx="2" fill="var(--s1)"/>
+<rect x="111.0" y="77.6" width="6" height="82.4" rx="2" fill="var(--s1)"/>
+<rect x="120.3" y="90.3" width="6" height="69.7" rx="2" fill="var(--s1)"/>
+<rect x="129.6" y="83.5" width="6" height="76.5" rx="2" fill="var(--s1)"/>
+<rect x="138.9" y="100.7" width="6" height="59.3" rx="2" fill="var(--s1)"/>
+<rect x="148.2" y="94.0" width="6" height="66.0" rx="2" fill="var(--s1)"/>
+<rect x="157.5" y="94.8" width="6" height="65.2" rx="2" fill="var(--s1)"/>
+<rect x="166.8" y="104.7" width="6" height="55.3" rx="2" fill="var(--s1)"/>
+<rect x="176.1" y="66.0" width="6" height="94.0" rx="2" fill="var(--s2)"/>
+<rect x="185.4" y="107.9" width="6" height="52.1" rx="2" fill="var(--s1)"/>
+<rect x="194.7" y="92.6" width="6" height="67.4" rx="2" fill="var(--s1)"/>
+<rect x="204.0" y="91.9" width="6" height="68.1" rx="2" fill="var(--s1)"/>
+<rect x="213.3" y="93.5" width="6" height="66.5" rx="2" fill="var(--s1)"/>
+<rect x="222.6" y="89.2" width="6" height="70.8" rx="2" fill="var(--s1)"/>
+<rect x="231.9" y="104.7" width="6" height="55.3" rx="2" fill="var(--s1)"/>
+<rect x="241.2" y="90.9" width="6" height="69.1" rx="2" fill="var(--s1)"/>
+<rect x="250.5" y="87.4" width="6" height="72.6" rx="2" fill="var(--s1)"/>
+<rect x="259.8" y="81.7" width="6" height="78.3" rx="2" fill="var(--s1)"/>
+<rect x="269.1" y="99.3" width="6" height="60.7" rx="2" fill="var(--s1)"/>
+<rect x="278.4" y="94.4" width="6" height="65.6" rx="2" fill="var(--s1)"/>
+<rect x="287.7" y="112.2" width="6" height="47.8" rx="2" fill="var(--s1)"/>
+<rect x="297.0" y="95.5" width="6" height="64.5" rx="2" fill="var(--s1)"/>
+<rect x="306.3" y="114.2" width="6" height="45.8" rx="2" fill="var(--s1)"/>
+<line x1="14" x2="314" y1="61.0" y2="61.0" stroke="var(--alert)" stroke-width="2"/>
+<text class="m" x="312" y="56.0" font-size="11" text-anchor="end">the chip's threshold</text>
+<text class="m" x="14" y="176" font-size="11">one bar = the baseline of one channel</text>
+<text class="t" x="330" y="46" font-size="12" font-weight="600">Next: one correction per channel</text>
+<rect x="334.0" y="93.5" width="6" height="66.5" rx="2" fill="var(--s1)"/>
+<rect x="343.3" y="87.2" width="6" height="72.8" rx="2" fill="var(--s1)"/>
+<rect x="352.6" y="95.5" width="6" height="64.5" rx="2" fill="var(--s1)"/>
+<rect x="361.9" y="88.0" width="6" height="72.0" rx="2" fill="var(--s1)"/>
+<rect x="371.2" y="89.2" width="6" height="70.8" rx="2" fill="var(--s1)"/>
+<rect x="380.5" y="90.8" width="6" height="69.2" rx="2" fill="var(--s1)"/>
+<rect x="389.8" y="88.9" width="6" height="71.1" rx="2" fill="var(--s1)"/>
+<rect x="399.1" y="88.7" width="6" height="71.3" rx="2" fill="var(--s1)"/>
+<rect x="408.4" y="87.4" width="6" height="72.6" rx="2" fill="var(--s1)"/>
+<rect x="417.7" y="90.6" width="6" height="69.4" rx="2" fill="var(--s1)"/>
+<rect x="427.0" y="91.5" width="6" height="68.5" rx="2" fill="var(--s1)"/>
+<rect x="436.3" y="91.5" width="6" height="68.5" rx="2" fill="var(--s1)"/>
+<rect x="445.6" y="92.5" width="6" height="67.5" rx="2" fill="var(--s1)"/>
+<rect x="454.9" y="90.1" width="6" height="69.9" rx="2" fill="var(--s1)"/>
+<rect x="464.2" y="92.0" width="6" height="68.0" rx="2" fill="var(--s1)"/>
+<rect x="473.5" y="87.3" width="6" height="72.7" rx="2" fill="var(--s1)"/>
+<rect x="482.8" y="94.7" width="6" height="65.3" rx="2" fill="var(--s1)"/>
+<rect x="492.1" y="92.7" width="6" height="67.3" rx="2" fill="var(--s1)"/>
+<rect x="501.4" y="92.4" width="6" height="67.6" rx="2" fill="var(--s1)"/>
+<rect x="510.7" y="95.2" width="6" height="64.8" rx="2" fill="var(--s1)"/>
+<rect x="520.0" y="85.2" width="6" height="74.8" rx="2" fill="var(--s1)"/>
+<rect x="529.3" y="96.0" width="6" height="64.0" rx="2" fill="var(--s1)"/>
+<rect x="538.6" y="90.7" width="6" height="69.3" rx="2" fill="var(--s1)"/>
+<rect x="547.9" y="91.3" width="6" height="68.7" rx="2" fill="var(--s1)"/>
+<rect x="557.2" y="85.9" width="6" height="74.1" rx="2" fill="var(--s1)"/>
+<rect x="566.5" y="95.0" width="6" height="65.0" rx="2" fill="var(--s1)"/>
+<rect x="575.8" y="87.3" width="6" height="72.7" rx="2" fill="var(--s1)"/>
+<rect x="585.1" y="91.8" width="6" height="68.2" rx="2" fill="var(--s1)"/>
+<rect x="594.4" y="90.4" width="6" height="69.6" rx="2" fill="var(--s1)"/>
+<rect x="603.7" y="91.7" width="6" height="68.3" rx="2" fill="var(--s1)"/>
+<rect x="613.0" y="88.4" width="6" height="71.6" rx="2" fill="var(--s1)"/>
+<rect x="622.3" y="92.8" width="6" height="67.2" rx="2" fill="var(--s1)"/>
+<line x1="330" x2="630" y1="80.2" y2="80.2" stroke="var(--alert)" stroke-width="2"/>
+<text class="m" x="628" y="75.2" font-size="11" text-anchor="end">the chip's threshold</text>
+<text class="m" x="330" y="176" font-size="11">one bar = the baseline of one channel</text>
+<text class="m" x="14" y="206" font-size="11">Left: the single tall channel (orange, like VMM 7 ch 23) forces the threshold up for everybody. Right: after the per-channel</text>
+<text class="m" x="14" y="221" font-size="11">correction the channels line up, so the chip's threshold can be lower and the muons that were lost are counted again.</text>
+</svg><p class="caption">Today each chip has one threshold. The next step gives each channel a small correction so that all channels start at the same level (cartoon, not measured).</p></div>
+
+<div class="stepcard next"><div class="sc-head"><span class="stepn">6</span><strong>Measure every channel&rsquo;s baseline and threshold</strong> <span class="pill warn">next, not done yet</span></div><dl><dt>Where we are</dt><dd>Not started. We found that the new slow-control library can already read the chip&rsquo;s monitor for each channel, but the command-line tool does not offer it.</dd><dt>What is needed</dt><dd>A way to call the library: either ask the developer to add a command, or write a small program of our own that calls it (without changing his software). We would test it on one channel of one hybrid first, then run all channels of all hybrids.</dd><dt>What it will tell us</dt><dd>The real baseline and threshold of every channel. This replaces the guesses from July and from the peaks above.</dd><dt>Then</dt><dd>compute the corrections (step 7).</dd></dl></div>
+
+<div class="stepcard later"><div class="sc-head"><span class="stepn">7</span><strong>Compute and apply the corrections, then scan again</strong> <span class="pill">later</span></div><dl><dt>Where we are</dt><dd>Not started.</dd><dt>What is needed</dt><dd>The measurements of step 6.</dd><dt>What it will tell us</dt><dd>If the corrections work, the noise onset of all chips lines up and the usable threshold window opens for every chip.</dd><dt>Then</dt><dd>repeat the noise scan with the corrections, voltage on and off, then measure the efficiency (step 8).</dd></dl></div>
+
+<div class="stepcard later"><div class="sc-head"><span class="stepn">8</span><strong>Measure the efficiency</strong> <span class="pill">later</span></div><dl><dt>Where we are</dt><dd>Not started.</dd><dt>What is needed</dt><dd>A night of cosmic muons at a safe threshold, then the tag-and-probe method: the two outer chambers say a muon went through, and the middle one is asked whether it saw it.</dd><dt>What it will tell us</dt><dd>The efficiency against the threshold, chip by chip: the real answer to the first question.</dd><dt>Then</dt><dd>compare with the beam test and with the DREAM readout.</dd></dl></div>
+
+<h2>8. Where the data and code are</h2>
+<table class="runs">
+<tr><th>Item</th><th>Where</th></tr>
+<tr><td>Voltage-on scan: <code>run_4</code> &hellip; <code>run_13</code>; first tests: <code>run_1</code> &hellip; <code>run_3</code></td><td><code>/local/p2/p2data/cosmics_3det_202610/runs/</code> on vmm_daplxa, copied to EOS <code>&hellip;/p2_sps_july/vmm_cosmic_run_oct26/</code></td></tr>
+<tr><td>Voltage-off scan: <code>run_14</code> &hellip; <code>run_23</code> (same configs), <code>run_24</code> &hellip; <code>run_27</code> (nothing masked)</td><td>same place; configs end in <code>m2hvoff_d&lt;d&gt;</code> and <code>m0hvoff_d&lt;d&gt;</code></td></tr>
+<tr><td>Tables used for the figures</td><td><code>analysis_noise_scan/</code> and <code>analysis_noise_scan_hvoff/</code> (chip tables, per-channel CSV, voltage on/off comparison)</td></tr>
+<tr><td>Chip settings</td><td>4.5&nbsp;mV/fC, 200&nbsp;ns peaking time; only the threshold lines and the masks change between files</td></tr>
+<tr><td>Code and feedback notes</td><td>branch <code>lab-cosmics-oct26</code>, <code>docs/LAB_COSMICS_OBSERVATIONS.md</code> (items 1&ndash;27)</td></tr>
+</table>
+</div>
   </article>
 </main>
 
