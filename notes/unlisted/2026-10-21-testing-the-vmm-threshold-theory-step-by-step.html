@@ -872,6 +872,12 @@ but not to set final thresholds. Hence the order of the cosmic plan: measure the
 inferred chip baselines of Figure 21. The noise scan then shows where each chip and channel really turns on. The cosmic scan measures efficiency against
 d directly, with tag-and-probe between the three chambers. If the recipe here is right, the measured d at which each chip turns noisy should be about the same
 on every chip. If not, the scatter shows by how much these baselines were off.</p>
+<div class="callout"><b>First check, from the stand's noise scan (22 Oct, run_4–run_13, d = 50 … 16).</b> The d at which each chip's total rate first passes 1 kHz:
+VMM 15 at 34; VMM 12, 14, 19 at 30; VMM 3, 5 at 27; VMM 8, 13, 17 at 24; VMM 16, 18 at 22; VMM 11 at 20; VMM 10 at 18; VMM 2 not reached at 16.
+VMM 4 and 9 were masked, VMM 6 was held at sdt 230, and VMM 7's onset (40) is its walking burst.
+That is a spread of 16 DAC, ±8 around d ≈ 26: the size of the systematic estimated above. So the baselines are as good as claimed, and no better.
+Until the vmmsc pedestals exist, each chip's own onset is the better reference: centre the cosmic scan on the measured onset rather than on the inferred baseline.
+The chambers and gas differ from July, so this tests the recipe, not the July noise levels.</div>
 </div>
 
 <details>
