@@ -37,6 +37,10 @@
 
 
 
+
+
+
+
 <style>
   :root{--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--alert:#eb6834;--surface:#fcfcfb;
     --c0:#eef0f3;--c1:#cde2fb;--c2:#86b6ef;--c3:#3987e5;--c4:#1c5cab;--c5:#0d366b;
@@ -98,9 +102,9 @@
 <div class="tldr"><strong>In one minute.</strong>
 <ul>
 <li><strong>The question:</strong> how low can we set the threshold of each VMM chip before electronic noise takes over? The beam test could only <em>guess</em> the answer. Here, with cosmic muons, we can <em>measure</em> it.</li>
-<li><strong>What we did, in order:</strong> (1) a first test, which showed a flood of data from a few chips; (2) a noise scan with the chamber voltage on; (3) the same scan with the voltage <em>off</em>, to separate the detector from the electronics; (4) a closer look at single channels; (5) a direct measurement of the baseline of each channel, using a chip setting where a firing channel makes its neighbours report; (6) the same scans with the three chips we had masked (VMM 4, 7, 9) switched back on.</li>
-<li><strong>What we found:</strong> the chips do <em>not</em> start to be noisy at the same threshold, and this spread stays when the voltage is off, so it comes from the electronics, not the chambers. Three chips (VMM 4, 7, 9) have noisy channels that also stay with the voltage off; when we switch them back on they show two kinds of noise: an ordinary smooth onset like the other chips, plus bursts that jump up and down with each new configuration, even at very high thresholds. And each channel has a noise peak of its own, so the channels inside one chip differ too. The baselines we could measure directly (about half of the channels so far) are mostly 45 to 65 ADC counts, not the 38 used so far for every channel, and they differ from chip to chip.</li>
-<li><strong>What this means for the next step:</strong> one threshold per chip is not enough. We need the baseline of <em>every channel</em> (half is done), in threshold units (millivolts, not yet done), and then to correct each channel. Then we repeat the scan and, only then, measure efficiency. The high voltage was switched on after these measurements, so the next runs are the first with the voltage on and all chips included.</li>
+<li><strong>What we did, in order:</strong> (1) a first test, which showed a flood of data from a few chips; (2) a noise scan with the chamber voltage on; (3) the same scan with the voltage <em>off</em>, to separate the detector from the electronics; (4) a closer look at single channels; (5) a direct measurement of the baseline of each channel, using a chip setting where a firing channel makes its neighbours report; (6) the same scans with the three chips we had masked (VMM 4, 7, 9) switched back on; (7) the first measurements with the high voltage on: a health check, and the neighbour read-out with cosmic muons, which gave a baseline for 97&nbsp;% of the channels.</li>
+<li><strong>What we found:</strong> the chips do <em>not</em> start to be noisy at the same threshold, and this spread stays when the voltage is off, so it comes from the electronics, not the chambers. Three chips (VMM 4, 7, 9) have noisy channels that also stay with the voltage off; when we switch them back on they show two kinds of noise: an ordinary smooth onset like the other chips, plus bursts that jump up and down with each new configuration, even at very high thresholds. And each channel has a noise peak of its own, so the channels inside one chip differ too. The baselines we could measure directly (about half of the channels so far) are mostly 45 to 65 ADC counts, not the 38 used so far for every channel, and they differ from chip to chip. With the voltage on we now have a baseline for 97&nbsp;% of the channels, the voltage does not change them, and VMM 4, 7 and 9 each have a large block of channels with baselines of 100 to several hundred, next to the channels that burst.</li>
+<li><strong>What this means for the next step:</strong> one threshold per chip is not enough. We need the baseline of <em>every channel</em> (half is done), in threshold units (millivolts, not yet done), and then to correct each channel. Then we repeat the scan and, only then, measure efficiency. The measurement with muon tracks (reference run and threshold scan, high voltage on) is running now.</li>
 </ul></div>
 
 <h2>0. The idea in one picture</h2>
@@ -1159,7 +1163,7 @@
 <text class="m" x="10" y="338" font-size="11">Orange: fires. Blue: read out as a neighbour. One step leaves most channels unmeasured; a few steps cover (nearly) all.</text>
 </svg><p class="caption">Each step lets other channels fire, and their neighbours get measured. The cartoon uses 16 channels and three steps.</p></div>
 
-<div class="stepcard done"><div class="sc-head"><span class="stepn">6</span><strong>Neighbour read-out with the voltage OFF</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>We switched on <code>sng = 1</code> on every chip and took 2 minutes at five settings: one first test, and then four thresholds per chip, 0, 3, 6 and 9 steps lower than that chip&rsquo;s noise onset from step 4. VMM 4 and 9 stay masked. The voltage stayed off, so the baselines are measured without any detector effect.</dd><dt>What we saw</dt><dd>Between 64 and 67&nbsp;% of the hits on every chip are neighbour read-outs, as expected. After adding the five captures, <strong>627 of the 1024 channels</strong> on the 16 working chips had a baseline (at least 50 read-outs); the count after each capture was 410, 410, 428, 528, 627, and the two lowest thresholds added the most. The whole of each 2-minute capture was used (599&nbsp;s in total). The median baseline is 54&nbsp;ADC; chip medians range from 48 to 61; only 10 of the 627 channels are at or below 38.</dd><dt>What it tells us</dt><dd>The single value used so far for every channel (38) is wrong for almost all of them, and the baselines differ between chips and, by a few ADC counts, inside each chip. About {100 * (BL_TOTAL - BL_COV) / BL_TOTAL:.0f}&nbsp;% of the channels still have no measurement (VMM 6 and VMM 7 the most). All the data taken have now been used, so more coverage needs new data: more steps, longer runs, or cosmic muons with the voltage on (they hit all channels evenly).</dd><dt>So the next step is</dt><dd>put the baselines in threshold units (millivolts), which needs one more measurement (step 9). First, though, the three chips we had masked must be put back into the study (next section).</dd></dl></div>
+<div class="stepcard done"><div class="sc-head"><span class="stepn">6</span><strong>Neighbour read-out with the voltage OFF</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>We switched on <code>sng = 1</code> on every chip and took 2 minutes at five settings: one first test, and then four thresholds per chip, 0, 3, 6 and 9 steps lower than that chip&rsquo;s noise onset from step 4. VMM 4 and 9 stay masked. The voltage stayed off, so the baselines are measured without any detector effect.</dd><dt>What we saw</dt><dd>Between 64 and 67&nbsp;% of the hits on every chip are neighbour read-outs, as expected. After adding the five captures, <strong>627 of the 1024 channels</strong> on the 16 working chips had a baseline (at least 50 read-outs); the count after each capture was 410, 410, 428, 528, 627, and the two lowest thresholds added the most. The whole of each 2-minute capture was used (599&nbsp;s in total). The median baseline is 54&nbsp;ADC; chip medians range from 48 to 61; only 10 of the 627 channels are at or below 38.</dd><dt>What it tells us</dt><dd>The single value used so far for every channel (38) is wrong for almost all of them, and the baselines differ between chips and, by a few ADC counts, inside each chip. About {100 * (BL_TOTAL - BL_COV) / BL_TOTAL:.0f}&nbsp;% of the channels still have no measurement (VMM 6 and VMM 7 the most). All the data taken have now been used, so more coverage needs new data: more steps, longer runs, or cosmic muons with the voltage on (they hit all channels evenly).</dd><dt>So the next step is</dt><dd>put the baselines in threshold units (millivolts), which needs one more measurement (step 10). First, though, the three chips we had masked must be put back into the study (next section).</dd></dl></div>
 <div class="viz-card"><svg viewBox="0 0 694 436" role="img" aria-label="Measured ADC baseline of every channel">
 <text class="t" x="14" y="18" font-size="13" font-weight="600">Measured baseline (ADC) of every channel, from neighbour read-out</text>
 <text class="m" x="14" y="34" font-size="11">one row per chip, one cell per channel 0-63; the colour is the median ADC of its neighbour read-outs</text>
@@ -3673,7 +3677,7 @@
 <line x1="84.0" y1="184.7708634495842" x2="540.0" y2="157.89741741142058" stroke="var(--alert)" stroke-width="2.2" stroke-dasharray="6 4"/>
 <text class="t" x="534" y="70" font-size="12" text-anchor="end" font-weight="600">rank correlation +0.33</text>
 </svg><p class="caption">Each dot is a channel with both a measured baseline and a clear noise peak (39 channels here, peaks with at least 10 hits). A line through the dots is almost flat. The rank correlation is +0.48 (13 channels, at least 30 hits), +0.33 (39 channels, at least 10 hits), +0.17 (82 channels, at least 5 hits); it gets smaller as more channels are included, and the ordinary correlation is small (+0.04 to +0.21). Channels above 100 ADC (the three outliers) are left out of the plot and of these numbers.</p></div>
-<p><strong>So the answer is no, at least not clearly.</strong> An earlier look with fewer channels showed a weak positive trend; with the whole data it largely disappears. Three reasons are possible, and none is tested yet: (1) the ADC baseline is not the same thing as the level the threshold acts on, because each channel&rsquo;s threshold comparator has its own small offset; (2) the threshold steps are coarse (3 to 10 units) and many peaks have few hits; (3) the peaks come from the voltage-on scan and the baselines from the voltage-off scan. Reason (1) is exactly why the chip monitor measurement of step 9 matters: it measures the pedestal <em>and</em> the threshold of each channel, so it gives the missing link.</p>
+<p><strong>So the answer is no, at least not clearly.</strong> An earlier look with fewer channels showed a weak positive trend; with the whole data it largely disappears. Three reasons are possible, and none is tested yet: (1) the ADC baseline is not the same thing as the level the threshold acts on, because each channel&rsquo;s threshold comparator has its own small offset; (2) the threshold steps are coarse (3 to 10 units) and many peaks have few hits; (3) the peaks come from the voltage-on scan and the baselines from the voltage-off scan. Reason (1) is exactly why the chip monitor measurement of step 10 matters: it measures the pedestal <em>and</em> the threshold of each channel, so it gives the missing link.</p>
 <div class="viz-card"><svg viewBox="0 0 640 190" role="img" aria-label="Three units for the same level">
 <text class="t" x="10" y="18" font-size="13" font-weight="600">Three ways to say the same level: what we set, what is real, what the data shows</text>
 <rect x="10" y="36" width="180" height="118" rx="10" fill="var(--s1)" opacity="0.14"/><rect x="10" y="36" width="180" height="118" rx="10" fill="none" stroke="var(--s1)" stroke-width="2.4" stroke-dasharray="0"/>
@@ -3842,7 +3846,1308 @@
 
 <div class="stepcard done"><div class="sc-head"><span class="stepn">7</span><strong>The three burst chips, unmasked</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>We repeated the voltage-off scan with VMM 4, 7 and 9 switched back on, at 13 thresholds with the normal read-out (d = 200 down to 16) and 9 with neighbour read-out (d = 100 down to 14), the other chips at d = 50. We also read the temperature of all chips (31 to 38 &deg;C, nothing unusual).</dd><dt>What we saw</dt><dd>Two things. (a) A smooth noise onset like the other chips: VMM 4 passes 1&nbsp;kHz at d = 22 (hottest channels 37 and 35) and VMM 9 at d = 27 (channel 16); VMM 7 shows none down to d = 16. (b) Bursts of up to millions of hits per second that do not follow the threshold: VMM 9 gives 2.7&nbsp;MHz at d = 200, far above any baseline, and VMM 4 gives 0 at d = 60 but 1.8&nbsp;MHz at d = 40. The hot channel changes with each configuration (VMM 4: channel 45, 39, 38/36, then 37/35). Within one run it does not change, and its pulse height is almost constant.</dd><dt>What it tells us</dt><dd>The chips can be placed on the same threshold scale as the rest (the smooth part), and the bursts are not ordinary noise: they look like a state a channel gets stuck in when the chip is configured. We have not yet tested whether applying the same configuration twice gives the same state.</dd><dt>So the next step is</dt><dd>repeat a few configurations several times (a short run, about 15 minutes, with the voltage off) to see whether the burst state is repeatable.</dd></dl></div>
 
-<h2>8. What we know, and what we do not</h2>
+<h2>8. First measurements with the voltage on</h2>
+<p>The high voltage was switched on after the runs above (we declare it in the run files; the voltages themselves are not read by the DAQ and are still to be written in the logbook). Three things were done with it on: a health check of the chambers, the neighbour read-out measurement again but now with cosmic muons, and the noise ladder of VMM 4, 7 and 9 again.</p>
+
+<h3>8a. Is every chamber alive?</h3>
+<p>We took 10 minutes at the &ldquo;safe&rdquo; setting of each chip (8 steps above the noise onset we measured with the voltage on) and looked at the pulse heights of the hits.</p>
+<div class="viz-card"><svg viewBox="0 0 640 468" role="img" aria-label="ADC spectrum of the hits of every chip, voltage on">
+<text class="t" x="12" y="18" font-size="13" font-weight="600">Health check with the voltage on: pulse-height spectrum of every chip</text>
+<text class="m" x="12" y="34" font-size="11">bar: 10th to 90th percentile of the ADC of the hits above threshold; dot: median; 2 minutes at the safe setting.</text>
+<text class="m" x="12" y="48" font-size="11">Orange tick: the spectrum reaches the ADC limit (1023). Right: hits per second of the chip.</text>
+<line x1="130.0" x2="130.0" y1="60" y2="406" stroke="var(--border)"/><text class="f" x="130.0" y="420" font-size="10" text-anchor="middle">0</text>
+<line x1="216.02150537634407" x2="216.02150537634407" y1="60" y2="406" stroke="var(--border)"/><text class="f" x="216.02150537634407" y="420" font-size="10" text-anchor="middle">200</text>
+<line x1="302.04301075268813" x2="302.04301075268813" y1="60" y2="406" stroke="var(--border)"/><text class="f" x="302.04301075268813" y="420" font-size="10" text-anchor="middle">400</text>
+<line x1="388.06451612903226" x2="388.06451612903226" y1="60" y2="406" stroke="var(--border)"/><text class="f" x="388.06451612903226" y="420" font-size="10" text-anchor="middle">600</text>
+<line x1="474.0860215053763" x2="474.0860215053763" y1="60" y2="406" stroke="var(--border)"/><text class="f" x="474.0860215053763" y="420" font-size="10" text-anchor="middle">800</text>
+<line x1="560.1075268817204" x2="560.1075268817204" y1="60" y2="406" stroke="var(--border)"/><text class="f" x="560.1075268817204" y="420" font-size="10" text-anchor="middle">1000</text>
+<text class="t" x="12" y="77.5" font-size="11" font-weight="600">det3 (IN)</text>
+<text class="m" x="122" y="77.5" font-size="11" text-anchor="end">VMM 2</text>
+<g><title>VMM 2: 26.12 hits/s, median 177, 10-90 % range 79 to 1023</title><rect x="164.0" y="68.5" width="406.0" height="10" rx="3" fill="var(--s1)" opacity="0.35"/><circle cx="206.1" cy="73.5" r="4" fill="var(--s1)"/></g>
+<line x1="570.0" x2="570.0" y1="66.5" y2="80.5" stroke="var(--s2)" stroke-width="3"/>
+<text class="m" x="632" y="77.5" font-size="11" text-anchor="end">26 Hz</text>
+<text class="m" x="122" y="96.5" font-size="11" text-anchor="end">VMM 3</text>
+<g><title>VMM 3: 26.4 hits/s, median 168, 10-90 % range 81 to 1023</title><rect x="164.8" y="87.5" width="405.2" height="10" rx="3" fill="var(--s1)" opacity="0.35"/><circle cx="202.3" cy="92.5" r="4" fill="var(--s1)"/></g>
+<line x1="570.0" x2="570.0" y1="85.5" y2="99.5" stroke="var(--s2)" stroke-width="3"/>
+<text class="m" x="632" y="96.5" font-size="11" text-anchor="end">26 Hz</text>
+<text class="m" x="122" y="115.5" font-size="11" text-anchor="end">VMM 4</text>
+<g><title>VMM 4: 14.61 hits/s, median 178, 10-90 % range 77 to 1023</title><rect x="163.1" y="106.5" width="406.9" height="10" rx="3" fill="var(--s1)" opacity="0.35"/><circle cx="206.6" cy="111.5" r="4" fill="var(--s1)"/></g>
+<line x1="570.0" x2="570.0" y1="104.5" y2="118.5" stroke="var(--s2)" stroke-width="3"/>
+<text class="m" x="632" y="115.5" font-size="11" text-anchor="end">15 Hz</text>
+<text class="m" x="122" y="134.5" font-size="11" text-anchor="end">VMM 5</text>
+<g><title>VMM 5: 46.09 hits/s, median 189, 10-90 % range 80 to 772</title><rect x="164.4" y="125.5" width="297.6" height="10" rx="3" fill="var(--s1)" opacity="0.35"/><circle cx="211.3" cy="130.5" r="4" fill="var(--s1)"/></g>
+<text class="m" x="632" y="134.5" font-size="11" text-anchor="end">46 Hz</text>
+<text class="m" x="122" y="153.5" font-size="11" text-anchor="end">VMM 6</text>
+<g><title>VMM 6: 18.11 hits/s, median 224, 10-90 % range 86 to 1023</title><rect x="167.0" y="144.5" width="403.0" height="10" rx="3" fill="var(--s1)" opacity="0.35"/><circle cx="226.3" cy="149.5" r="4" fill="var(--s1)"/></g>
+<line x1="570.0" x2="570.0" y1="142.5" y2="156.5" stroke="var(--s2)" stroke-width="3"/>
+<text class="m" x="632" y="153.5" font-size="11" text-anchor="end">18 Hz</text>
+<text class="m" x="122" y="172.5" font-size="11" text-anchor="end">VMM 7</text>
+<g><title>VMM 7: 8.52 hits/s, median 233, 10-90 % range 80 to 1023</title><rect x="164.4" y="163.5" width="405.6" height="10" rx="3" fill="var(--s1)" opacity="0.35"/><circle cx="230.2" cy="168.5" r="4" fill="var(--s1)"/></g>
+<line x1="570.0" x2="570.0" y1="161.5" y2="175.5" stroke="var(--s2)" stroke-width="3"/>
+<text class="m" x="632" y="172.5" font-size="11" text-anchor="end">9 Hz</text>
+<text class="t" x="12" y="191.5" font-size="11" font-weight="600">det2 (MID)</text>
+<text class="m" x="122" y="191.5" font-size="11" text-anchor="end">VMM 8</text>
+<g><title>VMM 8: 10.96 hits/s, median 146, 10-90 % range 76 to 575</title><rect x="162.7" y="182.5" width="214.6" height="10" rx="3" fill="var(--s1)" opacity="0.35"/><circle cx="192.8" cy="187.5" r="4" fill="var(--s1)"/></g>
+<text class="m" x="632" y="191.5" font-size="11" text-anchor="end">11 Hz</text>
+<text class="m" x="122" y="210.5" font-size="11" text-anchor="end">VMM 9</text>
+<g><title>VMM 9: 5.77 hits/s, median 100, 10-90 % range 74 to 559</title><rect x="161.8" y="201.5" width="208.6" height="10" rx="3" fill="var(--s1)" opacity="0.35"/><circle cx="173.0" cy="206.5" r="4" fill="var(--s1)"/></g>
+<text class="m" x="632" y="210.5" font-size="11" text-anchor="end">6 Hz</text>
+<text class="m" x="122" y="229.5" font-size="11" text-anchor="end">VMM 10</text>
+<g><title>VMM 10: 9.19 hits/s, median 163, 10-90 % range 55 to 705</title><rect x="153.7" y="220.5" width="279.6" height="10" rx="3" fill="var(--s1)" opacity="0.35"/><circle cx="200.1" cy="225.5" r="4" fill="var(--s1)"/></g>
+<text class="m" x="632" y="229.5" font-size="11" text-anchor="end">9 Hz</text>
+<text class="m" x="122" y="248.5" font-size="11" text-anchor="end">VMM 11</text>
+<g><title>VMM 11: 14.15 hits/s, median 102, 10-90 % range 66 to 500</title><rect x="158.4" y="239.5" width="186.7" height="10" rx="3" fill="var(--s1)" opacity="0.35"/><circle cx="173.9" cy="244.5" r="4" fill="var(--s1)"/></g>
+<text class="m" x="632" y="248.5" font-size="11" text-anchor="end">14 Hz</text>
+<text class="m" x="122" y="267.5" font-size="11" text-anchor="end">VMM 12</text>
+<g><title>VMM 12: 7.59 hits/s, median 256, 10-90 % range 88 to 726</title><rect x="167.8" y="258.5" width="274.4" height="10" rx="3" fill="var(--s1)" opacity="0.35"/><circle cx="240.1" cy="263.5" r="4" fill="var(--s1)"/></g>
+<text class="m" x="632" y="267.5" font-size="11" text-anchor="end">8 Hz</text>
+<text class="m" x="122" y="286.5" font-size="11" text-anchor="end">VMM 13</text>
+<g><title>VMM 13: 11.12 hits/s, median 185, 10-90 % range 85 to 698</title><rect x="166.6" y="277.5" width="263.7" height="10" rx="3" fill="var(--s1)" opacity="0.35"/><circle cx="209.6" cy="282.5" r="4" fill="var(--s1)"/></g>
+<text class="m" x="632" y="286.5" font-size="11" text-anchor="end">11 Hz</text>
+<text class="t" x="12" y="305.5" font-size="11" font-weight="600">det1 (OUT)</text>
+<text class="m" x="122" y="305.5" font-size="11" text-anchor="end">VMM 14</text>
+<g><title>VMM 14: 54.2 hits/s, median 173, 10-90 % range 90 to 597</title><rect x="168.7" y="296.5" width="218.1" height="10" rx="3" fill="var(--s1)" opacity="0.35"/><circle cx="204.4" cy="301.5" r="4" fill="var(--s1)"/></g>
+<text class="m" x="632" y="305.5" font-size="11" text-anchor="end">54 Hz</text>
+<text class="m" x="122" y="324.5" font-size="11" text-anchor="end">VMM 15</text>
+<g><title>VMM 15: 68.58 hits/s, median 172, 10-90 % range 91 to 513</title><rect x="169.1" y="315.5" width="181.5" height="10" rx="3" fill="var(--s1)" opacity="0.35"/><circle cx="204.0" cy="320.5" r="4" fill="var(--s1)"/></g>
+<text class="m" x="632" y="324.5" font-size="11" text-anchor="end">69 Hz</text>
+<text class="m" x="122" y="343.5" font-size="11" text-anchor="end">VMM 16</text>
+<g><title>VMM 16: 68.99 hits/s, median 214, 10-90 % range 88 to 578</title><rect x="167.8" y="334.5" width="210.8" height="10" rx="3" fill="var(--s1)" opacity="0.35"/><circle cx="222.0" cy="339.5" r="4" fill="var(--s1)"/></g>
+<text class="m" x="632" y="343.5" font-size="11" text-anchor="end">69 Hz</text>
+<text class="m" x="122" y="362.5" font-size="11" text-anchor="end">VMM 17</text>
+<g><title>VMM 17: 70.04 hits/s, median 169, 10-90 % range 83 to 679</title><rect x="165.7" y="353.5" width="256.3" height="10" rx="3" fill="var(--s1)" opacity="0.35"/><circle cx="202.7" cy="358.5" r="4" fill="var(--s1)"/></g>
+<text class="m" x="632" y="362.5" font-size="11" text-anchor="end">70 Hz</text>
+<text class="m" x="122" y="381.5" font-size="11" text-anchor="end">VMM 18</text>
+<g><title>VMM 18: 77.16 hits/s, median 187, 10-90 % range 83 to 849</title><rect x="165.7" y="372.5" width="329.5" height="10" rx="3" fill="var(--s1)" opacity="0.35"/><circle cx="210.4" cy="377.5" r="4" fill="var(--s1)"/></g>
+<text class="m" x="632" y="381.5" font-size="11" text-anchor="end">77 Hz</text>
+<text class="m" x="122" y="400.5" font-size="11" text-anchor="end">VMM 19</text>
+<g><title>VMM 19: 98.97 hits/s, median 191, 10-90 % range 89 to 753</title><rect x="168.3" y="391.5" width="285.6" height="10" rx="3" fill="var(--s1)" opacity="0.35"/><circle cx="212.2" cy="396.5" r="4" fill="var(--s1)"/></g>
+<text class="m" x="632" y="400.5" font-size="11" text-anchor="end">99 Hz</text>
+<text class="m" x="350.0" y="462" font-size="11" text-anchor="middle">ADC counts</text>
+</svg><p class="caption">Real data, 2 minutes of the 10-minute run. Every chip has hits and a broad spectrum. VMM 2, 3, 4, 6 and 7 of chamber det3 reach the ADC limit; the other two chambers stay between about 500 and 850.</p></div>
+<p>No chamber looks like the July failure of det3 (a collapsed gain). The det3 chips reaching the ADC limit is unexplained: it could be a higher gain than the other chambers or discharges, and the spectrum shape with more statistics will tell. And 6 to 100 hits per second and chip is well above the cosmic rate we expect (about 4 per second), so at this setting most hits are noise or background, and muon tracks will be picked out by requiring a coincidence of the three chambers.</p>
+
+<h3>8b. A baseline for (nearly) every channel</h3>
+<p>With the voltage off only channels that fire by themselves were covered, about 40&nbsp;% of the channels were still missing. With the voltage on, cosmic muons and chamber activity make every pad fire sometimes, so every channel becomes the neighbour of a firing one. We ran the neighbour read-out at five thresholds (10 minutes each, 50 minutes in total).</p>
+<div class="viz-card"><svg viewBox="0 0 620 462" role="img" aria-label="Channels with a measured baseline per chip, voltage off and on">
+<text class="t" x="12" y="18" font-size="13" font-weight="600">Channels with a measured baseline (of 64), voltage off and voltage on</text>
+<text class="m" x="12" y="34" font-size="11">neighbour read-out; a channel counts when it has at least 50 read-outs</text>
+<rect x="70" y="40" width="18" height="9" rx="2" fill="var(--fg-faint)"/><text class="m" x="94" y="48" font-size="11">voltage off (all earlier runs)</text><rect x="270" y="40" width="18" height="9" rx="2" fill="var(--s1)"/><text class="m" x="294" y="48" font-size="11">voltage on, with cosmics</text>
+<line x1="70.0" x2="70.0" y1="52" y2="432" stroke="var(--border)"/><text class="f" x="70.0" y="446" font-size="10" text-anchor="middle">0</text>
+<line x1="202.5" x2="202.5" y1="52" y2="432" stroke="var(--border)"/><text class="f" x="202.5" y="446" font-size="10" text-anchor="middle">16</text>
+<line x1="335.0" x2="335.0" y1="52" y2="432" stroke="var(--border)"/><text class="f" x="335.0" y="446" font-size="10" text-anchor="middle">32</text>
+<line x1="467.5" x2="467.5" y1="52" y2="432" stroke="var(--border)"/><text class="f" x="467.5" y="446" font-size="10" text-anchor="middle">48</text>
+<line x1="600.0" x2="600.0" y1="52" y2="432" stroke="var(--border)"/><text class="f" x="600.0" y="446" font-size="10" text-anchor="middle">64</text>
+<text class="t" x="62" y="68" font-size="12" text-anchor="end">VMM 2</text>
+<g><title>VMM 2: 36 channels with the voltage off</title><rect x="70" y="56" width="298.1" height="7" rx="2" fill="var(--fg-faint)"/></g><g><title>VMM 2: 64 channels with the voltage on</title><rect x="70" y="64" width="530.0" height="7" rx="2" fill="var(--s1)"/></g>
+<text class="m" x="605.0" y="68" font-size="10">64</text>
+<text class="t" x="62" y="89" font-size="12" text-anchor="end">VMM 3</text>
+<g><title>VMM 3: 45 channels with the voltage off</title><rect x="70" y="77" width="372.7" height="7" rx="2" fill="var(--fg-faint)"/></g><g><title>VMM 3: 63 channels with the voltage on</title><rect x="70" y="85" width="521.7" height="7" rx="2" fill="var(--s1)"/></g>
+<text class="m" x="596.7" y="89" font-size="10">63</text>
+<text class="t" x="62" y="110" font-size="12" text-anchor="end">VMM 4</text>
+<g><title>VMM 4: 17 channels with the voltage off</title><rect x="70" y="98" width="140.8" height="7" rx="2" fill="var(--fg-faint)"/></g><g><title>VMM 4: 56 channels with the voltage on</title><rect x="70" y="106" width="463.8" height="7" rx="2" fill="var(--s1)"/></g>
+<text class="m" x="538.8" y="110" font-size="10">56</text>
+<text class="t" x="62" y="131" font-size="12" text-anchor="end">VMM 5</text>
+<g><title>VMM 5: 49 channels with the voltage off</title><rect x="70" y="119" width="405.8" height="7" rx="2" fill="var(--fg-faint)"/></g><g><title>VMM 5: 64 channels with the voltage on</title><rect x="70" y="127" width="530.0" height="7" rx="2" fill="var(--s1)"/></g>
+<text class="m" x="605.0" y="131" font-size="10">64</text>
+<text class="t" x="62" y="152" font-size="12" text-anchor="end">VMM 6</text>
+<g><title>VMM 6: 13 channels with the voltage off</title><rect x="70" y="140" width="107.7" height="7" rx="2" fill="var(--fg-faint)"/></g><g><title>VMM 6: 64 channels with the voltage on</title><rect x="70" y="148" width="530.0" height="7" rx="2" fill="var(--s1)"/></g>
+<text class="m" x="605.0" y="152" font-size="10">64</text>
+<text class="t" x="62" y="173" font-size="12" text-anchor="end">VMM 7</text>
+<g><title>VMM 7: 22 channels with the voltage off</title><rect x="70" y="161" width="182.2" height="7" rx="2" fill="var(--fg-faint)"/></g><g><title>VMM 7: 53 channels with the voltage on</title><rect x="70" y="169" width="438.9" height="7" rx="2" fill="var(--s1)"/></g>
+<text class="m" x="513.9" y="173" font-size="10">53</text>
+<text class="t" x="62" y="194" font-size="12" text-anchor="end">VMM 8</text>
+<g><title>VMM 8: 47 channels with the voltage off</title><rect x="70" y="182" width="389.2" height="7" rx="2" fill="var(--fg-faint)"/></g><g><title>VMM 8: 64 channels with the voltage on</title><rect x="70" y="190" width="530.0" height="7" rx="2" fill="var(--s1)"/></g>
+<text class="m" x="605.0" y="194" font-size="10">64</text>
+<text class="t" x="62" y="215" font-size="12" text-anchor="end">VMM 9</text>
+<g><title>VMM 9: 19 channels with the voltage off</title><rect x="70" y="203" width="157.3" height="7" rx="2" fill="var(--fg-faint)"/></g><g><title>VMM 9: 55 channels with the voltage on</title><rect x="70" y="211" width="455.5" height="7" rx="2" fill="var(--s1)"/></g>
+<text class="m" x="530.5" y="215" font-size="10">55</text>
+<text class="t" x="62" y="236" font-size="12" text-anchor="end">VMM 10</text>
+<g><title>VMM 10: 30 channels with the voltage off</title><rect x="70" y="224" width="248.4" height="7" rx="2" fill="var(--fg-faint)"/></g><g><title>VMM 10: 64 channels with the voltage on</title><rect x="70" y="232" width="530.0" height="7" rx="2" fill="var(--s1)"/></g>
+<text class="m" x="605.0" y="236" font-size="10">64</text>
+<text class="t" x="62" y="257" font-size="12" text-anchor="end">VMM 11</text>
+<g><title>VMM 11: 38 channels with the voltage off</title><rect x="70" y="245" width="314.7" height="7" rx="2" fill="var(--fg-faint)"/></g><g><title>VMM 11: 64 channels with the voltage on</title><rect x="70" y="253" width="530.0" height="7" rx="2" fill="var(--s1)"/></g>
+<text class="m" x="605.0" y="257" font-size="10">64</text>
+<text class="t" x="62" y="278" font-size="12" text-anchor="end">VMM 12</text>
+<g><title>VMM 12: 54 channels with the voltage off</title><rect x="70" y="266" width="447.2" height="7" rx="2" fill="var(--fg-faint)"/></g><g><title>VMM 12: 64 channels with the voltage on</title><rect x="70" y="274" width="530.0" height="7" rx="2" fill="var(--s1)"/></g>
+<text class="m" x="605.0" y="278" font-size="10">64</text>
+<text class="t" x="62" y="299" font-size="12" text-anchor="end">VMM 13</text>
+<g><title>VMM 13: 34 channels with the voltage off</title><rect x="70" y="287" width="281.6" height="7" rx="2" fill="var(--fg-faint)"/></g><g><title>VMM 13: 64 channels with the voltage on</title><rect x="70" y="295" width="530.0" height="7" rx="2" fill="var(--s1)"/></g>
+<text class="m" x="605.0" y="299" font-size="10">64</text>
+<text class="t" x="62" y="320" font-size="12" text-anchor="end">VMM 14</text>
+<g><title>VMM 14: 51 channels with the voltage off</title><rect x="70" y="308" width="422.3" height="7" rx="2" fill="var(--fg-faint)"/></g><g><title>VMM 14: 64 channels with the voltage on</title><rect x="70" y="316" width="530.0" height="7" rx="2" fill="var(--s1)"/></g>
+<text class="m" x="605.0" y="320" font-size="10">64</text>
+<text class="t" x="62" y="341" font-size="12" text-anchor="end">VMM 15</text>
+<g><title>VMM 15: 38 channels with the voltage off</title><rect x="70" y="329" width="314.7" height="7" rx="2" fill="var(--fg-faint)"/></g><g><title>VMM 15: 64 channels with the voltage on</title><rect x="70" y="337" width="530.0" height="7" rx="2" fill="var(--s1)"/></g>
+<text class="m" x="605.0" y="341" font-size="10">64</text>
+<text class="t" x="62" y="362" font-size="12" text-anchor="end">VMM 16</text>
+<g><title>VMM 16: 49 channels with the voltage off</title><rect x="70" y="350" width="405.8" height="7" rx="2" fill="var(--fg-faint)"/></g><g><title>VMM 16: 64 channels with the voltage on</title><rect x="70" y="358" width="530.0" height="7" rx="2" fill="var(--s1)"/></g>
+<text class="m" x="605.0" y="362" font-size="10">64</text>
+<text class="t" x="62" y="383" font-size="12" text-anchor="end">VMM 17</text>
+<g><title>VMM 17: 33 channels with the voltage off</title><rect x="70" y="371" width="273.3" height="7" rx="2" fill="var(--fg-faint)"/></g><g><title>VMM 17: 64 channels with the voltage on</title><rect x="70" y="379" width="530.0" height="7" rx="2" fill="var(--s1)"/></g>
+<text class="m" x="605.0" y="383" font-size="10">64</text>
+<text class="t" x="62" y="404" font-size="12" text-anchor="end">VMM 18</text>
+<g><title>VMM 18: 50 channels with the voltage off</title><rect x="70" y="392" width="414.1" height="7" rx="2" fill="var(--fg-faint)"/></g><g><title>VMM 18: 64 channels with the voltage on</title><rect x="70" y="400" width="530.0" height="7" rx="2" fill="var(--s1)"/></g>
+<text class="m" x="605.0" y="404" font-size="10">64</text>
+<text class="t" x="62" y="425" font-size="12" text-anchor="end">VMM 19</text>
+<g><title>VMM 19: 42 channels with the voltage off</title><rect x="70" y="413" width="347.8" height="7" rx="2" fill="var(--fg-faint)"/></g><g><title>VMM 19: 64 channels with the voltage on</title><rect x="70" y="421" width="530.0" height="7" rx="2" fill="var(--s1)"/></g>
+<text class="m" x="605.0" y="425" font-size="10">64</text>
+</svg><p class="caption">Channels with a measured baseline: 1123 of 1152 (97&nbsp;%) with the voltage on, against 667 with the voltage off. 14 of the 18 chips are complete. The missing ones are mostly the masked channels of the three burst chips.</p></div>
+<p>Does the voltage change the baseline? We compared, for the 15 normal chips, the 609 channels measured both ways:</p>
+<div class="viz-card"><svg viewBox="0 0 520 400" role="img" aria-label="Baseline with the voltage on against the voltage off">
+<text class="t" x="12" y="18" font-size="13" font-weight="600">Does the voltage change a channel&#8217;s baseline? The 15 normal chips</text>
+<text class="m" x="12" y="34" font-size="11">one dot per channel (605 of the 609 channels fall inside the plotted range 30 to 80); dashed line: &#8220;no change&#8221;</text>
+<line x1="64.0" x2="64.0" y1="44" y2="350" stroke="var(--border)"/><line x1="64" x2="500" y1="350.0" y2="350.0" stroke="var(--border)"/><text class="m" x="64.0" y="365" font-size="11" text-anchor="middle">30</text><text class="m" x="56" y="354.0" font-size="11" text-anchor="end">30</text>
+<line x1="151.2" x2="151.2" y1="44" y2="350" stroke="var(--border)"/><line x1="64" x2="500" y1="288.8" y2="288.8" stroke="var(--border)"/><text class="m" x="151.2" y="365" font-size="11" text-anchor="middle">40</text><text class="m" x="56" y="292.8" font-size="11" text-anchor="end">40</text>
+<line x1="238.4" x2="238.4" y1="44" y2="350" stroke="var(--border)"/><line x1="64" x2="500" y1="227.6" y2="227.6" stroke="var(--border)"/><text class="m" x="238.4" y="365" font-size="11" text-anchor="middle">50</text><text class="m" x="56" y="231.6" font-size="11" text-anchor="end">50</text>
+<line x1="325.6" x2="325.6" y1="44" y2="350" stroke="var(--border)"/><line x1="64" x2="500" y1="166.4" y2="166.4" stroke="var(--border)"/><text class="m" x="325.6" y="365" font-size="11" text-anchor="middle">60</text><text class="m" x="56" y="170.4" font-size="11" text-anchor="end">60</text>
+<line x1="412.8" x2="412.8" y1="44" y2="350" stroke="var(--border)"/><line x1="64" x2="500" y1="105.19999999999999" y2="105.19999999999999" stroke="var(--border)"/><text class="m" x="412.8" y="365" font-size="11" text-anchor="middle">70</text><text class="m" x="56" y="109.19999999999999" font-size="11" text-anchor="end">70</text>
+<line x1="500.0" x2="500.0" y1="44" y2="350" stroke="var(--border)"/><line x1="64" x2="500" y1="44.0" y2="44.0" stroke="var(--border)"/><text class="m" x="500.0" y="365" font-size="11" text-anchor="middle">80</text><text class="m" x="56" y="48.0" font-size="11" text-anchor="end">80</text>
+<line x1="64.0" y1="350.0" x2="500.0" y2="44.0" stroke="var(--alert)" stroke-width="2" stroke-dasharray="6 4"/>
+<circle cx="212.2" cy="264.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="270.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="227.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="258.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="343.0" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="203.5" cy="227.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="258.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="294.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="227.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="194.8" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="177.4" cy="294.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="168.6" cy="325.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="270.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="270.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="194.8" cy="307.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="203.5" cy="288.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="282.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="343.0" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="160.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="369.2" cy="123.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="135.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="160.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="135.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="123.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="386.6" cy="105.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="148.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="160.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="148.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="148.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="203.5" cy="264.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="276.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="212.2" cy="282.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="186.1" cy="319.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="142.5" cy="331.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="276.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="282.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="276.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="282.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="276.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="288.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="194.8" cy="301.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="270.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="264.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="276.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="186.1" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="203.5" cy="227.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="282.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="276.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="194.8" cy="301.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="151.2" cy="319.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="203.5" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="135.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="203.5" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="168.6" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="264.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="343.0" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="264.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="430.2" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="288.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="227.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="177.4" cy="294.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="151.2" cy="319.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="288.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="177.4" cy="301.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="168.6" cy="301.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="168.6" cy="258.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="369.2" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="343.0" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="227.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="148.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="282.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="282.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="177.4" cy="264.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="212.2" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="194.8" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="159.9" cy="270.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="151.2" cy="276.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="194.8" cy="294.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="168.6" cy="258.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="212.2" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="212.2" cy="282.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="125.0" cy="294.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="81.4" cy="337.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="81.4" cy="319.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="125.0" cy="331.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="270.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="194.8" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="160.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="343.0" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="135.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="212.2" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="98.9" cy="319.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="212.2" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="194.8" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="177.4" cy="264.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="177.4" cy="282.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="194.8" cy="270.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="203.5" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="151.2" cy="282.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="177.4" cy="258.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="203.5" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="194.8" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="177.4" cy="270.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="212.2" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="186.1" cy="258.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="343.0" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="160.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="227.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="369.2" cy="129.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="160.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="369.2" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="148.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="386.6" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="369.2" cy="135.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="343.0" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="148.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="125.0" cy="301.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="186.1" cy="270.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="212.2" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="203.5" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="343.0" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="135.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="227.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="168.6" cy="276.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="160.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="227.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="264.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="404.1" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="404.1" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="404.1" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="203.5" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="258.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="282.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="160.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="160.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="343.0" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="404.1" cy="135.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="500.0" cy="44.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="160.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="404.1" cy="111.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="404.1" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="148.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="135.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="369.2" cy="135.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="148.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="194.8" cy="288.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="203.5" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="142.5" cy="294.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="343.0" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="258.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="203.5" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="72.7" cy="337.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="186.1" cy="313.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="125.0" cy="294.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="81.4" cy="337.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="142.5" cy="313.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="227.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="227.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="160.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="203.5" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="227.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="227.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="194.8" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="186.1" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="151.2" cy="282.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="151.2" cy="282.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="215.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="227.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="227.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="212.2" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="386.6" cy="117.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="369.2" cy="135.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="227.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="377.9" cy="123.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="160.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="184.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="343.0" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="343.0" cy="148.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="233.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="203.5" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="238.4" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="168.6" cy="270.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="255.8" cy="270.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="270.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="221.0" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="160.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="246.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="258.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="252.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="148.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="148.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="412.8" cy="86.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="203.1" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="377.9" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="178.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="273.3" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="154.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="325.6" cy="148.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="351.8" cy="135.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="343.0" cy="209.2" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="334.3" cy="148.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="203.5" cy="294.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="395.4" cy="111.3" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="282.0" cy="197.0" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="129.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="386.6" cy="172.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="360.5" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="343.0" cy="141.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="369.2" cy="123.6" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="290.7" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="308.2" cy="166.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="316.9" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="247.1" cy="221.5" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="264.6" cy="239.8" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="299.4" cy="190.9" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="282.7" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<circle cx="229.7" cy="270.4" r="3.6" fill="var(--s1)" fill-opacity="0.35"/>
+<text class="m" x="282.0" y="392" font-size="12" text-anchor="middle">baseline, voltage off (ADC counts)</text>
+<text class="m" x="16" y="197.0" font-size="12" text-anchor="middle" transform="rotate(-90 16 197.0)">baseline, voltage on (ADC counts)</text>
+</svg><p class="caption">The median difference is +1.0 ADC count (typical spread 1), 70&nbsp;% of the channels agree within 3 counts and 82&nbsp;% within 5. So the voltage does not move the baselines of these chips, and the voltage-off measurement was fine for them.</p></div>
+<p>Over all 1123 channels the median baseline is 51 ADC, and only 85 channels (8&nbsp;%) are at or below the 38 we had assumed for all of them.</p>
+
+<h3>8c. VMM 4, 7 and 9 have a block of channels with a high baseline</h3>
+<p>With complete coverage the three burst chips look different from every other chip. Among the 15 normal chips just one channel out of about 960 has a baseline above 80 ADC (VMM 16 channel 33, which reads 704). On VMM 4, 7 and 9 a large block of channels does:</p>
+<div class="viz-card"><svg viewBox="0 0 648 300" role="img" aria-label="Baseline of every channel of VMM 4, 7, 9 and a normal chip">
+<text class="t" x="12" y="18" font-size="13" font-weight="600">Baseline of every channel, voltage on: the three burst chips and a normal chip (VMM 12)</text>
+<text class="m" x="12" y="34" font-size="11">x: channel 0 to 63; y: ADC baseline on a log scale. Orange: above 80. Grey ticks at the bottom: masked or not measured.</text>
+<text class="m" x="12" y="48" font-size="11">Orange triangles on top: channels that were hot (bursting) in at least 3 runs.</text>
+<text class="t" x="42" y="70" font-size="12" font-weight="600">VMM 4</text>
+<line x1="42" x2="158" y1="223.8" y2="223.8" stroke="var(--border)"/><text class="f" x="38" y="226.8" font-size="9" text-anchor="end">30</text>
+<line x1="42" x2="158" y1="203.4" y2="203.4" stroke="var(--border)"/><text class="f" x="38" y="206.4" font-size="9" text-anchor="end">50</text>
+<line x1="42" x2="158" y1="175.7" y2="175.7" stroke="var(--border)"/><text class="f" x="38" y="178.7" font-size="9" text-anchor="end">100</text>
+<line x1="42" x2="158" y1="131.9" y2="131.9" stroke="var(--border)"/><text class="f" x="38" y="134.9" font-size="9" text-anchor="end">300</text>
+<line x1="42" x2="158" y1="83.8" y2="83.8" stroke="var(--border)"/><text class="f" x="38" y="86.8" font-size="9" text-anchor="end">1000</text>
+<line x1="42" x2="158" y1="184.6" y2="184.6" stroke="var(--alert)" stroke-width="1" stroke-dasharray="3 3"/>
+<g><title>VMM 4 ch 0: baseline ADC 45</title><circle cx="42.0" cy="207.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 1: baseline ADC 40</title><circle cx="43.8" cy="212.3" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 2: baseline ADC 41</title><circle cx="45.7" cy="211.3" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 3: baseline ADC 44</title><circle cx="47.5" cy="208.5" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 4: baseline ADC 48</title><circle cx="49.4" cy="205.0" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 5: baseline ADC 46</title><circle cx="51.2" cy="206.7" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 6: baseline ADC 49</title><circle cx="53.0" cy="204.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 7: baseline ADC 42</title><circle cx="54.9" cy="210.4" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 8: baseline ADC 44</title><circle cx="56.7" cy="208.5" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 9: baseline ADC 44</title><circle cx="58.6" cy="208.5" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 10: baseline ADC 41</title><circle cx="60.4" cy="211.3" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 11: baseline ADC 49</title><circle cx="62.3" cy="204.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 12: baseline ADC 49</title><circle cx="64.1" cy="204.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 13: baseline ADC 56</title><circle cx="65.9" cy="198.9" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 14: baseline ADC 44</title><circle cx="67.8" cy="208.5" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 15: baseline ADC 43</title><circle cx="69.6" cy="209.4" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 16: baseline ADC 52</title><circle cx="71.5" cy="201.8" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 17: baseline ADC 49</title><circle cx="73.3" cy="204.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 18: baseline ADC 50</title><circle cx="75.1" cy="203.4" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 19: baseline ADC 50</title><circle cx="77.0" cy="203.4" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 20: baseline ADC 44</title><circle cx="78.8" cy="208.5" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 21: baseline ADC 39</title><circle cx="80.7" cy="213.3" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 22: baseline ADC 46</title><circle cx="82.5" cy="206.7" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 23: baseline ADC 49</title><circle cx="84.3" cy="204.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 24: baseline ADC 63</title><circle cx="86.2" cy="194.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 25: baseline ADC 56</title><circle cx="88.0" cy="198.9" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 26: baseline ADC 45</title><circle cx="89.9" cy="207.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 27: baseline ADC 45</title><circle cx="91.7" cy="207.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 28: baseline ADC 50</title><circle cx="93.6" cy="203.4" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 29: baseline ADC 59</title><circle cx="95.4" cy="196.8" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 30: baseline ADC 49</title><circle cx="97.2" cy="204.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 31: baseline ADC 60</title><circle cx="99.1" cy="196.1" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 32: baseline ADC 61</title><circle cx="100.9" cy="195.5" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 33: baseline ADC 49</title><circle cx="102.8" cy="204.2" r="2.2" fill="var(--s1)"/></g>
+<line x1="104.6" x2="104.6" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="106.4" x2="106.4" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="108.3" x2="108.3" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="110.1" x2="110.1" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="112.0" x2="112.0" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="113.8" x2="113.8" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<g><title>VMM 4 ch 40: baseline ADC 108</title><circle cx="115.7" cy="172.7" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 4 ch 41: baseline ADC 106</title><circle cx="117.5" cy="173.4" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 4 ch 42: baseline ADC 144</title><circle cx="119.3" cy="161.2" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 4 ch 43: baseline ADC 123</title><circle cx="121.2" cy="167.5" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 4 ch 44: baseline ADC 191</title><circle cx="123.0" cy="149.9" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 4 ch 45: baseline ADC 109</title><circle cx="124.9" cy="172.3" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 4 ch 46: baseline ADC 187</title><circle cx="126.7" cy="150.7" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 4 ch 47: baseline ADC 122</title><circle cx="128.5" cy="167.8" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 4 ch 48: baseline ADC 270</title><circle cx="130.4" cy="136.1" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 4 ch 49: baseline ADC 144</title><circle cx="132.2" cy="161.2" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 4 ch 50: baseline ADC 336</title><circle cx="134.1" cy="127.4" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 4 ch 51: baseline ADC 210</title><circle cx="135.9" cy="146.1" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 4 ch 52: baseline ADC 231</title><circle cx="137.7" cy="142.3" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 4 ch 53: baseline ADC 228</title><circle cx="139.6" cy="142.8" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 4 ch 54: baseline ADC 69</title><circle cx="141.4" cy="190.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 4 ch 55: baseline ADC 176</title><circle cx="143.3" cy="153.2" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 4 ch 56: baseline ADC 192</title><circle cx="145.1" cy="149.7" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 4 ch 57: baseline ADC 352</title><circle cx="147.0" cy="125.5" r="2.2" fill="var(--s2)"/></g>
+<line x1="148.8" x2="148.8" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="150.6" x2="150.6" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="152.5" x2="152.5" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<g><title>VMM 4 ch 61: baseline ADC 336</title><circle cx="154.3" cy="127.4" r="2.2" fill="var(--s2)"/></g>
+<line x1="156.2" x2="156.2" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<g><title>VMM 4 ch 63: baseline ADC 233</title><circle cx="158.0" cy="142.0" r="2.2" fill="var(--s2)"/></g>
+<path d="M101.6 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M103.4 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M105.3 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M107.1 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M109.0 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M110.8 72 h6 l-3 6 z" fill="var(--s2)"/>
+<text class="f" x="42.0" y="258" font-size="9" text-anchor="middle">0</text>
+<text class="f" x="100.9" y="258" font-size="9" text-anchor="middle">32</text>
+<text class="f" x="158.0" y="258" font-size="9" text-anchor="middle">63</text>
+<text class="t" x="198" y="70" font-size="12" font-weight="600">VMM 7</text>
+<line x1="198" x2="314" y1="223.8" y2="223.8" stroke="var(--border)"/><text class="f" x="194" y="226.8" font-size="9" text-anchor="end">30</text>
+<line x1="198" x2="314" y1="203.4" y2="203.4" stroke="var(--border)"/><text class="f" x="194" y="206.4" font-size="9" text-anchor="end">50</text>
+<line x1="198" x2="314" y1="175.7" y2="175.7" stroke="var(--border)"/><text class="f" x="194" y="178.7" font-size="9" text-anchor="end">100</text>
+<line x1="198" x2="314" y1="131.9" y2="131.9" stroke="var(--border)"/><text class="f" x="194" y="134.9" font-size="9" text-anchor="end">300</text>
+<line x1="198" x2="314" y1="83.8" y2="83.8" stroke="var(--border)"/><text class="f" x="194" y="86.8" font-size="9" text-anchor="end">1000</text>
+<line x1="198" x2="314" y1="184.6" y2="184.6" stroke="var(--alert)" stroke-width="1" stroke-dasharray="3 3"/>
+<g><title>VMM 7 ch 0: baseline ADC 32</title><circle cx="198.0" cy="221.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 1: baseline ADC 32</title><circle cx="199.8" cy="221.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 2: baseline ADC 47</title><circle cx="201.7" cy="205.9" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 3: baseline ADC 42</title><circle cx="203.5" cy="210.4" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 4: baseline ADC 49</title><circle cx="205.4" cy="204.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 5: baseline ADC 45</title><circle cx="207.2" cy="207.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 6: baseline ADC 51</title><circle cx="209.0" cy="202.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 7: baseline ADC 45</title><circle cx="210.9" cy="207.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 8: baseline ADC 46</title><circle cx="212.7" cy="206.7" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 9: baseline ADC 51</title><circle cx="214.6" cy="202.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 10: baseline ADC 48</title><circle cx="216.4" cy="205.0" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 11: baseline ADC 49</title><circle cx="218.3" cy="204.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 12: baseline ADC 48</title><circle cx="220.1" cy="205.0" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 13: baseline ADC 51</title><circle cx="221.9" cy="202.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 14: baseline ADC 42</title><circle cx="223.8" cy="210.4" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 15: baseline ADC 52</title><circle cx="225.6" cy="201.8" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 16: baseline ADC 53</title><circle cx="227.5" cy="201.1" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 17: baseline ADC 60</title><circle cx="229.3" cy="196.1" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 18: baseline ADC 52</title><circle cx="231.1" cy="201.8" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 19: baseline ADC 58</title><circle cx="233.0" cy="197.5" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 20: baseline ADC 63</title><circle cx="234.8" cy="194.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 7 ch 21: baseline ADC 65</title><circle cx="236.7" cy="192.9" r="2.2" fill="var(--s1)"/></g>
+<line x1="238.5" x2="238.5" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="240.3" x2="240.3" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="242.2" x2="242.2" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="244.0" x2="244.0" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<g><title>VMM 7 ch 26: baseline ADC 82</title><circle cx="245.9" cy="183.7" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 27: baseline ADC 138</title><circle cx="247.7" cy="162.9" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 28: baseline ADC 148</title><circle cx="249.6" cy="160.1" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 29: baseline ADC 142</title><circle cx="251.4" cy="161.7" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 30: baseline ADC 97</title><circle cx="253.2" cy="177.0" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 31: baseline ADC 144</title><circle cx="255.1" cy="161.2" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 32: baseline ADC 258</title><circle cx="256.9" cy="137.9" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 33: baseline ADC 128</title><circle cx="258.8" cy="165.9" r="2.2" fill="var(--s2)"/></g>
+<line x1="260.6" x2="260.6" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<g><title>VMM 7 ch 35: baseline ADC 145</title><circle cx="262.4" cy="160.9" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 36: baseline ADC 288</title><circle cx="264.3" cy="133.5" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 37: baseline ADC 391</title><circle cx="266.1" cy="121.3" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 38: baseline ADC 87</title><circle cx="268.0" cy="181.3" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 39: baseline ADC 295</title><circle cx="269.8" cy="132.5" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 40: baseline ADC 215</title><circle cx="271.7" cy="145.2" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 41: baseline ADC 273</title><circle cx="273.5" cy="135.6" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 42: baseline ADC 440</title><circle cx="275.3" cy="116.6" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 43: baseline ADC 288</title><circle cx="277.2" cy="133.5" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 44: baseline ADC 227</title><circle cx="279.0" cy="143.0" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 45: baseline ADC 363</title><circle cx="280.9" cy="124.3" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 46: baseline ADC 235</title><circle cx="282.7" cy="141.6" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 47: baseline ADC 273</title><circle cx="284.5" cy="135.6" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 48: baseline ADC 176</title><circle cx="286.4" cy="153.2" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 49: baseline ADC 287</title><circle cx="288.2" cy="133.6" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 50: baseline ADC 1023</title><circle cx="290.1" cy="82.9" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 7 ch 51: baseline ADC 321</title><circle cx="291.9" cy="129.2" r="2.2" fill="var(--s2)"/></g>
+<line x1="293.7" x2="293.7" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<g><title>VMM 7 ch 53: baseline ADC 272</title><circle cx="295.6" cy="135.8" r="2.2" fill="var(--s2)"/></g>
+<line x1="297.4" x2="297.4" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="299.3" x2="299.3" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="301.1" x2="301.1" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="303.0" x2="303.0" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<g><title>VMM 7 ch 58: baseline ADC 187</title><circle cx="304.8" cy="150.7" r="2.2" fill="var(--s2)"/></g>
+<line x1="306.6" x2="306.6" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<g><title>VMM 7 ch 60: baseline ADC 288</title><circle cx="308.5" cy="133.5" r="2.2" fill="var(--s2)"/></g>
+<line x1="310.3" x2="310.3" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<g><title>VMM 7 ch 62: baseline ADC 229</title><circle cx="312.2" cy="142.7" r="2.2" fill="var(--s2)"/></g>
+<line x1="314.0" x2="314.0" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<path d="M235.5 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M237.3 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M239.2 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M241.0 72 h6 l-3 6 z" fill="var(--s2)"/>
+<text class="f" x="198.0" y="258" font-size="9" text-anchor="middle">0</text>
+<text class="f" x="256.9" y="258" font-size="9" text-anchor="middle">32</text>
+<text class="f" x="314.0" y="258" font-size="9" text-anchor="middle">63</text>
+<text class="t" x="354" y="70" font-size="12" font-weight="600">VMM 9</text>
+<line x1="354" x2="470" y1="223.8" y2="223.8" stroke="var(--border)"/><text class="f" x="350" y="226.8" font-size="9" text-anchor="end">30</text>
+<line x1="354" x2="470" y1="203.4" y2="203.4" stroke="var(--border)"/><text class="f" x="350" y="206.4" font-size="9" text-anchor="end">50</text>
+<line x1="354" x2="470" y1="175.7" y2="175.7" stroke="var(--border)"/><text class="f" x="350" y="178.7" font-size="9" text-anchor="end">100</text>
+<line x1="354" x2="470" y1="131.9" y2="131.9" stroke="var(--border)"/><text class="f" x="350" y="134.9" font-size="9" text-anchor="end">300</text>
+<line x1="354" x2="470" y1="83.8" y2="83.8" stroke="var(--border)"/><text class="f" x="350" y="86.8" font-size="9" text-anchor="end">1000</text>
+<line x1="354" x2="470" y1="184.6" y2="184.6" stroke="var(--alert)" stroke-width="1" stroke-dasharray="3 3"/>
+<g><title>VMM 9 ch 0: baseline ADC 48</title><circle cx="354.0" cy="205.0" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 9 ch 1: baseline ADC 41</title><circle cx="355.8" cy="211.3" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 9 ch 2: baseline ADC 47</title><circle cx="357.7" cy="205.9" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 9 ch 3: baseline ADC 40</title><circle cx="359.5" cy="212.3" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 9 ch 4: baseline ADC 44</title><circle cx="361.4" cy="208.5" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 9 ch 5: baseline ADC 51</title><circle cx="363.2" cy="202.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 9 ch 6: baseline ADC 48</title><circle cx="365.0" cy="205.0" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 9 ch 7: baseline ADC 37</title><circle cx="366.9" cy="215.4" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 9 ch 8: baseline ADC 39</title><circle cx="368.7" cy="213.3" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 9 ch 9: baseline ADC 52</title><circle cx="370.6" cy="201.8" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 9 ch 10: baseline ADC 37</title><circle cx="372.4" cy="215.4" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 9 ch 11: baseline ADC 37</title><circle cx="374.3" cy="215.4" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 9 ch 12: baseline ADC 40</title><circle cx="376.1" cy="212.3" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 9 ch 13: baseline ADC 47</title><circle cx="377.9" cy="205.9" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 9 ch 14: baseline ADC 40</title><circle cx="379.8" cy="212.3" r="2.2" fill="var(--s1)"/></g>
+<line x1="381.6" x2="381.6" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="383.5" x2="383.5" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="385.3" x2="385.3" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="387.1" x2="387.1" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="389.0" x2="389.0" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="390.8" x2="390.8" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="392.7" x2="392.7" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<g><title>VMM 9 ch 22: baseline ADC 67</title><circle cx="394.5" cy="191.7" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 9 ch 23: baseline ADC 124</title><circle cx="396.3" cy="167.2" r="2.2" fill="var(--s2)"/></g>
+<line x1="398.2" x2="398.2" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="400.0" x2="400.0" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="401.9" x2="401.9" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="403.7" x2="403.7" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<g><title>VMM 9 ch 28: baseline ADC 126</title><circle cx="405.6" cy="166.5" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 29: baseline ADC 129</title><circle cx="407.4" cy="165.6" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 30: baseline ADC 123</title><circle cx="409.2" cy="167.5" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 31: baseline ADC 160</title><circle cx="411.1" cy="157.0" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 32: baseline ADC 94</title><circle cx="412.9" cy="178.2" r="2.2" fill="var(--s2)"/></g>
+<line x1="414.8" x2="414.8" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<g><title>VMM 9 ch 34: baseline ADC 146</title><circle cx="416.6" cy="160.6" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 35: baseline ADC 130</title><circle cx="418.4" cy="165.3" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 36: baseline ADC 167</title><circle cx="420.3" cy="155.3" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 37: baseline ADC 104</title><circle cx="422.1" cy="174.2" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 38: baseline ADC 190</title><circle cx="424.0" cy="150.1" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 39: baseline ADC 124</title><circle cx="425.8" cy="167.2" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 40: baseline ADC 155</title><circle cx="427.7" cy="158.2" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 41: baseline ADC 173</title><circle cx="429.5" cy="153.9" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 42: baseline ADC 155</title><circle cx="431.3" cy="158.2" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 43: baseline ADC 171</title><circle cx="433.2" cy="154.3" r="2.2" fill="var(--s2)"/></g>
+<line x1="435.0" x2="435.0" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<g><title>VMM 9 ch 45: baseline ADC 176</title><circle cx="436.9" cy="153.2" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 46: baseline ADC 128</title><circle cx="438.7" cy="165.9" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 47: baseline ADC 176</title><circle cx="440.5" cy="153.2" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 48: baseline ADC 170</title><circle cx="442.4" cy="154.6" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 49: baseline ADC 117</title><circle cx="444.2" cy="169.5" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 50: baseline ADC 160</title><circle cx="446.1" cy="157.0" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 51: baseline ADC 155</title><circle cx="447.9" cy="158.2" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 52: baseline ADC 84</title><circle cx="449.7" cy="182.7" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 53: baseline ADC 128</title><circle cx="451.6" cy="165.9" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 54: baseline ADC 135</title><circle cx="453.4" cy="163.8" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 55: baseline ADC 135</title><circle cx="455.3" cy="163.8" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 56: baseline ADC 101</title><circle cx="457.1" cy="175.3" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 57: baseline ADC 214</title><circle cx="459.0" cy="145.4" r="2.2" fill="var(--s2)"/></g>
+<line x1="460.8" x2="460.8" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<line x1="462.6" x2="462.6" y1="242" y2="246" stroke="var(--fg-faint)"/>
+<g><title>VMM 9 ch 60: baseline ADC 223</title><circle cx="464.5" cy="143.7" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 61: baseline ADC 114</title><circle cx="466.3" cy="170.5" r="2.2" fill="var(--s2)"/></g>
+<g><title>VMM 9 ch 62: baseline ADC 71</title><circle cx="468.2" cy="189.4" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 9 ch 63: baseline ADC 92</title><circle cx="470.0" cy="179.1" r="2.2" fill="var(--s2)"/></g>
+<path d="M378.6 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M380.5 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M382.3 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M384.1 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M386.0 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M387.8 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M389.7 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M395.2 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M397.0 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M398.9 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M400.7 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M411.8 72 h6 l-3 6 z" fill="var(--s2)"/>
+<path d="M432.0 72 h6 l-3 6 z" fill="var(--s2)"/>
+<text class="f" x="354.0" y="258" font-size="9" text-anchor="middle">0</text>
+<text class="f" x="412.9" y="258" font-size="9" text-anchor="middle">32</text>
+<text class="f" x="470.0" y="258" font-size="9" text-anchor="middle">63</text>
+<text class="t" x="510" y="70" font-size="12" font-weight="600">VMM 12</text>
+<line x1="510" x2="626" y1="223.8" y2="223.8" stroke="var(--border)"/><text class="f" x="506" y="226.8" font-size="9" text-anchor="end">30</text>
+<line x1="510" x2="626" y1="203.4" y2="203.4" stroke="var(--border)"/><text class="f" x="506" y="206.4" font-size="9" text-anchor="end">50</text>
+<line x1="510" x2="626" y1="175.7" y2="175.7" stroke="var(--border)"/><text class="f" x="506" y="178.7" font-size="9" text-anchor="end">100</text>
+<line x1="510" x2="626" y1="131.9" y2="131.9" stroke="var(--border)"/><text class="f" x="506" y="134.9" font-size="9" text-anchor="end">300</text>
+<line x1="510" x2="626" y1="83.8" y2="83.8" stroke="var(--border)"/><text class="f" x="506" y="86.8" font-size="9" text-anchor="end">1000</text>
+<line x1="510" x2="626" y1="184.6" y2="184.6" stroke="var(--alert)" stroke-width="1" stroke-dasharray="3 3"/>
+<g><title>VMM 12 ch 0: baseline ADC 45</title><circle cx="510.0" cy="207.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 1: baseline ADC 54</title><circle cx="511.8" cy="200.3" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 2: baseline ADC 48</title><circle cx="513.7" cy="205.0" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 3: baseline ADC 48</title><circle cx="515.5" cy="205.0" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 4: baseline ADC 47</title><circle cx="517.4" cy="205.9" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 5: baseline ADC 43</title><circle cx="519.2" cy="209.4" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 6: baseline ADC 46</title><circle cx="521.0" cy="206.7" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 7: baseline ADC 48</title><circle cx="522.9" cy="205.0" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 8: baseline ADC 43</title><circle cx="524.7" cy="209.4" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 9: baseline ADC 45</title><circle cx="526.6" cy="207.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 10: baseline ADC 48</title><circle cx="528.4" cy="205.0" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 11: baseline ADC 64</title><circle cx="530.3" cy="193.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 12: baseline ADC 51</title><circle cx="532.1" cy="202.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 13: baseline ADC 52</title><circle cx="533.9" cy="201.8" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 14: baseline ADC 52</title><circle cx="535.8" cy="201.8" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 15: baseline ADC 48</title><circle cx="537.6" cy="205.0" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 16: baseline ADC 55</title><circle cx="539.5" cy="199.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 17: baseline ADC 52</title><circle cx="541.3" cy="201.8" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 18: baseline ADC 56</title><circle cx="543.1" cy="198.9" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 19: baseline ADC 62</title><circle cx="545.0" cy="194.8" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 20: baseline ADC 54</title><circle cx="546.8" cy="200.3" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 21: baseline ADC 48</title><circle cx="548.7" cy="205.0" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 22: baseline ADC 64</title><circle cx="550.5" cy="193.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 23: baseline ADC 61</title><circle cx="552.3" cy="195.5" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 24: baseline ADC 50</title><circle cx="554.2" cy="203.4" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 25: baseline ADC 60</title><circle cx="556.0" cy="196.1" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 26: baseline ADC 66</title><circle cx="557.9" cy="192.3" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 27: baseline ADC 62</title><circle cx="559.7" cy="194.8" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 28: baseline ADC 56</title><circle cx="561.6" cy="198.9" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 29: baseline ADC 49</title><circle cx="563.4" cy="204.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 30: baseline ADC 57</title><circle cx="565.2" cy="198.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 31: baseline ADC 60</title><circle cx="567.1" cy="196.1" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 32: baseline ADC 51</title><circle cx="568.9" cy="202.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 33: baseline ADC 53</title><circle cx="570.8" cy="201.1" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 34: baseline ADC 55</title><circle cx="572.6" cy="199.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 35: baseline ADC 51</title><circle cx="574.4" cy="202.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 36: baseline ADC 59</title><circle cx="576.3" cy="196.8" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 37: baseline ADC 61</title><circle cx="578.1" cy="195.5" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 38: baseline ADC 54</title><circle cx="580.0" cy="200.3" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 39: baseline ADC 56</title><circle cx="581.8" cy="198.9" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 40: baseline ADC 56</title><circle cx="583.7" cy="198.9" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 41: baseline ADC 64</title><circle cx="585.5" cy="193.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 42: baseline ADC 53</title><circle cx="587.3" cy="201.1" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 43: baseline ADC 60</title><circle cx="589.2" cy="196.1" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 44: baseline ADC 55</title><circle cx="591.0" cy="199.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 45: baseline ADC 63</title><circle cx="592.9" cy="194.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 46: baseline ADC 60</title><circle cx="594.7" cy="196.1" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 47: baseline ADC 57</title><circle cx="596.5" cy="198.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 48: baseline ADC 64</title><circle cx="598.4" cy="193.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 49: baseline ADC 57</title><circle cx="600.2" cy="198.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 50: baseline ADC 58</title><circle cx="602.1" cy="197.5" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 51: baseline ADC 64</title><circle cx="603.9" cy="193.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 52: baseline ADC 58</title><circle cx="605.7" cy="197.5" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 53: baseline ADC 64</title><circle cx="607.6" cy="193.6" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 54: baseline ADC 65</title><circle cx="609.4" cy="192.9" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 55: baseline ADC 62</title><circle cx="611.3" cy="194.8" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 56: baseline ADC 63</title><circle cx="613.1" cy="194.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 57: baseline ADC 56</title><circle cx="615.0" cy="198.9" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 58: baseline ADC 57</title><circle cx="616.8" cy="198.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 59: baseline ADC 57</title><circle cx="618.6" cy="198.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 60: baseline ADC 62</title><circle cx="620.5" cy="194.8" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 61: baseline ADC 58</title><circle cx="622.3" cy="197.5" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 62: baseline ADC 49</title><circle cx="624.2" cy="204.2" r="2.2" fill="var(--s1)"/></g>
+<g><title>VMM 12 ch 63: baseline ADC 54</title><circle cx="626.0" cy="200.3" r="2.2" fill="var(--s1)"/></g>
+<text class="f" x="510.0" y="258" font-size="9" text-anchor="middle">0</text>
+<text class="f" x="568.9" y="258" font-size="9" text-anchor="middle">32</text>
+<text class="f" x="626.0" y="258" font-size="9" text-anchor="middle">63</text>
+</svg><p class="caption">Baseline of every channel, voltage on. VMM 12 (right) is a normal chip. On VMM 4, VMM 7 and VMM 9 a block of channels in the upper part has baselines of 100 to several hundred ADC: 19 of 54 measured, unmasked channels on VMM 4 (from channel 40), 29 of 51 on VMM 7 (from 26, up to 1023), 32 of 49 on VMM 9 (from 23).</p></div>
+<div class="viz-card"><svg viewBox="0 0 640 330" role="img" aria-label="A block of channels with a high baseline and the bursts at its edge">
+<text class="t" x="10" y="18" font-size="13" font-weight="600">What the three burst chips look like (cartoon of the data above)</text>
+<rect x="24.8" y="178.0" width="7.7" height="36.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="34.0" y="177.0" width="7.7" height="37.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="43.3" y="176.0" width="7.7" height="38.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="52.5" y="175.0" width="7.7" height="39.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="61.8" y="174.0" width="7.7" height="40.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="71.0" y="178.0" width="7.7" height="36.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="80.3" y="177.0" width="7.7" height="37.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="89.5" y="176.0" width="7.7" height="38.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="98.8" y="175.0" width="7.7" height="39.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="108.0" y="174.0" width="7.7" height="40.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="117.3" y="178.0" width="7.7" height="36.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="126.5" y="177.0" width="7.7" height="37.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="135.8" y="176.0" width="7.7" height="38.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="145.1" y="175.0" width="7.7" height="39.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="154.3" y="174.0" width="7.7" height="40.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="163.6" y="178.0" width="7.7" height="36.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="172.8" y="177.0" width="7.7" height="37.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="182.1" y="176.0" width="7.7" height="38.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="191.3" y="175.0" width="7.7" height="39.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="200.6" y="174.0" width="7.7" height="40.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="209.8" y="178.0" width="7.7" height="36.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="219.1" y="177.0" width="7.7" height="37.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="228.3" y="176.0" width="7.7" height="38.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="237.6" y="175.0" width="7.7" height="39.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="246.8" y="174.0" width="7.7" height="40.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="256.1" y="178.0" width="7.7" height="36.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="265.3" y="177.0" width="7.7" height="37.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="274.6" y="176.0" width="7.7" height="38.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="283.8" y="175.0" width="7.7" height="39.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="293.1" y="174.0" width="7.7" height="40.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="302.3" y="178.0" width="7.7" height="36.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="311.6" y="177.0" width="7.7" height="37.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="320.8" y="176.0" width="7.7" height="38.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="330.1" y="175.0" width="7.7" height="39.0" rx="1.5" fill="var(--s1)" opacity="0.75"/>
+<rect x="339.3" y="174.0" width="7.7" height="40.0" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="348.6" y="171.8" width="7.7" height="42.2" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="357.8" y="169.6" width="7.7" height="44.4" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="367.1" y="167.4" width="7.7" height="46.6" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="376.3" y="165.2" width="7.7" height="48.8" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="385.6" y="163.0" width="7.7" height="51.0" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="394.8" y="160.8" width="7.7" height="53.2" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="404.1" y="158.6" width="7.7" height="55.4" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="413.3" y="156.4" width="7.7" height="57.6" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="422.6" y="154.2" width="7.7" height="59.8" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="431.8" y="152.0" width="7.7" height="62.0" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="441.1" y="149.8" width="7.7" height="64.2" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="450.3" y="147.6" width="7.7" height="66.4" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="459.6" y="145.4" width="7.7" height="68.6" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="468.8" y="143.2" width="7.7" height="70.8" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="478.1" y="141.0" width="7.7" height="73.0" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="487.3" y="138.8" width="7.7" height="75.2" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="496.6" y="136.6" width="7.7" height="77.4" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="505.8" y="134.4" width="7.7" height="79.6" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="515.0" y="132.2" width="7.7" height="81.8" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="524.3" y="130.0" width="7.7" height="84.0" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="533.5" y="127.8" width="7.7" height="86.2" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="542.8" y="125.6" width="7.7" height="88.4" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="552.0" y="123.4" width="7.7" height="90.6" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="561.3" y="121.2" width="7.7" height="92.8" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="570.5" y="119.0" width="7.7" height="95.0" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="579.8" y="116.8" width="7.7" height="97.2" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="589.0" y="114.6" width="7.7" height="99.4" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="598.3" y="112.4" width="7.7" height="101.6" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<rect x="607.5" y="110.2" width="7.7" height="103.8" rx="1.5" fill="var(--s2)" opacity="0.9"/>
+<path d="M282.6 150 h10 l-5 9 z" fill="var(--alert)"/>
+<path d="M301.1 150 h10 l-5 9 z" fill="var(--alert)"/>
+<path d="M319.6 150 h10 l-5 9 z" fill="var(--alert)"/>
+<path d="M338.1 150 h10 l-5 9 z" fill="var(--alert)"/>
+<line x1="24" x2="616" y1="214" y2="214" stroke="var(--border)"/>
+<text class="m" x="24" y="230" font-size="11">channel 0</text><text class="m" x="616" y="230" font-size="11" text-anchor="end">channel 63</text>
+<text class="t" x="42.5" y="130" font-size="12" font-weight="600">normal channels</text><text class="m" x="42.5" y="145" font-size="11">baseline about 50</text>
+<text class="t" x="523.5" y="70" font-size="12" font-weight="600" text-anchor="middle">block of channels with a high baseline</text><text class="m" x="523.5" y="85" font-size="11" text-anchor="middle">100 to 400 and more</text>
+<text class="t" x="310.75" y="138" font-size="11" text-anchor="middle">the bursts: at the edge of the block</text>
+<text class="m" x="10" y="250" font-size="11">VMM 4, 7 and 9 each have such a block in the upper part of the chip: about a third of the channels of</text>
+<text class="m" x="10" y="265" font-size="11">VMM 4, more than half of VMM 7 and two thirds of VMM 9. The channels that burst are the ones next to it.</text>
+<text class="m" x="10" y="280" font-size="11">Where we could compare, the block is there with the voltage off too, so it is not the chamber.</text>
+<text class="m" x="10" y="295" font-size="11">Why the block exists, and why the edge bursts, is not known: it looks like a property of the chip,</text>
+<text class="m" x="10" y="310" font-size="11">the hybrid or the connection of those channels.</text>
+</svg><p class="caption">The picture in one drawing. The bursts we have followed since the first day sit at the edge of the block: the channels that were hot in at least three runs are 34 to 39 on VMM 4 (the block starts at 40), 22 to 25 on VMM 7 (block from 26) and 15 to 27 on VMM 9, plus 33 and 44 (block from 23).</p></div>
+<p>Where a channel of the block was also measured with the voltage off, it was high then too: 6 of the 7 channels we could compare (VMM 4 channels 40 and 41, VMM 7 channel 26, VMM 9 channels 23, 28 and 31; the seventh read 0, probably because it was masked then). So the block does not come from the chamber. This is a small sample, and we don&rsquo;t know why the block exists: it looks like a property of the chip, the hybrid or the connection of those channels. It is a good thing to hand to the people who built these hybrids.</p>
+
+<h3>8d. The noise ladder of the three chips, with the voltage on</h3>
+<div class="viz-card"><svg viewBox="0 0 640 360" role="img" aria-label="VMM 4, 7 and 9 unmasked: rate against threshold with the voltage on and off">
+<text class="t" x="10" y="18" font-size="13" font-weight="600">VMM 4, 7 and 9 unmasked: voltage on (dot) against voltage off (ring)</text>
+<text class="m" x="10" y="33" font-size="11">kHz per chip, log scale; same configurations about an hour apart. Dots on the bottom edge: no hits, or fewer than 0.01 kHz.</text>
+<text class="m" x="10" y="47" font-size="11">Where a dot sits inside its ring, the rate is the same with and without the voltage.</text>
+<circle cx="16" cy="66" r="4.6" fill="var(--s1)"/><text class="m" x="26" y="70" font-size="11">voltage on (HV on, normal read-out)</text><circle cx="260" cy="66" r="6.6" fill="none" stroke="var(--s2)" stroke-width="2.6"/><text class="m" x="273" y="70" font-size="11">voltage off</text>
+<text class="f" x="10" y="86" font-size="10">x: threshold step d (left: very high threshold, right: low). Hover for the hot channel.</text>
+<text class="t" x="113.33333333333333" y="98" font-size="12" font-weight="600" text-anchor="middle">VMM 4</text>
+<line x1="44.0" x2="210.66666666666666" y1="308.0" y2="308.0" stroke="var(--border)"/><text class="f" x="40.0" y="311.0" font-size="9" text-anchor="end">0.01</text>
+<line x1="44.0" x2="210.66666666666666" y1="237.4" y2="237.4" stroke="var(--border)"/><text class="f" x="40.0" y="240.4" font-size="9" text-anchor="end">1</text>
+<line x1="44.0" x2="210.66666666666666" y1="166.8" y2="166.8" stroke="var(--border)"/><text class="f" x="40.0" y="169.8" font-size="9" text-anchor="end">100</text>
+<text class="f" x="50.4" y="322" font-size="9" text-anchor="middle">200</text>
+<text class="f" x="76.1" y="322" font-size="9" text-anchor="middle">60</text>
+<text class="f" x="101.7" y="322" font-size="9" text-anchor="middle">40</text>
+<text class="f" x="127.3" y="322" font-size="9" text-anchor="middle">30</text>
+<text class="f" x="153.0" y="322" font-size="9" text-anchor="middle">24</text>
+<text class="f" x="178.6" y="322" font-size="9" text-anchor="middle">20</text>
+<text class="f" x="204.3" y="322" font-size="9" text-anchor="middle">16</text>
+<g><title>VMM 4, d=200, voltage off: 12 kHz, hottest channel 45 (64 %)</title><circle cx="50.4" cy="199.3" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=100, voltage off: 0.00724 kHz, hottest channel 39 (100 %)</title><circle cx="63.2" cy="308.0" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=60, voltage off: 0.000629 kHz, hottest channel 38 (76 %)</title><circle cx="76.1" cy="308.0" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=50, voltage off: 26.7 kHz, hottest channel 38 (62 %)</title><circle cx="88.9" cy="187.0" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=40, voltage off: 1.77e+03 kHz, hottest channel 36 (59 %)</title><circle cx="101.7" cy="122.7" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=34, voltage off: 0 kHz, no hits</title><circle cx="114.5" cy="308.0" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=30, voltage off: 0.000595 kHz, hottest channel 37 (93 %)</title><circle cx="127.3" cy="308.0" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=27, voltage off: 0.0274 kHz, hottest channel 37 (88 %)</title><circle cx="140.2" cy="292.5" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=24, voltage off: 0.841 kHz, hottest channel 37 (85 %)</title><circle cx="153.0" cy="240.0" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=22, voltage off: 5.39 kHz, hottest channel 37 (83 %)</title><circle cx="165.8" cy="211.6" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=20, voltage off: 25.6 kHz, hottest channel 37 (79 %)</title><circle cx="178.6" cy="187.7" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=18, voltage off: 112 kHz, hottest channel 37 (77 %)</title><circle cx="191.4" cy="165.0" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=16, voltage off: 340 kHz, hottest channel 37 (73 %)</title><circle cx="204.3" cy="148.0" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 4, d=200, voltage on: 13.8 kHz, hottest channel 45 (69 %)</title><circle cx="50.4" cy="197.1" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=100, voltage on: 170 kHz, hottest channel 40 (100 %)</title><circle cx="63.2" cy="158.6" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=60, voltage on: 0.0134 kHz, hottest channel 38 (11 %)</title><circle cx="76.1" cy="303.5" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=50, voltage on: 28.6 kHz, hottest channel 38 (62 %)</title><circle cx="88.9" cy="186.0" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=40, voltage on: 1.74e+03 kHz, hottest channel 36 (54 %)</title><circle cx="101.7" cy="123.0" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=34, voltage on: 534 kHz, hottest channel 36 (79 %)</title><circle cx="114.5" cy="141.1" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=30, voltage on: 84.7 kHz, hottest channel 36 (89 %)</title><circle cx="127.3" cy="169.3" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=27, voltage on: 11.6 kHz, hottest channel 36 (93 %)</title><circle cx="140.2" cy="199.8" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=24, voltage on: 1.94 kHz, hottest channel 37 (46 %)</title><circle cx="153.0" cy="227.3" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=22, voltage on: 6.45 kHz, hottest channel 37 (78 %)</title><circle cx="165.8" cy="208.8" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=20, voltage on: 32.8 kHz, hottest channel 37 (78 %)</title><circle cx="178.6" cy="183.9" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=18, voltage on: 127 kHz, hottest channel 37 (75 %)</title><circle cx="191.4" cy="163.2" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 4, d=16, voltage on: 367 kHz, hottest channel 37 (71 %)</title><circle cx="204.3" cy="146.8" r="3.2" fill="var(--s1)"/></g>
+<text class="t" x="320.0" y="98" font-size="12" font-weight="600" text-anchor="middle">VMM 7</text>
+<line x1="250.66666666666666" x2="417.3333333333333" y1="308.0" y2="308.0" stroke="var(--border)"/><text class="f" x="246.66666666666666" y="311.0" font-size="9" text-anchor="end">0.01</text>
+<line x1="250.66666666666666" x2="417.3333333333333" y1="237.4" y2="237.4" stroke="var(--border)"/><text class="f" x="246.66666666666666" y="240.4" font-size="9" text-anchor="end">1</text>
+<line x1="250.66666666666666" x2="417.3333333333333" y1="166.8" y2="166.8" stroke="var(--border)"/><text class="f" x="246.66666666666666" y="169.8" font-size="9" text-anchor="end">100</text>
+<text class="f" x="257.1" y="322" font-size="9" text-anchor="middle">200</text>
+<text class="f" x="282.7" y="322" font-size="9" text-anchor="middle">60</text>
+<text class="f" x="308.4" y="322" font-size="9" text-anchor="middle">40</text>
+<text class="f" x="334.0" y="322" font-size="9" text-anchor="middle">30</text>
+<text class="f" x="359.6" y="322" font-size="9" text-anchor="middle">24</text>
+<text class="f" x="385.3" y="322" font-size="9" text-anchor="middle">20</text>
+<text class="f" x="410.9" y="322" font-size="9" text-anchor="middle">16</text>
+<g><title>VMM 7, d=200, voltage off: 820 kHz, hottest channel 47 (56 %)</title><circle cx="257.1" cy="134.5" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=100, voltage off: 0 kHz, no hits</title><circle cx="269.9" cy="308.0" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=60, voltage off: 15.4 kHz, hottest channel 25 (100 %)</title><circle cx="282.7" cy="195.4" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=50, voltage off: 34.7 kHz, hottest channel 24 (100 %)</title><circle cx="295.5" cy="183.0" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=40, voltage off: 144 kHz, hottest channel 24 (86 %)</title><circle cx="308.4" cy="161.2" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=34, voltage off: 547 kHz, hottest channel 23 (100 %)</title><circle cx="321.2" cy="140.7" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=30, voltage off: 0.0228 kHz, hottest channel 24 (100 %)</title><circle cx="334.0" cy="295.4" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=27, voltage off: 0.000422 kHz, hottest channel 24 (100 %)</title><circle cx="346.8" cy="308.0" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=24, voltage off: 0 kHz, no hits</title><circle cx="359.6" cy="308.0" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=22, voltage off: 0.0002 kHz, hottest channel 10 (78 %)</title><circle cx="372.5" cy="308.0" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=20, voltage off: 0.00259 kHz, hottest channel 10 (91 %)</title><circle cx="385.3" cy="308.0" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=18, voltage off: 0.0373 kHz, hottest channel 10 (89 %)</title><circle cx="398.1" cy="287.8" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=16, voltage off: 0.373 kHz, hottest channel 10 (87 %)</title><circle cx="410.9" cy="252.5" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 7, d=200, voltage on: 678 kHz, hottest channel 47 (49 %)</title><circle cx="257.1" cy="137.4" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=100, voltage on: 0.0172 kHz, hottest channel 27 (9 %)</title><circle cx="269.9" cy="299.6" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=60, voltage on: 22.1 kHz, hottest channel 25 (100 %)</title><circle cx="282.7" cy="190.0" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=50, voltage on: 27.5 kHz, hottest channel 24 (100 %)</title><circle cx="295.5" cy="186.6" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=40, voltage on: 190 kHz, hottest channel 24 (91 %)</title><circle cx="308.4" cy="156.9" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=34, voltage on: 546 kHz, hottest channel 23 (100 %)</title><circle cx="321.2" cy="140.8" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=30, voltage on: 315 kHz, hottest channel 23 (100 %)</title><circle cx="334.0" cy="149.2" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=27, voltage on: 60.5 kHz, hottest channel 23 (100 %)</title><circle cx="346.8" cy="174.5" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=24, voltage on: 4.92 kHz, hottest channel 23 (100 %)</title><circle cx="359.6" cy="213.0" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=22, voltage on: 0.736 kHz, hottest channel 23 (97 %)</title><circle cx="372.5" cy="242.1" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=20, voltage on: 0.0969 kHz, hottest channel 23 (79 %)</title><circle cx="385.3" cy="273.2" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=18, voltage on: 0.0772 kHz, hottest channel 10 (54 %)</title><circle cx="398.1" cy="276.7" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 7, d=16, voltage on: 0.499 kHz, hottest channel 10 (81 %)</title><circle cx="410.9" cy="248.0" r="3.2" fill="var(--s1)"/></g>
+<text class="t" x="526.6666666666666" y="98" font-size="12" font-weight="600" text-anchor="middle">VMM 9</text>
+<line x1="457.3333333333333" x2="624.0" y1="308.0" y2="308.0" stroke="var(--border)"/><text class="f" x="453.3333333333333" y="311.0" font-size="9" text-anchor="end">0.01</text>
+<line x1="457.3333333333333" x2="624.0" y1="237.4" y2="237.4" stroke="var(--border)"/><text class="f" x="453.3333333333333" y="240.4" font-size="9" text-anchor="end">1</text>
+<line x1="457.3333333333333" x2="624.0" y1="166.8" y2="166.8" stroke="var(--border)"/><text class="f" x="453.3333333333333" y="169.8" font-size="9" text-anchor="end">100</text>
+<text class="f" x="463.7" y="322" font-size="9" text-anchor="middle">200</text>
+<text class="f" x="489.4" y="322" font-size="9" text-anchor="middle">60</text>
+<text class="f" x="515.0" y="322" font-size="9" text-anchor="middle">40</text>
+<text class="f" x="540.7" y="322" font-size="9" text-anchor="middle">30</text>
+<text class="f" x="566.3" y="322" font-size="9" text-anchor="middle">24</text>
+<text class="f" x="591.9" y="322" font-size="9" text-anchor="middle">20</text>
+<text class="f" x="617.6" y="322" font-size="9" text-anchor="middle">16</text>
+<g><title>VMM 9, d=200, voltage off: 2.73e+03 kHz, hottest channel 45 (35 %)</title><circle cx="463.7" cy="116.1" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=100, voltage off: 25.7 kHz, hottest channel 25 (57 %)</title><circle cx="476.6" cy="187.6" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=60, voltage off: 688 kHz, hottest channel 27 (63 %)</title><circle cx="489.4" cy="137.2" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=50, voltage off: 105 kHz, hottest channel 21 (100 %)</title><circle cx="502.2" cy="166.0" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=40, voltage off: 9.36 kHz, hottest channel 21 (100 %)</title><circle cx="515.0" cy="203.1" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=34, voltage off: 0.0349 kHz, hottest channel 21 (73 %)</title><circle cx="527.8" cy="288.8" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=30, voltage off: 0.496 kHz, hottest channel 16 (100 %)</title><circle cx="540.7" cy="248.1" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=27, voltage off: 6.03 kHz, hottest channel 16 (100 %)</title><circle cx="553.5" cy="209.8" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=24, voltage off: 49.9 kHz, hottest channel 16 (100 %)</title><circle cx="566.3" cy="177.4" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=22, voltage off: 160 kHz, hottest channel 16 (99 %)</title><circle cx="579.1" cy="159.6" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=20, voltage off: 381 kHz, hottest channel 16 (99 %)</title><circle cx="591.9" cy="146.3" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=18, voltage off: 737 kHz, hottest channel 16 (97 %)</title><circle cx="604.8" cy="136.1" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=16, voltage off: 1.01e+03 kHz, hottest channel 16 (94 %)</title><circle cx="617.6" cy="131.3" r="5.6" fill="none" stroke="var(--s2)" stroke-width="2.2"/></g>
+<g><title>VMM 9, d=200, voltage on: 1.91e+03 kHz, hottest channel 33 (49 %)</title><circle cx="463.7" cy="121.5" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=100, voltage on: 82.3 kHz, hottest channel 25 (60 %)</title><circle cx="476.6" cy="169.8" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=60, voltage on: 929 kHz, hottest channel 27 (52 %)</title><circle cx="489.4" cy="132.6" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=50, voltage on: 1.13e+03 kHz, hottest channel 20 (84 %)</title><circle cx="502.2" cy="129.6" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=40, voltage on: 183 kHz, hottest channel 19 (70 %)</title><circle cx="515.0" cy="157.5" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=34, voltage on: 816 kHz, hottest channel 19 (100 %)</title><circle cx="527.8" cy="134.6" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=30, voltage on: 644 kHz, hottest channel 19 (100 %)</title><circle cx="540.7" cy="138.2" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=27, voltage on: 225 kHz, hottest channel 19 (90 %)</title><circle cx="553.5" cy="154.4" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=24, voltage on: 147 kHz, hottest channel 16 (71 %)</title><circle cx="566.3" cy="160.9" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=22, voltage on: 262 kHz, hottest channel 16 (95 %)</title><circle cx="579.1" cy="152.0" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=20, voltage on: 493 kHz, hottest channel 16 (96 %)</title><circle cx="591.9" cy="142.3" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=18, voltage on: 816 kHz, hottest channel 16 (93 %)</title><circle cx="604.8" cy="134.6" r="3.2" fill="var(--s1)"/></g>
+<g><title>VMM 9, d=16, voltage on: 1.06e+03 kHz, hottest channel 16 (88 %)</title><circle cx="617.6" cy="130.6" r="3.2" fill="var(--s1)"/></g>
+<text class="m" x="320.0" y="352" font-size="11" text-anchor="middle">threshold step d, from very high (left) to low (right)</text>
+</svg><p class="caption">The same configurations as before, voltage on (dot) and off (ring), taken about an hour apart on the same evening. At most thresholds the two agree, including the hot channel. VMM 4 matches in 7 of 13 thresholds (and both are quiet in 1), VMM 7 in 5 (quiet in 5), VMM 9 in 5 (quiet in 0).</p></div>
+<p>Two things stand out. First, a burst at a high threshold is the same in both runs: VMM 4 at d = 40 gives 1740&nbsp;kHz with the voltage on and 1770 with it off, both on channel 36; VMM 7 at d = 34 gives 546 and 547&nbsp;kHz, both on channel 23. So the burst state follows the threshold setting and is not a matter of chance at each configuration, at least at these settings; the planned Monday repeat test will check this directly. Second, near the noise onset (d from 34 down to 27) the chips are noisier with the voltage on (VMM 4 at d = 30: 85&nbsp;kHz against almost nothing with it off). That is the chamber adding hits near the onset, as on every other chip.</p>
+
+<div class="stepcard done"><div class="sc-head"><span class="stepn">8</span><strong>First measurements with the voltage on</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>The voltage was switched on by hand, and we took a 10-minute health check at the safe setting, the noise ladder of VMM 4, 7 and 9 again (13 points), and the neighbour read-out with cosmic muons at five thresholds. The runs are <code>run_57</code> to <code>run_75</code>.</dd><dt>What we saw</dt><dd>No chamber is dead. Baselines now exist for 1123 of 1152 channels, and the voltage does not change them on the 15 normal chips. VMM 4, 7 and 9 each have a block of channels with baselines of 100 to several hundred ADC, next to the channels that burst. The bursts at high thresholds are the same with the voltage on and off.</dd><dt>What it tells us</dt><dd>The baseline map is essentially complete. The three burst chips are different in a clear and measurable way, and their problem looks like a property of the hardware, not of the chambers or of chance.</dd><dt>So the next step is</dt><dd>take the efficiency measurement with muon tracks (step 9), and keep the burst chips in it, with the 23 hot channels masked.</dd></dl></div>
+
+<h2>9. What we know, and what we do not</h2>
 <div class="two">
 <div><h3>We know</h3><ul>
 <li>With no voltage, the electronics are silent at d = 50.</li>
@@ -3852,19 +5157,22 @@
 <li>A single channel&rsquo;s noise rate has a bell-shaped curve with a peak.</li>
 <li>With neighbour read-out we can measure a channel&rsquo;s baseline directly. The value used so far (38) is wrong for nearly all channels; the chips differ (medians 48 to 61).</li>
 <li>The measured ADC baselines do <em>not</em> predict where a channel&rsquo;s noise peaks (correlation between 0 and 0.4).</li>
+<li>With the voltage on, 97&nbsp;% of the channels have a baseline, and the voltage does not change them on the 15 normal chips.</li>
+<li>VMM 4, 7 and 9 each have a block of channels with a high baseline (also with the voltage off); the bursts are at its edge and, at high thresholds, are the same with the voltage on and off.</li>
+<li>No chamber is dead with the voltage on.</li>
 </ul></div>
 <div><h3>We do not know yet</h3><ul>
 <li>The <strong>efficiency</strong>: this was the noise side only.</li>
-<li>The baseline of the other half of the channels (still to be covered), and whether the voltage changes the baselines (same measurement with the voltage on).</li>
+<li>Why the three burst chips have that block of channels, and whether it is the chip, the hybrid or the connection.</li>
 <li>The link between ADC counts and millivolts, channel by channel.</li>
 <li>Whether the ADC baseline and the level the threshold acts on are the same thing, and why three channels read very high values (VMM 16 ch 33: 704, VMM 6 ch 14: 186, VMM 14 ch 34: 125).</li>
-<li>Why VMM 4, 7 and 9 burst, whether the same configuration gives the same burst again, and whether the cable, the hybrid, the chip or the new firmware is to blame.</li>
+<li>Whether applying the very same configuration twice on the same day gives the same burst (the Monday repeat test), and what the det3 pulse heights that reach the ADC limit mean.</li>
 <li>Whether the lab noise looks like the beam-hall noise (about 100 times higher in the beam hall).</li>
-<li>Whether the high voltage changes any of this (the voltage was switched on only after these runs), and what the voltage actually is: it is set by hand and not logged.</li>
+<li>What the voltage actually is: it is set by hand and not logged.</li>
 </ul></div>
 </div>
 
-<h2>9. What comes next</h2>
+<h2>10. What comes next</h2>
 <div class="viz-card"><svg viewBox="0 0 640 236" role="img" aria-label="One threshold per chip versus one per channel">
 <text class="t" x="10" y="18" font-size="13" font-weight="600">One threshold for the whole chip, or a small correction for each channel? (cartoon)</text>
 <text class="t" x="14" y="46" font-size="12" font-weight="600">Now: one threshold per chip</text>
@@ -3943,24 +5251,26 @@
 <text class="m" x="14" y="221" font-size="11">correction the channels line up, so the chip's threshold can be lower and the muons that were lost are counted again.</text>
 </svg><p class="caption">Today each chip has one threshold. The next step gives each channel a small correction so that all channels start at the same level (cartoon, not measured).</p></div>
 
-<div class="stepcard next"><div class="sc-head"><span class="stepn">8</span><strong>Measurements with the high voltage on</strong> <span class="pill warn">next, not done yet</span></div><dl><dt>Where we are</dt><dd>The voltage was switched on after the runs above. This is a proposed plan, not yet started: first a health check of the chambers (chamber 3 had trouble in July), then the noise ladder again with the voltage on for VMM 4, 7 and 9; neighbour read-out with cosmic muons to fill in the channels still without a baseline; a long cosmic run at a safe threshold; and then a threshold scan with muon tracks, about an hour per point.</dd><dt>What is needed</dt><dd>Hours of cosmic muons per point (about 40 tracks per minute per chip is expected, so one hour gives roughly 2400, i.e. an efficiency uncertainty of about 0.6&nbsp;% per chip), the voltage readings in the logbook, and the distances between the three chambers for the tracks. Other gain settings can be added if time allows.</dd><dt>What it will tell us</dt><dd>the first measured efficiency against threshold, chip by chip, plus the baselines of the channels that were still missing and whether the voltage moves them.</dd><dt>Then</dt><dd>on Monday the voltage goes off again for the 15-minute repeat test of step 7, then the millivolt measurement (step 9).</dd></dl></div>
+<div class="stepcard next"><div class="sc-head"><span class="stepn">9</span><strong>Reference run and threshold scan with muon tracks</strong> <span class="pill warn">next, not done yet</span></div><dl><dt>Where we are</dt><dd>Running and queued, with the voltage on. Since Saturday 18:33 the reference run is taking 16 runs of 30 minutes at the safe setting of every chip (the 23 hot channels of VMM 4, 7 and 9 masked, a data-rate guard that stops a run that floods). Behind it, started automatically, comes a threshold scan: four points of one hour, from 16 steps above the safe setting down to 8 steps below it. About 40 muon tracks per minute and chip are expected, so an hour gives roughly 2400 tracks, about 0.6&nbsp;% on an efficiency near 90&nbsp;%.</dd><dt>What is needed</dt><dd>Nothing is measured yet: the data are being taken (the Friday night was lost, see the table at the end). Still missing from our side: the voltage readings in the logbook, and the chamber distances, which are taken as in the beam test.</dd><dt>What it will tell us</dt><dd>the first efficiency against threshold, chip by chip, from tracks that cross the three chambers (tag and probe).</dd><dt>Then</dt><dd>on Monday the voltage goes off again for the 15-minute repeat test of step 7, and the millivolt measurement follows (step 10).</dd></dl></div>
 
-<div class="stepcard next"><div class="sc-head"><span class="stepn">9</span><strong>Put the baselines in millivolts</strong> <span class="pill warn">next, not done yet</span></div><dl><dt>Where we are</dt><dd>Not started. The new slow-control library can already read the chip&rsquo;s monitor for each channel, but the command-line tool does not offer it.</dd><dt>What is needed</dt><dd>A way to call the library: either ask the developer to add a command, or write a small program of our own that calls it (without changing his software). We would test it on one channel of one hybrid first, then run all channels of all hybrids.</dd><dt>What it will tell us</dt><dd>The level of every channel in millivolts. Together with the ADC baselines of step 6 this gives the full chain, threshold setting to millivolts to ADC, channel by channel.</dd><dt>Then</dt><dd>compute the corrections (step 10).</dd></dl></div>
+<div class="stepcard next"><div class="sc-head"><span class="stepn">10</span><strong>Put the baselines in millivolts</strong> <span class="pill warn">next, not done yet</span></div><dl><dt>Where we are</dt><dd>Not started. The new slow-control library can already read the chip&rsquo;s monitor for each channel, but the command-line tool does not offer it.</dd><dt>What is needed</dt><dd>A way to call the library: either ask the developer to add a command, or write a small program of our own that calls it (without changing his software). We would test it on one channel of one hybrid first, then run all channels of all hybrids.</dd><dt>What it will tell us</dt><dd>The level of every channel in millivolts. Together with the ADC baselines of step 6 this gives the full chain, threshold setting to millivolts to ADC, channel by channel.</dd><dt>Then</dt><dd>compute the corrections (step 11).</dd></dl></div>
 
-<div class="stepcard later"><div class="sc-head"><span class="stepn">10</span><strong>Compute and apply the corrections, then scan again</strong> <span class="pill">later</span></div><dl><dt>Where we are</dt><dd>Not started.</dd><dt>What is needed</dt><dd>The measurements of steps 6 to 9.</dd><dt>What it will tell us</dt><dd>If the corrections work, the noise onset of all chips lines up and the usable threshold window opens for every chip.</dd><dt>Then</dt><dd>repeat the noise scan with the corrections, voltage on and off, then measure the efficiency (step 11).</dd></dl></div>
+<div class="stepcard later"><div class="sc-head"><span class="stepn">11</span><strong>Compute and apply the corrections, then scan again</strong> <span class="pill">later</span></div><dl><dt>Where we are</dt><dd>Not started.</dd><dt>What is needed</dt><dd>The measurements of steps 6 to 10.</dd><dt>What it will tell us</dt><dd>If the corrections work, the noise onset of all chips lines up and the usable threshold window opens for every chip.</dd><dt>Then</dt><dd>repeat the noise scan with the corrections, voltage on and off, then measure the efficiency (step 12).</dd></dl></div>
 
-<div class="stepcard later"><div class="sc-head"><span class="stepn">11</span><strong>Measure the efficiency</strong> <span class="pill">later</span></div><dl><dt>Where we are</dt><dd>Not started.</dd><dt>What is needed</dt><dd>A night of cosmic muons at a safe threshold, then the tag-and-probe method: the two outer chambers say a muon went through, and the middle one is asked whether it saw it.</dd><dt>What it will tell us</dt><dd>The efficiency against the threshold, chip by chip: the real answer to the first question.</dd><dt>Then</dt><dd>compare with the beam test and with the DREAM readout.</dd></dl></div>
+<div class="stepcard later"><div class="sc-head"><span class="stepn">12</span><strong>Measure the efficiency</strong> <span class="pill">later</span></div><dl><dt>Where we are</dt><dd>Not started.</dd><dt>What is needed</dt><dd>A night of cosmic muons at a safe threshold, then the tag-and-probe method: the two outer chambers say a muon went through, and the middle one is asked whether it saw it.</dd><dt>What it will tell us</dt><dd>The efficiency against the threshold, chip by chip: the real answer to the first question.</dd><dt>Then</dt><dd>compare with the beam test and with the DREAM readout.</dd></dl></div>
 
-<h2>10. Where the data and code are</h2>
+<h2>11. Where the data and code are</h2>
 <table class="runs">
 <tr><th>Item</th><th>Where</th></tr>
 <tr><td>Voltage-on scan: <code>run_4</code> &hellip; <code>run_13</code>; first tests: <code>run_1</code> &hellip; <code>run_3</code></td><td><code>/local/p2/p2data/cosmics_3det_202610/runs/</code> on vmm_daplxa, copied to EOS <code>&hellip;/p2_sps_july/vmm_cosmic_run_oct26/</code></td></tr>
 <tr><td>Voltage-off scan: <code>run_14</code> &hellip; <code>run_23</code> (same configs), <code>run_24</code> &hellip; <code>run_27</code> (nothing masked)</td><td>same place; configs end in <code>m2hvoff_d&lt;d&gt;</code> and <code>m0hvoff_d&lt;d&gt;</code></td></tr>
 <tr><td>Neighbour read-out (sng 1), voltage off: <code>run_28</code> (first test), <code>run_29</code> &hellip; <code>run_32</code> (thresholds 0, &minus;3, &minus;6, &minus;9 from each chip&rsquo;s onset)</td><td>same place; configs <code>&hellip;_cosmic_sng1hvoff_probe / _o0 / _m3 / _m6 / _m9</code>. These runs are large: 2 to 9&nbsp;GB each, about 25&nbsp;GB in total. Analysed on lxplus from the EOS backup, so that the DAQ machine was not loaded</td></tr>
 <tr><td>VMM 4, 7, 9 unmasked, voltage off: <code>run_35</code> &hellip; <code>run_47</code> (normal read-out), <code>run_48</code> &hellip; <code>run_56</code> (neighbour read-out)</td><td>same place; configs <code>&hellip;_cosmic_n479hvoff_d&lt;d&gt;</code> and <code>&hellip;_s479hvoff_d&lt;d&gt;</code>. Two stray captures from a software problem at the start are kept apart in <code>orphan_2026-10-23_*</code> (not part of any run)</td></tr>
-<tr><td>Tables used for the figures</td><td><code>analysis_noise_scan/</code> and <code>analysis_noise_scan_hvoff/</code> (chip tables, per-channel CSV, voltage on/off comparison), <code>analysis_n479_hvoff/</code> (rate and hot channels of VMM 4, 7, 9), <code>analysis_sng1_hvoff/</code> (baseline of every covered channel, coverage per capture, baseline against noise peak)</td></tr>
+<tr><td>Voltage ON, 24 Oct: <code>run_57</code> (health check), <code>run_58</code> &hellip; <code>run_70</code> (noise ladder of VMM 4, 7, 9), <code>run_71</code> &hellip; <code>run_75</code> (neighbour read-out with cosmics, 4 to 44&nbsp;GB each)</td><td>same place; configs <code>&hellip;_safehvon_v1</code>, <code>&hellip;_n479hvon_d&lt;d&gt;</code>, <code>&hellip;_sngcosmic_o&lt;k&gt;</code>. A sixth neighbour point was refused by the disk guard. Nothing was recorded from Friday 20:24 to Saturday 18:33: the reference run had not been chained behind these scans, and the connection to the machine was lost (then the machine&rsquo;s account service stopped accepting the login)</td></tr>
+<tr><td>Reference run and threshold scan (running and queued)</td><td><code>run_76</code> onward: 16 &times; 30&nbsp;min at <code>&hellip;_safehvon_v1</code>; then <code>&hellip;_thrhvon_p16 / _p8 / _m4 / _m8</code> (60&nbsp;min each)</td></tr>
+<tr><td>Tables used for the figures</td><td><code>analysis_noise_scan/</code> and <code>analysis_noise_scan_hvoff/</code> (chip tables, per-channel CSV, voltage on/off comparison), <code>analysis_n479_hvoff/</code> and <code>analysis_hvon/</code> (rate and hot channels of VMM 4, 7, 9 with the voltage off and on; baselines with the voltage on), <code>analysis_health/</code> (pulse-height spectra of the health check), <code>analysis_sng1_hvoff/</code> (baseline of every covered channel, coverage per capture, baseline against noise peak)</td></tr>
 <tr><td>Chip settings</td><td>4.5&nbsp;mV/fC, 200&nbsp;ns peaking time; only the threshold lines and the masks change between files</td></tr>
-<tr><td>Code and feedback notes</td><td>branch <code>lab-cosmics-oct26</code>, <code>docs/LAB_COSMICS_OBSERVATIONS.md</code> (items 1&ndash;46)</td></tr>
+<tr><td>Code and feedback notes</td><td>branch <code>lab-cosmics-oct26</code>, <code>docs/LAB_COSMICS_OBSERVATIONS.md</code> (items 1&ndash;46, more to come)</td></tr>
 </table>
 </div>
   </article>
