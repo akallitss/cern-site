@@ -41,6 +41,8 @@
 
 
 
+
+
 <style>
   :root{--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--alert:#eb6834;--surface:#fcfcfb;
     --c0:#eef0f3;--c1:#cde2fb;--c2:#86b6ef;--c3:#3987e5;--c4:#1c5cab;--c5:#0d366b;
@@ -104,7 +106,7 @@
 <li><strong>The question:</strong> how low can we set the threshold of each VMM chip before electronic noise takes over? The beam test could only <em>guess</em> the answer. Here, with cosmic muons, we can <em>measure</em> it.</li>
 <li><strong>What we did, in order:</strong> (1) a first test, which showed a flood of data from a few chips; (2) a noise scan with the chamber voltage on; (3) the same scan with the voltage <em>off</em>, to separate the detector from the electronics; (4) a closer look at single channels; (5) a direct measurement of the baseline of each channel, using a chip setting where a firing channel makes its neighbours report; (6) the same scans with the three chips we had masked (VMM 4, 7, 9) switched back on; (7) the first measurements with the high voltage on: a health check, and the neighbour read-out with cosmic muons, which gave a baseline for 97&nbsp;% of the channels.</li>
 <li><strong>What we found:</strong> the chips do <em>not</em> start to be noisy at the same threshold, and this spread stays when the voltage is off, so it comes from the electronics, not the chambers. Three chips (VMM 4, 7, 9) have noisy channels that also stay with the voltage off; when we switch them back on they show two kinds of noise: an ordinary smooth onset like the other chips, plus bursts that jump up and down with each new configuration, even at very high thresholds. And each channel has a noise peak of its own, so the channels inside one chip differ too. The baselines we could measure directly (about half of the channels so far) are mostly 45 to 65 ADC counts, not the 38 used so far for every channel, and they differ from chip to chip. With the voltage on we now have a baseline for 97&nbsp;% of the channels, the voltage does not change them, and VMM 4, 7 and 9 each have a large block of channels with baselines of 100 to several hundred, next to the channels that burst.</li>
-<li><strong>What this means for the next step:</strong> one threshold per chip is not enough. We need the baseline of <em>every channel</em> (half is done), in threshold units (millivolts, not yet done), and then to correct each channel. Then we repeat the scan and, only then, measure efficiency. The measurement with muon tracks (reference run and threshold scan, high voltage on) is running now.</li>
+<li><strong>What this means for the next step:</strong> one threshold per chip is not enough. We need the baseline of <em>every channel</em> (half is done), in threshold units (millivolts, not yet done), and then to correct each channel. Then we repeat the scan and, only then, measure efficiency. The measurement with muon tracks (reference run and threshold scan, high voltage on) is running now, with a global threshold for each chip read from the noise scans; a first look shows muon-like events (about 19 per minute for the stack), but also bursts that carry a quarter of the hits and have to be cut.</li>
 </ul></div>
 
 <h2>0. The idea in one picture</h2>
@@ -1163,7 +1165,7 @@
 <text class="m" x="10" y="338" font-size="11">Orange: fires. Blue: read out as a neighbour. One step leaves most channels unmeasured; a few steps cover (nearly) all.</text>
 </svg><p class="caption">Each step lets other channels fire, and their neighbours get measured. The cartoon uses 16 channels and three steps.</p></div>
 
-<div class="stepcard done"><div class="sc-head"><span class="stepn">6</span><strong>Neighbour read-out with the voltage OFF</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>We switched on <code>sng = 1</code> on every chip and took 2 minutes at five settings: one first test, and then four thresholds per chip, 0, 3, 6 and 9 steps lower than that chip&rsquo;s noise onset from step 4. VMM 4 and 9 stay masked. The voltage stayed off, so the baselines are measured without any detector effect.</dd><dt>What we saw</dt><dd>Between 64 and 67&nbsp;% of the hits on every chip are neighbour read-outs, as expected. After adding the five captures, <strong>627 of the 1024 channels</strong> on the 16 working chips had a baseline (at least 50 read-outs); the count after each capture was 410, 410, 428, 528, 627, and the two lowest thresholds added the most. The whole of each 2-minute capture was used (599&nbsp;s in total). The median baseline is 54&nbsp;ADC; chip medians range from 48 to 61; only 10 of the 627 channels are at or below 38.</dd><dt>What it tells us</dt><dd>The single value used so far for every channel (38) is wrong for almost all of them, and the baselines differ between chips and, by a few ADC counts, inside each chip. About {100 * (BL_TOTAL - BL_COV) / BL_TOTAL:.0f}&nbsp;% of the channels still have no measurement (VMM 6 and VMM 7 the most). All the data taken have now been used, so more coverage needs new data: more steps, longer runs, or cosmic muons with the voltage on (they hit all channels evenly).</dd><dt>So the next step is</dt><dd>put the baselines in threshold units (millivolts), which needs one more measurement (step 10). First, though, the three chips we had masked must be put back into the study (next section).</dd></dl></div>
+<div class="stepcard done"><div class="sc-head"><span class="stepn">6</span><strong>Neighbour read-out with the voltage OFF</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>We switched on <code>sng = 1</code> on every chip and took 2 minutes at five settings: one first test, and then four thresholds per chip, 0, 3, 6 and 9 steps lower than that chip&rsquo;s noise onset from step 4. VMM 4 and 9 stay masked. The voltage stayed off, so the baselines are measured without any detector effect.</dd><dt>What we saw</dt><dd>Between 64 and 67&nbsp;% of the hits on every chip are neighbour read-outs, as expected. After adding the five captures, <strong>627 of the 1024 channels</strong> on the 16 working chips had a baseline (at least 50 read-outs); the count after each capture was 410, 410, 428, 528, 627, and the two lowest thresholds added the most. The whole of each 2-minute capture was used (599&nbsp;s in total). The median baseline is 54&nbsp;ADC; chip medians range from 48 to 61; only 10 of the 627 channels are at or below 38.</dd><dt>What it tells us</dt><dd>The single value used so far for every channel (38) is wrong for almost all of them, and the baselines differ between chips and, by a few ADC counts, inside each chip. About {100 * (BL_TOTAL - BL_COV) / BL_TOTAL:.0f}&nbsp;% of the channels still have no measurement (VMM 6 and VMM 7 the most). All the data taken have now been used, so more coverage needs new data: more steps, longer runs, or cosmic muons with the voltage on (they hit all channels evenly).</dd><dt>So the next step is</dt><dd>put the baselines in threshold units (millivolts), which needs one more measurement (step 12). First, though, the three chips we had masked must be put back into the study (next section).</dd></dl></div>
 <div class="viz-card"><svg viewBox="0 0 694 436" role="img" aria-label="Measured ADC baseline of every channel">
 <text class="t" x="14" y="18" font-size="13" font-weight="600">Measured baseline (ADC) of every channel, from neighbour read-out</text>
 <text class="m" x="14" y="34" font-size="11">one row per chip, one cell per channel 0-63; the colour is the median ADC of its neighbour read-outs</text>
@@ -3677,7 +3679,7 @@
 <line x1="84.0" y1="184.7708634495842" x2="540.0" y2="157.89741741142058" stroke="var(--alert)" stroke-width="2.2" stroke-dasharray="6 4"/>
 <text class="t" x="534" y="70" font-size="12" text-anchor="end" font-weight="600">rank correlation +0.33</text>
 </svg><p class="caption">Each dot is a channel with both a measured baseline and a clear noise peak (39 channels here, peaks with at least 10 hits). A line through the dots is almost flat. The rank correlation is +0.48 (13 channels, at least 30 hits), +0.33 (39 channels, at least 10 hits), +0.17 (82 channels, at least 5 hits); it gets smaller as more channels are included, and the ordinary correlation is small (+0.04 to +0.21). Channels above 100 ADC (the three outliers) are left out of the plot and of these numbers.</p></div>
-<p><strong>So the answer is no, at least not clearly.</strong> An earlier look with fewer channels showed a weak positive trend; with the whole data it largely disappears. Three reasons are possible, and none is tested yet: (1) the ADC baseline is not the same thing as the level the threshold acts on, because each channel&rsquo;s threshold comparator has its own small offset; (2) the threshold steps are coarse (3 to 10 units) and many peaks have few hits; (3) the peaks come from the voltage-on scan and the baselines from the voltage-off scan. Reason (1) is exactly why the chip monitor measurement of step 10 matters: it measures the pedestal <em>and</em> the threshold of each channel, so it gives the missing link.</p>
+<p><strong>So the answer is no, at least not clearly.</strong> An earlier look with fewer channels showed a weak positive trend; with the whole data it largely disappears. Three reasons are possible, and none is tested yet: (1) the ADC baseline is not the same thing as the level the threshold acts on, because each channel&rsquo;s threshold comparator has its own small offset; (2) the threshold steps are coarse (3 to 10 units) and many peaks have few hits; (3) the peaks come from the voltage-on scan and the baselines from the voltage-off scan. Reason (1) is exactly why the chip monitor measurement of step 12 matters: it measures the pedestal <em>and</em> the threshold of each channel, so it gives the missing link.</p>
 <div class="viz-card"><svg viewBox="0 0 640 190" role="img" aria-label="Three units for the same level">
 <text class="t" x="10" y="18" font-size="13" font-weight="600">Three ways to say the same level: what we set, what is real, what the data shows</text>
 <rect x="10" y="36" width="180" height="118" rx="10" fill="var(--s1)" opacity="0.14"/><rect x="10" y="36" width="180" height="118" rx="10" fill="none" stroke="var(--s1)" stroke-width="2.4" stroke-dasharray="0"/>
@@ -5145,9 +5147,258 @@
 </svg><p class="caption">The same configurations as before, voltage on (dot) and off (ring), taken about an hour apart on the same evening. At most thresholds the two agree, including the hot channel. VMM 4 matches in 7 of 13 thresholds (and both are quiet in 1), VMM 7 in 5 (quiet in 5), VMM 9 in 5 (quiet in 0).</p></div>
 <p>Two things stand out. First, a burst at a high threshold is the same in both runs: VMM 4 at d = 40 gives 1740&nbsp;kHz with the voltage on and 1770 with it off, both on channel 36; VMM 7 at d = 34 gives 546 and 547&nbsp;kHz, both on channel 23. So the burst state follows the threshold setting and is not a matter of chance at each configuration, at least at these settings; the planned Monday repeat test will check this directly. Second, near the noise onset (d from 34 down to 27) the chips are noisier with the voltage on (VMM 4 at d = 30: 85&nbsp;kHz against almost nothing with it off). That is the chamber adding hits near the onset, as on every other chip.</p>
 
-<div class="stepcard done"><div class="sc-head"><span class="stepn">8</span><strong>First measurements with the voltage on</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>The voltage was switched on by hand, and we took a 10-minute health check at the safe setting, the noise ladder of VMM 4, 7 and 9 again (13 points), and the neighbour read-out with cosmic muons at five thresholds. The runs are <code>run_57</code> to <code>run_75</code>.</dd><dt>What we saw</dt><dd>No chamber is dead. Baselines now exist for 1123 of 1152 channels, and the voltage does not change them on the 15 normal chips. VMM 4, 7 and 9 each have a block of channels with baselines of 100 to several hundred ADC, next to the channels that burst. The bursts at high thresholds are the same with the voltage on and off.</dd><dt>What it tells us</dt><dd>The baseline map is essentially complete. The three burst chips are different in a clear and measurable way, and their problem looks like a property of the hardware, not of the chambers or of chance.</dd><dt>So the next step is</dt><dd>take the efficiency measurement with muon tracks (step 9), and keep the burst chips in it, with the 23 hot channels masked.</dd></dl></div>
+<div class="stepcard done"><div class="sc-head"><span class="stepn">8</span><strong>First measurements with the voltage on</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>The voltage was switched on by hand, and we took a 10-minute health check at the safe setting, the noise ladder of VMM 4, 7 and 9 again (13 points), and the neighbour read-out with cosmic muons at five thresholds. The runs are <code>run_57</code> to <code>run_75</code>.</dd><dt>What we saw</dt><dd>No chamber is dead. Baselines now exist for 1123 of 1152 channels, and the voltage does not change them on the 15 normal chips. VMM 4, 7 and 9 each have a block of channels with baselines of 100 to several hundred ADC, next to the channels that burst. The bursts at high thresholds are the same with the voltage on and off.</dd><dt>What it tells us</dt><dd>The baseline map is essentially complete. The three burst chips are different in a clear and measurable way, and their problem looks like a property of the hardware, not of the chambers or of chance.</dd><dt>So the next step is</dt><dd>set a global threshold for each chip from the noise scans (step 9), then take the efficiency measurement with muon tracks (step 11), keeping the burst chips in it, with the 23 hot channels masked.</dd></dl></div>
 
-<h2>9. What we know, and what we do not</h2>
+<h2>9. A global threshold for each chip</h2>
+<p>Each chip has one threshold number, <code>sdt</code>, and the noise scans told us at which value each chip&rsquo;s noise starts. That number does not depend on our baseline estimates (they only fix the d scale), so we can read the global threshold of each chip straight from the scan. For the muon runs we use <strong>8 steps above the noise onset measured with the voltage on</strong>: low enough to catch small pulses, with a margin against the noise.</p>
+<div class="viz-card"><svg viewBox="0 0 640 508" role="img" aria-label="Noise onset and safe threshold per chip, in sdt">
+<text class="t" x="12" y="18" font-size="13" font-weight="600">Global threshold of each chip (sdt): where its noise starts, and what we run at</text>
+<text class="m" x="12" y="34" font-size="11">sdt is the number written to the chip; lower means a lower threshold. Gain 4.5 mV/fC, peaking time 200 ns.</text>
+<circle cx="16" cy="50" r="4.4" fill="var(--s1)"/><text class="m" x="26" y="54" font-size="11">noise passes 1 kHz, HV on</text><circle cx="190" cy="50" r="6.2" fill="none" stroke="var(--s2)" stroke-width="2.4"/><text class="m" x="202" y="54" font-size="11">same, HV off</text><rect x="300" y="45" width="9" height="9" fill="var(--s3)"/><text class="m" x="314" y="54" font-size="11">setting used in the muon runs (onset + 8)</text>
+<line x1="116.66666666666667" x2="116.66666666666667" y1="58" y2="458" stroke="var(--border)"/><text class="f" x="116.66666666666667" y="472" font-size="10" text-anchor="middle">200</text>
+<line x1="183.33333333333331" x2="183.33333333333331" y1="58" y2="458" stroke="var(--border)"/><text class="f" x="183.33333333333331" y="472" font-size="10" text-anchor="middle">210</text>
+<line x1="250.0" x2="250.0" y1="58" y2="458" stroke="var(--border)"/><text class="f" x="250.0" y="472" font-size="10" text-anchor="middle">220</text>
+<line x1="316.66666666666663" x2="316.66666666666663" y1="58" y2="458" stroke="var(--border)"/><text class="f" x="316.66666666666663" y="472" font-size="10" text-anchor="middle">230</text>
+<line x1="383.3333333333333" x2="383.3333333333333" y1="58" y2="458" stroke="var(--border)"/><text class="f" x="383.3333333333333" y="472" font-size="10" text-anchor="middle">240</text>
+<line x1="450.0" x2="450.0" y1="58" y2="458" stroke="var(--border)"/><text class="f" x="450.0" y="472" font-size="10" text-anchor="middle">250</text>
+<text class="t" x="80" y="77.0" font-size="12" text-anchor="end">VMM 2</text>
+<line x1="330.0" x2="330.0" y1="73.0" y2="73.0" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 2: setting used in the muon runs, sdt 232</title><rect x="325.5" y="68.5" width="9" height="9" fill="var(--s3)"/></g>
+<text class="f" x="498" y="77.0" font-size="10">no onset found: a guess</text>
+<text class="t" x="80" y="99.0" font-size="12" text-anchor="end">VMM 3</text>
+<line x1="156.7" x2="230.0" y1="95.0" y2="95.0" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 3: HV-off noise passes 1 kHz at sdt 206</title><circle cx="156.7" cy="95.0" r="6.2" fill="none" stroke="var(--s2)" stroke-width="2.4"/></g>
+<g><title>VMM 3: HV-on noise passes 1 kHz at sdt 209</title><circle cx="176.7" cy="95.0" r="4.2" fill="var(--s1)"/></g>
+<g><title>VMM 3: setting used in the muon runs, sdt 217</title><rect x="225.5" y="90.5" width="9" height="9" fill="var(--s3)"/></g>
+<text class="t" x="80" y="121.0" font-size="12" text-anchor="end">VMM 4</text>
+<line x1="256.7" x2="310.0" y1="117.0" y2="117.0" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 4: HV-off noise passes 1 kHz at sdt 221</title><circle cx="256.7" cy="117.0" r="6.2" fill="none" stroke="var(--s2)" stroke-width="2.4"/></g>
+<g><title>VMM 4: setting used in the muon runs, sdt 229</title><rect x="305.5" y="112.5" width="9" height="9" fill="var(--s3)"/></g>
+<text class="f" x="498" y="121.0" font-size="10">HV-off onset only</text>
+<text class="t" x="80" y="143.0" font-size="12" text-anchor="end">VMM 5</text>
+<line x1="303.3" x2="430.0" y1="139.0" y2="139.0" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 5: HV-off noise passes 1 kHz at sdt 228</title><circle cx="303.3" cy="139.0" r="6.2" fill="none" stroke="var(--s2)" stroke-width="2.4"/></g>
+<g><title>VMM 5: HV-on noise passes 1 kHz at sdt 239</title><circle cx="376.7" cy="139.0" r="4.2" fill="var(--s1)"/></g>
+<g><title>VMM 5: setting used in the muon runs, sdt 247</title><rect x="425.5" y="134.5" width="9" height="9" fill="var(--s3)"/></g>
+<text class="f" x="498" y="143.0" font-size="10">on and off differ by 11</text>
+<text class="t" x="80" y="165.0" font-size="12" text-anchor="end">VMM 6</text>
+<g><title>VMM 6: held at sdt 230 in every scan, no onset measured</title><rect x="312.2" y="156.5" width="9" height="9" fill="var(--s3)"/></g><text class="f" x="328.7" y="165.0" font-size="10">held at 230: not measured</text>
+<text class="t" x="80" y="187.0" font-size="12" text-anchor="end">VMM 7</text>
+<line x1="343.3" x2="343.3" y1="183.0" y2="183.0" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 7: setting used in the muon runs, sdt 234</title><rect x="338.8" y="178.5" width="9" height="9" fill="var(--s3)"/></g>
+<text class="f" x="498" y="187.0" font-size="10">no onset found: a guess</text>
+<text class="t" x="80" y="209.0" font-size="12" text-anchor="end">VMM 8</text>
+<line x1="230.0" x2="310.0" y1="205.0" y2="205.0" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 8: HV-off noise passes 1 kHz at sdt 217</title><circle cx="230.0" cy="205.0" r="6.2" fill="none" stroke="var(--s2)" stroke-width="2.4"/></g>
+<g><title>VMM 8: HV-on noise passes 1 kHz at sdt 221</title><circle cx="256.7" cy="205.0" r="4.2" fill="var(--s1)"/></g>
+<g><title>VMM 8: setting used in the muon runs, sdt 229</title><rect x="305.5" y="200.5" width="9" height="9" fill="var(--s3)"/></g>
+<text class="t" x="80" y="231.0" font-size="12" text-anchor="end">VMM 9</text>
+<line x1="236.7" x2="290.0" y1="227.0" y2="227.0" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 9: HV-off noise passes 1 kHz at sdt 218</title><circle cx="236.7" cy="227.0" r="6.2" fill="none" stroke="var(--s2)" stroke-width="2.4"/></g>
+<g><title>VMM 9: setting used in the muon runs, sdt 226</title><rect x="285.5" y="222.5" width="9" height="9" fill="var(--s3)"/></g>
+<text class="f" x="498" y="231.0" font-size="10">HV-off onset only</text>
+<text class="t" x="80" y="253.0" font-size="12" text-anchor="end">VMM 10</text>
+<line x1="303.3" x2="356.7" y1="249.0" y2="249.0" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 10: HV-off noise passes 1 kHz at sdt 228</title><circle cx="303.3" cy="249.0" r="6.2" fill="none" stroke="var(--s2)" stroke-width="2.4"/></g>
+<g><title>VMM 10: HV-on noise passes 1 kHz at sdt 228</title><circle cx="303.3" cy="249.0" r="4.2" fill="var(--s1)"/></g>
+<g><title>VMM 10: setting used in the muon runs, sdt 236</title><rect x="352.2" y="244.5" width="9" height="9" fill="var(--s3)"/></g>
+<text class="t" x="80" y="275.0" font-size="12" text-anchor="end">VMM 11</text>
+<line x1="276.7" x2="330.0" y1="271.0" y2="271.0" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 11: HV-off noise passes 1 kHz at sdt 224</title><circle cx="276.7" cy="271.0" r="6.2" fill="none" stroke="var(--s2)" stroke-width="2.4"/></g>
+<g><title>VMM 11: HV-on noise passes 1 kHz at sdt 226</title><circle cx="290.0" cy="271.0" r="4.2" fill="var(--s1)"/></g>
+<g><title>VMM 11: setting used in the muon runs, sdt 232</title><rect x="325.5" y="266.5" width="9" height="9" fill="var(--s3)"/></g>
+<text class="t" x="80" y="297.0" font-size="12" text-anchor="end">VMM 12</text>
+<line x1="363.3" x2="436.7" y1="293.0" y2="293.0" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 12: HV-off noise passes 1 kHz at sdt 237</title><circle cx="363.3" cy="293.0" r="6.2" fill="none" stroke="var(--s2)" stroke-width="2.4"/></g>
+<g><title>VMM 12: HV-on noise passes 1 kHz at sdt 240</title><circle cx="383.3" cy="293.0" r="4.2" fill="var(--s1)"/></g>
+<g><title>VMM 12: setting used in the muon runs, sdt 248</title><rect x="432.2" y="288.5" width="9" height="9" fill="var(--s3)"/></g>
+<text class="t" x="80" y="319.0" font-size="12" text-anchor="end">VMM 13</text>
+<line x1="196.7" x2="250.0" y1="315.0" y2="315.0" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 13: HV-off noise passes 1 kHz at sdt 212</title><circle cx="196.7" cy="315.0" r="6.2" fill="none" stroke="var(--s2)" stroke-width="2.4"/></g>
+<g><title>VMM 13: HV-on noise passes 1 kHz at sdt 212</title><circle cx="196.7" cy="315.0" r="4.2" fill="var(--s1)"/></g>
+<g><title>VMM 13: setting used in the muon runs, sdt 220</title><rect x="245.5" y="310.5" width="9" height="9" fill="var(--s3)"/></g>
+<text class="t" x="80" y="341.0" font-size="12" text-anchor="end">VMM 14</text>
+<line x1="283.3" x2="376.7" y1="337.0" y2="337.0" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 14: HV-off noise passes 1 kHz at sdt 225</title><circle cx="283.3" cy="337.0" r="6.2" fill="none" stroke="var(--s2)" stroke-width="2.4"/></g>
+<g><title>VMM 14: HV-on noise passes 1 kHz at sdt 231</title><circle cx="323.3" cy="337.0" r="4.2" fill="var(--s1)"/></g>
+<g><title>VMM 14: setting used in the muon runs, sdt 239</title><rect x="372.2" y="332.5" width="9" height="9" fill="var(--s3)"/></g>
+<text class="t" x="80" y="363.0" font-size="12" text-anchor="end">VMM 15</text>
+<line x1="210.0" x2="263.3" y1="359.0" y2="359.0" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 15: HV-off noise passes 1 kHz at sdt 214</title><circle cx="210.0" cy="359.0" r="6.2" fill="none" stroke="var(--s2)" stroke-width="2.4"/></g>
+<g><title>VMM 15: HV-on noise passes 1 kHz at sdt 214</title><circle cx="210.0" cy="359.0" r="4.2" fill="var(--s1)"/></g>
+<g><title>VMM 15: setting used in the muon runs, sdt 222</title><rect x="258.8" y="354.5" width="9" height="9" fill="var(--s3)"/></g>
+<text class="t" x="80" y="385.0" font-size="12" text-anchor="end">VMM 16</text>
+<line x1="243.3" x2="310.0" y1="381.0" y2="381.0" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 16: HV-off noise passes 1 kHz at sdt 219</title><circle cx="243.3" cy="381.0" r="6.2" fill="none" stroke="var(--s2)" stroke-width="2.4"/></g>
+<g><title>VMM 16: HV-on noise passes 1 kHz at sdt 221</title><circle cx="256.7" cy="381.0" r="4.2" fill="var(--s1)"/></g>
+<g><title>VMM 16: setting used in the muon runs, sdt 229</title><rect x="305.5" y="376.5" width="9" height="9" fill="var(--s3)"/></g>
+<text class="t" x="80" y="407.0" font-size="12" text-anchor="end">VMM 17</text>
+<line x1="190.0" x2="243.3" y1="403.0" y2="403.0" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 17: HV-off noise passes 1 kHz at sdt 211</title><circle cx="190.0" cy="403.0" r="6.2" fill="none" stroke="var(--s2)" stroke-width="2.4"/></g>
+<g><title>VMM 17: HV-on noise passes 1 kHz at sdt 211</title><circle cx="190.0" cy="403.0" r="4.2" fill="var(--s1)"/></g>
+<g><title>VMM 17: setting used in the muon runs, sdt 219</title><rect x="238.8" y="398.5" width="9" height="9" fill="var(--s3)"/></g>
+<text class="t" x="80" y="429.0" font-size="12" text-anchor="end">VMM 18</text>
+<line x1="143.3" x2="196.7" y1="425.0" y2="425.0" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 18: HV-off noise passes 1 kHz at sdt 204</title><circle cx="143.3" cy="425.0" r="6.2" fill="none" stroke="var(--s2)" stroke-width="2.4"/></g>
+<g><title>VMM 18: HV-on noise passes 1 kHz at sdt 204</title><circle cx="143.3" cy="425.0" r="4.2" fill="var(--s1)"/></g>
+<g><title>VMM 18: setting used in the muon runs, sdt 212</title><rect x="192.2" y="420.5" width="9" height="9" fill="var(--s3)"/></g>
+<text class="t" x="80" y="451.0" font-size="12" text-anchor="end">VMM 19</text>
+<line x1="323.3" x2="396.7" y1="447.0" y2="447.0" stroke="var(--fg-faint)" stroke-width="2"/>
+<g><title>VMM 19: HV-off noise passes 1 kHz at sdt 231</title><circle cx="323.3" cy="447.0" r="6.2" fill="none" stroke="var(--s2)" stroke-width="2.4"/></g>
+<g><title>VMM 19: HV-on noise passes 1 kHz at sdt 234</title><circle cx="343.3" cy="447.0" r="4.2" fill="var(--s1)"/></g>
+<g><title>VMM 19: setting used in the muon runs, sdt 242</title><rect x="392.2" y="442.5" width="9" height="9" fill="var(--s3)"/></g>
+</svg><p class="caption">Real data. For most chips the voltage-on and voltage-off onsets are close (0 to 6 steps apart); VMM 5 is the exception, 11 steps apart. For VMM 2 and VMM 7 no onset was found in the range scanned, so their setting is a guess; for VMM 4 and 9 only the voltage-off onset can be read, because the bursts hide the voltage-on one; VMM 6 was held at 230 in every scan.</p></div>
+<details><summary>The numbers for every chip (also as a CSV in the data folder)</summary><div style="overflow-x:auto"><table class="bltab"><tr><th>VMM</th><th>assumed baseline</th><th>onset HV on (d / sdt)</th><th>onset HV off (d / sdt)</th><th>used in the muon runs (d / sdt)</th></tr><tr><th>VMM 2</th><td>208</td><td>&ndash;</td><td>&ndash;</td><td>24 / 232</td></tr><tr><th>VMM 3</th><td>182</td><td>27 / 209</td><td>24 / 206</td><td>35 / 217</td></tr><tr><th>VMM 4</th><td>199</td><td>&ndash;</td><td>22 / 221</td><td>30 / 229</td></tr><tr><th>VMM 5</th><td>212</td><td>27 / 239</td><td>16 / 228</td><td>35 / 247</td></tr><tr><th>VMM 6</th><td>fixed</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td></tr><tr><th>VMM 7</th><td>200</td><td>&ndash;</td><td>&ndash;</td><td>34 / 234</td></tr><tr><th>VMM 8</th><td>197</td><td>24 / 221</td><td>20 / 217</td><td>32 / 229</td></tr><tr><th>VMM 9</th><td>191</td><td>&ndash;</td><td>27 / 218</td><td>35 / 226</td></tr><tr><th>VMM 10</th><td>210</td><td>18 / 228</td><td>18 / 228</td><td>26 / 236</td></tr><tr><th>VMM 11</th><td>204</td><td>22 / 226</td><td>20 / 224</td><td>28 / 232</td></tr><tr><th>VMM 12</th><td>210</td><td>30 / 240</td><td>27 / 237</td><td>38 / 248</td></tr><tr><th>VMM 13</th><td>188</td><td>24 / 212</td><td>24 / 212</td><td>32 / 220</td></tr><tr><th>VMM 14</th><td>201</td><td>30 / 231</td><td>24 / 225</td><td>38 / 239</td></tr><tr><th>VMM 15</th><td>180</td><td>34 / 214</td><td>34 / 214</td><td>42 / 222</td></tr><tr><th>VMM 16</th><td>199</td><td>22 / 221</td><td>20 / 219</td><td>30 / 229</td></tr><tr><th>VMM 17</th><td>187</td><td>24 / 211</td><td>24 / 211</td><td>32 / 219</td></tr><tr><th>VMM 18</th><td>182</td><td>22 / 204</td><td>22 / 204</td><td>30 / 212</td></tr><tr><th>VMM 19</th><td>204</td><td>30 / 234</td><td>27 / 231</td><td>38 / 242</td></tr></table></div></details>
+
+<div class="stepcard done"><div class="sc-head"><span class="stepn">9</span><strong>A global threshold for each chip</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>We read, for every chip, the threshold at which its noise passes 1&nbsp;kHz, with the voltage on and off (gain 4.5&nbsp;mV/fC, peaking time 200&nbsp;ns), and chose onset + 8 steps for the muon runs.</dd><dt>What we saw</dt><dd>Thirteen chips have a clean onset with the voltage on (VMM 3, 5, 8, 10 to 19); the two sets of onsets agree within a few steps. Five chips are special (VMM 2, 4, 6, 7, 9, see the figure).</dd><dt>What it tells us</dt><dd>The global threshold of 13 of the 18 chips is determined from data. It is only a floor: a noise onset says where the noise starts, not where the efficiency is best, and one noisy channel sets it for the whole chip. Only the muon data can say whether the margin of 8 steps is right, and a per-channel correction would let a chip go lower.</dd><dt>So the next step is</dt><dd>compare efficiency and noise at several settings with muon tracks (step 11), and keep the five special chips under watch.</dd></dl></div>
+
+<h2>10. First look at the muon events</h2>
+<p>The reference run is already taking data with the thresholds above. Can we find the muons in it? We took the first 30 minutes (the voltage on, the safe setting, the 23 hot channels of VMM 4, 7 and 9 masked) and grouped the hits that happen at the same moment.</p>
+<div class="viz-card"><svg viewBox="0 0 640 300" role="img" aria-label="Three kinds of event in the three chambers">
+<text class="t" x="10" y="18" font-size="13" font-weight="600">Three kinds of event in the stack (cartoon)</text>
+<rect x="14" y="30" width="196" height="224" rx="8" fill="var(--bg-elev)" stroke="var(--border)"/>
+<text class="t" x="112" y="50" font-size="12" font-weight="600" text-anchor="middle">a muon</text>
+<rect x="32" y="88" width="160" height="14" rx="4" fill="var(--s1)" opacity="0.18" stroke="var(--s1)" stroke-width="1"/>
+<rect x="32" y="138" width="160" height="14" rx="4" fill="var(--s1)" opacity="0.18" stroke="var(--s1)" stroke-width="1"/>
+<rect x="32" y="188" width="160" height="14" rx="4" fill="var(--s1)" opacity="0.18" stroke="var(--s1)" stroke-width="1"/>
+<line x1="84" y1="66" x2="140" y2="212" stroke="var(--alert)" stroke-width="2"/>
+<circle cx="100" cy="95" r="5" fill="var(--s1)"/>
+<circle cx="115" cy="145" r="5" fill="var(--s1)"/>
+<circle cx="130" cy="195" r="5" fill="var(--s1)"/>
+<text class="m" x="112" y="228" font-size="10" text-anchor="middle">one or a few hits in each chamber,</text><text class="m" x="112" y="240" font-size="10" text-anchor="middle">all at the same moment, in line</text>
+<text class="t" x="112" y="276" font-size="11" text-anchor="middle" font-weight="600">good: this is what we want</text>
+<rect x="222" y="30" width="196" height="224" rx="8" fill="var(--bg-elev)" stroke="var(--border)"/>
+<text class="t" x="320" y="50" font-size="12" font-weight="600" text-anchor="middle">noise</text>
+<rect x="240" y="88" width="160" height="14" rx="4" fill="var(--s1)" opacity="0.18" stroke="var(--s1)" stroke-width="1"/>
+<rect x="240" y="138" width="160" height="14" rx="4" fill="var(--s1)" opacity="0.18" stroke="var(--s1)" stroke-width="1"/>
+<rect x="240" y="188" width="160" height="14" rx="4" fill="var(--s1)" opacity="0.18" stroke="var(--s1)" stroke-width="1"/>
+<circle cx="292" cy="145" r="5" fill="var(--fg-faint)"/>
+<text class="m" x="320" y="228" font-size="10" text-anchor="middle">a single hit, nothing in the other</text><text class="m" x="320" y="240" font-size="10" text-anchor="middle">chambers at that moment</text>
+<text class="t" x="320" y="276" font-size="11" text-anchor="middle" font-weight="600">about half of all hits</text>
+<rect x="430" y="30" width="196" height="224" rx="8" fill="var(--bg-elev)" stroke="var(--border)"/>
+<text class="t" x="528" y="50" font-size="12" font-weight="600" text-anchor="middle">a burst</text>
+<rect x="448" y="88" width="160" height="14" rx="4" fill="var(--s1)" opacity="0.18" stroke="var(--s1)" stroke-width="1"/>
+<rect x="448" y="138" width="160" height="14" rx="4" fill="var(--s1)" opacity="0.18" stroke="var(--s1)" stroke-width="1"/>
+<rect x="448" y="188" width="160" height="14" rx="4" fill="var(--s1)" opacity="0.18" stroke="var(--s1)" stroke-width="1"/>
+<circle cx="522.5" cy="94.2" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="474.5" cy="97.2" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="455.0" cy="95.0" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="586.9" cy="92.5" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="536.0" cy="95.7" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="460.1" cy="94.3" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="558.1" cy="94.7" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="561.3" cy="92.9" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="489.2" cy="92.7" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="528.9" cy="97.5" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="541.4" cy="96.6" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="510.8" cy="96.5" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="469.0" cy="93.7" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="553.8" cy="96.4" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="516.4" cy="92.5" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="493.5" cy="93.3" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="495.6" cy="96.9" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="483.5" cy="97.3" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="584.1" cy="92.3" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="510.1" cy="95.0" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="457.5" cy="94.5" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="588.1" cy="92.7" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="542.3" cy="92.7" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="539.6" cy="97.4" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="484.1" cy="92.0" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="466.4" cy="95.2" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="456.6" cy="142.5" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="527.5" cy="147.5" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="516.2" cy="144.4" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="548.5" cy="142.6" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="539.8" cy="143.0" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="544.1" cy="147.7" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="462.0" cy="145.3" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="543.7" cy="142.9" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="493.7" cy="148.0" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="601.7" cy="142.7" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="558.4" cy="147.7" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="489.0" cy="145.7" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="460.4" cy="144.2" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="553.8" cy="145.5" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="568.6" cy="142.5" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="505.4" cy="147.2" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="540.5" cy="144.7" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="513.5" cy="147.9" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="539.0" cy="142.1" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="572.3" cy="144.0" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="518.2" cy="143.3" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="519.7" cy="143.9" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="467.1" cy="145.8" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="469.3" cy="146.7" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="457.8" cy="146.7" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="573.5" cy="145.0" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="559.0" cy="193.5" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="563.2" cy="194.6" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="488.2" cy="197.8" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="513.3" cy="194.2" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="581.3" cy="194.2" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="552.8" cy="193.0" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="578.8" cy="193.6" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="461.5" cy="197.9" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="479.6" cy="197.7" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="600.0" cy="195.6" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="455.8" cy="192.4" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="484.9" cy="194.3" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="544.5" cy="197.8" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="506.5" cy="192.8" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="537.2" cy="192.8" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="466.8" cy="195.3" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="557.0" cy="192.4" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="520.8" cy="196.2" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="567.1" cy="194.3" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="585.3" cy="193.0" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="559.9" cy="196.6" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="584.3" cy="195.0" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="468.7" cy="192.3" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="532.3" cy="193.0" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="547.2" cy="192.5" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<circle cx="569.5" cy="193.3" r="2.4" fill="var(--s2)" opacity="0.85"/>
+<text class="m" x="528" y="228" font-size="10" text-anchor="middle">hundreds of hits over many chips</text><text class="m" x="528" y="240" font-size="10" text-anchor="middle">and all chambers at once</text>
+<text class="t" x="528" y="276" font-size="11" text-anchor="middle" font-weight="600">a quarter of all hits: must be cut</text>
+<text class="f" x="10" y="296" font-size="10">The three bars are the three chambers (det3, det2, det1); dots are hits.</text>
+</svg><p class="caption">The three kinds of event we expect to see in the three chambers.</p></div>
+<div class="viz-card"><svg viewBox="0 0 640 330" role="img" aria-label="How many hits belong together in time">
+<text class="t" x="12" y="18" font-size="13" font-weight="600">Hits that belong together in time (within 100 ns), reference run, 30 minutes</text>
+<text class="m" x="12" y="34" font-size="11">number of such groups (&#8220;events&#8221;) of each size, log scale. A muon through three chambers gives a small group.</text>
+<text class="m" x="12" y="48" font-size="11">Orange: groups of more than 36 hits, which carry a quarter of all hits.</text>
+<line x1="70" x2="620" y1="272.0" y2="272.0" stroke="var(--border)"/><text class="f" x="64" y="275.0" font-size="10" text-anchor="end">1</text>
+<line x1="70" x2="620" y1="238.3" y2="238.3" stroke="var(--border)"/><text class="f" x="64" y="241.3" font-size="10" text-anchor="end">10</text>
+<line x1="70" x2="620" y1="204.7" y2="204.7" stroke="var(--border)"/><text class="f" x="64" y="207.7" font-size="10" text-anchor="end">100</text>
+<line x1="70" x2="620" y1="171.0" y2="171.0" stroke="var(--border)"/><text class="f" x="64" y="174.0" font-size="10" text-anchor="end">1,000</text>
+<line x1="70" x2="620" y1="137.4" y2="137.4" stroke="var(--border)"/><text class="f" x="64" y="140.4" font-size="10" text-anchor="end">10,000</text>
+<line x1="70" x2="620" y1="103.7" y2="103.7" stroke="var(--border)"/><text class="f" x="64" y="106.7" font-size="10" text-anchor="end">100,000</text>
+<line x1="70" x2="620" y1="70.1" y2="70.1" stroke="var(--border)"/><text class="f" x="64" y="73.1" font-size="10" text-anchor="end">1,000,000</text>
+<g><title>955,701 events of 1 hits</title><rect x="76.0" y="70.8" width="49.1" height="201.2" rx="3" fill="var(--s1)"/></g><text class="t" x="100.6" y="65.8" font-size="10" text-anchor="middle">955,701</text><text class="m" x="100.6" y="287" font-size="10" text-anchor="middle">1</text>
+<g><title>64,806 events of 2 hits</title><rect x="137.1" y="110.1" width="49.1" height="161.9" rx="3" fill="var(--s1)"/></g><text class="t" x="161.7" y="105.1" font-size="10" text-anchor="middle">64,806</text><text class="m" x="161.7" y="287" font-size="10" text-anchor="middle">2</text>
+<g><title>33,682 events of 3-4 hits</title><rect x="198.2" y="119.6" width="49.1" height="152.4" rx="3" fill="var(--s1)"/></g><text class="t" x="222.8" y="114.6" font-size="10" text-anchor="middle">33,682</text><text class="m" x="222.8" y="287" font-size="10" text-anchor="middle">3-4</text>
+<g><title>14,895 events of 5-9 hits</title><rect x="259.3" y="131.6" width="49.1" height="140.4" rx="3" fill="var(--s1)"/></g><text class="t" x="283.9" y="126.6" font-size="10" text-anchor="middle">14,895</text><text class="m" x="283.9" y="287" font-size="10" text-anchor="middle">5-9</text>
+<g><title>2,958 events of 10-19 hits</title><rect x="320.4" y="155.2" width="49.1" height="116.8" rx="3" fill="var(--s1)"/></g><text class="t" x="345.0" y="150.2" font-size="10" text-anchor="middle">2,958</text><text class="m" x="345.0" y="287" font-size="10" text-anchor="middle">10-19</text>
+<g><title>985 events of 20-49 hits</title><rect x="381.6" y="171.3" width="49.1" height="100.7" rx="3" fill="var(--s1)"/></g><text class="t" x="406.1" y="166.3" font-size="10" text-anchor="middle">985</text><text class="m" x="406.1" y="287" font-size="10" text-anchor="middle">20-49</text>
+<g><title>188 events of 50-99 hits</title><rect x="442.7" y="195.5" width="49.1" height="76.5" rx="3" fill="var(--s2)"/></g><text class="t" x="467.2" y="190.5" font-size="10" text-anchor="middle">188</text><text class="m" x="467.2" y="287" font-size="10" text-anchor="middle">50-99</text>
+<g><title>1,038 events of 100-999 hits</title><rect x="503.8" y="170.5" width="49.1" height="101.5" rx="3" fill="var(--s2)"/></g><text class="t" x="528.3" y="165.5" font-size="10" text-anchor="middle">1,038</text><text class="m" x="528.3" y="287" font-size="10" text-anchor="middle">100-999</text>
+<g><title>5 events of 1000+ hits</title><rect x="564.9" y="248.5" width="49.1" height="23.5" rx="3" fill="var(--s2)"/></g><text class="t" x="589.4" y="243.5" font-size="10" text-anchor="middle">5</text><text class="m" x="589.4" y="287" font-size="10" text-anchor="middle">1000+</text>
+<text class="m" x="345.0" y="322" font-size="11" text-anchor="middle">hits in the group</text>
+</svg><p class="caption">Real data. 1,828,316 hits in 30 minutes, 1,074,258 groups. More than half of the groups are a single, isolated hit; 1,429 groups have more than 36 hits and carry 26&nbsp;% of all hits.</p></div>
+<p><strong>Yes, the muons are there:</strong> 1,140 groups have hits in all three chambers, and 645 of them are small (at most 12 hits per chamber, typically exactly one per chamber), which is what a muon looks like. That is about 19 per minute for the whole stack. The time difference between the chambers in these events is centred on zero (the first hit of each chamber, median 0 to &minus;7 ns), so there is no big constant timing offset between the hybrids, and the spread is about 40&nbsp;ns, because the fine timing is not calibrated yet.</p>
+<p><strong>The complications we have to deal with</strong> (this is what makes the correlation between the chambers harder than it looks):</p>
+<ul>
+<li><strong>Bursts.</strong> A quarter of all hits sit in a few thousand groups with dozens to hundreds of hits across many chips and chambers at the same moment. If we just ask for hits in all three chambers within 100&nbsp;ns, these bursts give millions of false pairs, against a few thousand real ones. They must be cut by size before anything else. We do not know what they are (discharges in the chambers, or pick-up in the electronics); the repeat test with the voltage off would tell us.</li>
+<li><strong>Noise.</strong> Half of all hits are isolated singles. They cost nothing in a three-chamber coincidence, but they fake a probe hit: the efficiency must be corrected for the chance that a noise hit lands next to the muon&rsquo;s track.</li>
+<li><strong>Few tracks.</strong> About 19 per minute for the whole stack, fewer than the 40 per chip we hoped for (not yet corrected for the masked channels, the pad size or the angles). An hour gives about 1100 tracks for the stack, so an efficiency per chip is limited to a few per cent per hour. We need hours of data per setting.</li>
+<li><strong>Timing.</strong> The timing is not calibrated (about 40&nbsp;ns spread), so the coincidence window must be about &plusmn;100&nbsp;ns. This is fine at these rates.</li>
+<li><strong>Geometry.</strong> We still have to map the pads of each chip to positions, check the orientation of each chamber, and use the beam-test distances. Cosmic muons arrive at wide angles, so the line between two chambers must allow a wide search box in the third.</li>
+<li><strong>The three burst chips.</strong> Their masked channels leave holes in the efficiency map, and their bursts must be rejected by the size cut as well.</li>
+<li><strong>det3.</strong> Its pulse heights reach the ADC limit (step 8). That is a question of gain or discharges, and it matters for how we define a hit.</li>
+</ul>
+
+<div class="stepcard done"><div class="sc-head"><span class="stepn">10</span><strong>A first look at the muon events</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>We took the first 30 minutes of the reference run and grouped the hits that occur at the same time (within 100&nbsp;ns).</dd><dt>What we saw</dt><dd>645 muon-like events in 30 minutes (about 19 per minute), a time spread of about 40&nbsp;ns between chambers with no big offset, and a quarter of all hits in large bursts.</dd><dt>What it tells us</dt><dd>The muon data can be analysed, and no hardware change is needed. But the analysis needs a size cut for the bursts, a coincidence window of about &plusmn;100&nbsp;ns, a noise correction and a pad-to-position map before it gives an efficiency.</dd><dt>So the next step is</dt><dd>write the tag-and-probe analysis with these cuts, and run it on the reference run and on the threshold scan (step 11).</dd></dl></div>
+
+<h2>11. What we know, and what we do not</h2>
 <div class="two">
 <div><h3>We know</h3><ul>
 <li>With no voltage, the electronics are silent at d = 50.</li>
@@ -5160,9 +5411,12 @@
 <li>With the voltage on, 97&nbsp;% of the channels have a baseline, and the voltage does not change them on the 15 normal chips.</li>
 <li>VMM 4, 7 and 9 each have a block of channels with a high baseline (also with the voltage off); the bursts are at its edge and, at high thresholds, are the same with the voltage on and off.</li>
 <li>No chamber is dead with the voltage on.</li>
+<li>A global threshold for 13 of the 18 chips can be read from the noise scans (onset + 8 steps); the five others are special.</li>
+<li>Muon-like events are in the data (about 19 per minute for the stack), with no large timing offset between the chambers.</li>
 </ul></div>
 <div><h3>We do not know yet</h3><ul>
-<li>The <strong>efficiency</strong>: this was the noise side only.</li>
+<li>The <strong>efficiency</strong>: this was the noise side and a first look at the muon events.</li>
+<li>Whether 8 steps above the noise onset is the best margin, and what the large bursts (a quarter of all hits) are.</li>
 <li>Why the three burst chips have that block of channels, and whether it is the chip, the hybrid or the connection.</li>
 <li>The link between ADC counts and millivolts, channel by channel.</li>
 <li>Whether the ADC baseline and the level the threshold acts on are the same thing, and why three channels read very high values (VMM 16 ch 33: 704, VMM 6 ch 14: 186, VMM 14 ch 34: 125).</li>
@@ -5172,7 +5426,7 @@
 </ul></div>
 </div>
 
-<h2>10. What comes next</h2>
+<h2>12. What comes next</h2>
 <div class="viz-card"><svg viewBox="0 0 640 236" role="img" aria-label="One threshold per chip versus one per channel">
 <text class="t" x="10" y="18" font-size="13" font-weight="600">One threshold for the whole chip, or a small correction for each channel? (cartoon)</text>
 <text class="t" x="14" y="46" font-size="12" font-weight="600">Now: one threshold per chip</text>
@@ -5251,15 +5505,15 @@
 <text class="m" x="14" y="221" font-size="11">correction the channels line up, so the chip's threshold can be lower and the muons that were lost are counted again.</text>
 </svg><p class="caption">Today each chip has one threshold. The next step gives each channel a small correction so that all channels start at the same level (cartoon, not measured).</p></div>
 
-<div class="stepcard next"><div class="sc-head"><span class="stepn">9</span><strong>Reference run and threshold scan with muon tracks</strong> <span class="pill warn">next, not done yet</span></div><dl><dt>Where we are</dt><dd>Running and queued, with the voltage on. Since Saturday 18:33 the reference run is taking 16 runs of 30 minutes at the safe setting of every chip (the 23 hot channels of VMM 4, 7 and 9 masked, a data-rate guard that stops a run that floods). Behind it, started automatically, comes a threshold scan: four points of one hour, from 16 steps above the safe setting down to 8 steps below it. About 40 muon tracks per minute and chip are expected, so an hour gives roughly 2400 tracks, about 0.6&nbsp;% on an efficiency near 90&nbsp;%.</dd><dt>What is needed</dt><dd>Nothing is measured yet: the data are being taken (the Friday night was lost, see the table at the end). Still missing from our side: the voltage readings in the logbook, and the chamber distances, which are taken as in the beam test.</dd><dt>What it will tell us</dt><dd>the first efficiency against threshold, chip by chip, from tracks that cross the three chambers (tag and probe).</dd><dt>Then</dt><dd>on Monday the voltage goes off again for the 15-minute repeat test of step 7, and the millivolt measurement follows (step 10).</dd></dl></div>
+<div class="stepcard next"><div class="sc-head"><span class="stepn">11</span><strong>Reference run and threshold scan with muon tracks</strong> <span class="pill warn">next, not done yet</span></div><dl><dt>Where we are</dt><dd>Running and queued, with the voltage on. Since Saturday 18:33 the reference run is taking 16 runs of 30 minutes at the safe setting of every chip (the 23 hot channels of VMM 4, 7 and 9 masked, a data-rate guard that stops a run that floods). Behind it, started automatically, comes a threshold scan: four points of one hour, from 16 steps above the safe setting down to 8 steps below it. About 40 muon tracks per minute and chip are expected, so an hour gives roughly 2400 tracks, about 0.6&nbsp;% on an efficiency near 90&nbsp;%.</dd><dt>What is needed</dt><dd>Nothing is measured yet: the data are being taken (the Friday night was lost, see the table at the end). Still missing from our side: the voltage readings in the logbook, and the chamber distances, which are taken as in the beam test.</dd><dt>What it will tell us</dt><dd>the first efficiency against threshold, chip by chip, from tracks that cross the three chambers (tag and probe).</dd><dt>Then</dt><dd>on Monday the voltage goes off again for the 15-minute repeat test of step 7, and the millivolt measurement follows (step 12).</dd></dl></div>
 
-<div class="stepcard next"><div class="sc-head"><span class="stepn">10</span><strong>Put the baselines in millivolts</strong> <span class="pill warn">next, not done yet</span></div><dl><dt>Where we are</dt><dd>Not started. The new slow-control library can already read the chip&rsquo;s monitor for each channel, but the command-line tool does not offer it.</dd><dt>What is needed</dt><dd>A way to call the library: either ask the developer to add a command, or write a small program of our own that calls it (without changing his software). We would test it on one channel of one hybrid first, then run all channels of all hybrids.</dd><dt>What it will tell us</dt><dd>The level of every channel in millivolts. Together with the ADC baselines of step 6 this gives the full chain, threshold setting to millivolts to ADC, channel by channel.</dd><dt>Then</dt><dd>compute the corrections (step 11).</dd></dl></div>
+<div class="stepcard next"><div class="sc-head"><span class="stepn">12</span><strong>Put the baselines in millivolts</strong> <span class="pill warn">next, not done yet</span></div><dl><dt>Where we are</dt><dd>Not started. The new slow-control library can already read the chip&rsquo;s monitor for each channel, but the command-line tool does not offer it.</dd><dt>What is needed</dt><dd>A way to call the library: either ask the developer to add a command, or write a small program of our own that calls it (without changing his software). We would test it on one channel of one hybrid first, then run all channels of all hybrids.</dd><dt>What it will tell us</dt><dd>The level of every channel in millivolts. Together with the ADC baselines of step 6 this gives the full chain, threshold setting to millivolts to ADC, channel by channel.</dd><dt>Then</dt><dd>compute the corrections (step 13).</dd></dl></div>
 
-<div class="stepcard later"><div class="sc-head"><span class="stepn">11</span><strong>Compute and apply the corrections, then scan again</strong> <span class="pill">later</span></div><dl><dt>Where we are</dt><dd>Not started.</dd><dt>What is needed</dt><dd>The measurements of steps 6 to 10.</dd><dt>What it will tell us</dt><dd>If the corrections work, the noise onset of all chips lines up and the usable threshold window opens for every chip.</dd><dt>Then</dt><dd>repeat the noise scan with the corrections, voltage on and off, then measure the efficiency (step 12).</dd></dl></div>
+<div class="stepcard later"><div class="sc-head"><span class="stepn">13</span><strong>Compute and apply the corrections, then scan again</strong> <span class="pill">later</span></div><dl><dt>Where we are</dt><dd>Not started.</dd><dt>What is needed</dt><dd>The measurements of steps 6 to 12.</dd><dt>What it will tell us</dt><dd>If the corrections work, the noise onset of all chips lines up and the usable threshold window opens for every chip.</dd><dt>Then</dt><dd>repeat the noise scan with the corrections, voltage on and off, then measure the efficiency (step 14).</dd></dl></div>
 
-<div class="stepcard later"><div class="sc-head"><span class="stepn">12</span><strong>Measure the efficiency</strong> <span class="pill">later</span></div><dl><dt>Where we are</dt><dd>Not started.</dd><dt>What is needed</dt><dd>A night of cosmic muons at a safe threshold, then the tag-and-probe method: the two outer chambers say a muon went through, and the middle one is asked whether it saw it.</dd><dt>What it will tell us</dt><dd>The efficiency against the threshold, chip by chip: the real answer to the first question.</dd><dt>Then</dt><dd>compare with the beam test and with the DREAM readout.</dd></dl></div>
+<div class="stepcard later"><div class="sc-head"><span class="stepn">14</span><strong>Measure the efficiency</strong> <span class="pill">later</span></div><dl><dt>Where we are</dt><dd>Not started.</dd><dt>What is needed</dt><dd>A night of cosmic muons at a safe threshold, then the tag-and-probe method: the two outer chambers say a muon went through, and the middle one is asked whether it saw it.</dd><dt>What it will tell us</dt><dd>The efficiency against the threshold, chip by chip: the real answer to the first question.</dd><dt>Then</dt><dd>compare with the beam test and with the DREAM readout.</dd></dl></div>
 
-<h2>11. Where the data and code are</h2>
+<h2>13. Where the data and code are</h2>
 <table class="runs">
 <tr><th>Item</th><th>Where</th></tr>
 <tr><td>Voltage-on scan: <code>run_4</code> &hellip; <code>run_13</code>; first tests: <code>run_1</code> &hellip; <code>run_3</code></td><td><code>/local/p2/p2data/cosmics_3det_202610/runs/</code> on vmm_daplxa, copied to EOS <code>&hellip;/p2_sps_july/vmm_cosmic_run_oct26/</code></td></tr>
@@ -5267,10 +5521,11 @@
 <tr><td>Neighbour read-out (sng 1), voltage off: <code>run_28</code> (first test), <code>run_29</code> &hellip; <code>run_32</code> (thresholds 0, &minus;3, &minus;6, &minus;9 from each chip&rsquo;s onset)</td><td>same place; configs <code>&hellip;_cosmic_sng1hvoff_probe / _o0 / _m3 / _m6 / _m9</code>. These runs are large: 2 to 9&nbsp;GB each, about 25&nbsp;GB in total. Analysed on lxplus from the EOS backup, so that the DAQ machine was not loaded</td></tr>
 <tr><td>VMM 4, 7, 9 unmasked, voltage off: <code>run_35</code> &hellip; <code>run_47</code> (normal read-out), <code>run_48</code> &hellip; <code>run_56</code> (neighbour read-out)</td><td>same place; configs <code>&hellip;_cosmic_n479hvoff_d&lt;d&gt;</code> and <code>&hellip;_s479hvoff_d&lt;d&gt;</code>. Two stray captures from a software problem at the start are kept apart in <code>orphan_2026-10-23_*</code> (not part of any run)</td></tr>
 <tr><td>Voltage ON, 24 Oct: <code>run_57</code> (health check), <code>run_58</code> &hellip; <code>run_70</code> (noise ladder of VMM 4, 7, 9), <code>run_71</code> &hellip; <code>run_75</code> (neighbour read-out with cosmics, 4 to 44&nbsp;GB each)</td><td>same place; configs <code>&hellip;_safehvon_v1</code>, <code>&hellip;_n479hvon_d&lt;d&gt;</code>, <code>&hellip;_sngcosmic_o&lt;k&gt;</code>. A sixth neighbour point was refused by the disk guard. Nothing was recorded from Friday 20:24 to Saturday 18:33: the reference run had not been chained behind these scans, and the connection to the machine was lost (then the machine&rsquo;s account service stopped accepting the login)</td></tr>
+<tr><td>First look at the muon events: the first 30 minutes of the reference run (<code>run_76</code>)</td><td><code>analysis_muons/</code> in the data folder; per-chip thresholds in <code>analysis_thresholds/</code> (chip table and a per-channel baseline table, CSV)</td></tr>
 <tr><td>Reference run and threshold scan (running and queued)</td><td><code>run_76</code> onward: 16 &times; 30&nbsp;min at <code>&hellip;_safehvon_v1</code>; then <code>&hellip;_thrhvon_p16 / _p8 / _m4 / _m8</code> (60&nbsp;min each)</td></tr>
 <tr><td>Tables used for the figures</td><td><code>analysis_noise_scan/</code> and <code>analysis_noise_scan_hvoff/</code> (chip tables, per-channel CSV, voltage on/off comparison), <code>analysis_n479_hvoff/</code> and <code>analysis_hvon/</code> (rate and hot channels of VMM 4, 7, 9 with the voltage off and on; baselines with the voltage on), <code>analysis_health/</code> (pulse-height spectra of the health check), <code>analysis_sng1_hvoff/</code> (baseline of every covered channel, coverage per capture, baseline against noise peak)</td></tr>
 <tr><td>Chip settings</td><td>4.5&nbsp;mV/fC, 200&nbsp;ns peaking time; only the threshold lines and the masks change between files</td></tr>
-<tr><td>Code and feedback notes</td><td>branch <code>lab-cosmics-oct26</code>, <code>docs/LAB_COSMICS_OBSERVATIONS.md</code> (items 1&ndash;46, more to come)</td></tr>
+<tr><td>Code and feedback notes</td><td>branch <code>lab-cosmics-oct26</code>, <code>docs/LAB_COSMICS_OBSERVATIONS.md</code> (items 1&ndash;56)</td></tr>
 </table>
 </div>
   </article>
