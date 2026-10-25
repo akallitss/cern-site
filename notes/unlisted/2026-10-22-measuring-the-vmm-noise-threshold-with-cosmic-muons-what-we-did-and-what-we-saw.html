@@ -9,10 +9,12 @@
 <meta name="category" content="Detector R&amp;D">
 <meta name="keywords" content="VMM,threshold,noise,cosmics,P2,lab">
 <meta name="date" content="2026-10-22">
-<meta name="updated" content="2026-10-23">
+<meta name="updated" content="2026-10-25">
 <meta name="visibility" content="unlisted">
 <!-- ======================================================================= -->
 <link rel="stylesheet" href="../../assets/site.css">
+
+
 
 
 
@@ -51,7 +53,7 @@
     --t0:#52514e;--t1:#1d1f24;--t2:#0b0b0b;--t3:#fff;--t4:#fff;--t5:#fff;}
   @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--s1:#3987e5;--s2:#d95926;--s3:#199e70;--alert:#e8743f;--surface:#1c1f25;
     --c0:#262a31;--c1:#184f95;--c2:#256abf;--c3:#3987e5;--c4:#86b6ef;--c5:#cde2fb;
-    --t0:#a5a9b1;--t1:#e8e8e4;--t2:#e8e8e4;--t3:#0b0b0b;--t4:#0b0b0b;--t5:#0b0b0b;}}
+    --t0:#a5a9b1;--t1:#e8e8e4;--t2:#e8e8e4;--t3:#0b0b0b;--t4:#0b0b0b;--t5:#0b0b0b;}
   :root[data-theme="dark"]{--s1:#3987e5;--s2:#d95926;--s3:#199e70;--alert:#e8743f;--surface:#1c1f25;
     --c0:#262a31;--c1:#184f95;--c2:#256abf;--c3:#3987e5;--c4:#86b6ef;--c5:#cde2fb;
     --t0:#a5a9b1;--t1:#e8e8e4;--t2:#e8e8e4;--t3:#0b0b0b;--t4:#0b0b0b;--t5:#0b0b0b;}
@@ -66,14 +68,14 @@
   .big{font-size:30px;font-weight:650} .small{font-size:12.5px}
   .tldr{border-left:4px solid var(--s1);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0}
   .tldr li{margin:3px 0}
-  .stepn{flex:none;width:26px;height:26px;border-radius:50%;background:var(--s1);color:#fff;font-weight:650;font-size:14px;display:inline-flex;align-items:center;justify-content:center}
+  .stepn{flex:none;min-width:26px;padding:0 5px;box-sizing:border-box;height:26px;border-radius:13px;background:var(--s1);color:#fff;font-weight:650;font-size:14px;display:inline-flex;align-items:center;justify-content:center}
   .stepcard{border:1px solid var(--border);border-left:5px solid var(--s1);border-radius:8px;background:var(--bg-elev);padding:10px 14px 4px;margin:14px 0}
   .stepcard.next{border-left-color:var(--s2)} .stepcard.later{border-left-color:var(--fg-faint)}
   .sc-head{display:flex;gap:10px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
   .stepcard dl{margin:0;display:grid;grid-template-columns:150px 1fr;gap:4px 12px}
   .stepcard dt{color:var(--fg-muted);font-size:13.5px} .stepcard dd{margin:0 0 6px;font-size:15px}
-  @media (max-width:640px){.stepcard dl{grid-template-columns:1fr}.stepcard dt{margin-top:4px}}
-  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px} @media (max-width:640px){.two{grid-template-columns:1fr}}
+  @media (max-width:640px){.stepcard dl{grid-template-columns:1fr}.stepcard dt{margin-top:4px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px} @media (max-width:640px){.two{grid-template-columns:1fr}
   .two>div{border:1px solid var(--border);border-radius:8px;padding:8px 14px;background:var(--bg-elev)}
   .two h3{margin:4px 0 6px}
   details{margin:6px 0;border:1px solid var(--border);border-radius:8px;background:var(--bg-elev);padding:4px 12px}
@@ -109,6 +111,7 @@
 <li><strong>What we did, in order:</strong> (1) a first test, which showed a flood of data from a few chips; (2) a noise scan with the chamber voltage on; (3) the same scan with the voltage <em>off</em>, to separate the detector from the electronics; (4) a closer look at single channels; (5) a direct measurement of the baseline of each channel, using a chip setting where a firing channel makes its neighbours report; (6) the same scans with the three chips we had masked (VMM 4, 7, 9) switched back on; (7) the first measurements with the high voltage on: a health check, and the neighbour read-out with cosmic muons, which gave a baseline for 97&nbsp;% of the channels.</li>
 <li><strong>What we found:</strong> the chips do <em>not</em> start to be noisy at the same threshold, and this spread stays when the voltage is off, so it comes from the electronics, not the chambers. Three chips (VMM 4, 7, 9) have noisy channels that also stay with the voltage off; when we switch them back on they show two kinds of noise: an ordinary smooth onset like the other chips, plus bursts that jump up and down with each new configuration, even at very high thresholds. And each channel has a noise peak of its own, so the channels inside one chip differ too. The baselines we could measure directly (about half of the channels so far) are mostly 45 to 65 ADC counts, not the 38 used so far for every channel, and they differ from chip to chip. With the voltage on we now have a baseline for 97&nbsp;% of the channels, the voltage does not change them, and VMM 4, 7 and 9 each have a large block of channels with baselines of 100 to several hundred, next to the channels that burst.</li>
 <li><strong>What this means for the next step:</strong> one threshold per chip is not enough. We need the baseline of <em>every channel</em> (half is done), in threshold units (millivolts, not yet done), and then to correct each channel. Then we repeat the scan and, only then, measure efficiency. The measurement with muon tracks (reference run and threshold scan, high voltage on) is running now, with a global threshold for each chip read from the noise scans; the reference run (8 hours) and the threshold scan are done and show a steady muon rate of about 21 per minute for the stack, but also bursts that carry a quarter of the hits and have to be cut. An interleaved 24-hour run at four thresholds is taking the statistics for the efficiency.</li>
+<li><strong>Update, Sunday 25 October evening (step 10c):</strong> the tag-and-probe analysis, with the beam-test pad map, shows that the &ldquo;muon-like&rdquo; events are <em>not</em> muon tracks: their hits do not line up in a straight line through the three chambers. Counting the events that do form a straight line, minus what chance gives, leaves about 16 per hour at the safe setting, where muons should give hundreds to thousands. Below the safe setting the extra &ldquo;tracks&rdquo; are a fixed pattern of a few hot channels. The pad map itself is fine (no other wiring does better, no chamber is flipped). So the stack sees almost no cosmic muons above the noise at these settings, and the best threshold cannot be chosen from efficiency yet. The long run was stopped at 21:34 (runs 96&ndash;111). Next: check the high voltage and the gas against the beam test, and a source test.</li>
 </ul></div>
 
 <h2>0. The idea in one picture</h2>
@@ -5387,6 +5390,7 @@
 <text class="m" x="345.0" y="322" font-size="11" text-anchor="middle">hits in the group</text>
 </svg><p class="caption">Real data. 1,828,316 hits in 30 minutes, 1,074,258 groups. More than half of the groups are a single, isolated hit; 1,429 groups have more than 36 hits and carry 26&nbsp;% of all hits.</p></div>
 <p><strong>Yes, the muons are there:</strong> 1,140 groups have hits in all three chambers, and 645 of them are small (at most 12 hits per chamber, typically exactly one per chamber), which is what a muon looks like. That is about 19 per minute for the whole stack. The time difference between the chambers in these events is centred on zero (the first hit of each chamber, median 0 to &minus;7 ns), so there is no big constant timing offset between the hybrids, and the spread is about 40&nbsp;ns, because the fine timing is not calibrated yet.</p>
+<div class="callout warn"><strong>Correction (25 October, step 10c).</strong> &ldquo;Yes, the muons are there&rdquo; was too quick. The later analysis put each hit at its pad position and asked whether the three hits form a straight line: almost none of these events do, beyond what chance gives. Most of the small three-chamber events are noise that fires the chambers at the same moment. The text above is kept as it was written.</div>
 <p><strong>The complications we have to deal with</strong> (this is what makes the correlation between the chambers harder than it looks):</p>
 <ul>
 <li><strong>Bursts.</strong> A quarter of all hits sit in a few thousand groups with dozens to hundreds of hits across many chips and chambers at the same moment. If we just ask for hits in all three chambers within 100&nbsp;ns, these bursts give millions of false pairs, against a few thousand real ones. They must be cut by size before anything else. We do not know what they are (discharges in the chambers, or pick-up in the electronics); the repeat test with the voltage off would tell us.</li>
@@ -5477,6 +5481,102 @@
 
 <div class="stepcard done"><div class="sc-head"><span class="stepn">10</span><strong>A first look at the muon events</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>We took the first 30 minutes of the reference run and grouped the hits that occur at the same time (within 100&nbsp;ns).</dd><dt>What we saw</dt><dd>645 muon-like events in 30 minutes (about 19 per minute), a time spread of about 40&nbsp;ns between chambers with no big offset, and a quarter of all hits in large bursts.</dd><dt>What it tells us</dt><dd>The muon data can be analysed, and no hardware change is needed. But the analysis needs a size cut for the bursts, a coincidence window of about &plusmn;100&nbsp;ns, a noise correction and a pad-to-position map before it gives an efficiency.</dd><dt>So the next step is</dt><dd>write the tag-and-probe analysis with these cuts, and run it on the reference run and on the threshold scan (step 11).</dd></dl></div>
 
+<div class="callout warn"><strong>Correction (25 October).</strong> The &ldquo;muon-like&rdquo; yield above is mostly noise that hits the three chambers at the same moment (step 10c): only about 16 per hour of these events are straight tracks beyond chance. The steady rate over 8 hours and the stable timing are real, but they describe this shared noise, not muons.</div>
+
+<h3>10c. Are these really muons? The tag-and-probe analysis</h3>
+<p><strong>The idea.</strong> The two outer chambers &ldquo;tag&rdquo; a muon; the middle chamber is the &ldquo;probe&rdquo;: did it see the muon too? The fraction of yes answers is the efficiency. This is the same method as at the beam test, with the outer chambers playing the role of the reference detectors. It only works if the tags really are muons.</p>
+<p><strong>First try, without positions.</strong> We just asked: when det3 and det1 both fire, does det2 fire at the same moment?</p>
+<table class="bltab"><tr><th>setting</th><th>det2 fired when det3 and det1 fired</th></tr><tr><th>safe (16 repeats, runs 76&ndash;91)</th><td>0.52&ndash;0.58</td></tr><tr><th>safe + 8 (runs 93, 96)</th><td>0.50, 0.46</td></tr><tr><th>safe + 16 (run 92)</th><td>0.49</td></tr><tr><th>safe &minus; 4 (run 94)</th><td>0.36</td></tr><tr><th>safe &minus; 8 (run 95, a quarter of the files)</th><td>0.04</td></tr></table>
+<p>This looks like an efficiency of about 55&nbsp;% at the safe setting that falls at lower thresholds. It is not one. At lower thresholds the outer chambers fire together on noise much more often, so the &ldquo;tags&rdquo; are mostly fake and the fraction drops; and a det2 hit anywhere in the chamber counts, not only where the muon went.</p>
+<p><strong>Second try, with positions.</strong> We put every hit on its pad with the beam-test map and asked whether the det2 hit is where the line through the outer hits says it should be.</p>
+<div class="viz-card"><svg viewBox="0 0 640 300" role="img" aria-label="The straight-line test: the middle hit must sit half way between the outer hits">
+<text class="t" x="12" y="18" font-size="13" font-weight="600">The straight-line test (cartoon)</text>
+<text class="m" x="12" y="34" font-size="11">The chambers lie flat, 31 cm apart. A muon is a straight line, so its hit in the middle chamber is half way between the other two,</text>
+<text class="m" x="12" y="48" font-size="11">whatever its angle. Noise hits that happen at the same moment land anywhere.</text>
+<text class="t" x="155" y="76" font-size="12" font-weight="600" text-anchor="middle">a muon</text>
+<rect x="40" y="95" width="230" height="10" rx="3" fill="var(--c1)"/>
+<text class="f" x="276" y="104" font-size="9">det3 (P2_IN)</text>
+<rect x="40" y="170" width="230" height="10" rx="3" fill="var(--c1)"/>
+<text class="f" x="276" y="179" font-size="9">det2 (P2_MID)</text>
+<rect x="40" y="245" width="230" height="10" rx="3" fill="var(--c1)"/>
+<text class="f" x="276" y="254" font-size="9">det1 (P2_OUT)</text>
+<line x1="72" y1="84" x2="228" y2="266" stroke="var(--s1)" stroke-width="2.2"/>
+<circle cx="90" cy="100" r="6" fill="var(--s1)"/>
+<circle cx="150" cy="175" r="6" fill="var(--s1)"/>
+<circle cx="210" cy="250" r="6" fill="var(--s1)"/>
+<text class="m" x="162" y="168" font-size="10">half way: straight</text>
+<text class="t" x="465" y="76" font-size="12" font-weight="600" text-anchor="middle">noise at the same moment</text>
+<rect x="350" y="95" width="230" height="10" rx="3" fill="var(--c1)"/>
+<rect x="350" y="170" width="230" height="10" rx="3" fill="var(--c1)"/>
+<rect x="350" y="245" width="230" height="10" rx="3" fill="var(--c1)"/>
+<circle cx="390" cy="100" r="6" fill="var(--s2)"/>
+<circle cx="540" cy="175" r="6" fill="var(--s2)"/>
+<circle cx="470" cy="250" r="6" fill="var(--s2)"/>
+<line x1="390" y1="100" x2="470" y2="250" stroke="var(--s2)" stroke-width="1.5" stroke-dasharray="4 4"/>
+<text class="m" x="420" y="168" font-size="10" text-anchor="end">expected here</text>
+<text class="m" x="550" y="194" font-size="10" text-anchor="middle">but it is here</text>
+</svg><p class="caption">Lying flat, 31 cm apart: a straight line crosses the middle chamber half way between its crossings of the outer two, whatever its angle. This test needs no other detector.</p></div>
+<p>Only 3.6&nbsp;% of the tags had a det2 hit at the right place, although 63&nbsp;% had a det2 hit somewhere at the right time. Either the map is wrong for this set-up (new Samtec cables, chambers turned flat), or the events are not muons. We checked both.</p>
+<p><strong>Is the map wrong?</strong> We followed the method used on the cosmic bench: try every reasonable way the 64 channels of each chip could be wired to the pads (40 per connector: in order, reversed, pairs swapped, the two halves swapped, odd and even pins split), and keep the one that makes the most events straight. To be fair, we fitted on half of the events and tested on the other half.</p>
+<div class="viz-card"><svg viewBox="0 0 640 200" role="img" aria-label="Fraction of events that are straight lines for different wirings">
+<text class="t" x="12" y="18" font-size="13" font-weight="600">Is the channel-to-pad map right? Straight events with each wiring</text>
+<text class="m" x="12" y="34" font-size="11">% of events (one hit per chamber) with the middle hit within 30 mm of the midpoint; 40 wirings tried per connector</text>
+<text class="t" x="292" y="67" font-size="11" text-anchor="end">SPS map, held-out events</text><g><title>SPS map, held-out events: 13.6 %</title><rect x="300" y="52" width="234.2" height="22" rx="4" fill="var(--s1)"/></g><text class="t" x="540.2" y="67" font-size="11">13.6 %</text>
+<text class="t" x="292" y="101" font-size="11" text-anchor="end">best other wiring, events it was fitted on</text><g><title>best other wiring, events it was fitted on: 15.4 %</title><rect x="300" y="86" width="265.2" height="22" rx="4" fill="var(--c2)"/></g><text class="t" x="571.2" y="101" font-size="11">15.4 %</text>
+<text class="t" x="292" y="135" font-size="11" text-anchor="end">best other wiring, held-out events</text><g><title>best other wiring, held-out events: 12.1 %</title><rect x="300" y="120" width="208.4" height="22" rx="4" fill="var(--s2)"/></g><text class="t" x="514.4" y="135" font-size="11">12.1 %</text>
+<text class="t" x="292" y="169" font-size="11" text-anchor="end">shuffled events (chance)</text><g><title>shuffled events (chance): 6.9 %</title><rect x="300" y="154" width="118.8" height="22" rx="4" fill="var(--fg-faint)"/></g><text class="t" x="424.8" y="169" font-size="11">6.9 %</text>
+</svg><p class="caption">Real data, runs 76&ndash;91. The beam-test map does best on events it has never seen. A different wiring can look better on the events it was tuned on, but it does worse on new events: it learned the noise. We also scanned rotations and mirror images between the chambers: no chamber is flipped.</p></div>
+<p>One detail is useful for the future: at the beam test two connector halves of P2_IN needed a correction because of the Hitachi cables. With the Samtec cables they follow the plain order.</p>
+<p><strong>So are the events muons?</strong> We counted, for every run, the groups that contain a straight triplet (one hit per chamber, middle hit within 30&nbsp;mm of the midpoint), and subtracted what chance gives. Chance is measured by moving each middle-chamber hit to another channel <em>of the same chip</em>: this keeps the noise that is shared between chips, and only real straight lines survive.</p>
+<div class="viz-card"><svg viewBox="0 0 640 380" role="img" aria-label="Straight tracks per hour above chance at each threshold setting">
+<text class="t" x="12" y="18" font-size="13" font-weight="600">Straight three-chamber tracks per hour, above chance, at each setting</text>
+<text class="m" x="12" y="34" font-size="11">Runs 76&ndash;108 (the long run included). Bars: the strict chance level (each middle hit kept on its chip, channel shuffled);</text>
+<text class="m" x="12" y="48" font-size="11">open bars: the loose chance level (middle hits taken from another event). Lines: &plusmn;1 standard error.</text>
+<line x1="60" x2="620" y1="320.0" y2="320.0" stroke="var(--border)"/><text class="f" x="54" y="323.0" font-size="9" text-anchor="end">0</text>
+<line x1="60" x2="620" y1="257.5" y2="257.5" stroke="var(--border)"/><text class="f" x="54" y="260.5" font-size="9" text-anchor="end">40</text>
+<line x1="60" x2="620" y1="195.0" y2="195.0" stroke="var(--border)"/><text class="f" x="54" y="198.0" font-size="9" text-anchor="end">80</text>
+<line x1="60" x2="620" y1="132.5" y2="132.5" stroke="var(--border)"/><text class="f" x="54" y="135.5" font-size="9" text-anchor="end">120</text>
+<line x1="60" x2="620" y1="70.0" y2="70.0" stroke="var(--border)"/><text class="f" x="54" y="73.0" font-size="9" text-anchor="end">160</text>
+<g><title>safe + 16: 21 +- 14 per hour (strict), 55 +- 12 (loose); 1.1 h, 1 runs</title><rect x="70.0" y="287.1" width="36.7" height="32.9" rx="3" fill="var(--s1)"/><rect x="109.7" y="233.9" width="33.7" height="86.1" rx="3" fill="none" stroke="var(--fg-faint)" stroke-width="1.5"/></g>
+<line x1="88.3" x2="88.3" y1="308.3" y2="265.8" stroke="var(--fg)" stroke-width="1.3"/>
+<text class="t" x="88.3" y="259.8" font-size="10" text-anchor="middle">21 &plusmn; 14</text>
+<text class="m" x="106.7" y="334" font-size="10" text-anchor="middle">safe + 16</text><text class="f" x="106.7" y="347" font-size="9" text-anchor="middle">1.1 h, 1 run</text>
+<g><title>safe + 8: 13 +- 8 per hour (strict), 56 +- 8 (loose); 3.3 h, 5 runs</title><rect x="163.3" y="300.5" width="36.7" height="19.5" rx="3" fill="var(--s1)"/><rect x="203.0" y="232.2" width="33.7" height="87.8" rx="3" fill="none" stroke="var(--fg-faint)" stroke-width="1.5"/></g>
+<line x1="181.7" x2="181.7" y1="313.2" y2="287.7" stroke="var(--fg)" stroke-width="1.3"/>
+<text class="t" x="181.7" y="281.7" font-size="10" text-anchor="middle">13 &plusmn; 8</text>
+<text class="m" x="200.0" y="334" font-size="10" text-anchor="middle">safe + 8</text><text class="f" x="200.0" y="347" font-size="9" text-anchor="middle">3.3 h, 5 runs</text>
+<g><title>safe: 16 +- 6 per hour (strict), 70 +- 5 (loose); 10.6 h, 19 runs</title><rect x="256.7" y="294.6" width="36.7" height="25.4" rx="3" fill="var(--s1)"/><rect x="296.3" y="210.2" width="33.7" height="109.8" rx="3" fill="none" stroke="var(--fg-faint)" stroke-width="1.5"/></g>
+<line x1="275.0" x2="275.0" y1="303.7" y2="285.4" stroke="var(--fg)" stroke-width="1.3"/>
+<text class="t" x="275.0" y="279.4" font-size="10" text-anchor="middle">16 &plusmn; 6</text>
+<text class="m" x="293.3" y="334" font-size="10" text-anchor="middle">safe</text><text class="f" x="293.3" y="347" font-size="9" text-anchor="middle">10.6 h, 19 runs</text>
+<g><title>safe - 4: 13 +- 10 per hour (strict), 68 +- 11 (loose); 2.8 h, 4 runs</title><rect x="350.0" y="299.9" width="36.7" height="20.1" rx="3" fill="var(--s1)"/><rect x="389.7" y="213.1" width="33.7" height="106.9" rx="3" fill="none" stroke="var(--fg-faint)" stroke-width="1.5"/></g>
+<line x1="368.3" x2="368.3" y1="316.0" y2="283.8" stroke="var(--fg)" stroke-width="1.3"/>
+<text class="t" x="368.3" y="277.8" font-size="10" text-anchor="middle">13 &plusmn; 10</text>
+<text class="m" x="386.7" y="334" font-size="10" text-anchor="middle">safe &minus; 4</text><text class="f" x="386.7" y="347" font-size="9" text-anchor="middle">2.8 h, 4 runs</text>
+<g><title>safe - 6: 54 +- 22 per hour (strict), 146 +- 23 (loose); 1.7 h, 3 runs</title><rect x="443.3" y="235.2" width="36.7" height="84.8" rx="3" fill="var(--s2)"/><rect x="483.0" y="91.3" width="33.7" height="228.7" rx="3" fill="none" stroke="var(--fg-faint)" stroke-width="1.5"/></g>
+<line x1="461.7" x2="461.7" y1="268.9" y2="201.5" stroke="var(--fg)" stroke-width="1.3"/>
+<text class="t" x="461.7" y="195.5" font-size="10" text-anchor="middle">54 &plusmn; 22</text>
+<text class="m" x="480.0" y="334" font-size="10" text-anchor="middle">safe &minus; 6</text><text class="f" x="480.0" y="347" font-size="9" text-anchor="middle">1.7 h, 3 runs</text>
+<g><title>safe - 8: 922 +- 196 per hour (strict), 819 +- 187 (loose); 0.3 h, 1 runs</title><rect x="536.7" y="70.0" width="36.7" height="250.0" rx="3" fill="var(--s2)"/><rect x="576.3" y="70.0" width="33.7" height="250.0" rx="3" fill="none" stroke="var(--fg-faint)" stroke-width="1.5"/></g>
+<text class="t" x="555.0" y="64.0" font-size="10" text-anchor="middle">&#8593; 922</text>
+<text class="m" x="573.3" y="334" font-size="10" text-anchor="middle">safe &minus; 8</text><text class="f" x="573.3" y="347" font-size="9" text-anchor="middle">0.3 h, 1 run</text>
+<text class="f" x="340.0" y="366" font-size="9" text-anchor="middle">the orange bars are a fixed pattern of hot channels, not muons (next figure)</text>
+</svg><p class="caption">Real data, runs 76&ndash;108, all settings of the threshold scan and of the long run. At the safe setting about 16 per hour, from 10.6 hours. For comparison, a rough estimate: the stack covers about 0.05 m&sup2; per chamber, so muons crossing all three should be of order one per second, that is a few thousand per hour times the efficiency of each chamber to the third power (about 400 per hour at 50&nbsp;% per chamber).</p></div>
+<table class="bltab"><tr><th>setting</th><th>runs</th><th>hours</th><th>3-chamber groups per hour</th><th>straight above chance, strict</th><th>loose</th></tr><tr><th>safe + 16</th><td>1</td><td>1.1</td><td>761</td><td>21 &plusmn; 14</td><td>55 &plusmn; 12</td></tr><tr><th>safe + 8</th><td>5</td><td>3.3</td><td>840</td><td>13 &plusmn; 8</td><td>56 &plusmn; 8</td></tr><tr><th>safe</th><td>19</td><td>10.6</td><td>1,158</td><td>16 &plusmn; 6</td><td>70 &plusmn; 5</td></tr><tr><th>safe &minus; 4</th><td>4</td><td>2.8</td><td>1,128</td><td>13 &plusmn; 10</td><td>68 &plusmn; 11</td></tr><tr><th>safe &minus; 6</th><td>3</td><td>1.7</td><td>3,399</td><td>54 &plusmn; 22</td><td>146 &plusmn; 23</td></tr><tr><th>safe &minus; 8</th><td>1</td><td>0.3</td><td>30,432</td><td>922 &plusmn; 196</td><td>819 &plusmn; 187</td></tr></table>
+<p>The rise at 6 and 8 steps below the safe setting looks like muons appearing, but it is not:</p>
+<div class="viz-card"><svg viewBox="0 0 640 200" role="img" aria-label="Share of the low-threshold straight events carried by ten pad combinations">
+<text class="t" x="12" y="18" font-size="13" font-weight="600">The low-threshold &#8220;tracks&#8221; repeat the same few pads</text>
+<text class="m" x="12" y="34" font-size="11">Share of the straight events carried by the 10 most frequent (det3 pad, det1 pad) combinations. Real muons would spread</text>
+<text class="m" x="12" y="48" font-size="11">over hundreds of combinations; one combination alone (VMM 5 ch 46, VMM 11 ch 10, VMM 19 ch 20) is 22 % of run 95.</text>
+<text class="t" x="212" y="79" font-size="11" text-anchor="end">safe &minus; 8 (run 95)</text><rect x="220" y="64" width="380" height="22" rx="4" fill="var(--c0)"/><g><title>safe - 8 (run 95): 2443 straight events, 59 % in 10 combinations</title><rect x="220" y="64" width="224.2" height="22" rx="4" fill="var(--s2)"/></g><text class="x3" x="228" y="79" font-size="11">59 % of 2443</text>
+<text class="t" x="212" y="111" font-size="11" text-anchor="end">safe &minus; 6 (run 99)</text><rect x="220" y="96" width="380" height="22" rx="4" fill="var(--c0)"/><g><title>safe - 6 (run 99): 409 straight events, 44 % in 10 combinations</title><rect x="220" y="96" width="167.2" height="22" rx="4" fill="var(--s2)"/></g><text class="x3" x="228" y="111" font-size="11">44 % of 409</text>
+<text class="t" x="212" y="143" font-size="11" text-anchor="end">safe &minus; 6 (run 103)</text><rect x="220" y="128" width="380" height="22" rx="4" fill="var(--c0)"/><g><title>safe - 6 (run 103): 381 straight events, 45 % in 10 combinations</title><rect x="220" y="128" width="171.0" height="22" rx="4" fill="var(--s2)"/></g><text class="x3" x="228" y="143" font-size="11">45 % of 381</text>
+<text class="t" x="212" y="175" font-size="11" text-anchor="end">safe &minus; 6 (run 107)</text><rect x="220" y="160" width="380" height="22" rx="4" fill="var(--c0)"/><g><title>safe - 6 (run 107): 467 straight events, 46 % in 10 combinations</title><rect x="220" y="160" width="174.8" height="22" rx="4" fill="var(--s2)"/></g><text class="x3" x="228" y="175" font-size="11">46 % of 467</text>
+</svg><p class="caption">Real data. The straight events at low threshold come again and again from the same few channels in the three chambers firing together: hot channels with correlated noise, not particles.</p></div>
+<p>We also looked at the big bursts (more than 36 hits): about 190 hits in under a microsecond, spread evenly over every chip of a chamber, mostly det3 and det2. They are whole-chamber events, not tracks. And the pulse heights of the hits in three-chamber events are no larger than those of single noise hits: no sign of a muon signal there either.</p>
+<p><strong>What this means.</strong> With these settings the stack sees almost no cosmic muons above the noise: the chambers fire together, but on noise. The best threshold cannot be chosen from the efficiency until a muon signal is there. At the beam test the same chambers and chips gave 67&ndash;85&nbsp;%, so something is different here. The first suspects are the high voltage and the gas (the voltage is set by hand and not logged; the gas is not confirmed), then the new cables. A radioactive source (Fe-55) on one chamber would show directly whether signals come through, and would check the map at the same time.</p>
+<div class="stepcard done"><div class="sc-head"><span class="stepn">10c</span><strong>Tag-and-probe: are these muons?</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>Tag-and-probe without and with pad positions; the beam-test map against 40 alternative wirings per connector and rotations / mirrors between chambers; straight tracks above chance for every run, runs 76&ndash;108.</dd><dt>What we saw</dt><dd>The map is the best one available and no chamber is flipped. Straight tracks above chance: about 16 per hour at the safe setting, nothing more at the other settings except a fixed pattern of hot channels at the lowest ones.</dd><dt>What it tells us</dt><dd>The three-chamber coincidences are shared noise, not muons. The efficiency, and so the best threshold, cannot be measured until the chambers show a muon signal.</dd><dt>So the next step is</dt><dd>check the high voltage and the gas against the beam test, and do a source test (step 12b).</dd></dl></div>
+
 <h2>11. What we know, and what we do not</h2>
 <div class="two">
 <div><h3>We know</h3><ul>
@@ -5491,11 +5591,14 @@
 <li>VMM 4, 7 and 9 each have a block of channels with a high baseline (also with the voltage off); the bursts are at its edge and, at high thresholds, are the same with the voltage on and off.</li>
 <li>No chamber is dead with the voltage on.</li>
 <li>A global threshold for 13 of the 18 chips can be read from the noise scans (onset + 8 steps); the five others are special.</li>
-<li>Muon-like events are in the data (about 21 per minute for the stack, steady over 8 hours), with no large timing offset between the chambers, and the usable range of thresholds ends between 4 and 8 steps below the safe setting, where noise coincidences take over.</li>
+<li>Muon-like events are in the data (about 21 per minute for the stack, steady over 8 hours), with no large timing offset between the chambers, and the usable range of thresholds ends between 4 and 8 steps below the safe setting, where noise coincidences take over. <em>Corrected on 25 October: these are mostly shared noise, not muons (next item).</em></li>
+<li>Only about 16 per hour of the three-chamber events are straight tracks beyond chance, at every setting from 16 steps above to 4 below the safe one; the extra &ldquo;tracks&rdquo; at lower thresholds are a fixed pattern of hot channels.</li>
+<li>The beam-test channel-to-pad map is the best one for this set-up; no chamber is flipped or mirrored; the two P2_IN corrections of the Hitachi cables are not needed with the Samtec cables.</li>
 </ul></div>
 <div><h3>We do not know yet</h3><ul>
 <li>The <strong>efficiency</strong>: this was the noise side and a first look at the muon events.</li>
 <li>Which threshold gives the best efficiency (the yield rises down to 4 steps below the safe setting, but it mixes muons and chance coincidences), and what the large bursts (a quarter of all hits) are.</li>
+<li><strong>Why the chambers show almost no muon signal here</strong>, when they gave 67&ndash;85&nbsp;% at the beam test: high voltage, gas, cables?</li>
 <li>Why the total hit rate rose by half over the 8 hours of the reference run while the muon rate did not.</li>
 <li>Why the three burst chips have that block of channels, and whether it is the chip, the hybrid or the connection.</li>
 <li>The link between ADC counts and millivolts, channel by channel.</li>
@@ -5585,13 +5688,15 @@
 <text class="m" x="14" y="221" font-size="11">correction the channels line up, so the chip's threshold can be lower and the muons that were lost are counted again.</text>
 </svg><p class="caption">Today each chip has one threshold. The next step gives each channel a small correction so that all channels start at the same level (cartoon, not measured).</p></div>
 
-<div class="stepcard next"><div class="sc-head"><span class="stepn">11</span><strong>Reference run, threshold scan and the interleaved long run</strong> <span class="pill warn">next, not done yet</span></div><dl><dt>Where we are</dt><dd>Reference run done (8 hours at the safe setting) and the threshold scan done (four points of one hour). Since Sunday 13:22 a long run is taking 30-minute runs in rotation at four settings: 8 steps above the safe setting, the safe setting, 4 steps below it and 6 steps below it (up to 48 runs, about 24 hours; you stop it). The lowest of the scan points (8 steps below) is left out because noise coincidences dominate there. The rotation, rather than one setting for the whole day, because the best threshold is not known yet and the hit rate drifts over the hours.</dd><dt>What is needed</dt><dd>Voltage readings in the logbook (still missing), and the tag-and-probe analysis, which is not written yet. A day of rotation gives about six hours per setting, roughly 8000 muon-like events per setting for the stack.</dd><dt>What it will tell us</dt><dd>Enough data at each setting to measure the efficiency against the threshold, chip by chip, and so to find where the efficiency stops rising while the noise starts to grow.</dd><dt>Then</dt><dd>write the tag-and-probe analysis (burst cut, noise correction, pad map) and run it on all of these runs; on Monday the voltage goes off again for the 15-minute repeat test of step 7, and the millivolt measurement follows (step 12).</dd></dl></div>
+<div class="stepcard done"><div class="sc-head"><span class="stepn">11</span><strong>Reference run, threshold scan and the interleaved long run</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>Reference run (8 hours at the safe setting), threshold scan (four points of one hour), and the interleaved long run from Sunday 13:22 to 21:34: 16 runs of 30 minutes (run_96 to run_111) in rotation at 8 steps above the safe setting, the safe setting, 4 and 6 steps below it. Stopped on request after the analysis of step 10c.</dd><dt>What we saw</dt><dd>About 33 hours of data at six settings in total. The tag-and-probe analysis (step 10c) found no muon signal at any of them, so more hours at the same settings would not help.</dd><dt>What it tells us</dt><dd>The data are good for noise and stability studies (the total rate drift, the bursts, the hot channels), but not yet for efficiency.</dd><dt>So the next step is</dt><dd>find out why there is no muon signal (step 12b) before taking more muon data.</dd></dl></div>
+
+<div class="stepcard next"><div class="sc-head"><span class="stepn">12b</span><strong>Why no muon signal? High voltage, gas, source test</strong> <span class="pill warn">next, not done yet</span></div><dl><dt>Where we are</dt><dd>The high voltage was switched on by hand on 23 October and is still on; its values are not in the logbook. The gas mixture is not confirmed in the run configuration.</dd><dt>What is needed</dt><dd>The voltage of each chamber and the gas, compared with the beam test; then an Fe-55 source on one chamber for a few minutes, with the same chip settings.</dd><dt>What it will tell us</dt><dd>Whether signals come through at all: a clear excess of hits under the source, at the right pads, would show the chambers work and confirm the map; no excess would point to the gain (voltage or gas).</dd><dt>Then</dt><dd>once there is a muon signal, repeat the threshold scan and the tag-and-probe analysis (step 14).</dd></dl></div>
 
 <div class="stepcard next"><div class="sc-head"><span class="stepn">12</span><strong>Put the baselines in millivolts</strong> <span class="pill warn">next, not done yet</span></div><dl><dt>Where we are</dt><dd>Not started. The new slow-control library can already read the chip&rsquo;s monitor for each channel, but the command-line tool does not offer it.</dd><dt>What is needed</dt><dd>A way to call the library: either ask the developer to add a command, or write a small program of our own that calls it (without changing his software). We would test it on one channel of one hybrid first, then run all channels of all hybrids.</dd><dt>What it will tell us</dt><dd>The level of every channel in millivolts. Together with the ADC baselines of step 6 this gives the full chain, threshold setting to millivolts to ADC, channel by channel.</dd><dt>Then</dt><dd>compute the corrections (step 13).</dd></dl></div>
 
 <div class="stepcard later"><div class="sc-head"><span class="stepn">13</span><strong>Compute and apply the corrections, then scan again</strong> <span class="pill">later</span></div><dl><dt>Where we are</dt><dd>Not started.</dd><dt>What is needed</dt><dd>The measurements of steps 6 to 12.</dd><dt>What it will tell us</dt><dd>If the corrections work, the noise onset of all chips lines up and the usable threshold window opens for every chip.</dd><dt>Then</dt><dd>repeat the noise scan with the corrections, voltage on and off, then measure the efficiency (step 14).</dd></dl></div>
 
-<div class="stepcard later"><div class="sc-head"><span class="stepn">14</span><strong>Measure the efficiency</strong> <span class="pill">later</span></div><dl><dt>Where we are</dt><dd>Not started.</dd><dt>What is needed</dt><dd>A night of cosmic muons at a safe threshold, then the tag-and-probe method: the two outer chambers say a muon went through, and the middle one is asked whether it saw it.</dd><dt>What it will tell us</dt><dd>The efficiency against the threshold, chip by chip: the real answer to the first question.</dd><dt>Then</dt><dd>compare with the beam test and with the DREAM readout.</dd></dl></div>
+<div class="stepcard later"><div class="sc-head"><span class="stepn">14</span><strong>Measure the efficiency</strong> <span class="pill">later</span></div><dl><dt>Where we are</dt><dd>Not started.</dd><dt>What is needed</dt><dd>A night of cosmic muons at a safe threshold, then the tag-and-probe method: the two outer chambers say a muon went through, and the middle one is asked whether it saw it. The analysis is written and was tried on 33 hours of data (step 10c); it needs a muon signal first (step 12b).</dd><dt>What it will tell us</dt><dd>The efficiency against the threshold, chip by chip: the real answer to the first question.</dd><dt>Then</dt><dd>compare with the beam test and with the DREAM readout.</dd></dl></div>
 
 <h2>13. Where the data and code are</h2>
 <table class="runs">
@@ -5603,10 +5708,11 @@
 <tr><td>Voltage ON, 24 Oct: <code>run_57</code> (health check), <code>run_58</code> &hellip; <code>run_70</code> (noise ladder of VMM 4, 7, 9), <code>run_71</code> &hellip; <code>run_75</code> (neighbour read-out with cosmics, 4 to 44&nbsp;GB each)</td><td>same place; configs <code>&hellip;_safehvon_v1</code>, <code>&hellip;_n479hvon_d&lt;d&gt;</code>, <code>&hellip;_sngcosmic_o&lt;k&gt;</code>. A sixth neighbour point was refused by the disk guard. Nothing was recorded from Friday 20:24 to Saturday 18:33: the reference run had not been chained behind these scans, and the connection to the machine was lost (then the machine&rsquo;s account service stopped accepting the login)</td></tr>
 <tr><td>First look at the muon events: the first 30 minutes of the reference run (<code>run_76</code>)</td><td><code>analysis_muons/</code> in the data folder; per-chip thresholds in <code>analysis_thresholds/</code> (chip table and a per-channel baseline table, CSV)</td></tr>
 <tr><td>Reference run and threshold scan (done)</td><td><code>run_76</code> &hellip; <code>run_91</code>: 16 &times; 30&nbsp;min at <code>&hellip;_safehvon_v1</code>; <code>run_92</code> &hellip; <code>run_95</code>: <code>&hellip;_thrhvon_p16 / _p8 / _m4 / _m8</code> (60&nbsp;min each); per-run results in <code>analysis_muons/per_run/</code></td></tr>
-<tr><td>Interleaved long run (running since Sunday 13:22)</td><td><code>run_96</code> onward: 30&nbsp;min each in rotation <code>&hellip;_thrhvon_p8</code>, <code>&hellip;_safehvon_v1</code>, <code>&hellip;_thrhvon_m4</code>, <code>&hellip;_thrhvon_m6</code></td></tr>
+<tr><td>Interleaved long run (Sunday 13:22 to 21:34, stopped on request)</td><td><code>run_96</code> &hellip; <code>run_111</code>: 30&nbsp;min each in rotation <code>&hellip;_thrhvon_p8</code>, <code>&hellip;_safehvon_v1</code>, <code>&hellip;_thrhvon_m4</code>, <code>&hellip;_thrhvon_m6</code> (<code>run_111</code> stopped after 21 minutes)</td></tr>
+<tr><td>Tag-and-probe, map and straight-track analysis (step 10c)</td><td>Code in <code>P2_basket_analysis/cosmic_vmm_analysis/</code> (linked in the DAQ repo as <code>cosmic_vmm_analysis</code>): <code>tag_and_probe.py</code>, <code>tag_and_probe_pads.py</code>, <code>muon_signal_check.py</code>, <code>dump_candidates.py</code>, <code>orientation_check.py</code>, <code>straight_track_rate.py</code>. Results in <code>analysis_muons/</code> (<code>straight_track_rate_runs76-108.json</code>, <code>orientation_runs76-91.json</code>, <code>signal_check/</code>, candidate events in <code>cand/</code>)</td></tr>
 <tr><td>Tables used for the figures</td><td><code>analysis_noise_scan/</code> and <code>analysis_noise_scan_hvoff/</code> (chip tables, per-channel CSV, voltage on/off comparison), <code>analysis_n479_hvoff/</code> and <code>analysis_hvon/</code> (rate and hot channels of VMM 4, 7, 9 with the voltage off and on; baselines with the voltage on), <code>analysis_health/</code> (pulse-height spectra of the health check), <code>analysis_sng1_hvoff/</code> (baseline of every covered channel, coverage per capture, baseline against noise peak)</td></tr>
 <tr><td>Chip settings</td><td>4.5&nbsp;mV/fC, 200&nbsp;ns peaking time; only the threshold lines and the masks change between files</td></tr>
-<tr><td>Code and feedback notes</td><td>branch <code>lab-cosmics-oct26</code>, <code>docs/LAB_COSMICS_OBSERVATIONS.md</code> (items 1&ndash;60)</td></tr>
+<tr><td>Code and feedback notes</td><td>branch <code>lab-cosmics-oct26</code>, <code>docs/LAB_COSMICS_OBSERVATIONS.md</code> (items 1&ndash;64); the analysis scripts moved on 25 October from the DAQ repo&rsquo;s <code>quick_scripts/</code> to <code>P2_basket_analysis/cosmic_vmm_analysis/</code></td></tr>
 </table>
 </div>
   </article>
