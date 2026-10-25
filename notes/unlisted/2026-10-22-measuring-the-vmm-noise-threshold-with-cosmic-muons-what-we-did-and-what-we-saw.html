@@ -47,13 +47,15 @@
 
 
 
+
+
 <style>
   :root{--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--alert:#eb6834;--surface:#fcfcfb;
     --c0:#eef0f3;--c1:#cde2fb;--c2:#86b6ef;--c3:#3987e5;--c4:#1c5cab;--c5:#0d366b;
     --t0:#52514e;--t1:#1d1f24;--t2:#0b0b0b;--t3:#fff;--t4:#fff;--t5:#fff;}
   @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--s1:#3987e5;--s2:#d95926;--s3:#199e70;--alert:#e8743f;--surface:#1c1f25;
     --c0:#262a31;--c1:#184f95;--c2:#256abf;--c3:#3987e5;--c4:#86b6ef;--c5:#cde2fb;
-    --t0:#a5a9b1;--t1:#e8e8e4;--t2:#e8e8e4;--t3:#0b0b0b;--t4:#0b0b0b;--t5:#0b0b0b;}
+    --t0:#a5a9b1;--t1:#e8e8e4;--t2:#e8e8e4;--t3:#0b0b0b;--t4:#0b0b0b;--t5:#0b0b0b;}}
   :root[data-theme="dark"]{--s1:#3987e5;--s2:#d95926;--s3:#199e70;--alert:#e8743f;--surface:#1c1f25;
     --c0:#262a31;--c1:#184f95;--c2:#256abf;--c3:#3987e5;--c4:#86b6ef;--c5:#cde2fb;
     --t0:#a5a9b1;--t1:#e8e8e4;--t2:#e8e8e4;--t3:#0b0b0b;--t4:#0b0b0b;--t5:#0b0b0b;}
@@ -68,14 +70,14 @@
   .big{font-size:30px;font-weight:650} .small{font-size:12.5px}
   .tldr{border-left:4px solid var(--s1);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0}
   .tldr li{margin:3px 0}
-  .stepn{flex:none;min-width:26px;padding:0 5px;box-sizing:border-box;height:26px;border-radius:13px;background:var(--s1);color:#fff;font-weight:650;font-size:14px;display:inline-flex;align-items:center;justify-content:center}
+  .stepn{flex:none;width:26px;height:26px;border-radius:50%;background:var(--s1);color:#fff;font-weight:650;font-size:14px;display:inline-flex;align-items:center;justify-content:center}
   .stepcard{border:1px solid var(--border);border-left:5px solid var(--s1);border-radius:8px;background:var(--bg-elev);padding:10px 14px 4px;margin:14px 0}
   .stepcard.next{border-left-color:var(--s2)} .stepcard.later{border-left-color:var(--fg-faint)}
   .sc-head{display:flex;gap:10px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
   .stepcard dl{margin:0;display:grid;grid-template-columns:150px 1fr;gap:4px 12px}
   .stepcard dt{color:var(--fg-muted);font-size:13.5px} .stepcard dd{margin:0 0 6px;font-size:15px}
-  @media (max-width:640px){.stepcard dl{grid-template-columns:1fr}.stepcard dt{margin-top:4px}
-  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px} @media (max-width:640px){.two{grid-template-columns:1fr}
+  @media (max-width:640px){.stepcard dl{grid-template-columns:1fr}.stepcard dt{margin-top:4px}}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px} @media (max-width:640px){.two{grid-template-columns:1fr}}
   .two>div{border:1px solid var(--border);border-radius:8px;padding:8px 14px;background:var(--bg-elev)}
   .two h3{margin:4px 0 6px}
   details{margin:6px 0;border:1px solid var(--border);border-radius:8px;background:var(--bg-elev);padding:4px 12px}
@@ -84,6 +86,8 @@
   table.bltab th{font-weight:500;color:var(--fg-muted);text-align:left;padding:2px 10px 2px 0;white-space:nowrap}
   table.bltab td{padding:2px 10px;text-align:right;border-top:1px solid var(--border)} table.bltab td.na{color:var(--fg-faint)}
   table.runs td,table.runs th{padding:4px 8px;font-size:13.5px}
+  dl.gloss{display:grid;grid-template-columns:170px 1fr;gap:4px 14px;margin:8px 0 14px} dl.gloss dt{font-weight:600;font-size:14px} dl.gloss dd{margin:0;font-size:14.5px}
+  @media (max-width:640px){dl.gloss{grid-template-columns:1fr} dl.gloss dt{margin-top:6px}}
 </style>
 </head>
 <body>
@@ -5698,7 +5702,82 @@
 
 <div class="stepcard later"><div class="sc-head"><span class="stepn">14</span><strong>Measure the efficiency</strong> <span class="pill">later</span></div><dl><dt>Where we are</dt><dd>Not started.</dd><dt>What is needed</dt><dd>A night of cosmic muons at a safe threshold, then the tag-and-probe method: the two outer chambers say a muon went through, and the middle one is asked whether it saw it. The analysis is written and was tried on 33 hours of data (step 10c); it needs a muon signal first (step 12b).</dd><dt>What it will tell us</dt><dd>The efficiency against the threshold, chip by chip: the real answer to the first question.</dd><dt>Then</dt><dd>compare with the beam test and with the DREAM readout.</dd></dl></div>
 
-<h2>13. Where the data and code are</h2>
+<h2>13. All runs at a glance, and the words we use</h2>
+<p>This is the map of the whole campaign so far: which run numbers belong to which measurement, and what the names mean. The same overview now opens the logbook.</p>
+<div class="viz-card"><svg viewBox="0 0 640 250" role="img" aria-label="All runs from 1 to 111 grouped by measurement, coloured by the chamber voltage">
+<text class="t" x="12" y="18" font-size="13" font-weight="600">All 111 runs at a glance</text>
+<text class="m" x="12" y="34" font-size="11">Each block is one measurement, placed by run number; the colour is the chamber voltage. Hover a block for details.</text>
+<g><title>runs 1-3: First points: the flood of hits from VMM 4 and 9 (held at sdt 400), then masks on single channels</title><rect x="20.3" y="82" width="15.7" height="34" rx="3" fill="var(--s1)"/></g>
+<text class="m" x="28.1" y="72" font-size="9.5" text-anchor="middle">first points</text>
+<g><title>runs 4-13: Noise scan, voltage on: all chips together, d = 50, 40, 34, 30, 27, 24, 22, 20, 18, 16</title><rect x="36.5" y="82" width="53.5" height="34" rx="3" fill="var(--s1)"/></g>
+<text class="m" x="63.2" y="136" font-size="9.5" text-anchor="middle">noise scan</text>
+<g><title>runs 14-23: Noise scan, voltage off: the same ten points, to separate the electronics from the chambers</title><rect x="90.5" y="82" width="53.5" height="34" rx="3" fill="var(--c2)"/></g>
+<text class="m" x="117.3" y="72" font-size="9.5" text-anchor="middle">noise scan</text>
+<g><title>runs 24-27: Noise scan, voltage off, nothing masked (to see VMM 4, 7, 9), d = 50, 40, 34, 30</title><rect x="144.6" y="82" width="21.1" height="34" rx="3" fill="var(--c2)"/></g>
+<text class="m" x="155.1" y="136" font-size="9.5" text-anchor="middle">no masks</text>
+<g><title>runs 28-32: Neighbour read-out baselines, voltage off: a probe point (28), then 0, -3, -6, -9 DAC from each chip's onset (29-32)</title><rect x="166.2" y="82" width="26.5" height="34" rx="3" fill="var(--c2)"/></g>
+<text class="m" x="179.5" y="72" font-size="9.5" text-anchor="middle">baselines</text>
+<g><title>runs 33-34: Numbers lost in the run-counter incident; two stray captures are kept apart in orphan_2026-10-23_*</title><rect x="193.2" y="82" width="10.3" height="34" rx="3" fill="var(--border)"/></g>
+<g><title>runs 35-47: Block A: VMM 4, 7, 9 unmasked, normal read-out, d = 200, 100, 60, 50, 40, 34, 30, 27, 24, 22, 20, 18, 16</title><rect x="204.1" y="82" width="69.7" height="34" rx="3" fill="var(--c2)"/></g>
+<text class="m" x="238.9" y="72" font-size="9.5" text-anchor="middle">block A</text>
+<g><title>runs 48-56: Block C: the same with neighbour read-out, d = 100, 60, 50, 40, 34, 27, 22, 18, 14</title><rect x="274.3" y="82" width="48.1" height="34" rx="3" fill="var(--c2)"/></g>
+<text class="m" x="298.4" y="136" font-size="9.5" text-anchor="middle">block C</text>
+<g><title>runs 57-57: Health check with the voltage on, at the safe setting</title><rect x="323.0" y="82" width="4.9" height="34" rx="3" fill="var(--s1)"/></g>
+<g><title>runs 58-70: VMM 4, 7, 9 noise scan, voltage on (the same 13 points as block A)</title><rect x="328.4" y="82" width="69.7" height="34" rx="3" fill="var(--s1)"/></g>
+<text class="m" x="363.2" y="136" font-size="9.5" text-anchor="middle">VMM 4/7/9</text>
+<g><title>runs 71-75: Neighbour read-out with cosmics, voltage on: safe, -4, -8, -12, -16 (baselines for 97 % of the channels)</title><rect x="398.6" y="82" width="26.5" height="34" rx="3" fill="var(--s1)"/></g>
+<text class="m" x="411.9" y="72" font-size="9.5" text-anchor="middle">baselines</text>
+<g><title>runs 76-91: Reference run at the safe setting</title><rect x="425.7" y="82" width="85.9" height="34" rx="3" fill="var(--s1)"/></g>
+<text class="m" x="468.6" y="136" font-size="9.5" text-anchor="middle">reference run</text>
+<g><title>runs 92-95: Threshold scan with tracks: safe + 16 (92), safe + 8 (93), safe - 4 (94), safe - 8 (95)</title><rect x="512.2" y="82" width="21.1" height="34" rx="3" fill="var(--s1)"/></g>
+<text class="m" x="522.7" y="72" font-size="9.5" text-anchor="middle">scan</text>
+<g><title>runs 96-111: Interleaved long run, stopped on request (run_111 after 21 minutes); settings below</title><rect x="533.8" y="82" width="85.9" height="34" rx="3" fill="var(--s1)"/></g>
+<text class="m" x="576.8" y="136" font-size="9.5" text-anchor="middle">interleaved long run</text>
+<text class="f" x="22.7" y="152" font-size="9" text-anchor="middle">1</text>
+
+
+<text class="f" x="206.5" y="152" font-size="9" text-anchor="middle">35</text>
+<text class="f" x="325.4" y="152" font-size="9" text-anchor="middle">57</text>
+<text class="f" x="428.1" y="152" font-size="9" text-anchor="middle">76</text>
+<text class="f" x="514.6" y="152" font-size="9" text-anchor="middle">92</text>
+<text class="f" x="536.2" y="152" font-size="9" text-anchor="middle">96</text>
+<text class="f" x="617.3" y="152" font-size="9" text-anchor="middle">111</text>
+<text class="f" x="320.0" y="166" font-size="9" text-anchor="middle">run number</text>
+<line x1="20.3" x2="90.0" y1="184" y2="184" stroke="var(--fg-faint)" stroke-width="1.5"/><text class="m" x="55.1" y="198" font-size="10" text-anchor="middle">Thu 22</text>
+<line x1="90.5" x2="425.1" y1="184" y2="184" stroke="var(--fg-faint)" stroke-width="1.5"/><text class="m" x="257.8" y="198" font-size="10" text-anchor="middle">Fri 23</text>
+<line x1="425.7" x2="511.6" y1="184" y2="184" stroke="var(--fg-faint)" stroke-width="1.5"/><text class="m" x="468.6" y="198" font-size="10" text-anchor="middle">Sat 24 &ndash; Sun 25 night</text>
+<line x1="512.2" x2="619.7" y1="184" y2="184" stroke="var(--fg-faint)" stroke-width="1.5"/><text class="m" x="565.9" y="198" font-size="10" text-anchor="middle">Sun 25</text>
+<text class="f" x="428.1" y="212" font-size="9" text-anchor="middle">(nothing recorded Fri 20:24 &ndash; Sat 18:32)</text>
+<rect x="20" y="228" width="14" height="14" rx="3" fill="var(--s1)"/><text class="m" x="40" y="239" font-size="11">voltage on</text>
+<rect x="170" y="228" width="14" height="14" rx="3" fill="var(--c2)"/><text class="m" x="190" y="239" font-size="11">voltage off</text>
+<rect x="320" y="228" width="14" height="14" rx="3" fill="var(--border)"/><text class="m" x="340" y="239" font-size="11">number not used</text>
+</svg><p class="caption">From the logbook. 111 run numbers in four days; numbers 33 and 34 were lost in the run-counter incident of Friday afternoon.</p></div>
+
+<h3>The words</h3>
+<dl class="gloss">
+<dt>run_N</dt><dd>One start-to-stop of the DAQ, with one chip configuration. The data are in <code>runs/run_N/cfg_&lt;config&gt;/raw_daq_data/</code>.</dd>
+<dt>config label</dt><dd>The chip configuration files are called <code>p2b-config-cern-ext_gain4.5_peaktime200_opt_cosmic_&lt;label&gt;.txt</code>. Only the label changes between runs, so the label is what we quote: e.g. <code>m2hvoff_d34</code>. Every run used gain 4.5&nbsp;mV/fC and 200&nbsp;ns peaking time.</dd>
+<dt>sdt</dt><dd>The threshold register of a chip, in DAC counts. One value per chip.</dd>
+<dt>d</dt><dd>The threshold step of the noise scans: d = sdt &minus; the chip&rsquo;s assumed baseline (the July estimate per chip). <code>_d34</code> means every chip at its baseline + 34. Lower d = lower threshold = more noise. VMM 6 has no baseline estimate and stays at sdt 230.</dd>
+<dt>onset</dt><dd>For each chip, the d at which its hit rate first passes 1&nbsp;kHz in a noise scan.</dd>
+<dt>safe</dt><dd>The working threshold of each chip: its onset with the voltage on, plus 8 DAC (VMM 6 at sdt 230). Config <code>safehvon_v1</code>.</dd>
+<dt>safe + k, safe &minus; k</dt><dd>Every chip k DAC above or below its safe value. Configs <code>thrhvon_p16</code>, <code>_p8</code> (+16, +8) and <code>_m4</code>, <code>_m6</code>, <code>_m8</code> (&minus;4, &minus;6, &minus;8).</dd>
+<dt>masks</dt><dd>A masked channel is switched off (<code>sm 1</code>). <code>m1</code>: single hot channels (did not work, the burst hops); <code>m2</code>: VMM 4 and 9 fully masked plus VMM 7 ch 24; <code>m0</code>: nothing masked; from run 57 on (all <code>safehvon</code> and <code>thrhvon</code> configs): 23 channels of VMM 4, 7 and 9.</dd>
+<dt>hvoff, hvon</dt><dd>The chamber voltage when the config was made. The voltage is set by hand and not read by the DAQ.</dd>
+<dt>n479, s479</dt><dd>VMM 4, 7 and 9 unmasked and following the threshold d, all other chips parked at d = 50. <code>n</code> = normal read-out, <code>s</code> = neighbour read-out.</dd>
+<dt>neighbour read-out (sng 1)</dt><dd>A chip setting that makes the neighbours of a firing channel report their pulse height too; a neighbour&rsquo;s value is its baseline. Labels <code>sng1hvoff_*</code> (0/&minus;3/&minus;6/&minus;9 DAC from each chip&rsquo;s onset, voltage off), <code>s479*</code> and <code>sngcosmic_oK</code> (safe &minus; K, voltage on).</dd>
+<dt>burst</dt><dd>VMM 4, 7 and 9 fire a band of channels at up to MHz rates; the band moves with each new configuration. Not the same as the &ldquo;large events&rdquo; of the muon runs (more than 36 hits within 100&nbsp;ns, about 1 per second).</dd>
+<dt>reference run, threshold scan, long run</dt><dd>Long data at the safe setting; one-hour points at other settings; 30-minute runs cycling through four settings so that a slow drift affects them all alike.</dd>
+<dt>det3, det2, det1</dt><dd>The three chambers: det3 = P2_IN (VMM 2&ndash;7), det2 = P2_MID (VMM 8&ndash;13), det1 = P2_OUT (VMM 14&ndash;19), 31&nbsp;cm apart, lying flat.</dd>
+</dl>
+
+<h3>The groups</h3>
+<div style="overflow-x:auto"><table class="runs"><tr><th>runs</th><th>when</th><th>voltage</th><th>measurement</th><th>config label</th><th>length each</th></tr><tr><td>1&ndash;3</td><td>Thu 22 Oct 18:08</td><td>on</td><td>First points: the flood of hits from VMM 4 and 9 (held at sdt 400), then masks on single channels</td><td><code>d50</code>, <code>d40</code>, <code>m1_d50</code></td><td>2 min</td></tr><tr><td>4&ndash;13</td><td>Thu 22 Oct 18:19</td><td>on</td><td><strong>Noise scan, voltage on</strong>: all chips together, d = 50, 40, 34, 30, 27, 24, 22, 20, 18, 16</td><td><code>m2_d50</code> &hellip; <code>m2_d16</code></td><td>2 min</td></tr><tr><td>14&ndash;23</td><td>Fri 23 Oct 09:54</td><td>off</td><td><strong>Noise scan, voltage off</strong>: the same ten points, to separate the electronics from the chambers</td><td><code>m2hvoff_d50</code> &hellip; <code>m2hvoff_d16</code></td><td>2 min</td></tr><tr><td>24&ndash;27</td><td>Fri 23 Oct 10:28</td><td>off</td><td>Noise scan, voltage off, <strong>nothing masked</strong> (to see VMM 4, 7, 9), d = 50, 40, 34, 30</td><td><code>m0hvoff_d50</code> &hellip; <code>m0hvoff_d30</code></td><td>2 min</td></tr><tr><td>28&ndash;32</td><td>Fri 23 Oct 13:31</td><td>off</td><td><strong>Neighbour read-out baselines, voltage off</strong>: a probe point (28), then 0, &minus;3, &minus;6, &minus;9 DAC from each chip&rsquo;s onset (29&ndash;32)</td><td><code>sng1hvoff_probe</code>, <code>_o0</code>, <code>_m3</code>, <code>_m6</code>, <code>_m9</code></td><td>2 min</td></tr><tr><td>33&ndash;34</td><td>Fri 23 Oct 16:21</td><td>&ndash;</td><td>Numbers lost in the run-counter incident; two stray captures are kept apart in <code>orphan_2026-10-23_*</code></td><td>&ndash;</td><td>&ndash;</td></tr><tr><td>35&ndash;47</td><td>Fri 23 Oct 16:28</td><td>off</td><td><strong>Block A</strong>: VMM 4, 7, 9 unmasked, normal read-out, d = 200, 100, 60, 50, 40, 34, 30, 27, 24, 22, 20, 18, 16</td><td><code>n479hvoff_d200</code> &hellip; <code>_d16</code></td><td>2 min</td></tr><tr><td>48&ndash;56</td><td>Fri 23 Oct 17:12</td><td>off</td><td><strong>Block C</strong>: the same with neighbour read-out, d = 100, 60, 50, 40, 34, 27, 22, 18, 14</td><td><code>s479hvoff_d100</code> &hellip; <code>_d14</code></td><td>2 min</td></tr><tr><td>57</td><td>Fri 23 Oct 18:31</td><td>on</td><td><strong>Health check with the voltage on</strong>, at the safe setting</td><td><code>safehvon_v1</code></td><td>10 min</td></tr><tr><td>58&ndash;70</td><td>Fri 23 Oct 18:44</td><td>on</td><td><strong>VMM 4, 7, 9 noise scan, voltage on</strong> (the same 13 points as block A)</td><td><code>n479hvon_d200</code> &hellip; <code>_d16</code></td><td>2 min</td></tr><tr><td>71&ndash;75</td><td>Fri 23 Oct 19:27</td><td>on</td><td><strong>Neighbour read-out with cosmics, voltage on</strong>: safe, &minus;4, &minus;8, &minus;12, &minus;16 (baselines for 97&nbsp;% of the channels)</td><td><code>sngcosmic_o0</code>, <code>_o4</code>, <code>_o8</code>, <code>_o12</code>, <code>_o16</code></td><td>10 min</td></tr><tr><td>76&ndash;91</td><td>Sat 24 Oct 18:32 &ndash; Sun 02:55</td><td>on</td><td><strong>Reference run</strong> at the safe setting</td><td><code>safehvon_v1</code></td><td>30 min (16 runs)</td></tr><tr><td>92&ndash;95</td><td>Sun 25 Oct 02:55 &ndash; 06:00</td><td>on</td><td><strong>Threshold scan with tracks</strong>: safe + 16 (92), safe + 8 (93), safe &minus; 4 (94), safe &minus; 8 (95)</td><td><code>thrhvon_p16</code>, <code>_p8</code>, <code>_m4</code>, <code>_m8</code></td><td>60 min</td></tr><tr><td>96&ndash;111</td><td>Sun 25 Oct 13:22 &ndash; 21:34</td><td>on</td><td><strong>Interleaved long run</strong>, stopped on request (run_111 after 21 minutes); settings below</td><td><code>thrhvon_p8</code>, <code>safehvon_v1</code>, <code>thrhvon_m4</code>, <code>thrhvon_m6</code> in rotation</td><td>30 min</td></tr></table></div>
+<p><strong>The long run by setting:</strong> safe + 8: runs 96, 100, 104, 108; safe: 97, 101, 105, 109; safe &minus; 4: 98, 102, 106, 110; safe &minus; 6: 99, 103, 107, 111.<br>
+<strong>All muon data (voltage on) by setting:</strong> safe: 76&ndash;91, 97, 101, 105, 109 (20 runs, about 11 hours); safe + 16: 92; safe + 8: 93, 96, 100, 104, 108; safe &minus; 4: 94, 98, 102, 106, 110; safe &minus; 6: 99, 103, 107, 111; safe &minus; 8: 95.</p>
+<div class="callout"><strong>Reading the times in the logbook.</strong> Summer time ended during run 92 (03:00 became 02:00 on 25 October): run 92 is logged at 02:55 and ran its full hour, run 93 is logged at 02:56 but started one hour later. A note typed in the logbook is filed under the run that was current at that moment, so the note announcing a new block sits under the last run of the block before.</div>
+
+<h2>14. Where the data and code are</h2>
 <table class="runs">
 <tr><th>Item</th><th>Where</th></tr>
 <tr><td>Voltage-on scan: <code>run_4</code> &hellip; <code>run_13</code>; first tests: <code>run_1</code> &hellip; <code>run_3</code></td><td><code>/local/p2/p2data/cosmics_3det_202610/runs/</code> on vmm_daplxa, copied to EOS <code>&hellip;/p2_sps_july/vmm_cosmic_run_oct26/</code></td></tr>
