@@ -5,14 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
 <title>Measuring the VMM noise threshold with cosmic muons: what we did and what we saw</title>
-<meta name="description" content="A picture book of the lab threshold scans on the three-chamber cosmic stand: what we did step by step, with the chamber voltage on and off, and what we found per chip.">
+<meta name="description" content="A picture book of the lab threshold scans on the three-chamber cosmic stand: what we did step by step, what we found per chip, and (section 15) how the muons were found after all, with efficiencies checked against scintillators.">
 <meta name="category" content="Detector R&amp;D">
 <meta name="keywords" content="VMM,threshold,noise,cosmics,P2,lab">
 <meta name="date" content="2026-10-22">
-<meta name="updated" content="2026-10-25">
+<meta name="updated" content="2026-10-30">
 <meta name="visibility" content="unlisted">
 <!-- ======================================================================= -->
 <link rel="stylesheet" href="../../assets/site.css">
+
 
 
 
@@ -100,7 +101,7 @@
   <article>
     <header class="note-header">
       <h1>Measuring the VMM noise threshold with cosmic muons: what we did and what we saw</h1>
-      <p class="muted">A picture book of the first lab threshold scan on the three-chamber cosmic stand: why, how, and the first noise results per chip.</p>
+      <p class="muted">A picture book of the lab threshold scans on the three-chamber cosmic stand: the noise per chip, and (section 15, updated 30 October) the muons found after all, with efficiencies checked against scintillators.</p>
       <div class="meta-row">
         <span class="pill">Detector R&amp;D</span>
         <time datetime="2026-10-22">2026-10-22</time>
@@ -111,11 +112,12 @@
     <div class="note-body">
 <div class="tldr"><strong>In one minute.</strong>
 <ul>
+<li><strong>Update, 26&ndash;30 October (section 15): the chambers do see muons, and they always did.</strong> The &ldquo;no muon signal&rdquo; of 25 October was an error in our analysis: the hybrids were read on connectors c5&ndash;c7, not c4&ndash;c6 as the run files say, so every hit was placed one connector away. With the right map the old runs show about 600 straight tracks per hour, like the new ones. A run with scintillators (run_130) gives an independent reference: at the safe thresholds each chamber is about <strong>65&ndash;72&nbsp;% efficient</strong> (det2 as good as with DREAM, det1 about 0.15 below). Lowering the threshold below the safe setting does not add much, because the noise takes over. The efficiencies from the chambers alone are lower bounds, because some of their &ldquo;tags&rdquo; are shared noise. The items below this one are the story as it was written at the time; the corrections are marked where they apply.</li>
 <li><strong>The question:</strong> how low can we set the threshold of each VMM chip before electronic noise takes over? The beam test could only <em>guess</em> the answer. Here, with cosmic muons, we can <em>measure</em> it.</li>
 <li><strong>What we did, in order:</strong> (1) a first test, which showed a flood of data from a few chips; (2) a noise scan with the chamber voltage on; (3) the same scan with the voltage <em>off</em>, to separate the detector from the electronics; (4) a closer look at single channels; (5) a direct measurement of the baseline of each channel, using a chip setting where a firing channel makes its neighbours report; (6) the same scans with the three chips we had masked (VMM 4, 7, 9) switched back on; (7) the first measurements with the high voltage on: a health check, and the neighbour read-out with cosmic muons, which gave a baseline for 97&nbsp;% of the channels.</li>
 <li><strong>What we found:</strong> the chips do <em>not</em> start to be noisy at the same threshold, and this spread stays when the voltage is off, so it comes from the electronics, not the chambers. Three chips (VMM 4, 7, 9) have noisy channels that also stay with the voltage off; when we switch them back on they show two kinds of noise: an ordinary smooth onset like the other chips, plus bursts that jump up and down with each new configuration, even at very high thresholds. And each channel has a noise peak of its own, so the channels inside one chip differ too. The baselines we could measure directly (about half of the channels so far) are mostly 45 to 65 ADC counts, not the 38 used so far for every channel, and they differ from chip to chip. With the voltage on we now have a baseline for 97&nbsp;% of the channels, the voltage does not change them, and VMM 4, 7 and 9 each have a large block of channels with baselines of 100 to several hundred, next to the channels that burst.</li>
 <li><strong>What this means for the next step:</strong> one threshold per chip is not enough. We need the baseline of <em>every channel</em> (half is done), in threshold units (millivolts, not yet done), and then to correct each channel. Then we repeat the scan and, only then, measure efficiency. The measurement with muon tracks (reference run and threshold scan, high voltage on) is running now, with a global threshold for each chip read from the noise scans; the reference run (8 hours) and the threshold scan are done and show a steady muon rate of about 21 per minute for the stack, but also bursts that carry a quarter of the hits and have to be cut. An interleaved 24-hour run at four thresholds is taking the statistics for the efficiency.</li>
-<li><strong>Update, Sunday 25 October evening (step 10c):</strong> the tag-and-probe analysis, with the beam-test pad map, shows that the &ldquo;muon-like&rdquo; events are <em>not</em> muon tracks: their hits do not line up in a straight line through the three chambers. Counting the events that do form a straight line, minus what chance gives, leaves about 16 per hour at the safe setting, where muons should give hundreds to thousands. Below the safe setting the extra &ldquo;tracks&rdquo; are a fixed pattern of a few hot channels. The pad map itself is fine (no other wiring does better, no chamber is flipped). So the stack sees almost no cosmic muons above the noise at these settings, and the best threshold cannot be chosen from efficiency yet. The long run was stopped at 21:34 (runs 96&ndash;111). Next: check the high voltage and the gas against the beam test, and a source test.</li>
+<li><strong>Update, Sunday 25 October evening (step 10c), corrected on 29 October (section 15):</strong> the tag-and-probe analysis, with the beam-test pad map, shows that the &ldquo;muon-like&rdquo; events are <em>not</em> muon tracks: their hits do not line up in a straight line through the three chambers. Counting the events that do form a straight line, minus what chance gives, leaves about 16 per hour at the safe setting, where muons should give hundreds to thousands. Below the safe setting the extra &ldquo;tracks&rdquo; are a fixed pattern of a few hot channels. The pad map itself is fine (no other wiring does better, no chamber is flipped). So the stack sees almost no cosmic muons above the noise at these settings, and the best threshold cannot be chosen from efficiency yet. The long run was stopped at 21:34 (runs 96&ndash;111). Next: check the high voltage and the gas against the beam test, and a source test.</li>
 </ul></div>
 
 <h2>0. The idea in one picture</h2>
@@ -5581,7 +5583,10 @@
 <p><strong>What this means.</strong> With these settings the stack sees almost no cosmic muons above the noise: the chambers fire together, but on noise. The best threshold cannot be chosen from the efficiency until a muon signal is there. At the beam test the same chambers and chips gave 67&ndash;85&nbsp;%, so something is different here. The first suspects are the high voltage and the gas (the voltage is set by hand and not logged; the gas is not confirmed), then the new cables. A radioactive source (Fe-55) on one chamber would show directly whether signals come through, and would check the map at the same time.</p>
 <div class="stepcard done"><div class="sc-head"><span class="stepn">10c</span><strong>Tag-and-probe: are these muons?</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>Tag-and-probe without and with pad positions; the beam-test map against 40 alternative wirings per connector and rotations / mirrors between chambers; straight tracks above chance for every run, runs 76&ndash;108.</dd><dt>What we saw</dt><dd>The map is the best one available and no chamber is flipped. Straight tracks above chance: about 16 per hour at the safe setting, nothing more at the other settings except a fixed pattern of hot channels at the lowest ones.</dd><dt>What it tells us</dt><dd>The three-chamber coincidences are shared noise, not muons. The efficiency, and so the best threshold, cannot be measured until the chambers show a muon signal.</dd><dt>So the next step is</dt><dd>check the high voltage and the gas against the beam test, and do a source test (step 12b).</dd></dl></div>
 
+<div class="callout warn"><strong>Correction (29 October, section 15).</strong> Step 10c is wrong in its conclusion. The pad map we tested was right <em>inside</em> each connector, but it assumed the hybrids sat on connectors c4&ndash;c6, as the run files say; the data show they were on c5&ndash;c7. Every hit was placed one connector away, so straight tracks could not line up and the search for a better wiring could not find it (it only changed the order inside a connector). With the right connectors the same runs show about 600 straight tracks per hour above chance at the safe setting, and the chambers are efficient. The &ldquo;muon-like&rdquo; events of section 10 were mostly real muons after all. The text above is kept as it was written.</div>
+
 <h2>11. What we know, and what we do not</h2>
+<div class="callout warn"><strong>Read with section 15.</strong> Two items below are corrected there: the chambers do see muons (about 600 straight tracks per hour, efficiency about 65&ndash;72&nbsp;% per chamber with the scintillator reference), and the beam-test map is right only once the hybrids are put on connectors c5&ndash;c7.</div>
 <div class="two">
 <div><h3>We know</h3><ul>
 <li>With no voltage, the electronics are silent at d = 50.</li>
@@ -5704,54 +5709,61 @@
 
 <h2>13. All runs at a glance, and the words we use</h2>
 <p>This is the map of the whole campaign so far: which run numbers belong to which measurement, and what the names mean. The same overview now opens the logbook.</p>
-<div class="viz-card"><svg viewBox="0 0 640 250" role="img" aria-label="All runs from 1 to 111 grouped by measurement, coloured by the chamber voltage">
-<text class="t" x="12" y="18" font-size="13" font-weight="600">All 111 runs at a glance</text>
+<div class="viz-card"><svg viewBox="0 0 640 250" role="img" aria-label="All runs from 1 to 130 grouped by measurement, coloured by the chamber voltage">
+<text class="t" x="12" y="18" font-size="13" font-weight="600">All 130 runs at a glance</text>
 <text class="m" x="12" y="34" font-size="11">Each block is one measurement, placed by run number; the colour is the chamber voltage. Hover a block for details.</text>
-<g><title>runs 1-3: First points: the flood of hits from VMM 4 and 9 (held at sdt 400), then masks on single channels</title><rect x="20.3" y="82" width="15.7" height="34" rx="3" fill="var(--s1)"/></g>
-<text class="m" x="28.1" y="72" font-size="9.5" text-anchor="middle">first points</text>
-<g><title>runs 4-13: Noise scan, voltage on: all chips together, d = 50, 40, 34, 30, 27, 24, 22, 20, 18, 16</title><rect x="36.5" y="82" width="53.5" height="34" rx="3" fill="var(--s1)"/></g>
-<text class="m" x="63.2" y="136" font-size="9.5" text-anchor="middle">noise scan</text>
-<g><title>runs 14-23: Noise scan, voltage off: the same ten points, to separate the electronics from the chambers</title><rect x="90.5" y="82" width="53.5" height="34" rx="3" fill="var(--c2)"/></g>
-<text class="m" x="117.3" y="72" font-size="9.5" text-anchor="middle">noise scan</text>
-<g><title>runs 24-27: Noise scan, voltage off, nothing masked (to see VMM 4, 7, 9), d = 50, 40, 34, 30</title><rect x="144.6" y="82" width="21.1" height="34" rx="3" fill="var(--c2)"/></g>
-<text class="m" x="155.1" y="136" font-size="9.5" text-anchor="middle">no masks</text>
-<g><title>runs 28-32: Neighbour read-out baselines, voltage off: a probe point (28), then 0, -3, -6, -9 DAC from each chip's onset (29-32)</title><rect x="166.2" y="82" width="26.5" height="34" rx="3" fill="var(--c2)"/></g>
-<text class="m" x="179.5" y="72" font-size="9.5" text-anchor="middle">baselines</text>
-<g><title>runs 33-34: Numbers lost in the run-counter incident; two stray captures are kept apart in orphan_2026-10-23_*</title><rect x="193.2" y="82" width="10.3" height="34" rx="3" fill="var(--border)"/></g>
-<g><title>runs 35-47: Block A: VMM 4, 7, 9 unmasked, normal read-out, d = 200, 100, 60, 50, 40, 34, 30, 27, 24, 22, 20, 18, 16</title><rect x="204.1" y="82" width="69.7" height="34" rx="3" fill="var(--c2)"/></g>
-<text class="m" x="238.9" y="72" font-size="9.5" text-anchor="middle">block A</text>
-<g><title>runs 48-56: Block C: the same with neighbour read-out, d = 100, 60, 50, 40, 34, 27, 22, 18, 14</title><rect x="274.3" y="82" width="48.1" height="34" rx="3" fill="var(--c2)"/></g>
-<text class="m" x="298.4" y="136" font-size="9.5" text-anchor="middle">block C</text>
-<g><title>runs 57-57: Health check with the voltage on, at the safe setting</title><rect x="323.0" y="82" width="4.9" height="34" rx="3" fill="var(--s1)"/></g>
-<g><title>runs 58-70: VMM 4, 7, 9 noise scan, voltage on (the same 13 points as block A)</title><rect x="328.4" y="82" width="69.7" height="34" rx="3" fill="var(--s1)"/></g>
-<text class="m" x="363.2" y="136" font-size="9.5" text-anchor="middle">VMM 4/7/9</text>
-<g><title>runs 71-75: Neighbour read-out with cosmics, voltage on: safe, -4, -8, -12, -16 (baselines for 97 % of the channels)</title><rect x="398.6" y="82" width="26.5" height="34" rx="3" fill="var(--s1)"/></g>
-<text class="m" x="411.9" y="72" font-size="9.5" text-anchor="middle">baselines</text>
-<g><title>runs 76-91: Reference run at the safe setting</title><rect x="425.7" y="82" width="85.9" height="34" rx="3" fill="var(--s1)"/></g>
-<text class="m" x="468.6" y="136" font-size="9.5" text-anchor="middle">reference run</text>
-<g><title>runs 92-95: Threshold scan with tracks: safe + 16 (92), safe + 8 (93), safe - 4 (94), safe - 8 (95)</title><rect x="512.2" y="82" width="21.1" height="34" rx="3" fill="var(--s1)"/></g>
-<text class="m" x="522.7" y="72" font-size="9.5" text-anchor="middle">scan</text>
-<g><title>runs 96-111: Interleaved long run, stopped on request (run_111 after 21 minutes); settings below</title><rect x="533.8" y="82" width="85.9" height="34" rx="3" fill="var(--s1)"/></g>
-<text class="m" x="576.8" y="136" font-size="9.5" text-anchor="middle">interleaved long run</text>
-<text class="f" x="22.7" y="152" font-size="9" text-anchor="middle">1</text>
+<g><title>runs 1-3: First points: the flood of hits from VMM 4 and 9 (held at sdt 400), then masks on single channels</title><rect x="20.2" y="82" width="13.4" height="34" rx="3" fill="var(--s1)"/></g>
+<text class="m" x="26.9" y="72" font-size="9.5" text-anchor="middle">first points</text>
+<g><title>runs 4-13: Noise scan, voltage on: all chips together, d = 50, 40, 34, 30, 27, 24, 22, 20, 18, 16</title><rect x="34.1" y="82" width="45.7" height="34" rx="3" fill="var(--s1)"/></g>
+<text class="m" x="56.9" y="136" font-size="9.5" text-anchor="middle">noise scan</text>
+<g><title>runs 14-23: Noise scan, voltage off: the same ten points, to separate the electronics from the chambers</title><rect x="80.2" y="82" width="45.7" height="34" rx="3" fill="var(--c2)"/></g>
+<text class="m" x="103.1" y="72" font-size="9.5" text-anchor="middle">noise scan</text>
+<g><title>runs 24-27: Noise scan, voltage off, nothing masked (to see VMM 4, 7, 9), d = 50, 40, 34, 30</title><rect x="126.4" y="82" width="18.0" height="34" rx="3" fill="var(--c2)"/></g>
+<text class="m" x="135.4" y="136" font-size="9.5" text-anchor="middle">no masks</text>
+<g><title>runs 28-32: Neighbour read-out baselines, voltage off: a probe point (28), then 0, -3, -6, -9 DAC from each chip's onset (29-32)</title><rect x="144.8" y="82" width="22.6" height="34" rx="3" fill="var(--c2)"/></g>
+<text class="m" x="156.2" y="72" font-size="9.5" text-anchor="middle">baselines</text>
+<g><title>runs 33-34: Numbers lost in the run-counter incident; two stray captures are kept apart in orphan_2026-10-23_*</title><rect x="167.9" y="82" width="8.8" height="34" rx="3" fill="var(--border)"/></g>
+<g><title>runs 35-47: Block A: VMM 4, 7, 9 unmasked, normal read-out, d = 200, 100, 60, 50, 40, 34, 30, 27, 24, 22, 20, 18, 16</title><rect x="177.2" y="82" width="59.5" height="34" rx="3" fill="var(--c2)"/></g>
+<text class="m" x="206.9" y="72" font-size="9.5" text-anchor="middle">block A</text>
+<g><title>runs 48-56: Block C: the same with neighbour read-out, d = 100, 60, 50, 40, 34, 27, 22, 18, 14</title><rect x="237.2" y="82" width="41.1" height="34" rx="3" fill="var(--c2)"/></g>
+<text class="m" x="257.7" y="136" font-size="9.5" text-anchor="middle">block C</text>
+<g><title>runs 57-57: Health check with the voltage on, at the safe setting</title><rect x="278.7" y="82" width="4.2" height="34" rx="3" fill="var(--s1)"/></g>
+<g><title>runs 58-70: VMM 4, 7, 9 noise scan, voltage on (the same 13 points as block A)</title><rect x="283.3" y="82" width="59.5" height="34" rx="3" fill="var(--s1)"/></g>
+<text class="m" x="313.1" y="136" font-size="9.5" text-anchor="middle">VMM 4/7/9</text>
+<g><title>runs 71-75: Neighbour read-out with cosmics, voltage on: safe, -4, -8, -12, -16 (baselines for 97 % of the channels)</title><rect x="343.3" y="82" width="22.6" height="34" rx="3" fill="var(--s1)"/></g>
+<text class="m" x="354.6" y="72" font-size="9.5" text-anchor="middle">baselines</text>
+<g><title>runs 76-91: Reference run at the safe setting</title><rect x="366.4" y="82" width="73.4" height="34" rx="3" fill="var(--s1)"/></g>
+<text class="m" x="403.1" y="136" font-size="9.5" text-anchor="middle">reference run</text>
+<g><title>runs 92-95: Threshold scan with tracks: safe + 16 (92), safe + 8 (93), safe - 4 (94), safe - 8 (95)</title><rect x="440.2" y="82" width="18.0" height="34" rx="3" fill="var(--s1)"/></g>
+<text class="m" x="449.2" y="72" font-size="9.5" text-anchor="middle">scan</text>
+<g><title>runs 96-111: Interleaved long run, stopped on request (run_111 after 21 minutes); settings below</title><rect x="458.7" y="82" width="73.4" height="34" rx="3" fill="var(--s1)"/></g>
+<text class="m" x="495.4" y="136" font-size="9.5" text-anchor="middle">interleaved long run</text>
+<g><title>runs 112-118: New voltages and read-out connectors (section 15): VMM 4, 7, 9 noise ladder</title><rect x="532.5" y="82" width="31.8" height="34" rx="3" fill="var(--s1)"/></g>
+<text class="m" x="548.5" y="72" font-size="9.5" text-anchor="middle">new HV</text>
+<g><title>runs 119-125: Safe setting: 119 and 123 nothing masked; 120-122 VMM 4, 7, 9 parked (121 analysed); 124 and 125 with 12 channels of VMM 4 and 9 masked (124 analysed)</title><rect x="564.8" y="82" width="31.8" height="34" rx="3" fill="var(--s1)"/></g>
+<text class="m" x="580.8" y="136" font-size="9.5" text-anchor="middle">muons</text>
+<g><title>runs 126-130: Scintillators on hybrid H0: 128 first wiring (no coincidence, TTL), 130 the three-paddle coincidence (60 min)</title><rect x="597.2" y="82" width="22.6" height="34" rx="3" fill="var(--s1)"/></g>
+<text class="m" x="608.5" y="72" font-size="9.5" text-anchor="middle">scint.</text>
+<text class="f" x="22.3" y="152" font-size="9" text-anchor="middle">1</text>
 
 
-<text class="f" x="206.5" y="152" font-size="9" text-anchor="middle">35</text>
-<text class="f" x="325.4" y="152" font-size="9" text-anchor="middle">57</text>
-<text class="f" x="428.1" y="152" font-size="9" text-anchor="middle">76</text>
-<text class="f" x="514.6" y="152" font-size="9" text-anchor="middle">92</text>
-<text class="f" x="536.2" y="152" font-size="9" text-anchor="middle">96</text>
-<text class="f" x="617.3" y="152" font-size="9" text-anchor="middle">111</text>
+<text class="f" x="179.2" y="152" font-size="9" text-anchor="middle">35</text>
+<text class="f" x="280.8" y="152" font-size="9" text-anchor="middle">57</text>
+<text class="f" x="368.5" y="152" font-size="9" text-anchor="middle">76</text>
+<text class="f" x="460.8" y="152" font-size="9" text-anchor="middle">96</text>
+<text class="f" x="534.6" y="152" font-size="9" text-anchor="middle">112</text>
+<text class="f" x="617.7" y="152" font-size="9" text-anchor="middle">130</text>
 <text class="f" x="320.0" y="166" font-size="9" text-anchor="middle">run number</text>
-<line x1="20.3" x2="90.0" y1="184" y2="184" stroke="var(--fg-faint)" stroke-width="1.5"/><text class="m" x="55.1" y="198" font-size="10" text-anchor="middle">Thu 22</text>
-<line x1="90.5" x2="425.1" y1="184" y2="184" stroke="var(--fg-faint)" stroke-width="1.5"/><text class="m" x="257.8" y="198" font-size="10" text-anchor="middle">Fri 23</text>
-<line x1="425.7" x2="511.6" y1="184" y2="184" stroke="var(--fg-faint)" stroke-width="1.5"/><text class="m" x="468.6" y="198" font-size="10" text-anchor="middle">Sat 24 &ndash; Sun 25 night</text>
-<line x1="512.2" x2="619.7" y1="184" y2="184" stroke="var(--fg-faint)" stroke-width="1.5"/><text class="m" x="565.9" y="198" font-size="10" text-anchor="middle">Sun 25</text>
-<text class="f" x="428.1" y="212" font-size="9" text-anchor="middle">(nothing recorded Fri 20:24 &ndash; Sat 18:32)</text>
+<line x1="20.2" x2="79.8" y1="184" y2="184" stroke="var(--fg-faint)" stroke-width="1.5"/><text class="m" x="50.0" y="198" font-size="10" text-anchor="middle">Thu 22</text>
+<line x1="80.2" x2="365.9" y1="184" y2="184" stroke="var(--fg-faint)" stroke-width="1.5"/><text class="m" x="223.1" y="198" font-size="10" text-anchor="middle">Fri 23</text>
+<line x1="366.4" x2="439.8" y1="184" y2="184" stroke="var(--fg-faint)" stroke-width="1.5"/><text class="m" x="403.1" y="198" font-size="10" text-anchor="middle">Sat 24 &ndash; Sun</text>
+<line x1="440.2" x2="532.1" y1="184" y2="184" stroke="var(--fg-faint)" stroke-width="1.5"/><text class="m" x="486.2" y="198" font-size="10" text-anchor="middle">Sun 25</text>
+<line x1="532.5" x2="619.8" y1="184" y2="184" stroke="var(--fg-faint)" stroke-width="1.5"/><text class="m" x="576.2" y="198" font-size="10" text-anchor="middle">Mon 26 &ndash; Fri 30</text>
+<text class="f" x="368.5" y="212" font-size="9" text-anchor="middle">(nothing recorded Fri 20:24 &ndash; Sat 18:32)</text>
 <rect x="20" y="228" width="14" height="14" rx="3" fill="var(--s1)"/><text class="m" x="40" y="239" font-size="11">voltage on</text>
 <rect x="170" y="228" width="14" height="14" rx="3" fill="var(--c2)"/><text class="m" x="190" y="239" font-size="11">voltage off</text>
 <rect x="320" y="228" width="14" height="14" rx="3" fill="var(--border)"/><text class="m" x="340" y="239" font-size="11">number not used</text>
-</svg><p class="caption">From the logbook. 111 run numbers in four days; numbers 33 and 34 were lost in the run-counter incident of Friday afternoon.</p></div>
+</svg><p class="caption">From the logbook. 130 run numbers in nine days; numbers 33 and 34 were lost in the run-counter incident of Friday afternoon. From run_112 on, the new voltages and read-out connectors (section 15).</p></div>
 
 <h3>The words</h3>
 <dl class="gloss">
@@ -5772,7 +5784,7 @@
 </dl>
 
 <h3>The groups</h3>
-<div style="overflow-x:auto"><table class="runs"><tr><th>runs</th><th>when</th><th>voltage</th><th>measurement</th><th>config label</th><th>length each</th></tr><tr><td>1&ndash;3</td><td>Thu 22 Oct 18:08</td><td>on</td><td>First points: the flood of hits from VMM 4 and 9 (held at sdt 400), then masks on single channels</td><td><code>d50</code>, <code>d40</code>, <code>m1_d50</code></td><td>2 min</td></tr><tr><td>4&ndash;13</td><td>Thu 22 Oct 18:19</td><td>on</td><td><strong>Noise scan, voltage on</strong>: all chips together, d = 50, 40, 34, 30, 27, 24, 22, 20, 18, 16</td><td><code>m2_d50</code> &hellip; <code>m2_d16</code></td><td>2 min</td></tr><tr><td>14&ndash;23</td><td>Fri 23 Oct 09:54</td><td>off</td><td><strong>Noise scan, voltage off</strong>: the same ten points, to separate the electronics from the chambers</td><td><code>m2hvoff_d50</code> &hellip; <code>m2hvoff_d16</code></td><td>2 min</td></tr><tr><td>24&ndash;27</td><td>Fri 23 Oct 10:28</td><td>off</td><td>Noise scan, voltage off, <strong>nothing masked</strong> (to see VMM 4, 7, 9), d = 50, 40, 34, 30</td><td><code>m0hvoff_d50</code> &hellip; <code>m0hvoff_d30</code></td><td>2 min</td></tr><tr><td>28&ndash;32</td><td>Fri 23 Oct 13:31</td><td>off</td><td><strong>Neighbour read-out baselines, voltage off</strong>: a probe point (28), then 0, &minus;3, &minus;6, &minus;9 DAC from each chip&rsquo;s onset (29&ndash;32)</td><td><code>sng1hvoff_probe</code>, <code>_o0</code>, <code>_m3</code>, <code>_m6</code>, <code>_m9</code></td><td>2 min</td></tr><tr><td>33&ndash;34</td><td>Fri 23 Oct 16:21</td><td>&ndash;</td><td>Numbers lost in the run-counter incident; two stray captures are kept apart in <code>orphan_2026-10-23_*</code></td><td>&ndash;</td><td>&ndash;</td></tr><tr><td>35&ndash;47</td><td>Fri 23 Oct 16:28</td><td>off</td><td><strong>Block A</strong>: VMM 4, 7, 9 unmasked, normal read-out, d = 200, 100, 60, 50, 40, 34, 30, 27, 24, 22, 20, 18, 16</td><td><code>n479hvoff_d200</code> &hellip; <code>_d16</code></td><td>2 min</td></tr><tr><td>48&ndash;56</td><td>Fri 23 Oct 17:12</td><td>off</td><td><strong>Block C</strong>: the same with neighbour read-out, d = 100, 60, 50, 40, 34, 27, 22, 18, 14</td><td><code>s479hvoff_d100</code> &hellip; <code>_d14</code></td><td>2 min</td></tr><tr><td>57</td><td>Fri 23 Oct 18:31</td><td>on</td><td><strong>Health check with the voltage on</strong>, at the safe setting</td><td><code>safehvon_v1</code></td><td>10 min</td></tr><tr><td>58&ndash;70</td><td>Fri 23 Oct 18:44</td><td>on</td><td><strong>VMM 4, 7, 9 noise scan, voltage on</strong> (the same 13 points as block A)</td><td><code>n479hvon_d200</code> &hellip; <code>_d16</code></td><td>2 min</td></tr><tr><td>71&ndash;75</td><td>Fri 23 Oct 19:27</td><td>on</td><td><strong>Neighbour read-out with cosmics, voltage on</strong>: safe, &minus;4, &minus;8, &minus;12, &minus;16 (baselines for 97&nbsp;% of the channels)</td><td><code>sngcosmic_o0</code>, <code>_o4</code>, <code>_o8</code>, <code>_o12</code>, <code>_o16</code></td><td>10 min</td></tr><tr><td>76&ndash;91</td><td>Sat 24 Oct 18:32 &ndash; Sun 02:55</td><td>on</td><td><strong>Reference run</strong> at the safe setting</td><td><code>safehvon_v1</code></td><td>30 min (16 runs)</td></tr><tr><td>92&ndash;95</td><td>Sun 25 Oct 02:55 &ndash; 06:00</td><td>on</td><td><strong>Threshold scan with tracks</strong>: safe + 16 (92), safe + 8 (93), safe &minus; 4 (94), safe &minus; 8 (95)</td><td><code>thrhvon_p16</code>, <code>_p8</code>, <code>_m4</code>, <code>_m8</code></td><td>60 min</td></tr><tr><td>96&ndash;111</td><td>Sun 25 Oct 13:22 &ndash; 21:34</td><td>on</td><td><strong>Interleaved long run</strong>, stopped on request (run_111 after 21 minutes); settings below</td><td><code>thrhvon_p8</code>, <code>safehvon_v1</code>, <code>thrhvon_m4</code>, <code>thrhvon_m6</code> in rotation</td><td>30 min</td></tr></table></div>
+<div style="overflow-x:auto"><table class="runs"><tr><th>runs</th><th>when</th><th>voltage</th><th>measurement</th><th>config label</th><th>length each</th></tr><tr><td>1&ndash;3</td><td>Thu 22 Oct 18:08</td><td>on</td><td>First points: the flood of hits from VMM 4 and 9 (held at sdt 400), then masks on single channels</td><td><code>d50</code>, <code>d40</code>, <code>m1_d50</code></td><td>2 min</td></tr><tr><td>4&ndash;13</td><td>Thu 22 Oct 18:19</td><td>on</td><td><strong>Noise scan, voltage on</strong>: all chips together, d = 50, 40, 34, 30, 27, 24, 22, 20, 18, 16</td><td><code>m2_d50</code> &hellip; <code>m2_d16</code></td><td>2 min</td></tr><tr><td>14&ndash;23</td><td>Fri 23 Oct 09:54</td><td>off</td><td><strong>Noise scan, voltage off</strong>: the same ten points, to separate the electronics from the chambers</td><td><code>m2hvoff_d50</code> &hellip; <code>m2hvoff_d16</code></td><td>2 min</td></tr><tr><td>24&ndash;27</td><td>Fri 23 Oct 10:28</td><td>off</td><td>Noise scan, voltage off, <strong>nothing masked</strong> (to see VMM 4, 7, 9), d = 50, 40, 34, 30</td><td><code>m0hvoff_d50</code> &hellip; <code>m0hvoff_d30</code></td><td>2 min</td></tr><tr><td>28&ndash;32</td><td>Fri 23 Oct 13:31</td><td>off</td><td><strong>Neighbour read-out baselines, voltage off</strong>: a probe point (28), then 0, &minus;3, &minus;6, &minus;9 DAC from each chip&rsquo;s onset (29&ndash;32)</td><td><code>sng1hvoff_probe</code>, <code>_o0</code>, <code>_m3</code>, <code>_m6</code>, <code>_m9</code></td><td>2 min</td></tr><tr><td>33&ndash;34</td><td>Fri 23 Oct 16:21</td><td>&ndash;</td><td>Numbers lost in the run-counter incident; two stray captures are kept apart in <code>orphan_2026-10-23_*</code></td><td>&ndash;</td><td>&ndash;</td></tr><tr><td>35&ndash;47</td><td>Fri 23 Oct 16:28</td><td>off</td><td><strong>Block A</strong>: VMM 4, 7, 9 unmasked, normal read-out, d = 200, 100, 60, 50, 40, 34, 30, 27, 24, 22, 20, 18, 16</td><td><code>n479hvoff_d200</code> &hellip; <code>_d16</code></td><td>2 min</td></tr><tr><td>48&ndash;56</td><td>Fri 23 Oct 17:12</td><td>off</td><td><strong>Block C</strong>: the same with neighbour read-out, d = 100, 60, 50, 40, 34, 27, 22, 18, 14</td><td><code>s479hvoff_d100</code> &hellip; <code>_d14</code></td><td>2 min</td></tr><tr><td>57</td><td>Fri 23 Oct 18:31</td><td>on</td><td><strong>Health check with the voltage on</strong>, at the safe setting</td><td><code>safehvon_v1</code></td><td>10 min</td></tr><tr><td>58&ndash;70</td><td>Fri 23 Oct 18:44</td><td>on</td><td><strong>VMM 4, 7, 9 noise scan, voltage on</strong> (the same 13 points as block A)</td><td><code>n479hvon_d200</code> &hellip; <code>_d16</code></td><td>2 min</td></tr><tr><td>71&ndash;75</td><td>Fri 23 Oct 19:27</td><td>on</td><td><strong>Neighbour read-out with cosmics, voltage on</strong>: safe, &minus;4, &minus;8, &minus;12, &minus;16 (baselines for 97&nbsp;% of the channels)</td><td><code>sngcosmic_o0</code>, <code>_o4</code>, <code>_o8</code>, <code>_o12</code>, <code>_o16</code></td><td>10 min</td></tr><tr><td>76&ndash;91</td><td>Sat 24 Oct 18:32 &ndash; Sun 02:55</td><td>on</td><td><strong>Reference run</strong> at the safe setting</td><td><code>safehvon_v1</code></td><td>30 min (16 runs)</td></tr><tr><td>92&ndash;95</td><td>Sun 25 Oct 02:55 &ndash; 06:00</td><td>on</td><td><strong>Threshold scan with tracks</strong>: safe + 16 (92), safe + 8 (93), safe &minus; 4 (94), safe &minus; 8 (95)</td><td><code>thrhvon_p16</code>, <code>_p8</code>, <code>_m4</code>, <code>_m8</code></td><td>60 min</td></tr><tr><td>96&ndash;111</td><td>Sun 25 Oct 13:22 &ndash; 21:34</td><td>on</td><td><strong>Interleaved long run</strong>, stopped on request (run_111 after 21 minutes); settings below</td><td><code>thrhvon_p8</code>, <code>safehvon_v1</code>, <code>thrhvon_m4</code>, <code>thrhvon_m6</code> in rotation</td><td>30 min</td></tr><tr><td>112&ndash;118</td><td>Mon 26 Oct 12:26</td><td>on</td><td><strong>New voltages and read-out connectors</strong> (section 15): VMM 4, 7, 9 noise ladder</td><td><code>n479hvon_d50</code> &hellip; <code>_d16</code></td><td>2 min</td></tr><tr><td>119&ndash;125</td><td>Mon 26 &ndash; Thu 29 Oct</td><td>on</td><td><strong>Safe setting</strong>: 119 and 123 nothing masked; 120&ndash;122 VMM 4, 7, 9 parked (121 analysed); 124 and 125 with 12 channels of VMM 4 and 9 masked (124 analysed)</td><td><code>safe_nomask_oldHV</code>, <code>safe_hold479_*</code>, <code>safe_m9c16to21_m4c36to41</code></td><td>2&ndash;30 min</td></tr><tr><td>126&ndash;130</td><td>Thu 29 &ndash; Fri 30 Oct</td><td>on</td><td><strong>Scintillators on hybrid H0</strong>: 128 first wiring (no coincidence, TTL), 130 the three-paddle coincidence (60 min)</td><td><code>safe_m9c16to21_m4c36to41_h0open</code></td><td>2&ndash;60 min</td></tr></table></div>
 <p><strong>The long run by setting:</strong> safe + 8: runs 96, 100, 104, 108; safe: 97, 101, 105, 109; safe &minus; 4: 98, 102, 106, 110; safe &minus; 6: 99, 103, 107, 111.<br>
 <strong>All muon data (voltage on) by setting:</strong> safe: 76&ndash;91, 97, 101, 105, 109 (20 runs, about 11 hours); safe + 16: 92; safe + 8: 93, 96, 100, 104, 108; safe &minus; 4: 94, 98, 102, 106, 110; safe &minus; 6: 99, 103, 107, 111; safe &minus; 8: 95.</p>
 <div class="callout"><strong>Reading the times in the logbook.</strong> Summer time ended during run 92 (03:00 became 02:00 on 25 October): run 92 is logged at 02:55 and ran its full hour, run 93 is logged at 02:56 but started one hour later. A note typed in the logbook is filed under the run that was current at that moment, so the note announcing a new block sits under the last run of the block before.</div>
@@ -5792,7 +5804,271 @@
 <tr><td>Tables used for the figures</td><td><code>analysis_noise_scan/</code> and <code>analysis_noise_scan_hvoff/</code> (chip tables, per-channel CSV, voltage on/off comparison), <code>analysis_n479_hvoff/</code> and <code>analysis_hvon/</code> (rate and hot channels of VMM 4, 7, 9 with the voltage off and on; baselines with the voltage on), <code>analysis_health/</code> (pulse-height spectra of the health check), <code>analysis_sng1_hvoff/</code> (baseline of every covered channel, coverage per capture, baseline against noise peak)</td></tr>
 <tr><td>Chip settings</td><td>4.5&nbsp;mV/fC, 200&nbsp;ns peaking time; only the threshold lines and the masks change between files</td></tr>
 <tr><td>Code and feedback notes</td><td>branch <code>lab-cosmics-oct26</code>, <code>docs/LAB_COSMICS_OBSERVATIONS.md</code> (items 1&ndash;64); the analysis scripts moved on 25 October from the DAQ repo&rsquo;s <code>quick_scripts/</code> to <code>P2_basket_analysis/cosmic_vmm_analysis/</code></td></tr>
+<tr><td>New voltages and connectors, 26&ndash;30 Oct (section 15)</td><td><code>run_112</code> &hellip; <code>run_118</code> (VMM 4, 7, 9 ladder, 2 min), <code>run_119</code> &hellip; <code>run_125</code> (30 min at the safe setting, with VMM 4, 7, 9 parked in 120&ndash;122), <code>run_126</code> &hellip; <code>run_130</code> (scintillators on hybrid H0; <code>run_128</code> first wiring, <code>run_130</code> the coincidence, 60 min). Analysed so far: 121, 124, 128, 130</td></tr>
+<tr><td>Section 15 analysis</td><td>Code in <code>P2_basket_analysis/cosmic_vmm_analysis/</code>: <code>straight_track_rate.py</code> (<code>--conn-shift</code>, <code>--order</code>, <code>--veto</code>), <code>half_order_scan.py</code>, <code>residual_diagnostics.py</code>, <code>event_display.py</code>, <code>efficiency_tp.py</code>, <code>run_efficiency_batch.sh</code>, <code>summarize_eff_runs.py</code>, <code>eff_maps.py</code>, <code>scint_efficiency.py</code>, <code>eff_vs_baseline.py</code>, <code>inventory_runs.py</code>; the map for each period and the traps are in its README. Results in <code>analysis_run121/</code>, <code>analysis_run124/</code>, <code>analysis_run130/</code>, <code>analysis_runs76_111/</code>, <code>analysis_inventory/</code></td></tr>
 </table>
+
+<h2>15. 26&ndash;30 October: the muons were there all along</h2>
+<p>This section corrects the conclusion of step 10c. It is long because the path mattered: each step below was needed to trust the next one.</p>
+
+<h3>15a. What changed on Monday 26 October</h3>
+<p>You raised the chamber voltages (P2_IN 420&nbsp;V mesh / 720&nbsp;V drift, P2_MID and P2_OUT 430 / 730) and moved the read-out cables of all three chambers to other connectors; the hybrids and chips stayed the same. The high-voltage connectors were <em>not</em> moved (the run files from run_112 on say they were; that sentence is wrong).</p>
+<p>The first new run that we analysed (run_121, 30 minutes) had VMM 4, 7 and 9 parked at the highest threshold. With the pad map moved to the new connectors, it showed a clear excess of straight tracks. We then checked it, one possible fake at a time.</p>
+
+<div class="stepcard done"><div class="sc-head"><span class="stepn">15</span><strong>Muons in the new runs, and how we convinced ourselves</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>run_121 and run_124 (30 minutes each, safe setting, the second with all chips on). Straight tracks above chance, the position of the det2 hit relative to the line through the other two, event displays drawn at random, and every possible channel order per connector, chosen on half of the events and tested on the other half.</dd><dt>What we saw</dt><dd>About 600 (run_121) and 800 (run_124) straight tracks per hour above the strict chance level. det2 sits on the line: the core of its residual is 6 to 8&nbsp;mm wide, close to what the 12&nbsp;mm pads allow (4&nbsp;mm), and the hits of a track arrive within a few tens of nanoseconds. Two connector halves of det3 read their channels in the opposite order (c3 top and c5 top); everything else follows the beam-test order. One fake had to be removed: in run_121 a det3 channel discharging every few seconds (VMM 2 ch 27, also VMM 6 ch 44, always at the ADC limit) makes small signals on fixed channels of the other two chambers, which drew the same &ldquo;track&rdquo; 131 times. Real tracks almost never repeat the same three pads.</dd><dt>What it tells us</dt><dd>The chambers see cosmic muons, and the analysis can find them. The two reversed halves belong to det3&rsquo;s connectors, whichever hybrid reads them. A repeated identical track is the sign of a discharge, and must be checked before any count is trusted.</dd><dt>So the next step is</dt><dd>ask why the old runs showed nothing (15b).</dd></dl></div>
+<div class="viz-card"><img src="2026-10-22-measuring-the-vmm-noise-threshold-with-cosmic-muons-what-we-did-and-what-we-saw_files/ed124_random.png" alt="Eight three-chamber events of run_124 drawn at random: most are three hits on a straight line" style="width:100%;height:auto;display:block;border-radius:6px;background:#fff"><p class="caption">Real data, run_124: eight groups with a hit in each chamber, drawn at random, with no selection. For each: the pads seen from above (grey = pads read out), and two side views. Most are three single pads on an inclined straight line within a few tens of nanoseconds; the x marks where det2 should be. The others are noise.</p></div>
+
+<h3>15b. The old runs, read on the right connectors</h3>
+<p>If the new runs show muons at about the same rate as a few days before, why did runs 76&ndash;111 show nothing? A gain change of 10&ndash;20&nbsp;V could not explain it: the muon pulses of run_124, scaled down to the old gain, would still be above the threshold 96&ndash;98&nbsp;% of the time. So we asked the data which connectors the hybrids were really on.</p>
+<div class="viz-card"><svg viewBox="0 0 640 250" role="img" aria-label="Straight tracks per hour against the connector assumed for the hybrids">
+<text class="t" x="12" y="18" font-size="13" font-weight="600">Which connectors were the old runs really read on?</text>
+<text class="m" x="12" y="34" font-size="11">Runs 76&ndash;91 (8.9 hours): straight tracks per hour above the strict chance level, if the three hybrids of each chamber</text>
+<text class="m" x="12" y="48" font-size="11">sit on the connectors below. The run files said c4&ndash;c6. Lines: &plusmn;1 standard error.</text>
+<line x1="60" x2="620" y1="200.0" y2="200.0" stroke="var(--border)"/><text class="f" x="54" y="203.0" font-size="9" text-anchor="end">0</text>
+<line x1="60" x2="620" y1="176.4" y2="176.4" stroke="var(--border)"/><text class="f" x="54" y="179.4" font-size="9" text-anchor="end">100</text>
+<line x1="60" x2="620" y1="152.7" y2="152.7" stroke="var(--border)"/><text class="f" x="54" y="155.7" font-size="9" text-anchor="end">200</text>
+<line x1="60" x2="620" y1="129.1" y2="129.1" stroke="var(--border)"/><text class="f" x="54" y="132.1" font-size="9" text-anchor="end">300</text>
+<line x1="60" x2="620" y1="105.5" y2="105.5" stroke="var(--border)"/><text class="f" x="54" y="108.5" font-size="9" text-anchor="end">400</text>
+<line x1="60" x2="620" y1="81.8" y2="81.8" stroke="var(--border)"/><text class="f" x="54" y="84.8" font-size="9" text-anchor="end">500</text>
+<g><title>c1-c3: 11 +- 6 per hour</title><rect x="72.0" y="197.4" width="46.0" height="2.6" rx="3" fill="var(--c2)"/></g><text class="t" x="95.0" y="192.4" font-size="10" text-anchor="middle">11</text><text class="m" x="95.0" y="214" font-size="10" text-anchor="middle">c1&ndash;c3</text>
+<g><title>c2-c4: 7 +- 5 per hour</title><rect x="142.0" y="198.4" width="46.0" height="1.6" rx="3" fill="var(--c2)"/></g><text class="t" x="165.0" y="193.4" font-size="10" text-anchor="middle">7</text><text class="m" x="165.0" y="214" font-size="10" text-anchor="middle">c2&ndash;c4</text>
+<g><title>c3-c5: 14 +- 5 per hour</title><rect x="212.0" y="196.8" width="46.0" height="3.2" rx="3" fill="var(--c2)"/></g><text class="t" x="235.0" y="191.8" font-size="10" text-anchor="middle">14</text><text class="m" x="235.0" y="214" font-size="10" text-anchor="middle">c3&ndash;c5</text>
+<g><title>c4-c6: 11 +- 6 per hour</title><rect x="282.0" y="197.4" width="46.0" height="2.6" rx="3" fill="var(--s2)"/></g><text class="t" x="305.0" y="192.4" font-size="10" text-anchor="middle">11</text><text class="m" x="305.0" y="214" font-size="10" text-anchor="middle">c4&ndash;c6</text>
+<text class="f" x="305.0" y="227" font-size="9" text-anchor="middle">run files</text>
+<g><title>c5-c7: 511 +- 10 per hour</title><rect x="352.0" y="79.3" width="46.0" height="120.7" rx="3" fill="var(--s3)"/></g><text class="t" x="375.0" y="74.3" font-size="10" text-anchor="middle">511</text><text class="m" x="375.0" y="214" font-size="10" text-anchor="middle">c5&ndash;c7</text>
+<text class="f" x="375.0" y="227" font-size="9" text-anchor="middle">the data</text>
+<g><title>c6-c8: 8 +- 5 per hour</title><rect x="422.0" y="198.1" width="46.0" height="1.9" rx="3" fill="var(--c2)"/></g><text class="t" x="445.0" y="193.1" font-size="10" text-anchor="middle">8</text><text class="m" x="445.0" y="214" font-size="10" text-anchor="middle">c6&ndash;c8</text>
+<g><title>c7-c9: 8 +- 5 per hour</title><rect x="492.0" y="198.1" width="46.0" height="1.9" rx="3" fill="var(--c2)"/></g><text class="t" x="515.0" y="193.1" font-size="10" text-anchor="middle">8</text><text class="m" x="515.0" y="214" font-size="10" text-anchor="middle">c7&ndash;c9</text>
+<g><title>c8-c10: 11 +- 5 per hour</title><rect x="562.0" y="197.4" width="46.0" height="2.6" rx="3" fill="var(--c2)"/></g><text class="t" x="585.0" y="192.4" font-size="10" text-anchor="middle">11</text><text class="m" x="585.0" y="214" font-size="10" text-anchor="middle">c8&ndash;c10</text>
+<text class="f" x="340.0" y="244" font-size="9" text-anchor="middle">connectors of the three hybrids (same shift on all three chambers)</text>
+</svg><p class="caption">Real data. Only one placement gives tracks: the hybrids on connectors c5&ndash;c7. With the placement of the run files (c4&ndash;c6) there is nothing, which is what step 10c saw. The new runs, in the same way, are on c3&ndash;c5, which is where the run files say: the move was two connectors in the numbering of the pad map.</p></div>
+<p>With the right connectors, the channel order inside each connector was scanned again (the order found in step 10c was tested on the wrong connectors). The result: c5 top of det3 is reversed here too (now read by VMM 3), and every other half follows the beam-test order. The discharge test also found one in the old runs: det2 VMM 11 ch 35, at the ADC limit, with small signals on VMM 4 ch 9 and VMM 18 ch 10. Those groups are removed.</p>
+<div class="viz-card"><svg viewBox="0 0 640 300" role="img" aria-label="Efficiency per run against the threshold setting, three chambers">
+<text class="t" x="12" y="18" font-size="13" font-weight="600">The threshold scan of 24&ndash;25 October, with the right map: one dot per run</text>
+<text class="m" x="12" y="34" font-size="11">Efficiency from the chambers alone (tag-and-probe, probe hit within 15 mm), runs 76&ndash;111. These numbers are lower bounds</text>
+<text class="m" x="12" y="48" font-size="11">(section 15c); compare the settings with each other, not with DREAM. Left of the dashed line the noise floods the tags.</text>
+<text class="t" x="130.0" y="66" font-size="11" text-anchor="middle">det3 P2_IN</text>
+<line x1="40" x2="220" y1="240.0" y2="240.0" stroke="var(--border)"/><text class="f" x="36" y="243.0" font-size="9" text-anchor="end">0.0</text>
+<line x1="40" x2="220" y1="183.3" y2="183.3" stroke="var(--border)"/><text class="f" x="36" y="186.3" font-size="9" text-anchor="end">0.2</text>
+<line x1="40" x2="220" y1="126.7" y2="126.7" stroke="var(--border)"/><text class="f" x="36" y="129.7" font-size="9" text-anchor="end">0.4</text>
+<line x1="40" x2="220" y1="70.0" y2="70.0" stroke="var(--border)"/><text class="f" x="36" y="73.0" font-size="9" text-anchor="end">0.6</text>
+<line x1="171.5" x2="171.5" y1="70" y2="240" stroke="var(--fg-faint)" stroke-dasharray="3 3"/>
+<g><title>run 92, thrhvon_p16: 0.233 +- 0.010</title><circle cx="46.9" cy="174.1" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<text class="m" x="46.9" y="253" font-size="9" text-anchor="middle">+16</text>
+<g><title>run 93, thrhvon_p8: 0.246 +- 0.010</title><circle cx="99.1" cy="170.2" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 96, thrhvon_p8: 0.270 +- 0.017</title><circle cx="100.7" cy="163.5" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 100, thrhvon_p8: 0.304 +- 0.017</title><circle cx="102.3" cy="154.0" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 104, thrhvon_p8: 0.311 +- 0.017</title><circle cx="103.9" cy="151.8" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 108, thrhvon_p8: 0.320 +- 0.017</title><circle cx="105.5" cy="149.3" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<text class="m" x="102.3" y="253" font-size="9" text-anchor="middle">+8</text>
+<g><title>run 76, safehvon_v1: 0.296 +- 0.014</title><circle cx="151.0" cy="156.2" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 77, safehvon_v1: 0.300 +- 0.014</title><circle cx="151.7" cy="155.0" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 78, safehvon_v1: 0.271 +- 0.014</title><circle cx="152.4" cy="163.2" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 79, safehvon_v1: 0.270 +- 0.013</title><circle cx="153.1" cy="163.4" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 80, safehvon_v1: 0.291 +- 0.014</title><circle cx="153.8" cy="157.4" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 81, safehvon_v1: 0.284 +- 0.013</title><circle cx="154.5" cy="159.4" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 82, safehvon_v1: 0.250 +- 0.013</title><circle cx="155.2" cy="169.1" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 83, safehvon_v1: 0.248 +- 0.013</title><circle cx="155.9" cy="169.6" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 84, safehvon_v1: 0.289 +- 0.013</title><circle cx="156.6" cy="158.0" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 85, safehvon_v1: 0.255 +- 0.013</title><circle cx="157.3" cy="167.7" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 86, safehvon_v1: 0.267 +- 0.013</title><circle cx="158.0" cy="164.4" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 87, safehvon_v1: 0.286 +- 0.014</title><circle cx="158.7" cy="159.1" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 88, safehvon_v1: 0.254 +- 0.013</title><circle cx="159.4" cy="168.0" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 89, safehvon_v1: 0.229 +- 0.012</title><circle cx="160.1" cy="175.1" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 90, safehvon_v1: 0.267 +- 0.013</title><circle cx="160.8" cy="164.3" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 91, safehvon_v1: 0.231 +- 0.013</title><circle cx="161.5" cy="174.6" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 97, safehvon_v1: 0.303 +- 0.015</title><circle cx="162.2" cy="154.3" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 101, safehvon_v1: 0.322 +- 0.016</title><circle cx="162.9" cy="148.8" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 105, safehvon_v1: 0.337 +- 0.016</title><circle cx="163.6" cy="144.5" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<g><title>run 109, safehvon_v1: 0.318 +- 0.016</title><circle cx="164.3" cy="149.9" r="2.6" fill="var(--s1)" opacity="0.9"/></g>
+<text class="m" x="157.7" y="253" font-size="9" text-anchor="middle">safe</text>
+<g><title>run 94, thrhvon_m4: 0.229 +- 0.008</title><circle cx="182.2" cy="175.1" r="2.6" fill="var(--s1)" opacity="0.45"/></g>
+<g><title>run 98, thrhvon_m4: 0.183 +- 0.010</title><circle cx="183.8" cy="188.0" r="2.6" fill="var(--s1)" opacity="0.45"/></g>
+<g><title>run 102, thrhvon_m4: 0.193 +- 0.010</title><circle cx="185.4" cy="185.5" r="2.6" fill="var(--s1)" opacity="0.45"/></g>
+<g><title>run 106, thrhvon_m4: 0.172 +- 0.010</title><circle cx="187.0" cy="191.4" r="2.6" fill="var(--s1)" opacity="0.45"/></g>
+<g><title>run 110, thrhvon_m4: 0.300 +- 0.014</title><circle cx="188.6" cy="155.0" r="2.6" fill="var(--s1)" opacity="0.45"/></g>
+<text class="m" x="185.4" y="253" font-size="9" text-anchor="middle">-4</text>
+<g><title>run 99, thrhvon_m6: 0.023 +- 0.001</title><circle cx="196.8" cy="233.5" r="2.6" fill="var(--s1)" opacity="0.45"/></g>
+<g><title>run 103, thrhvon_m6: 0.021 +- 0.001</title><circle cx="198.4" cy="234.0" r="2.6" fill="var(--s1)" opacity="0.45"/></g>
+<g><title>run 107, thrhvon_m6: 0.024 +- 0.001</title><circle cx="200.0" cy="233.2" r="2.6" fill="var(--s1)" opacity="0.45"/></g>
+<g><title>run 111, thrhvon_m6: 0.060 +- 0.004</title><circle cx="201.6" cy="223.1" r="2.6" fill="var(--s1)" opacity="0.45"/></g>
+<text class="m" x="199.2" y="253" font-size="9" text-anchor="middle">-6</text>
+<g><title>run 95, thrhvon_m8: 0.003 +- 0.000</title><circle cx="213.1" cy="239.0" r="2.6" fill="var(--s1)" opacity="0.45"/></g>
+<text class="m" x="213.1" y="253" font-size="9" text-anchor="middle">-8</text>
+<text class="f" x="130.0" y="267" font-size="9" text-anchor="middle">threshold: safe + K DAC</text>
+<text class="t" x="335.0" y="66" font-size="11" text-anchor="middle">det2 P2_MID</text>
+<line x1="245" x2="425" y1="240.0" y2="240.0" stroke="var(--border)"/>
+<line x1="245" x2="425" y1="183.3" y2="183.3" stroke="var(--border)"/>
+<line x1="245" x2="425" y1="126.7" y2="126.7" stroke="var(--border)"/>
+<line x1="245" x2="425" y1="70.0" y2="70.0" stroke="var(--border)"/>
+<line x1="376.5" x2="376.5" y1="70" y2="240" stroke="var(--fg-faint)" stroke-dasharray="3 3"/>
+<g><title>run 92, thrhvon_p16: 0.394 +- 0.014</title><circle cx="251.9" cy="128.5" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<text class="m" x="251.9" y="253" font-size="9" text-anchor="middle">+16</text>
+<g><title>run 93, thrhvon_p8: 0.381 +- 0.013</title><circle cx="304.1" cy="132.0" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 96, thrhvon_p8: 0.359 +- 0.019</title><circle cx="305.7" cy="138.3" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 100, thrhvon_p8: 0.391 +- 0.019</title><circle cx="307.3" cy="129.2" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 104, thrhvon_p8: 0.445 +- 0.020</title><circle cx="308.9" cy="113.9" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 108, thrhvon_p8: 0.456 +- 0.019</title><circle cx="310.5" cy="110.8" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<text class="m" x="307.3" y="253" font-size="9" text-anchor="middle">+8</text>
+<g><title>run 76, safehvon_v1: 0.510 +- 0.018</title><circle cx="356.0" cy="95.4" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 77, safehvon_v1: 0.481 +- 0.018</title><circle cx="356.7" cy="103.6" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 78, safehvon_v1: 0.462 +- 0.018</title><circle cx="357.4" cy="109.0" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 79, safehvon_v1: 0.447 +- 0.018</title><circle cx="358.1" cy="113.4" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 80, safehvon_v1: 0.471 +- 0.018</title><circle cx="358.8" cy="106.4" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 81, safehvon_v1: 0.473 +- 0.017</title><circle cx="359.5" cy="105.9" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 82, safehvon_v1: 0.469 +- 0.018</title><circle cx="360.2" cy="107.1" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 83, safehvon_v1: 0.430 +- 0.018</title><circle cx="360.9" cy="118.3" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 84, safehvon_v1: 0.487 +- 0.017</title><circle cx="361.6" cy="102.1" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 85, safehvon_v1: 0.426 +- 0.017</title><circle cx="362.3" cy="119.4" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 86, safehvon_v1: 0.457 +- 0.018</title><circle cx="363.0" cy="110.5" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 87, safehvon_v1: 0.480 +- 0.018</title><circle cx="363.7" cy="103.9" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 88, safehvon_v1: 0.425 +- 0.018</title><circle cx="364.4" cy="119.6" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 89, safehvon_v1: 0.427 +- 0.018</title><circle cx="365.1" cy="119.1" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 90, safehvon_v1: 0.434 +- 0.017</title><circle cx="365.8" cy="117.0" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 91, safehvon_v1: 0.411 +- 0.018</title><circle cx="366.5" cy="123.6" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 97, safehvon_v1: 0.435 +- 0.018</title><circle cx="367.2" cy="116.7" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 101, safehvon_v1: 0.494 +- 0.019</title><circle cx="367.9" cy="100.1" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 105, safehvon_v1: 0.486 +- 0.019</title><circle cx="368.6" cy="102.2" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<g><title>run 109, safehvon_v1: 0.496 +- 0.019</title><circle cx="369.3" cy="99.3" r="2.6" fill="var(--s2)" opacity="0.9"/></g>
+<text class="m" x="362.7" y="253" font-size="9" text-anchor="middle">safe</text>
+<g><title>run 94, thrhvon_m4: 0.314 +- 0.010</title><circle cx="387.2" cy="151.1" r="2.6" fill="var(--s2)" opacity="0.45"/></g>
+<g><title>run 98, thrhvon_m4: 0.149 +- 0.008</title><circle cx="388.8" cy="197.6" r="2.6" fill="var(--s2)" opacity="0.45"/></g>
+<g><title>run 102, thrhvon_m4: 0.168 +- 0.008</title><circle cx="390.4" cy="192.3" r="2.6" fill="var(--s2)" opacity="0.45"/></g>
+<g><title>run 106, thrhvon_m4: 0.159 +- 0.008</title><circle cx="392.0" cy="195.1" r="2.6" fill="var(--s2)" opacity="0.45"/></g>
+<g><title>run 110, thrhvon_m4: 0.356 +- 0.015</title><circle cx="393.6" cy="139.0" r="2.6" fill="var(--s2)" opacity="0.45"/></g>
+<text class="m" x="390.4" y="253" font-size="9" text-anchor="middle">-4</text>
+<g><title>run 99, thrhvon_m6: 0.010 +- 0.001</title><circle cx="401.8" cy="237.3" r="2.6" fill="var(--s2)" opacity="0.45"/></g>
+<g><title>run 103, thrhvon_m6: 0.009 +- 0.001</title><circle cx="403.4" cy="237.3" r="2.6" fill="var(--s2)" opacity="0.45"/></g>
+<g><title>run 107, thrhvon_m6: 0.010 +- 0.001</title><circle cx="405.0" cy="237.2" r="2.6" fill="var(--s2)" opacity="0.45"/></g>
+<g><title>run 111, thrhvon_m6: 0.035 +- 0.002</title><circle cx="406.6" cy="230.0" r="2.6" fill="var(--s2)" opacity="0.45"/></g>
+<text class="m" x="404.2" y="253" font-size="9" text-anchor="middle">-6</text>
+<g><title>run 95, thrhvon_m8: 0.003 +- 0.000</title><circle cx="418.1" cy="239.3" r="2.6" fill="var(--s2)" opacity="0.45"/></g>
+<text class="m" x="418.1" y="253" font-size="9" text-anchor="middle">-8</text>
+<text class="f" x="335.0" y="267" font-size="9" text-anchor="middle">threshold: safe + K DAC</text>
+<text class="t" x="540.0" y="66" font-size="11" text-anchor="middle">det1 P2_OUT</text>
+<line x1="450" x2="630" y1="240.0" y2="240.0" stroke="var(--border)"/>
+<line x1="450" x2="630" y1="183.3" y2="183.3" stroke="var(--border)"/>
+<line x1="450" x2="630" y1="126.7" y2="126.7" stroke="var(--border)"/>
+<line x1="450" x2="630" y1="70.0" y2="70.0" stroke="var(--border)"/>
+<line x1="581.5" x2="581.5" y1="70" y2="240" stroke="var(--fg-faint)" stroke-dasharray="3 3"/>
+<g><title>run 92, thrhvon_p16: 0.231 +- 0.010</title><circle cx="456.9" cy="174.6" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<text class="m" x="456.9" y="253" font-size="9" text-anchor="middle">+16</text>
+<g><title>run 93, thrhvon_p8: 0.247 +- 0.010</title><circle cx="509.1" cy="170.0" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 96, thrhvon_p8: 0.260 +- 0.016</title><circle cx="510.7" cy="166.4" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 100, thrhvon_p8: 0.268 +- 0.016</title><circle cx="512.3" cy="164.0" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 104, thrhvon_p8: 0.306 +- 0.017</title><circle cx="513.9" cy="153.3" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 108, thrhvon_p8: 0.315 +- 0.017</title><circle cx="515.5" cy="150.7" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<text class="m" x="512.3" y="253" font-size="9" text-anchor="middle">+8</text>
+<g><title>run 76, safehvon_v1: 0.355 +- 0.016</title><circle cx="561.0" cy="139.4" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 77, safehvon_v1: 0.310 +- 0.015</title><circle cx="561.7" cy="152.3" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 78, safehvon_v1: 0.313 +- 0.015</title><circle cx="562.4" cy="151.3" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 79, safehvon_v1: 0.312 +- 0.015</title><circle cx="563.1" cy="151.7" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 80, safehvon_v1: 0.306 +- 0.015</title><circle cx="563.8" cy="153.4" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 81, safehvon_v1: 0.329 +- 0.015</title><circle cx="564.5" cy="146.8" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 82, safehvon_v1: 0.284 +- 0.015</title><circle cx="565.2" cy="159.5" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 83, safehvon_v1: 0.301 +- 0.015</title><circle cx="565.9" cy="154.8" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 84, safehvon_v1: 0.311 +- 0.014</title><circle cx="566.6" cy="152.0" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 85, safehvon_v1: 0.279 +- 0.014</title><circle cx="567.3" cy="161.1" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 86, safehvon_v1: 0.281 +- 0.014</title><circle cx="568.0" cy="160.3" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 87, safehvon_v1: 0.330 +- 0.015</title><circle cx="568.7" cy="146.6" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 88, safehvon_v1: 0.272 +- 0.014</title><circle cx="569.4" cy="163.1" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 89, safehvon_v1: 0.271 +- 0.015</title><circle cx="570.1" cy="163.2" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 90, safehvon_v1: 0.295 +- 0.015</title><circle cx="570.8" cy="156.3" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 91, safehvon_v1: 0.268 +- 0.014</title><circle cx="571.5" cy="164.2" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 97, safehvon_v1: 0.312 +- 0.016</title><circle cx="572.2" cy="151.5" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 101, safehvon_v1: 0.349 +- 0.017</title><circle cx="572.9" cy="141.0" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 105, safehvon_v1: 0.344 +- 0.017</title><circle cx="573.6" cy="142.5" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<g><title>run 109, safehvon_v1: 0.362 +- 0.018</title><circle cx="574.3" cy="137.3" r="2.6" fill="var(--s3)" opacity="0.9"/></g>
+<text class="m" x="567.7" y="253" font-size="9" text-anchor="middle">safe</text>
+<g><title>run 94, thrhvon_m4: 0.286 +- 0.010</title><circle cx="592.2" cy="159.1" r="2.6" fill="var(--s3)" opacity="0.45"/></g>
+<g><title>run 98, thrhvon_m4: 0.261 +- 0.014</title><circle cx="593.8" cy="165.9" r="2.6" fill="var(--s3)" opacity="0.45"/></g>
+<g><title>run 102, thrhvon_m4: 0.311 +- 0.015</title><circle cx="595.4" cy="152.0" r="2.6" fill="var(--s3)" opacity="0.45"/></g>
+<g><title>run 106, thrhvon_m4: 0.269 +- 0.015</title><circle cx="597.0" cy="163.8" r="2.6" fill="var(--s3)" opacity="0.45"/></g>
+<g><title>run 110, thrhvon_m4: 0.339 +- 0.016</title><circle cx="598.6" cy="144.0" r="2.6" fill="var(--s3)" opacity="0.45"/></g>
+<text class="m" x="595.4" y="253" font-size="9" text-anchor="middle">-4</text>
+<g><title>run 99, thrhvon_m6: 0.059 +- 0.003</title><circle cx="606.8" cy="223.3" r="2.6" fill="var(--s3)" opacity="0.45"/></g>
+<g><title>run 103, thrhvon_m6: 0.065 +- 0.004</title><circle cx="608.4" cy="221.7" r="2.6" fill="var(--s3)" opacity="0.45"/></g>
+<g><title>run 107, thrhvon_m6: 0.065 +- 0.004</title><circle cx="610.0" cy="221.5" r="2.6" fill="var(--s3)" opacity="0.45"/></g>
+<g><title>run 111, thrhvon_m6: 0.129 +- 0.009</title><circle cx="611.6" cy="203.5" r="2.6" fill="var(--s3)" opacity="0.45"/></g>
+<text class="m" x="609.2" y="253" font-size="9" text-anchor="middle">-6</text>
+<g><title>run 95, thrhvon_m8: 0.010 +- 0.000</title><circle cx="623.1" cy="237.2" r="2.6" fill="var(--s3)" opacity="0.45"/></g>
+<text class="m" x="623.1" y="253" font-size="9" text-anchor="middle">-8</text>
+<text class="f" x="540.0" y="267" font-size="9" text-anchor="middle">threshold: safe + K DAC</text>
+</svg><p class="caption">Real data, every run on its own (none are added together). From 16 DAC above the safe setting down to the safe setting, the efficiency rises slowly (about 0.05 to 0.10 per chamber). Below it, the noise floods the tags and this method cannot measure (the faint dots). Over the 8 hours of runs 76&ndash;91 all three chambers drift down (det2 from 0.51 to 0.41) and are back up the next afternoon: the gain moves with time.</p></div>
+<p>The number of straight tracks per hour, which needs no tags, says the same: 430 per hour at safe + 16, 420&ndash;530 at safe + 8, 580&ndash;700 at the safe setting, and only 580&ndash;730 at 4 and 6 DAC below it, while the noise rises by orders of magnitude. Within the range the noise allows, lowering the threshold gives little.</p>
+
+<div class="stepcard done"><div class="sc-head"><span class="stepn">16</span><strong>The old runs, read on the right connectors</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>A scan of the connectors the hybrids could be on, for runs 76&ndash;91 together (only to choose the map); then every run from 76 to 111 analysed on its own with that map: efficiency of each chamber (chambers alone) and straight tracks per hour.</dd><dt>What we saw</dt><dd>The hybrids were on c5&ndash;c7 (511 &plusmn; 10 tracks per hour against about 10 for every other placement). With that map every run sees muons. Efficiency at the safe setting: det3 0.23&ndash;0.34, det2 0.41&ndash;0.51, det1 0.27&ndash;0.36 (chambers alone); +8 and +16 DAC are a little lower; below the safe setting the method is swamped.</dd><dt>What it tells us</dt><dd>There was never a detector or gas problem: it was our map. The threshold scan of 24&ndash;25 October is usable, and it says the efficiency changes slowly with the threshold around the safe setting.</dd><dt>So the next step is</dt><dd>check the efficiency with a reference that does not depend on the chambers (15c).</dd></dl></div>
+
+<h3>15c. A reference that does not depend on the chambers: scintillators</h3>
+<p>Tag-and-probe with the chambers alone has a weak point: if noise fires two chambers at the same moment, it makes a &ldquo;tag&rdquo; that no muon made, and the probe chamber is blamed for missing it. Our correction for chance only removes tags made at random times, not noise that is shared between chambers. So you put scintillator paddles above and below the stack, and fed their signals to the trigger hybrid (H0).</p>
+<p>The first try (run_128) did not work as a reference. The paddle signals were partly sent as TTL pulses, which have the wrong sign and size for a VMM input, and there was no coincidence unit, so each channel carried one paddle&rsquo;s singles. One channel fired 1300 times per second and only 0.1&nbsp;% of its pulses came with a chamber hit. For run_130 the paddles were rewired: two on top, one below, all NIM, and the coincidence of the three in its own channel.</p>
+<table class="bltab"><tr><th>channel</th><th>rate</th><th>what it is</th><th>evidence</th></tr><tr><th>VMM 0 ch 40</th><td style="text-align:left">0.28 Hz</td><td style="text-align:left">coincidence of the three paddles</td><td style="text-align:left">99.8&nbsp;% of its pulses come with all three paddle signals, 15&ndash;30&nbsp;ns after them</td></tr><tr><th>VMM 0 ch 41</th><td style="text-align:left">13 Hz</td><td style="text-align:left">top paddle</td><td style="text-align:left">74&nbsp;% of its pulses with ch 45</td></tr><tr><th>VMM 0 ch 45</th><td style="text-align:left">23 Hz</td><td style="text-align:left">top paddle</td><td style="text-align:left">42&nbsp;% with ch 41</td></tr><tr><th>VMM 0 ch 44</th><td style="text-align:left">15 Hz</td><td style="text-align:left">bottom paddle</td><td style="text-align:left">2&ndash;4&nbsp;% with the top paddles; det1, the bottom chamber, answers it most</td></tr></table>
+<p>The coincidence fires about 1000 times per hour. For each one we ask whether each chamber has a hit at the right moment (random hits in the same window: below 0.1&nbsp;%). The cleanest number takes the coincidences where the two <em>other</em> chambers also have one clean cluster each: then a muon certainly crossed the area that is read out, and the probe chamber has no excuse.</p>
+<div class="viz-card"><svg viewBox="0 0 640 300" role="img" aria-label="Efficiency from the chambers alone and with the scintillator reference">
+<text class="t" x="12" y="18" font-size="13" font-weight="600">The scintillator reference: how efficient are the chambers really?</text>
+<text class="m" x="12" y="34" font-size="11">Same thresholds and voltages. Grey: chambers alone (run_124). Colour: the scintillator coincidence fired and the other two</text>
+<text class="m" x="12" y="48" font-size="11">chambers have one clean cluster each (run_130, about 300 events per chamber). Solid: probe hit within 50 mm; light: anywhere.</text>
+<line x1="50" x2="620" y1="250.0" y2="250.0" stroke="var(--border)"/><text class="f" x="44" y="253.0" font-size="9" text-anchor="end">0.0</text>
+<line x1="50" x2="620" y1="213.2" y2="213.2" stroke="var(--border)"/><text class="f" x="44" y="216.2" font-size="9" text-anchor="end">0.2</text>
+<line x1="50" x2="620" y1="176.4" y2="176.4" stroke="var(--border)"/><text class="f" x="44" y="179.4" font-size="9" text-anchor="end">0.4</text>
+<line x1="50" x2="620" y1="139.6" y2="139.6" stroke="var(--border)"/><text class="f" x="44" y="142.6" font-size="9" text-anchor="end">0.6</text>
+<line x1="50" x2="620" y1="102.8" y2="102.8" stroke="var(--border)"/><text class="f" x="44" y="105.8" font-size="9" text-anchor="end">0.8</text>
+<line x1="50" x2="620" y1="66.0" y2="66.0" stroke="var(--border)"/><text class="f" x="44" y="69.0" font-size="9" text-anchor="end">1.0</text>
+<g><title>det3 P2_IN, chambers alone: within 50 mm 0.42 +- 0.01, anywhere 0.47 +- 0.01</title><rect x="68.0" y="164.2" width="60" height="85.8" rx="3" fill="var(--fg-faint)" opacity="0.35"/><rect x="68.0" y="173.3" width="60" height="76.7" rx="3" fill="var(--fg-faint)"/></g><text class="t" x="98.0" y="159.2" font-size="10" text-anchor="middle">0.42 / 0.47</text><text class="m" x="98.0" y="263" font-size="9" text-anchor="middle">chambers alone</text>
+<g><title>det3 P2_IN, scintillator: within 50 mm 0.65 +- 0.03, anywhere 0.72 +- 0.03</title><rect x="140.0" y="118.4" width="60" height="131.6" rx="3" fill="var(--s1)" opacity="0.35"/><rect x="140.0" y="130.4" width="60" height="119.6" rx="3" fill="var(--s1)"/></g><text class="t" x="170.0" y="113.4" font-size="10" text-anchor="middle">0.65 / 0.72</text><text class="m" x="170.0" y="263" font-size="9" text-anchor="middle">scintillator</text>
+<text class="t" x="134.0" y="280" font-size="11" text-anchor="middle">det3 P2_IN</text>
+<g><title>det2 P2_MID, chambers alone: within 50 mm 0.59 +- 0.02, anywhere 0.66 +- 0.02</title><rect x="258.0" y="128.0" width="60" height="122.0" rx="3" fill="var(--fg-faint)" opacity="0.35"/><rect x="258.0" y="141.9" width="60" height="108.1" rx="3" fill="var(--fg-faint)"/></g><text class="t" x="288.0" y="123.0" font-size="10" text-anchor="middle">0.59 / 0.66</text><text class="m" x="288.0" y="263" font-size="9" text-anchor="middle">chambers alone</text>
+<g><title>det2 P2_MID, scintillator: within 50 mm 0.66 +- 0.03, anywhere 0.69 +- 0.03</title><rect x="330.0" y="123.2" width="60" height="126.8" rx="3" fill="var(--s2)" opacity="0.35"/><rect x="330.0" y="127.8" width="60" height="122.2" rx="3" fill="var(--s2)"/></g><text class="t" x="360.0" y="118.2" font-size="10" text-anchor="middle">0.66 / 0.69</text><text class="m" x="360.0" y="263" font-size="9" text-anchor="middle">scintillator</text>
+<g><title>DREAM, cosmic bench, 9 Jul, 430 V (65&ndash;67&nbsp;%)</title><line x1="252.0" x2="396.0" y1="128.6" y2="128.6" stroke="var(--fg)" stroke-width="1.6" stroke-dasharray="5 3"/></g><text class="m" x="398.0" y="131.6" font-size="9">DREAM</text>
+<text class="t" x="324.0" y="280" font-size="11" text-anchor="middle">det2 P2_MID</text>
+<g><title>det1 P2_OUT, chambers alone: within 50 mm 0.52 +- 0.02, anywhere 0.55 +- 0.02</title><rect x="448.0" y="148.1" width="60" height="101.9" rx="3" fill="var(--fg-faint)" opacity="0.35"/><rect x="448.0" y="155.1" width="60" height="94.9" rx="3" fill="var(--fg-faint)"/></g><text class="t" x="478.0" y="143.1" font-size="10" text-anchor="middle">0.52 / 0.55</text><text class="m" x="478.0" y="263" font-size="9" text-anchor="middle">chambers alone</text>
+<g><title>det1 P2_OUT, scintillator: within 50 mm 0.63 +- 0.03, anywhere 0.69 +- 0.03</title><rect x="520.0" y="123.3" width="60" height="126.7" rx="3" fill="var(--s3)" opacity="0.35"/><rect x="520.0" y="134.2" width="60" height="115.8" rx="3" fill="var(--s3)"/></g><text class="t" x="550.0" y="118.3" font-size="10" text-anchor="middle">0.63 / 0.69</text><text class="m" x="550.0" y="263" font-size="9" text-anchor="middle">scintillator</text>
+<g><title>DREAM, cosmic bench, 19 Jul, 430 V</title><line x1="442.0" x2="586.0" y1="101.0" y2="101.0" stroke="var(--fg)" stroke-width="1.6" stroke-dasharray="5 3"/></g><text class="m" x="588.0" y="104.0" font-size="9">DREAM</text>
+<text class="t" x="514.0" y="280" font-size="11" text-anchor="middle">det1 P2_OUT</text>
+</svg><p class="caption">Real data. With the scintillators the efficiency is higher than the chambers alone said, most for det3. det2 reaches its DREAM value; det1 stays about 0.15 below.</p></div>
+<div style="overflow-x:auto"><table class="bltab"><tr><th></th><th>coincidence<br>only</th><th>+ clean tags:<br>anywhere</th><th>within<br>50 mm</th><th>within<br>15 mm</th><th>chambers alone (run_124):<br>50 mm / anywhere</th></tr><tr><th>det3 P2_IN</th><td>0.54</td><td>0.72 &plusmn; 0.03</td><td>0.65</td><td>0.45</td><td>0.42 / 0.47</td></tr><tr><th>det2 P2_MID</th><td>0.47</td><td>0.69 &plusmn; 0.03</td><td>0.66</td><td>0.61</td><td>0.59 / 0.66</td></tr><tr><th>det1 P2_OUT</th><td>0.48</td><td>0.69 &plusmn; 0.03</td><td>0.63</td><td>0.45</td><td>0.52 / 0.55</td></tr></table></div>
+<p>The first column is lower because some coincidences cross the paddles outside the area that is read out. The 15&nbsp;mm column is too strict for det3 and det1: their position is predicted by extending a line, which misses by more than 15&nbsp;mm about a third of the time, so for them the 50&nbsp;mm or the &ldquo;anywhere&rdquo; column is the right one.</p>
+
+<div class="stepcard done"><div class="sc-head"><span class="stepn">17</span><strong>The scintillator reference</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>run_130: 60 minutes, same thresholds and voltages as run_124, scintillator coincidence on hybrid H0 (VMM 0 channel 40). The efficiency of each chamber on the coincidences, with and without the condition that the other two chambers have a clean cluster.</dd><dt>What we saw</dt><dd>With the scintillator and the two other chambers as the tag: det3 0.72, det2 0.69, det1 0.69 (&plusmn;0.03) for a hit anywhere, 0.63&ndash;0.66 within 50&nbsp;mm. The chambers alone gave 0.42&ndash;0.59 within 50&nbsp;mm in run_124, and only 0.24 for det2 in run_130 itself.</dd><dt>What it tells us</dt><dd>The chambers are about 65&ndash;72&nbsp;% efficient at the safe thresholds. The tag-and-probe with the chambers alone underestimates this, by up to 0.25, because some of its tags are shared noise; its numbers, including the threshold curve of 15b, are lower bounds, good for comparing settings with each other. det2 is as good as with DREAM; det1 is 0.12&ndash;0.18 below its DREAM value.</dd><dt>So the next step is</dt><dd>look at what still limits the efficiency, channel by channel (15d), and repeat the threshold scan with the scintillators.</dd></dl></div>
+
+<h3>15d. Channel by channel, and the noise in run_130</h3>
+<p><strong>Does a channel&rsquo;s baseline set its efficiency?</strong> All channels of a chip share one threshold, so a channel resting higher should need less signal. We compared the efficiency of every channel (runs 76&ndash;91 added, about 40 tags per channel) with its baseline from section 8b. For the ordinary channels there is no link: the efficiency is the same (0.33&ndash;0.37) from 6 ADC counts below the chip&rsquo;s median baseline to 6 above, on every chip. A spread of &plusmn;6 counts is about &plusmn;7 DAC, and the threshold scan already showed that this much threshold changes little. So correcting each channel would not raise the efficiency much. The exception is the block of very high baselines on the three burst chips:</p>
+<div class="viz-card"><svg viewBox="0 0 640 190" role="img" aria-label="Efficiency of the normal and the high-baseline channels of VMM 4, 7 and 9">
+<text class="t" x="12" y="18" font-size="13" font-weight="600">The high-baseline channels of VMM 4, 7 and 9 lose muons</text>
+<text class="m" x="12" y="34" font-size="11">Runs 76&ndash;91 summed (chambers alone, so lower bounds; compare the two bars of a chip with each other).</text>
+<text class="t" x="140" y="72" font-size="12" text-anchor="end">VMM 4</text>
+<g><title>VMM 4 normal channels: 0.31 (34 channels)</title><rect x="150" y="50" width="199.3" height="15" rx="3" fill="var(--s1)"/></g><text class="m" x="355.3" y="62" font-size="10">0.31 &middot; normal channels (34 ch)</text>
+<g><title>VMM 4 high-baseline block: 0.20 (19 channels)</title><rect x="150" y="68" width="128.6" height="15" rx="3" fill="var(--s2)"/></g><text class="m" x="284.6" y="80" font-size="10">0.20 &middot; high-baseline block (19 ch)</text>
+<text class="t" x="140" y="116" font-size="12" text-anchor="end">VMM 7</text>
+<g><title>VMM 7 normal channels: 0.18 (22 channels)</title><rect x="150" y="94" width="115.7" height="15" rx="3" fill="var(--s1)"/></g><text class="m" x="271.7" y="106" font-size="10">0.18 &middot; normal channels (22 ch)</text>
+<g><title>VMM 7 high-baseline block: 0.10 (29 channels)</title><rect x="150" y="112" width="64.3" height="15" rx="3" fill="var(--s2)"/></g><text class="m" x="220.3" y="124" font-size="10">0.10 &middot; high-baseline block (29 ch)</text>
+<text class="t" x="140" y="160" font-size="12" text-anchor="end">VMM 9</text>
+<g><title>VMM 9 normal channels: 0.37 (17 channels)</title><rect x="150" y="138" width="237.9" height="15" rx="3" fill="var(--s1)"/></g><text class="m" x="393.9" y="150" font-size="10">0.37 &middot; normal channels (17 ch)</text>
+<g><title>VMM 9 high-baseline block: 0.12 (31 channels)</title><rect x="150" y="156" width="77.1" height="15" rx="3" fill="var(--s2)"/></g><text class="m" x="233.1" y="168" font-size="10">0.12 &middot; high-baseline block (31 ch)</text>
+</svg><p class="caption">Real data. The channels whose baseline sits 100 to 200 ADC counts high respond <em>less</em>, not more. This is a fault of these three chips (or their hybrids), next to the bursts, worth reporting to the people who built them.</p></div>
+<p><strong>Why the chambers alone did so badly in run_130.</strong> Six channels that were quiet in run_124 fire tens to hundreds of times per second in run_130: VMM 5 ch 46 (350 per second), VMM 18 ch 50 (530), VMM 12 ch 28 and ch 50 (36 each), VMM 15 ch 42 and ch 1 (22 each). Their small, isolated hits make false clean clusters in det3 and det1, which are exactly the tags for det2. Something on the set-up that changed between the two runs (the paddles, their cables or their high voltage) is the first suspect. Masking those six channels removes the problem.</p>
+
+<div class="stepcard done"><div class="sc-head"><span class="stepn">18</span><strong>Channel by channel</strong> <span class="pill ok">done</span></div><dl><dt>What we did</dt><dd>Efficiency of every channel against its baseline (runs 76&ndash;91); the hit rate of every channel in run_124 and run_130.</dd><dt>What we saw</dt><dd>No link between baseline and efficiency for ordinary channels. The high-baseline blocks of VMM 4, 7 and 9 are 0.10&ndash;0.20 efficient against 0.18&ndash;0.37 for the other channels of the same chips. Six channels became noisy between run_124 and run_130.</dd><dt>What it tells us</dt><dd>Per-channel trims would not gain much efficiency at these settings. The three burst chips have a measurable defect. The noise of a run can change the chamber-only efficiency a lot, which is one more reason to use the scintillators.</dd><dt>So the next step is</dt><dd>repeat the threshold scan with the scintillator reference, with the six noisy channels masked (section 15e).</dd></dl></div>
+
+<h3>15e. What we know now, and what comes next</h3>
+<div class="two">
+<div><h3>We know</h3><ul>
+<li>The chambers see cosmic muons, in the old runs (read on c5&ndash;c7) and in the new ones (c3&ndash;c5).</li>
+<li>Two connector halves of det3 (c3 top, c5 top) read their channels in reversed order; all others follow the beam-test map.</li>
+<li>At the safe thresholds the chambers are about 65&ndash;72&nbsp;% efficient (scintillator reference). det2 equals its DREAM value; det1 is about 0.15 below.</li>
+<li>Around the safe setting the efficiency changes slowly with the threshold; below it the noise takes over.</li>
+<li>The efficiency is not lost to timing (a window of &plusmn;100&nbsp;ns or &plusmn;1&nbsp;&micro;s gives the same) nor to dead time after earlier hits.</li>
+<li>Channel baselines do not predict efficiency, except the high-baseline blocks of VMM 4, 7, 9, which lose muons.</li>
+<li>Discharges (det3 in run_121, det2 VMM 11 ch 35 in the old runs) draw repeated fake tracks; new noisy channels appeared in run_130.</li>
+</ul></div>
+<div><h3>Next</h3><ul>
+<li>A threshold scan <strong>with the scintillator reference</strong> (safe + 8, safe, safe &minus; 2, &minus;4), with the six new noisy channels masked: the efficiency curve this campaign set out to measure.</li>
+<li>Why det1 stays below its DREAM value (gain against threshold on that chamber, or its connectors).</li>
+<li>Report to the hybrid developers: the high-baseline blocks of VMM 4, 7, 9 are less efficient, as well as bursting.</li>
+<li>Correct the run files: the read-out connectors of runs 1&ndash;111 and the sentence about the high-voltage connectors from run_112 on.</li>
+<li>Runs 122, 123, 125&ndash;127 and 129 are not analysed yet.</li>
+</ul></div>
+</div>
 </div>
   </article>
 </main>
