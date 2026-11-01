@@ -51,6 +51,7 @@
 
 
 
+
 <style>
   :root{--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--alert:#eb6834;--surface:#fcfcfb;
     --c0:#eef0f3;--c1:#cde2fb;--c2:#86b6ef;--c3:#3987e5;--c4:#1c5cab;--c5:#0d366b;
@@ -6077,6 +6078,79 @@
 
 <h3>15f. The weekend scan (31 October &ndash; 1 November): the chambers faded</h3>
 <p>Over the weekend the stack ran a threshold scan with the scintillators: 3-hour points at K = +64, +24, 0, &minus;8, &minus;12, 0 again, +40, +12, &minus;4, &minus;10 and &minus;14 DAC from the safe setting (runs 133&ndash;169, labels <code>adwk1_K&hellip;</code>), with more noisy channels masked at the lower thresholds (16 at K = 0, 162 at K = &minus;12). Before analysing it point by point we asked a simpler question: does the stack respond to the scintillators the same way all weekend? It does not.</p>
+<div class="viz-card"><svg viewBox="0 0 640 470" role="img" aria-label="How a threshold scan is run: one point, the weekend scan in sequence, and the planned scan in rotation">
+<text class="t" x="12" y="18" font-size="13" font-weight="600">How a threshold scan is run</text>
+<text class="t" x="12" y="42" font-size="11.5" font-weight="600">1. One point of the scan</text>
+<rect x="40" y="56" width="60" height="8" rx="2" fill="var(--s2)"/><rect x="110" y="56" width="60" height="8" rx="2" fill="var(--s2)"/><text class="m" x="180" y="64" font-size="9.5">two paddles on top</text>
+<rect x="30" y="78" width="150" height="10" rx="2" fill="var(--s1)" opacity="0.85"/><text class="m" x="188" y="87" font-size="9.5">det3 P2_IN</text>
+<rect x="30" y="102" width="150" height="10" rx="2" fill="var(--s1)" opacity="0.85"/><text class="m" x="188" y="111" font-size="9.5">det2 P2_MID</text>
+<rect x="30" y="126" width="150" height="10" rx="2" fill="var(--s1)" opacity="0.85"/><text class="m" x="188" y="135" font-size="9.5">det1 P2_OUT</text>
+<rect x="50" y="150" width="110" height="8" rx="2" fill="var(--s2)"/><text class="m" x="180" y="158" font-size="9.5">one paddle below</text>
+<line x1="70" y1="52" x2="125" y2="164" stroke="var(--fg)" stroke-width="1.4" stroke-dasharray="4 3"/><text class="f" x="128" y="172" font-size="9">a muon</text>
+<text class="m" x="330" y="62" font-size="10">every chip: its own safe threshold + the same offset K</text>
+<rect x="338" y="123.5" width="16" height="52.5" rx="2" fill="var(--c2)"/><rect x="338" y="107.5" width="16" height="16" rx="2" fill="var(--s2)" opacity="0.85"/>
+<rect x="365" y="142.2" width="16" height="33.8" rx="2" fill="var(--c2)"/><rect x="365" y="126.2" width="16" height="16" rx="2" fill="var(--s2)" opacity="0.85"/>
+<rect x="392" y="104.8" width="16" height="71.2" rx="2" fill="var(--c2)"/><rect x="392" y="88.8" width="16" height="16" rx="2" fill="var(--s2)" opacity="0.85"/>
+<rect x="419" y="126.0" width="16" height="50.0" rx="2" fill="var(--c2)"/><rect x="419" y="110.0" width="16" height="16" rx="2" fill="var(--s2)" opacity="0.85"/>
+<rect x="446" y="127.2" width="16" height="48.8" rx="2" fill="var(--c2)"/><rect x="446" y="111.2" width="16" height="16" rx="2" fill="var(--s2)" opacity="0.85"/>
+<rect x="473" y="118.5" width="16" height="57.5" rx="2" fill="var(--c2)"/><rect x="473" y="102.5" width="16" height="16" rx="2" fill="var(--s2)" opacity="0.85"/>
+<rect x="500" y="103.5" width="16" height="72.5" rx="2" fill="var(--c2)"/><rect x="500" y="87.5" width="16" height="16" rx="2" fill="var(--s2)" opacity="0.85"/>
+<rect x="527" y="114.8" width="16" height="61.2" rx="2" fill="var(--c2)"/><rect x="527" y="98.8" width="16" height="16" rx="2" fill="var(--s2)" opacity="0.85"/>
+<rect x="554" y="127.2" width="16" height="48.8" rx="2" fill="var(--c2)"/><rect x="554" y="111.2" width="16" height="16" rx="2" fill="var(--s2)" opacity="0.85"/>
+<rect x="581" y="139.8" width="16" height="36.2" rx="2" fill="var(--c2)"/><rect x="581" y="123.8" width="16" height="16" rx="2" fill="var(--s2)" opacity="0.85"/>
+<line x1="330" x2="610" y1="176" y2="176" stroke="var(--fg-faint)"/><text class="f" x="475" y="190" font-size="9" text-anchor="middle">chips (threshold in DAC); blue = safe, orange = + K (here K = +12)</text>
+<text class="t" x="12" y="225" font-size="11.5" font-weight="600">2. The weekend scan: the points one after the other</text>
+<rect x="31.0" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="36.7" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="42.4" y="237" width="47.2" height="26" rx="2" fill="var(--s1)"/><text class="x3" x="66.0" y="254" font-size="10" text-anchor="middle">K +64</text>
+<rect x="90.0" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="95.7" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="101.4" y="237" width="47.2" height="26" rx="2" fill="var(--s1)"/><text class="x3" x="125.0" y="254" font-size="10" text-anchor="middle">K +24</text>
+<rect x="149.0" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="154.7" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="160.4" y="237" width="47.2" height="26" rx="2" fill="var(--s1)"/><text class="x3" x="184.0" y="254" font-size="10" text-anchor="middle">K 0</text>
+<rect x="208.0" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="213.7" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="219.4" y="237" width="47.2" height="26" rx="2" fill="var(--s1)"/><text class="x3" x="243.0" y="254" font-size="10" text-anchor="middle">K -8</text>
+<rect x="267.0" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="272.7" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="278.4" y="237" width="47.2" height="26" rx="2" fill="var(--s1)"/><text class="x3" x="302.0" y="254" font-size="10" text-anchor="middle">K -12</text>
+<rect x="326.0" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="331.7" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="337.4" y="237" width="47.2" height="26" rx="2" fill="var(--s1)"/><text class="x3" x="361.0" y="254" font-size="10" text-anchor="middle">K 0</text>
+<rect x="385.0" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="390.7" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="396.4" y="237" width="47.2" height="26" rx="2" fill="var(--s1)"/><text class="x3" x="420.0" y="254" font-size="10" text-anchor="middle">K +40</text>
+<rect x="444.0" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="449.7" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="455.4" y="237" width="47.2" height="26" rx="2" fill="var(--s1)"/><text class="x3" x="479.0" y="254" font-size="10" text-anchor="middle">K +12</text>
+<rect x="503.0" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="508.7" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="514.4" y="237" width="47.2" height="26" rx="2" fill="var(--s1)"/><text class="x3" x="538.0" y="254" font-size="10" text-anchor="middle">K -4</text>
+<rect x="562.0" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="567.7" y="237" width="4.7" height="26" fill="var(--c2)"/><rect x="573.4" y="237" width="47.2" height="26" rx="2" fill="var(--s1)"/><text class="x3" x="597.0" y="254" font-size="10" text-anchor="middle">K -10</text>
+<text class="f" x="30" y="275" font-size="9">each point: two 2-minute runs (light), then 3 hours (dark); 33 hours in all</text>
+<polyline points="30.0,297.0 47.7,299.3 118.5,313.1 207.0,325.5 295.5,336.1 354.5,343.0 620.0,343.0" fill="none" stroke="var(--alert)" stroke-width="2.2"/><text class="m" x="224.7" y="303" font-size="9.5">&#8600; gain of the chambers: falls, then nothing from the 6th point on</text><line x1="30" x2="620" y1="343" y2="343" stroke="var(--border)"/><text class="m" x="620" y="356" font-size="9.5" text-anchor="end">each threshold met a different gain: threshold and gain cannot be told apart</text>
+<text class="t" x="12" y="375" font-size="11.5" font-weight="600">3. Next: 30-minute runs in rotation, the safe setting repeated in every cycle</text>
+<g><title>cycle 1: safe +0</title><rect x="30.6" y="387" width="23.4" height="24" rx="1.5" fill="var(--s1)"/></g>
+<g><title>cycle 1: safe +8</title><rect x="55.2" y="387" width="23.4" height="24" rx="1.5" fill="var(--c3)"/></g>
+<g><title>cycle 1: safe -2</title><rect x="79.8" y="387" width="23.4" height="24" rx="1.5" fill="var(--c4)"/></g>
+<g><title>cycle 1: safe -4</title><rect x="104.3" y="387" width="23.4" height="24" rx="1.5" fill="var(--c5)"/></g>
+<text class="x3" x="42.3" y="403" font-size="8" text-anchor="middle">S</text>
+<text class="x3" x="66.9" y="403" font-size="8" text-anchor="middle">+8</text>
+<text class="x3" x="91.5" y="403" font-size="8" text-anchor="middle">-2</text>
+<text class="x3" x="116.0" y="403" font-size="8" text-anchor="middle">-4</text>
+<g><title>cycle 2: safe +0</title><rect x="128.9" y="387" width="23.4" height="24" rx="1.5" fill="var(--s1)"/></g>
+<g><title>cycle 2: safe +8</title><rect x="153.5" y="387" width="23.4" height="24" rx="1.5" fill="var(--c3)"/></g>
+<g><title>cycle 2: safe -2</title><rect x="178.1" y="387" width="23.4" height="24" rx="1.5" fill="var(--c4)"/></g>
+<g><title>cycle 2: safe -4</title><rect x="202.7" y="387" width="23.4" height="24" rx="1.5" fill="var(--c5)"/></g>
+<text class="x3" x="140.6" y="403" font-size="8" text-anchor="middle">S</text>
+<text class="x3" x="165.2" y="403" font-size="8" text-anchor="middle">+8</text>
+<text class="x3" x="189.8" y="403" font-size="8" text-anchor="middle">-2</text>
+<text class="x3" x="214.4" y="403" font-size="8" text-anchor="middle">-4</text>
+<g><title>cycle 3: safe +0</title><rect x="227.3" y="387" width="23.4" height="24" rx="1.5" fill="var(--s1)"/></g>
+<g><title>cycle 3: safe +8</title><rect x="251.8" y="387" width="23.4" height="24" rx="1.5" fill="var(--c3)"/></g>
+<g><title>cycle 3: safe -2</title><rect x="276.4" y="387" width="23.4" height="24" rx="1.5" fill="var(--c4)"/></g>
+<g><title>cycle 3: safe -4</title><rect x="301.0" y="387" width="23.4" height="24" rx="1.5" fill="var(--c5)"/></g>
+<text class="x3" x="239.0" y="403" font-size="8" text-anchor="middle">S</text>
+<text class="x3" x="263.5" y="403" font-size="8" text-anchor="middle">+8</text>
+<text class="x3" x="288.1" y="403" font-size="8" text-anchor="middle">-2</text>
+<text class="x3" x="312.7" y="403" font-size="8" text-anchor="middle">-4</text>
+<g><title>cycle 4: safe +0</title><rect x="325.6" y="387" width="23.4" height="24" rx="1.5" fill="var(--s1)"/></g>
+<g><title>cycle 4: safe +8</title><rect x="350.2" y="387" width="23.4" height="24" rx="1.5" fill="var(--c3)"/></g>
+<g><title>cycle 4: safe -2</title><rect x="374.8" y="387" width="23.4" height="24" rx="1.5" fill="var(--c4)"/></g>
+<g><title>cycle 4: safe -4</title><rect x="399.4" y="387" width="23.4" height="24" rx="1.5" fill="var(--c5)"/></g>
+<g><title>cycle 5: safe +0</title><rect x="423.9" y="387" width="23.4" height="24" rx="1.5" fill="var(--s1)"/></g>
+<g><title>cycle 5: safe +8</title><rect x="448.5" y="387" width="23.4" height="24" rx="1.5" fill="var(--c3)"/></g>
+<g><title>cycle 5: safe -2</title><rect x="473.1" y="387" width="23.4" height="24" rx="1.5" fill="var(--c4)"/></g>
+<g><title>cycle 5: safe -4</title><rect x="497.7" y="387" width="23.4" height="24" rx="1.5" fill="var(--c5)"/></g>
+<g><title>cycle 6: safe +0</title><rect x="522.3" y="387" width="23.4" height="24" rx="1.5" fill="var(--s1)"/></g>
+<g><title>cycle 6: safe +8</title><rect x="546.9" y="387" width="23.4" height="24" rx="1.5" fill="var(--c3)"/></g>
+<g><title>cycle 6: safe -2</title><rect x="571.4" y="387" width="23.4" height="24" rx="1.5" fill="var(--c4)"/></g>
+<g><title>cycle 6: safe -4</title><rect x="596.0" y="387" width="23.4" height="24" rx="1.5" fill="var(--c5)"/></g>
+<text class="f" x="30" y="425" font-size="9">S = safe (repeated: it shows the gain drift); +8, &minus;2, &minus;4 = safe + K. Six cycles of 2 hours: each point gets 3 hours,</text><text class="f" x="30" y="438" font-size="9">spread over the whole day, so a slow drift touches all points alike and a sudden change is seen within one cycle.</text>
+</svg><p class="caption">How a scan works (cartoon, not data). A point is one setting of all chips: each at its own safe threshold, shifted by the same K. The weekend took the points one after the other (panel 2), so when the gain fell each point met a different gain. Taking the points in rotation (panel 3) spreads every point over the whole run, and the repeated safe setting measures the drift.</p></div>
 <div class="viz-card"><svg viewBox="0 0 640 420" role="img" aria-label="Chamber response and muon pulse height against time during the weekend scan">
 <text class="t" x="12" y="18" font-size="13" font-weight="600">The weekend scan: the chambers faded, whatever the threshold</text>
 <text class="m" x="12" y="34" font-size="11">Each dot: 30 minutes (2 to 4 minutes for the short runs 131&ndash;134). Shaded bands: the 3-hour points, labelled with</text>
@@ -6416,7 +6490,7 @@
 <h3>15g. How long each point should run</h3>
 <p>The scintillators are recorded one by one as well as through their hardware coincidence, so the coincidence can also be made afterwards. Asking for either top paddle together with the bottom one gives nearly three times as many muons that cross all three chambers, for almost the same quality:</p>
 <table class="bltab"><tr><th>trigger (run_130, built offline from the recorded paddles)</th><th>per hour</th><th>with a hit in all three chambers, per hour</th><th>gain</th></tr><tr><th>hardware triple (ch 40)</th><td>1002</td><td>237</td><td>1.0&times;</td></tr><tr><th>top 41 AND bottom 44</th><td>1170</td><td>263</td><td>1.1&times;</td></tr><tr><th>top 45 AND bottom 44</th><td>2107</td><td>394</td><td>1.7&times;</td></tr><tr><th>(top 41 OR top 45) AND bottom 44</th><td>3277</td><td>659</td><td>2.8&times;</td></tr></table>
-<p>With that trigger about 650 muons per hour cross the stack and are seen by the two chambers that tag them. For an efficiency of about 0.7 the statistical error per chamber is about &plusmn;0.02 after one hour and &plusmn;0.011 after two to three hours, which is what is needed to see the steps of 0.03 to 0.10 between neighbouring thresholds. One chip is about a sixth of a chamber, so per chip a day per point is needed. A drift of the gain is the bigger danger, as the weekend showed, so the points should not be taken one after the other but <strong>in rotation</strong>: 30-minute runs cycling through the thresholds, with the safe setting repeated in every cycle to watch the gain, until each point has two to three hours.</p>
+<p>With that trigger about 650 muons per hour cross the stack and are seen by the two chambers that tag them. For an efficiency of about 0.7 the statistical error per chamber is about &plusmn;0.02 after one hour and &plusmn;0.011 after two to three hours, which is what is needed to see the steps of 0.03 to 0.10 between neighbouring thresholds. One chip is about a sixth of a chamber, so per chip a day per point is needed. A drift of the gain is the bigger danger, as the weekend showed, so the points should not be taken one after the other but <strong>in rotation</strong>: 30-minute runs cycling through the thresholds, with the safe setting repeated in every cycle to watch the gain, until each point has two to three hours (panel 3 of the cartoon in 15f).</p>
 </div>
   </article>
 </main>
