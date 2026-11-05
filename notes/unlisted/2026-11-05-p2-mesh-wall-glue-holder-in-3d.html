@@ -30,6 +30,10 @@
   .readout div { border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; background: var(--bg-elev); }
   .readout small { display: block; color: var(--fg-muted); font-size: .78rem; }
   .readout strong { font-variant-numeric: tabular-nums; }
+  #flip { width: 100%; display: none; }
+  .nogl #flip { display: block; }
+  .nogl #view, .nogl #caption { display: none; }
+  .nogl .needs-gl { opacity: .45; pointer-events: none; }
   .ok { color: #24865a; } .bad { color: #c43a2a; }
   @media (prefers-color-scheme: dark) { .ok { color: #45b07c; } .bad { color: #f06a4c; } }
 </style>
@@ -65,8 +69,10 @@
         <input id="time" type="range" min="0" max="1000" value="0" aria-label="animation time">
       </div>
 
+      <div id="nogl" class="callout warn" hidden></div>
       <div class="stage">
         <canvas id="view"></canvas>
+        <img id="flip" alt="Recorded animation of the selected option" hidden>
         <div class="caption" id="caption"></div>
       </div>
 
@@ -80,11 +86,11 @@
         <label><input type="checkbox" id="labels" checked> labels</label>
         <label>height ×<select id="exag"><option>1</option><option>3</option><option selected>5</option><option>10</option></select></label>
       </div>
-      <div class="bar">
+      <div class="bar needs-gl">
         <label>laid glue height <input type="range" id="hLaid" min="30" max="200" step="5" value="70"> <strong id="hLaidV"></strong></label>
         <label>insulation t₁ <input type="range" id="t1" min="0" max="100" step="5" value="50"> <strong id="t1V"></strong></label>
       </div>
-      <div class="readout">
+      <div class="readout needs-gl">
         <div><small>line laid (width × height)</small><strong id="rLine"></strong></div>
         <div><small>glue per mm of wall</small><strong id="rVol"></strong></div>
         <div><small>whole detector (1684 mm)</small><strong id="rTot"></strong></div>
@@ -139,6 +145,51 @@
   <span><a href="../../notes/">← all notes</a></span>
 </div></footer>
 
+<script>
+  // Shows why the 3D view did not start, instead of an empty box.
+  window.__p2fail = function (msg) {
+    var c = document.getElementById("caption");
+    if (c) c.innerHTML = "<b>The 3D view could not start.</b> " + msg;
+    if (!window.__p2ok) startFlipbook(msg);
+  };
+  // Without WebGL: play the same animation from frames recorded in Chrome (41 per sequence).
+  function startFlipbook(why) {
+    if (window.__flip) return;
+    var F = window.__flip = { opt: "A", view: "over", t: 0, playing: true };
+    var base = "2026-11-05-p2-mesh-wall-glue-holder-in-3d_files/frames/";
+    var $ = function (id) { return document.getElementById(id); };
+    document.body.classList.add("nogl");
+    var img = $("flip"); img.hidden = false;
+    var n = $("nogl"); n.hidden = false;
+    n.innerHTML = "<strong>This browser did not give the page WebGL</strong> (" + why + "). " +
+      "Below is the same animation, recorded: A/B, play, the time slider and the end-on cut still work; the sliders need WebGL. " +
+      "For the interactive 3D, open the page in Chrome, or in Firefox set <code>webgl.force-enabled</code> to true in " +
+      "<code>about:config</code> and restart it (check <code>about:support</code> → WebGL).";
+    var cache = {};
+    function src(i) { return base + F.opt + "_" + F.view + "_" + (i < 10 ? "0" : "") + i + ".jpg"; }
+    function preload() { for (var i = 0; i <= 40; i++) { var s = src(i); if (!cache[s]) { cache[s] = new Image(); cache[s].src = s; } } }
+    function show() { img.src = src(Math.round(Math.min(1, F.t) * 40)); $("time").value = Math.round(Math.min(1, F.t) * 1000); }
+    function opt(o) { F.opt = o; if (o === "B") F.view = "over"; F.t = 0;
+      $("optA").setAttribute("aria-pressed", o === "A"); $("optB").setAttribute("aria-pressed", o === "B"); preload(); show(); }
+    $("optA").addEventListener("click", function () { opt("A"); });
+    $("optB").addEventListener("click", function () { opt("B"); });
+    $("camOver").addEventListener("click", function () { F.view = "over"; preload(); show(); });
+    $("camTop").addEventListener("click", function () { F.view = "over"; preload(); show(); });
+    $("camEnd").addEventListener("click", function () { if (F.opt === "A") { F.view = "end"; preload(); show(); } });
+    $("play").addEventListener("click", function () { F.playing = !F.playing; $("play").textContent = F.playing ? "❚❚ pause" : "▶ play"; });
+    $("time").addEventListener("input", function (e) { F.t = e.target.value / 1000; F.playing = false; $("play").textContent = "▶ play"; show(); });
+    $("play").textContent = "❚❚ pause";
+    preload(); show();
+    setInterval(function () { if (F.playing) { F.t += 0.1 / 16; if (F.t > 1.08) F.t = 0; show(); } }, 100);
+  }
+  window.addEventListener("error", function (e) {
+    window.__p2fail((e.message || "script error") + (e.filename ? " (" + e.filename.split("/").pop() + ":" + e.lineno + ")" : ""));
+  });
+  window.addEventListener("unhandledrejection", function (e) { window.__p2fail(String(e.reason)); });
+  setTimeout(function () {
+    if (!window.__p2ok) window.__p2fail("The script did not run. Reload the page; if it stays empty, try another browser and tell Alexandra which one.");
+  }, 6000);
+</script>
 <script type="module">
 import * as THREE from "three";
 import { OrbitControls } from "../../assets/three-0.160.0/OrbitControls.js";
@@ -166,7 +217,9 @@ const state = { opt: "A", t: 0, playing: true, t1: 0.05, h: 0.07, V: 5, section:
 
 // ---------------------------------------------------------------- renderer
 const canvas = document.getElementById("view");
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); }
+catch (e) { window.__p2fail(e.message); throw e; }
 renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
 renderer.localClippingEnabled = false;
 const scene = new THREE.Scene();
@@ -314,7 +367,7 @@ function build() {
     shoe.userData.x = 0;
     // laid glue line (stretched in update)
     dyn.lineA = box(0, 1, grooveTop, grooveTop + h, LIP[0], LIP[1], M.glue, A);
-    label("guide bar, pinned in 2 screw holes", 352, t1 + 2.9, -7.6);
+    dyn.fixLbl = label("guide bar, pinned in 2 screw holes", 352, t1 + 2.9, -7.6);
     dyn.lblShoe = label("shoe: runners on the wall borders", XC, headT + 4.2, 3.2);
     dyn.lblLip = label("lip + overflow channels", XC, headB - 0.2, 7.2);
   }
@@ -340,7 +393,7 @@ function build() {
     dyn.lineBtop = fT;
     label("film stencil, 0.7 mm slot over the wall", 312, fT + 1.0, -6.5);
     dyn.lblSq = label("squeegee", XC, fT + 3.6, 1);
-    label("pins in screw holes", 354.8, t1 + 2.1, -7.5);
+    dyn.fixLbl = label("pins in screw holes", 354.8, t1 + 2.1, -7.5);
   }
 
   // ---- mesh (both)
@@ -446,6 +499,7 @@ function update() {
   }
   // fixture (guide bar / pins) goes away before the mesh comes
   if (dyn.fixture) dyn.fixture.visible = t < meshStart;
+  if (dyn.fixLbl) dyn.fixLbl.userData.show = t < meshStart;
   // mesh
   const m = ease(clamp((t - meshStart) / 0.14));
   dyn.mesh.visible = t >= meshStart;
@@ -522,7 +576,7 @@ if (q.has("x")) { state.V = +q.get("x"); $("exag").value = q.get("x"); }
 if (q.has("t1")) { state.t1 = +q.get("t1") / 1000; $("t1").value = q.get("t1"); }
 if (q.has("t")) { state.t = +q.get("t"); state.playing = false; $("play").textContent = "▶ play"; }
 if (q.get("section") === "1") { state.section = true; $("section").checked = true; }
-build(); readout(); cam(q.get("cam") || "over"); requestAnimationFrame(loop);
+build(); readout(); cam(q.get("cam") || "over"); window.__p2ok = true; requestAnimationFrame(loop);
 </script>
 </body>
 </html>
