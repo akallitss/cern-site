@@ -89,8 +89,7 @@
         <label>height ×<select id="exag"><option>1</option><option>3</option><option selected>5</option><option>10</option></select></label>
       </div>
       <div class="bar needs-gl">
-        <label>laid glue height <input type="range" id="hLaid" min="30" max="200" step="5" value="70"> <strong id="hLaidV"></strong></label>
-        <label>insulation t₁ <input type="range" id="t1" min="0" max="100" step="5" value="50"> <strong id="t1V"></strong></label>
+        <label>laid glue height <input type="range" id="hLaid" min="30" max="200" step="5" value="100"> <strong id="hLaidV"></strong></label>
       </div>
       <div class="readout needs-gl">
         <div><small>line laid (width × height)</small><strong id="rLine"></strong></div>
@@ -114,8 +113,9 @@
         <li><strong>The glue cavity</strong> between them is fed by the syringe. At the back, a <strong>lip</strong> 1.0&nbsp;mm wide
         sits at the laid-height above the wall and leaves a line of that height.</li>
         <li><strong>Two overflow channels</strong>, one along the inside of each runner, between runner and lip.
-        Glue pushed sideways goes up into them instead of under the runners. They are the inner groove
-        that collects what overflows, so the glue that stays is inside the wall.</li>
+        Glue pushed sideways goes up into them instead of under the runners. They collect what overflows,
+        so the line that stays on the wall is the one the lip sets. The top of the wall is flat, so the shoe, not the wall,
+        does the containing: the runners have to be kept on the wall's borders by the user.</li>
         <li>A <strong>fence arm</strong> rides against a printed guide bar pinned in two screw holes, which keeps the runners on the
         2.66&nbsp;mm wall. A straight bar for each straight side, an arc bar for each arc.</li>
         <li>Print the body. Make the runners and lip from shim or PTFE strip glued in: 0.35&nbsp;mm features are below what FDM holds.</li>
@@ -127,12 +127,12 @@
       <ul>
         <li>A 50–100&nbsp;µm PET or Kapton film with a 0.7&nbsp;mm slot over the middle of the wall, pinned in the same screw holes.
         It rests on the wall and on the outer pillar tops.</li>
-        <li>The squeegee fills the slot. Lifting the film leaves a line as tall as the film <em>plus</em> the depth of the groove
-        under it (t₁): the slider shows how that adds volume.</li>
+        <li>The squeegee fills the slot. The film rests on the pillar tops, which stand 18&nbsp;µm (the copper) above the wall,
+        so lifting it leaves a line as tall as the film plus 18&nbsp;µm.</li>
       </ul>
 
       <h3>C · one shoe, guided by the board outline</h3>
-      <p>The same groove is on the shoe: two runners, the glue cavity, the lip and the two overflow channels, as in A.
+      <p>The shoe is the same as in A: two runners, the glue cavity, the lip and the two overflow channels, as in A.
       The difference is how it is kept on the wall. There is no set of pinned bars: the shoe is slid all the way round
       in one pass, and a fence arm rides against the outline of the board.</p>
       <ul>
@@ -142,8 +142,8 @@
         are more accurate than the routed edge). Its rim is the fence for the whole perimeter, in one piece.</li>
         <li><strong>A short shoe, 10&nbsp;mm instead of 16&nbsp;mm</strong>, so it follows the arcs. The fence arm has two PTFE buttons
         against the rim; you push the shoe forward and slightly outwards.</li>
-        <li>The arm reach changes with the side (table below): one setting for the bottom and the 60° side,
-        a second for the inner arc. Make it a slot with a screw, or two arms.</li>
+        <li>The arm reach changes with the side (table below): 12&nbsp;mm for the bottom and the 60° side,
+        17&nbsp;mm for the inner arc, 52&nbsp;mm for the outer arc. Make it three swappable arms, or one arm with a slot and a screw.</li>
       </ul>
       <p><strong>What the Gerber says</strong> (Apr26 Edge_Cuts against the M1 active outline, sampled every 0.5&nbsp;mm round the
       1684&nbsp;mm path; reach = board edge to the outer border of the wall):</p>
@@ -153,15 +153,16 @@
           <tr><td>bottom, straight</td><td>480&nbsp;mm</td><td>yes, constant to 0.01&nbsp;mm</td><td>11.8&nbsp;mm</td></tr>
           <tr><td>60° side, straight</td><td>480&nbsp;mm</td><td>yes, drifts 0.10&nbsp;mm end to end</td><td>11.9–12.0&nbsp;mm</td></tr>
           <tr><td>inner arc (r 114.8)</td><td>113&nbsp;mm</td><td>yes, concentric</td><td>16.9&nbsp;mm</td></tr>
-          <tr><td>outer arc (r 595.1)</td><td>~510&nbsp;mm</td><td>yes, concentric, but far</td><td>52&nbsp;mm, across the 10 connectors at r&nbsp;632</td></tr>
+          <tr><td>outer arc (r 595.1)</td><td>~510&nbsp;mm</td><td>yes, concentric, but far</td><td>52&nbsp;mm, across the connector pads at r&nbsp;632 (not soldered yet when the mesh is glued)</td></tr>
           <tr><td>the two ends of the outer arc</td><td>2 × ~50&nbsp;mm</td><td><strong>no</strong>: the top flat and the bottom-right chamfer</td><td>15 → 55&nbsp;mm</td></tr>
           <tr><td>the other four corners</td><td>~5&nbsp;mm each</td><td>no</td><td>—</td></tr>
         </tbody>
       </table>
       <ul>
-        <li><strong>About 1070&nbsp;mm of the 1684&nbsp;mm</strong> (bottom, 60° side, inner arc) can be done with a 12/17&nbsp;mm fence on the nest rim.</li>
-        <li><strong>The outer arc</strong> needs a 52&nbsp;mm arm reaching over the connector row. That works only if the connectors are
-        not soldered yet when the mesh is glued; otherwise use an arc bar pinned in the outer screw holes there (r&nbsp;≈&nbsp;609, between the wall and the connectors), as in A.</li>
+        <li><strong>About 1580&nbsp;mm of the 1684&nbsp;mm</strong> can follow the nest rim: the bottom, the 60° side and the inner arc
+        with the 12/17&nbsp;mm arms, and the outer arc with the 52&nbsp;mm arm. The connectors are not soldered when the mesh is glued,
+        so the long arm passes over the bare connector pads. Keep it clear of them (no contact) so the pads stay clean, and make it stiff
+        (aluminium rather than print): over 52&nbsp;mm a small flex already uses up the 0.3&nbsp;mm margin.</li>
         <li><strong>The ~100&nbsp;mm at the two ends of the outer arc</strong> have nothing parallel to follow: guide by hand there,
         or add two short corner pieces to the nest.</li>
         <li>The routed edge has a break-out tab every 75&nbsp;mm (about 3&nbsp;mm wide, up to 0.5&nbsp;mm proud). Sand the stubs flush
@@ -169,17 +170,22 @@
         <li>The margin is small: a runner can wander about 0.3&nbsp;mm before it leaves the wall, and a routed edge is typically good to
         ±0.1–0.2&nbsp;mm. That is why the nest is pinned in the screw holes and not just pushed against the board edge.</li>
       </ul>
-      <p class="faint">This C is new. The "C · fill the groove level" in the options note is a different idea (a flat blade on the rails).</p>
+      <p class="faint">This C is new. The "C · fill the groove level" in the options note was a different idea (a flat blade on the rails);
+      it is ruled out, because the top of the wall is flat.</p>
 
       <h3>The mesh step</h3>
-      <p>In all three options the glue is spread by the mesh, as you said. The mesh lands on the highest points: the rails
-      (if t₁&nbsp;&gt;&nbsp;0) and the pillars. The glue has to fill the groove up to the mesh and wet it (~40&nbsp;µm assumed),
-      so the width it spreads to is <em>volume ÷ (t₁ + 40&nbsp;µm)</em>. That is the "after the mesh" number. It must stay
-      under the 2.11&nbsp;mm between the rails; above 2.66&nbsp;mm it leaves the wall. A deep groove (large t₁) helps
-      contain the glue, but it also needs more glue before the glue touches the mesh at all.</p>
+      <p>In all three options the glue is spread by the weight of the mesh. The top of the wall is flat: there is no
+      insulation step under it, so no rails and no groove (t₁&nbsp;=&nbsp;0). The mesh lands on the highest points, the pillars, which
+      stand on 18&nbsp;µm of copper and so are 18&nbsp;µm above the wall. The glue fills that 18&nbsp;µm gap and wets the mesh
+      (~40&nbsp;µm assumed), so the width it spreads to is <em>volume ÷ (18 + 40&nbsp;µm)</em>. That is the "after the mesh" number.
+      It must stay inside the 2.66&nbsp;mm wall, with some margin on both sides because nothing else stops it.</p>
+      <p>With the shoe (A or C) and a 100&nbsp;µm laid line: 1.0&nbsp;mm × 100&nbsp;µm = 0.10&nbsp;mm³ per mm, which spreads to about
+      <strong>1.7&nbsp;mm</strong>, leaving about 0.47&nbsp;mm to each border of the wall, and 0.17&nbsp;mL for the whole detector.
+      The width scales with the laid height (≈&nbsp;0.17&nbsp;mm per 10&nbsp;µm), and inversely with the mesh-wetting thickness,
+      the one assumed number here.</p>
 
-      <div class="callout">Still open: the real t₁ (a profile across a developed wall), the glue and its viscosity, and the
-      mesh thickness after stretching. Also open for C: are the connectors already soldered when the mesh is glued? Once these are known, the shoe, the nest or the stencil can be drawn for the workshop.</div>
+      <div class="callout">Still open: the glue and its viscosity, and the
+      mesh thickness after stretching (it sets the 40&nbsp;µm above). Once these are known, the shoe, the nest or the stencil can be drawn for the workshop.</div>
     </div>
   </article>
 </main>
@@ -258,7 +264,7 @@ const RUN_W = 0.35, LIP = [2.67, 3.67], SHOE_L = 16, SHOE_LC = 10;
 // stencil
 const SLOT = [2.82, 3.52];
 
-const state = { opt: "A", t: 0, playing: true, t1: 0.05, h: 0.07, V: 5, section: false, labels: true };
+const state = { opt: "A", t: 0, playing: true, t1: 0, h: 0.10, V: 5, section: false, labels: true };
 
 // ---------------------------------------------------------------- renderer
 const canvas = document.getElementById("view");
@@ -490,16 +496,15 @@ function numbers() {
 function readout() {
   const r = numbers();
   document.getElementById("hLaidV").textContent = `${Math.round(state.h * 1000)} µm`;
-  document.getElementById("t1V").textContent = `${Math.round(state.t1 * 1000)} µm`;
   document.getElementById("rLine").textContent = `${r.w.toFixed(2)} mm × ${Math.round(r.hh * 1000)} µm`;
   document.getElementById("rVol").textContent = `${r.vol.toFixed(3)} mm³`;
   document.getElementById("rTot").textContent = `${(r.vol * PATH_LEN / 1000).toFixed(2)} mL`;
   const el = document.getElementById("rW");
   let msg, cls;
   if (r.wf > WALL[1] - WALL[0]) { msg = "off the wall"; cls = "bad"; }
-  else if (r.wf > M1L[0] - M1F) { msg = "over the rails"; cls = "bad"; }
+  else if (r.wf > WALL[1] - WALL[0] - 0.6) { msg = "close to the wall borders"; cls = "bad"; }
   else if (r.wf < 0.8) { msg = "narrow bond"; cls = "bad"; }
-  else { msg = "inside the groove"; cls = "ok"; }
+  else { msg = "on the wall, margin both sides"; cls = "ok"; }
   el.innerHTML = `${Math.min(r.wf, 9.99).toFixed(2)} mm — <span class="${cls}">${msg}</span>`;
 }
 
@@ -509,19 +514,19 @@ const STEPS = {
     [0.00, "<b>A.</b> The guide bar is pinned in two screw holes of the board. The shoe's fence arm rides along it, which keeps the runners on the 2.66 mm wall."],
     [0.06, "<b>A.</b> The shoe slides on its two runners, one on each border of the wall. Glue from the syringe fills the cavity; the trailing lip leaves a 1.0 mm line; glue pushed sideways rises into the two overflow channels instead of passing under the runners."],
     [0.66, "<b>A.</b> The shoe is lifted off: one line in the middle of the wall, both borders and the active side clean."],
-    [0.76, "<b>Mesh.</b> The stretched mesh comes down on the rails and the pillars and spreads the glue across the groove. Check the width below: it must stay inside the 2.11 mm between the rails."],
+    [0.76, "<b>Mesh.</b> The stretched mesh comes down on the pillars and its weight spreads the glue across the flat top of the wall. Check the width below: it must stay inside the 2.66 mm wall."],
   ],
   C: [
     [0.00, "<b>C.</b> The board lies in a nest plate, pinned in the screw holes; the plate's rim follows the board outline. The fence arm of the short shoe bears on the rim with two PTFE buttons. The overflow channels are under the shoe: press end-on to see them."],
     [0.06, "<b>C.</b> One pass, all the way round: push the shoe forward and slightly outwards against the rim. The runners stay on the wall's borders, the lip leaves a 1.0 mm line, and what spreads sideways rises into the two overflow channels."],
-    [0.66, "<b>C.</b> The shoe is lifted off. On the outer arc the rim is 52 mm away (behind the connectors), and at the two ends of that arc the outline is not parallel to the wall: see the table below."],
-    [0.76, "<b>Mesh.</b> The stretched mesh comes down on the rails and the pillars and spreads the glue across the groove. Check the width below: it must stay inside the 2.11 mm between the rails."],
+    [0.66, "<b>C.</b> The shoe is lifted off. On the outer arc a 52 mm arm reaches over the (not yet soldered) connector pads to the rim; only the ~50 mm at each end of that arc have to be guided by hand: see the table below."],
+    [0.76, "<b>Mesh.</b> The stretched mesh comes down on the pillars and its weight spreads the glue across the flat top of the wall. Check the width below: it must stay inside the 2.66 mm wall."],
   ],
   B: [
     [0.00, "<b>B.</b> The film stencil is lowered over two pins in the screw holes. It rests on the wall and on the outer pillar tops; its 0.7 mm slot runs along the middle of the wall."],
     [0.10, "<b>B.</b> The squeegee pushes a bead of glue along the film and fills the slot. The film itself protects the active side."],
-    [0.56, "<b>B.</b> The film is lifted straight up: a line as tall as the film plus the groove under it."],
-    [0.72, "<b>Mesh.</b> The stretched mesh comes down on the rails and the pillars and spreads the glue across the groove."],
+    [0.56, "<b>B.</b> The film is lifted straight up: a line as tall as the film plus the 18 µm the pillar tops stand above the wall."],
+    [0.72, "<b>Mesh.</b> The stretched mesh comes down on the pillars and its weight spreads the glue across the flat top of the wall."],
   ],
 };
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -615,7 +620,7 @@ const $ = (id) => document.getElementById(id);
 function setOpt(o) {
   state.opt = o; state.t = 0;
   for (const k of ["A", "B", "C"]) $("opt" + k).setAttribute("aria-pressed", o === k);
-  state.h = o === "B" ? 0.10 : 0.07; $("hLaid").value = Math.round(state.h * 1000);
+  state.h = 0.10; $("hLaid").value = Math.round(state.h * 1000);
   build(); readout();
 }
 $("optA").onclick = () => setOpt("A");
@@ -630,7 +635,6 @@ $("section").onchange = (e) => { state.section = e.target.checked; update(); };
 $("labels").onchange = (e) => { state.labels = e.target.checked; placeLabels(); };
 $("exag").onchange = (e) => { state.V = +e.target.value; build(); };
 $("hLaid").oninput = (e) => { state.h = e.target.value / 1000; build(); readout(); };
-$("t1").oninput = (e) => { state.t1 = e.target.value / 1000; build(); readout(); };
 
 function resize() {
   const w = canvas.clientWidth, h = canvas.clientHeight;
@@ -653,7 +657,6 @@ if (q.get("opt") === "B") { state.opt = "B"; state.h = 0.10; $("hLaid").value = 
 if (q.get("opt") === "C") { state.opt = "C";
   $("optA").setAttribute("aria-pressed", false); $("optC").setAttribute("aria-pressed", true); }
 if (q.has("x")) { state.V = +q.get("x"); $("exag").value = q.get("x"); }
-if (q.has("t1")) { state.t1 = +q.get("t1") / 1000; $("t1").value = q.get("t1"); }
 if (q.has("t")) { state.t = +q.get("t"); state.playing = false; $("play").textContent = "▶ play"; }
 if (q.get("section") === "1") { state.section = true; $("section").checked = true; }
 build(); readout(); cam(q.get("cam") || "over"); window.__p2ok = true; requestAnimationFrame(loop);
