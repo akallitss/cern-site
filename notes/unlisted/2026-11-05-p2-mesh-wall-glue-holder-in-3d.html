@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
 <title>P2 mesh wall: glue holder in 3D</title>
-<meta name="description" content="Options A (sliding shoe with overflow channels) and B (film stencil) moving along the real P2 rim wall in 3D, with the glue volume worked out live.">
+<meta name="description" content="Options A (sliding shoe with overflow channels on a pinned guide bar), B (film stencil) and C (one short shoe guided by the board outline) moving along the real P2 rim wall in 3D, with the glue volume worked out live.">
 <meta name="category" content="Detector R&amp;D">
 <meta name="keywords" content="P2,BASKET,Micromegas,bulk,mesh,glue,holder,3D">
 <meta name="date" content="2026-11-05">
@@ -51,7 +51,8 @@
   <article>
     <header class="note-header">
       <h1>P2 mesh wall: glue holder in 3D</h1>
-      <p class="muted">Option A (sliding shoe) and option B (film stencil) moving along a 76&nbsp;mm piece of the real
+      <p class="muted">Option A (sliding shoe on a pinned guide bar), option B (film stencil) and option C (one short shoe
+      slid all the way round, guided by the board outline) moving along a 76&nbsp;mm piece of the real
       bottom edge of the P2 board. Drag to turn, scroll to zoom, right-drag to pan.</p>
       <div class="meta-row">
         <span class="pill">Detector R&amp;D</span>
@@ -64,6 +65,7 @@
       <div class="bar" role="group" aria-label="option">
         <button id="optA" aria-pressed="true">A · sliding shoe</button>
         <button id="optB" aria-pressed="false">B · film stencil</button>
+        <button id="optC" aria-pressed="false">C · one shoe, outline fence</button>
         <span style="flex:1"></span>
         <button id="play">❚❚ pause</button>
         <input id="time" type="range" min="0" max="1000" value="0" aria-label="animation time">
@@ -118,6 +120,8 @@
         2.66&nbsp;mm wall. A straight bar for each straight side, an arc bar for each arc.</li>
         <li>Print the body. Make the runners and lip from shim or PTFE strip glued in: 0.35&nbsp;mm features are below what FDM holds.</li>
       </ul>
+      <p class="faint">The overflow channels (magenta) are under the shoe, so they are hidden from above. Press <em>end-on</em>,
+      or tick <em>cut through the tool</em>, to see them in section.</p>
 
       <h3>B · film stencil</h3>
       <ul>
@@ -127,15 +131,55 @@
         under it (t₁): the slider shows how that adds volume.</li>
       </ul>
 
+      <h3>C · one shoe, guided by the board outline</h3>
+      <p>The same groove is on the shoe: two runners, the glue cavity, the lip and the two overflow channels, as in A.
+      The difference is how it is kept on the wall. There is no set of pinned bars: the shoe is slid all the way round
+      in one pass, and a fence arm rides against the outline of the board.</p>
+      <ul>
+        <li><strong>The board edge alone is too thin to steer on.</strong> The stack-up is 0.2&nbsp;mm FR4 + 2 × 18&nbsp;µm copper,
+        so the edge is 0.24&nbsp;mm tall. The board therefore lies in a <strong>nest plate</strong>: a plate cut to the
+        Edge_Cuts outline, about 2&nbsp;mm thicker than the board, located with pins in two or three screw holes (drilled holes
+        are more accurate than the routed edge). Its rim is the fence for the whole perimeter, in one piece.</li>
+        <li><strong>A short shoe, 10&nbsp;mm instead of 16&nbsp;mm</strong>, so it follows the arcs. The fence arm has two PTFE buttons
+        against the rim; you push the shoe forward and slightly outwards.</li>
+        <li>The arm reach changes with the side (table below): one setting for the bottom and the 60° side,
+        a second for the inner arc. Make it a slot with a screw, or two arms.</li>
+      </ul>
+      <p><strong>What the Gerber says</strong> (Apr26 Edge_Cuts against the M1 active outline, sampled every 0.5&nbsp;mm round the
+      1684&nbsp;mm path; reach = board edge to the outer border of the wall):</p>
+      <table>
+        <thead><tr><th>stretch of the wall</th><th>length</th><th>board edge parallel?</th><th>reach, edge → wall</th></tr></thead>
+        <tbody>
+          <tr><td>bottom, straight</td><td>480&nbsp;mm</td><td>yes, constant to 0.01&nbsp;mm</td><td>11.8&nbsp;mm</td></tr>
+          <tr><td>60° side, straight</td><td>480&nbsp;mm</td><td>yes, drifts 0.10&nbsp;mm end to end</td><td>11.9–12.0&nbsp;mm</td></tr>
+          <tr><td>inner arc (r 114.8)</td><td>113&nbsp;mm</td><td>yes, concentric</td><td>16.9&nbsp;mm</td></tr>
+          <tr><td>outer arc (r 595.1)</td><td>~510&nbsp;mm</td><td>yes, concentric, but far</td><td>52&nbsp;mm, across the 10 connectors at r&nbsp;632</td></tr>
+          <tr><td>the two ends of the outer arc</td><td>2 × ~50&nbsp;mm</td><td><strong>no</strong>: the top flat and the bottom-right chamfer</td><td>15 → 55&nbsp;mm</td></tr>
+          <tr><td>the other four corners</td><td>~5&nbsp;mm each</td><td>no</td><td>—</td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li><strong>About 1070&nbsp;mm of the 1684&nbsp;mm</strong> (bottom, 60° side, inner arc) can be done with a 12/17&nbsp;mm fence on the nest rim.</li>
+        <li><strong>The outer arc</strong> needs a 52&nbsp;mm arm reaching over the connector row. That works only if the connectors are
+        not soldered yet when the mesh is glued; otherwise use an arc bar pinned in the outer screw holes there (r&nbsp;≈&nbsp;609, between the wall and the connectors), as in A.</li>
+        <li><strong>The ~100&nbsp;mm at the two ends of the outer arc</strong> have nothing parallel to follow: guide by hand there,
+        or add two short corner pieces to the nest.</li>
+        <li>The routed edge has a break-out tab every 75&nbsp;mm (about 3&nbsp;mm wide, up to 0.5&nbsp;mm proud). Sand the stubs flush
+        so the board sits against the nest.</li>
+        <li>The margin is small: a runner can wander about 0.3&nbsp;mm before it leaves the wall, and a routed edge is typically good to
+        ±0.1–0.2&nbsp;mm. That is why the nest is pinned in the screw holes and not just pushed against the board edge.</li>
+      </ul>
+      <p class="faint">This C is new. The "C · fill the groove level" in the options note is a different idea (a flat blade on the rails).</p>
+
       <h3>The mesh step</h3>
-      <p>In both options the glue is spread by the mesh, as you said. The mesh lands on the highest points: the rails
+      <p>In all three options the glue is spread by the mesh, as you said. The mesh lands on the highest points: the rails
       (if t₁&nbsp;&gt;&nbsp;0) and the pillars. The glue has to fill the groove up to the mesh and wet it (~40&nbsp;µm assumed),
       so the width it spreads to is <em>volume ÷ (t₁ + 40&nbsp;µm)</em>. That is the "after the mesh" number. It must stay
       under the 2.11&nbsp;mm between the rails; above 2.66&nbsp;mm it leaves the wall. A deep groove (large t₁) helps
       contain the glue, but it also needs more glue before the glue touches the mesh at all.</p>
 
       <div class="callout">Still open: the real t₁ (a profile across a developed wall), the glue and its viscosity, and the
-      mesh thickness after stretching. Once these are known, the shoe or the stencil can be drawn for the workshop.</div>
+      mesh thickness after stretching. Also open for C: are the connectors already soldered when the mesh is glued? Once these are known, the shoe, the nest or the stencil can be drawn for the workshop.</div>
     </div>
   </article>
 </main>
@@ -162,7 +206,7 @@
     var img = $("flip"); img.hidden = false;
     var n = $("nogl"); n.hidden = false;
     n.innerHTML = "<strong>This browser did not give the page WebGL</strong> (" + why + "). " +
-      "Below is the same animation, recorded: A/B, play, the time slider and the end-on cut still work; the sliders need WebGL. " +
+      "Below is the same animation, recorded: A/B/C, play, the time slider and the end-on cut still work; the sliders need WebGL. " +
       "For the interactive 3D, open the page in Chrome, or in Firefox set <code>webgl.force-enabled</code> to true in " +
       "<code>about:config</code> and restart it (check <code>about:support</code> → WebGL).";
     var cache = {};
@@ -170,12 +214,13 @@
     function preload() { for (var i = 0; i <= 40; i++) { var s = src(i); if (!cache[s]) { cache[s] = new Image(); cache[s].src = s; } } }
     function show() { img.src = src(Math.round(Math.min(1, F.t) * 40)); $("time").value = Math.round(Math.min(1, F.t) * 1000); }
     function opt(o) { F.opt = o; if (o === "B") F.view = "over"; F.t = 0;
-      $("optA").setAttribute("aria-pressed", o === "A"); $("optB").setAttribute("aria-pressed", o === "B"); preload(); show(); }
+      ["A", "B", "C"].forEach(function (k) { $("opt" + k).setAttribute("aria-pressed", o === k); }); preload(); show(); }
     $("optA").addEventListener("click", function () { opt("A"); });
     $("optB").addEventListener("click", function () { opt("B"); });
+    $("optC").addEventListener("click", function () { opt("C"); });
     $("camOver").addEventListener("click", function () { F.view = "over"; preload(); show(); });
     $("camTop").addEventListener("click", function () { F.view = "over"; preload(); show(); });
-    $("camEnd").addEventListener("click", function () { if (F.opt === "A") { F.view = "end"; preload(); show(); } });
+    $("camEnd").addEventListener("click", function () { if (F.opt !== "B") { F.view = "end"; preload(); show(); } });
     $("play").addEventListener("click", function () { F.playing = !F.playing; $("play").textContent = F.playing ? "❚❚ pause" : "▶ play"; });
     $("time").addEventListener("input", function (e) { F.t = e.target.value / 1000; F.playing = false; $("play").textContent = "▶ play"; show(); });
     $("play").textContent = "❚❚ pause";
@@ -209,7 +254,7 @@ const WALL_C = (WALL[0] + WALL[1]) / 2;
 const MESH_WET = 0.040;
 const PATH_LEN = 1684;
 // shoe
-const RUN_W = 0.35, LIP = [2.67, 3.67], SHOE_L = 16;
+const RUN_W = 0.35, LIP = [2.67, 3.67], SHOE_L = 16, SHOE_LC = 10;
 // stencil
 const SLOT = [2.82, 3.52];
 
@@ -248,8 +293,8 @@ const M = {
   table: mat("table", 0x9aa3ad), fr4: mat("fr4", 0xc9c2a6), cu: mat("cu", 0xc8742c, { metalness: 0.5, roughness: 0.4 }),
   ins: mat("ins", 0x4f8fbf), dyna: mat("dyna", 0x3f9a5c), glue: mat("glue", 0xf2b705, { roughness: 0.3 }),
   hole: mat("hole", 0x111111), pin: mat("pin", 0xb8bec6, { metalness: 0.8, roughness: 0.3 }),
-  tool: mat("tool", 0x7a6fa8, { transparent: true, opacity: 0.9 }), ptfe: mat("ptfe", 0xeeeeee),
-  chan: mat("chan", 0x2a2440), guide: mat("guide", 0x8e83b8), syr: mat("syr", 0xdfe6ee, { transparent: true, opacity: 0.55 }),
+  tool: mat("tool", 0x7a6fa8, { transparent: true, opacity: 0.6, depthWrite: false }), ptfe: mat("ptfe", 0xeeeeee),
+  chan: mat("chan", 0xc2367a), guide: mat("guide", 0x8e83b8), nest: mat("nest", 0xaab6c2, { roughness: 0.5 }), syr: mat("syr", 0xdfe6ee, { transparent: true, opacity: 0.55 }),
   film: mat("film", 0xd9b45a, { transparent: true, opacity: 0.55 }), blade: mat("blade", 0x6d8fb3, { transparent: true, opacity: 0.8, roughness: 0.5 }),
 };
 
@@ -338,19 +383,10 @@ function build() {
   // screw holes (dark discs through the insulation)
   for (const x of HOLES) cyl(x, HOLE_S, 0, t1 + 0.002, HOLE_D / 2, M.hole, geo);
 
-  // ---- option A
-  const A = new THREE.Group(); geo.add(A); dyn.A = A;
-  if (state.opt === "A") {
-    const gd = new THREE.Group(); A.add(gd); dyn.fixture = gd;
-    box(X0, X1, t1, t1 + 2.5, -9.6, -5.5, M.guide, gd);                   // guide bar on the frame
-    for (const x of HOLES) cyl(x, HOLE_S, -FR4 - 1.0, t1 + 3.0, 1.7, M.pin, gd);
-    const shoe = new THREE.Group(); A.add(shoe); dyn.shoe = shoe;
-    const headB = railTop + 0.5, headT = headB + 2.5;
-    const L = SHOE_L / 2;
-    // body
+  // ---- the shoe with the groove (A and C share it; C is shorter)
+  function shoeParts(shoe, L, headB, headT) {
     const c = XC;   // shoe parts are built around x = 0 of the shoe
     box(c - L, c + L, headB, headT, 1.4, 5.2, M.tool, shoe);
-    box(c - 6, c + 6, headB + 0.8, headT, -5.4, 1.4, M.tool, shoe);       // fence arm
     // runners on the wall borders
     box(c - L, c + L, railTop, headB, WALL[0], WALL[0] + RUN_W, M.ptfe, shoe);
     box(c - L, c + L, railTop, headB, WALL[1] - RUN_W, WALL[1], M.ptfe, shoe);
@@ -364,12 +400,42 @@ function build() {
     // syringe
     cyl(c, WALL_C, headT, headT + 3.5, 2.2, M.syr, shoe);
     cyl(c, WALL_C, headT + 0.4, headT + 2.6, 2.0, M.glue, shoe);
-    shoe.userData.x = 0;
+  }
+
+  // ---- option A
+  const A = new THREE.Group(); geo.add(A); dyn.A = A;
+  if (state.opt === "A") {
+    const gd = new THREE.Group(); A.add(gd); dyn.fixture = gd;
+    box(X0, X1, t1, t1 + 2.5, -9.6, -5.5, M.guide, gd);                   // guide bar on the frame
+    for (const x of HOLES) cyl(x, HOLE_S, -FR4 - 1.0, t1 + 3.0, 1.7, M.pin, gd);
+    const shoe = new THREE.Group(); A.add(shoe); dyn.shoe = shoe;
+    const headB = railTop + 0.5, headT = headB + 2.5;
+    shoeParts(shoe, SHOE_L / 2, headB, headT);
+    box(XC - 6, XC + 6, headB + 0.8, headT, -5.4, 1.4, M.tool, shoe);     // fence arm
     // laid glue line (stretched in update)
     dyn.lineA = box(0, 1, grooveTop, grooveTop + h, LIP[0], LIP[1], M.glue, A);
     dyn.fixLbl = label("guide bar, pinned in 2 screw holes", 352, t1 + 2.9, -7.6);
     dyn.lblShoe = label("shoe: runners on the wall borders", XC, headT + 4.2, 3.2);
-    dyn.lblLip = label("lip + overflow channels", XC, headB - 0.2, 7.2);
+    dyn.lblLip = label("lip + overflow channels (under the shoe)", XC, headB - 0.2, 7.2);
+  }
+
+  // ---- option C: one short shoe, fence arm against the nest plate that holds the board
+  const Cg = new THREE.Group(); geo.add(Cg); dyn.C = Cg;
+  if (state.opt === "C") {
+    const nest = new THREE.Group(); Cg.add(nest); dyn.fixture = nest;
+    box(X0 - 6, X1 + 6, -FR4, 1.8, EDGE - 5.5, EDGE - 0.03, M.nest, nest);   // nest rim, cut to the Edge_Cuts outline
+    for (const x of HOLES) cyl(x, HOLE_S, -FR4 - 1.0, t1 + 0.9, 1.7, M.pin, nest);   // locating pins in the screw holes
+    const shoe = new THREE.Group(); Cg.add(shoe); dyn.shoe = shoe;
+    const headB = railTop + 0.5, headT = headB + 2.5;
+    shoeParts(shoe, SHOE_LC / 2, headB, headT);
+    box(XC - 4, XC + 4, headB + 0.8, headT, EDGE + 0.9, 1.4, M.tool, shoe);     // arm, 11.8 mm reach
+    box(XC - 4, XC + 4, t1 + 0.35, headT, EDGE + 0.08, EDGE + 0.9, M.tool, shoe); // fence foot beside the rim
+    for (const dx of [-2.8, 2.8]) box(XC + dx - 0.7, XC + dx + 0.7, t1 + 0.45, 1.6, EDGE + 0.0, EDGE + 0.08, M.ptfe, shoe);
+    dyn.lineA = box(0, 1, grooveTop, grooveTop + h, LIP[0], LIP[1], M.glue, Cg);
+    dyn.lblFence = label("fence arm: 2 PTFE buttons on the rim", XC, 3.4, -9.4);
+    dyn.fixLbl = label("nest plate: rim cut to the board outline, pinned", 352, 2.3, -12.5);
+    dyn.lblShoe = label("one 10 mm shoe, fence on the rim", XC, headT + 4.2, -2);
+    dyn.lblLip = label("lip + overflow channels (under the shoe)", XC, headB - 0.2, 7.2);
   }
 
   // ---- option B
@@ -414,7 +480,7 @@ function build() {
 function numbers() {
   const t1 = state.t1, h = state.h;
   let w, hh;
-  if (state.opt === "A") { w = LIP[1] - LIP[0]; hh = h; }
+  if (state.opt !== "B") { w = LIP[1] - LIP[0]; hh = h; }
   else { w = SLOT[1] - SLOT[0]; hh = h + Math.max(0, Math.max(t1 + DYNA, CU + DYNA) - DYNA); }
   const vol = w * hh;                         // mm^3 per mm
   const fill = Math.max(0, Math.max(t1 + DYNA, CU + DYNA) - DYNA) + MESH_WET;   // height the glue must fill
@@ -445,6 +511,12 @@ const STEPS = {
     [0.66, "<b>A.</b> The shoe is lifted off: one line in the middle of the wall, both borders and the active side clean."],
     [0.76, "<b>Mesh.</b> The stretched mesh comes down on the rails and the pillars and spreads the glue across the groove. Check the width below: it must stay inside the 2.11 mm between the rails."],
   ],
+  C: [
+    [0.00, "<b>C.</b> The board lies in a nest plate, pinned in the screw holes; the plate's rim follows the board outline. The fence arm of the short shoe bears on the rim with two PTFE buttons. The overflow channels are under the shoe: press end-on to see them."],
+    [0.06, "<b>C.</b> One pass, all the way round: push the shoe forward and slightly outwards against the rim. The runners stay on the wall's borders, the lip leaves a 1.0 mm line, and what spreads sideways rises into the two overflow channels."],
+    [0.66, "<b>C.</b> The shoe is lifted off. On the outer arc the rim is 52 mm away (behind the connectors), and at the two ends of that arc the outline is not parallel to the wall: see the table below."],
+    [0.76, "<b>Mesh.</b> The stretched mesh comes down on the rails and the pillars and spreads the glue across the groove. Check the width below: it must stay inside the 2.11 mm between the rails."],
+  ],
   B: [
     [0.00, "<b>B.</b> The film stencil is lowered over two pins in the screw holes. It rests on the wall and on the outer pillar tops; its 0.7 mm slot runs along the middle of the wall."],
     [0.10, "<b>B.</b> The squeegee pushes a bead of glue along the film and fills the slot. The film itself protects the active side."],
@@ -468,19 +540,21 @@ function update() {
   const cap = steps.filter(s => t >= s[0]).pop() || steps[0];
   document.getElementById("caption").innerHTML = cap[1];
   let toolX = XS, cutX = XC;
-  const meshStart = state.opt === "A" ? 0.76 : 0.72;
-  if (state.opt === "A" && dyn.shoe) {
+  const meshStart = state.opt === "B" ? 0.72 : 0.76;
+  const SL = state.opt === "C" ? SHOE_LC : SHOE_L;
+  if (state.opt !== "B" && dyn.shoe) {
     const u = ease(clamp((t - 0.06) / 0.58));
     toolX = XS + (XE - XS) * u;
     const lift = ease(clamp((t - 0.66) / 0.08));
     dyn.shoe.position.set(toolX - XC, lift * 6, 0);
     dyn.shoe.visible = t < 0.75;
-    setSpan(dyn.lineA, XS - SHOE_L / 2 + 2, Math.max(XS - SHOE_L / 2 + 2, toolX - SHOE_L / 2 + 1));
+    setSpan(dyn.lineA, XS - SL / 2 + 2, Math.max(XS - SL / 2 + 2, toolX - SL / 2 + 1));
     dyn.lineA.visible = t > 0.07 && t < meshStart + 0.04;
     dyn.lblShoe.userData.base = [toolX, dyn.lblShoe.userData.base[1], dyn.lblShoe.userData.base[2]];
     dyn.lblLip.userData.base = [toolX - 6, dyn.lblLip.userData.base[1], dyn.lblLip.userData.base[2]];
     dyn.lblShoe.userData.show = dyn.lblLip.userData.show = t < 0.75;
-    cutX = toolX - SHOE_L / 2 + 1;
+    if (dyn.lblFence) { dyn.lblFence.userData.base = [toolX, 3.4, -9.4]; dyn.lblFence.userData.show = t < 0.75; }
+    cutX = toolX - SL / 2 + 1;
   }
   if (state.opt === "B" && dyn.film) {
     const down = 1 - ease(clamp(t / 0.09));
@@ -506,12 +580,12 @@ function update() {
   const m = ease(clamp((t - meshStart) / 0.14));
   dyn.mesh.visible = t >= meshStart;
   dyn.mesh.position.y = dyn.meshB + 0.02 + (1 - m) * 1.2;
-  const wNow = (state.opt === "A" ? (LIP[1] - LIP[0]) : (SLOT[1] - SLOT[0]));
+  const wNow = (state.opt !== "B" ? (LIP[1] - LIP[0]) : (SLOT[1] - SLOT[0]));
   const wEnd = Math.min(r.wf, 2.9);
   const sp = ease(clamp((t - meshStart - 0.1) / 0.12));
   const w = wNow + (wEnd - wNow) * sp;
-  const xa = state.opt === "A" ? XS - SHOE_L / 2 + 2 : X0 + 4;
-  const xb = state.opt === "A" ? XE - SHOE_L / 2 + 1 : X1 - 5;
+  const xa = state.opt !== "B" ? XS - SL / 2 + 2 : X0 + 4;
+  const xb = state.opt !== "B" ? XE - SL / 2 + 1 : X1 - 5;
   dyn.spread.visible = t >= meshStart + 0.04;
   dyn.spread.scale.set(xb - xa, 1, w);
   dyn.spread.position.set((xa + xb) / 2 - XC, dyn.spread.position.y, WALL_C);
@@ -540,12 +614,13 @@ function cam(kind) {
 const $ = (id) => document.getElementById(id);
 function setOpt(o) {
   state.opt = o; state.t = 0;
-  $("optA").setAttribute("aria-pressed", o === "A"); $("optB").setAttribute("aria-pressed", o === "B");
-  state.h = o === "A" ? 0.07 : 0.10; $("hLaid").value = Math.round(state.h * 1000);
+  for (const k of ["A", "B", "C"]) $("opt" + k).setAttribute("aria-pressed", o === k);
+  state.h = o === "B" ? 0.10 : 0.07; $("hLaid").value = Math.round(state.h * 1000);
   build(); readout();
 }
 $("optA").onclick = () => setOpt("A");
 $("optB").onclick = () => setOpt("B");
+$("optC").onclick = () => setOpt("C");
 $("play").onclick = () => { state.playing = !state.playing; $("play").textContent = state.playing ? "❚❚ pause" : "▶ play"; };
 $("time").oninput = (e) => { state.t = e.target.value / 1000; state.playing = false; $("play").textContent = "▶ play"; update(); };
 $("camOver").onclick = () => cam("over");
@@ -575,6 +650,8 @@ function loop(now) {
 const q = new URLSearchParams(location.search);
 if (q.get("opt") === "B") { state.opt = "B"; state.h = 0.10; $("hLaid").value = 100;
   $("optA").setAttribute("aria-pressed", false); $("optB").setAttribute("aria-pressed", true); }
+if (q.get("opt") === "C") { state.opt = "C";
+  $("optA").setAttribute("aria-pressed", false); $("optC").setAttribute("aria-pressed", true); }
 if (q.has("x")) { state.V = +q.get("x"); $("exag").value = q.get("x"); }
 if (q.has("t1")) { state.t1 = +q.get("t1") / 1000; $("t1").value = q.get("t1"); }
 if (q.has("t")) { state.t = +q.get("t"); state.playing = false; $("play").textContent = "▶ play"; }
