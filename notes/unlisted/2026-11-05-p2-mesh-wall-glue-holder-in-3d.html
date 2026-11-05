@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>P2 mesh wall: glue holder in 3D</title>
+<meta name="description" content="Options A (sliding shoe with overflow channels) and B (film stencil) moving along the real P2 rim wall in 3D, with the glue volume worked out live.">
+<meta name="category" content="Detector R&amp;D">
+<meta name="keywords" content="P2,BASKET,Micromegas,bulk,mesh,glue,holder,3D">
+<meta name="date" content="2026-11-05">
+<meta name="updated" content="2026-11-05">
+<meta name="visibility" content="unlisted">
+<meta name="robots" content="noindex, nofollow">
+<!-- ======================================================================= -->
+<link rel="stylesheet" href="../../assets/site.css">
+<style>
+  .stage { position: relative; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--bg-elev); }
+  #view { width: 100%; height: min(70vh, 620px); display: block; touch-action: none; }
+  .caption { position: absolute; left: 12px; right: 12px; bottom: 10px; padding: 8px 12px; border-radius: 8px;
+             background: color-mix(in srgb, var(--bg-elev) 88%, transparent); border: 1px solid var(--border); font-size: .92rem; }
+  .caption b { color: var(--accent); }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: 10px 0; }
+  .bar button { font: inherit; padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-elev); color: var(--fg); cursor: pointer; }
+  .bar button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .bar label { font-size: .9rem; color: var(--fg-muted); display: inline-flex; align-items: center; gap: 6px; }
+  .bar input[type=range] { width: 140px; }
+  #time { width: min(100%, 420px); }
+  .readout { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px; margin: 8px 0 4px; }
+  .readout div { border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; background: var(--bg-elev); }
+  .readout small { display: block; color: var(--fg-muted); font-size: .78rem; }
+  .readout strong { font-variant-numeric: tabular-nums; }
+  .ok { color: #24865a; } .bad { color: #c43a2a; }
+  @media (prefers-color-scheme: dark) { .ok { color: #45b07c; } .bad { color: #f06a4c; } }
+</style>
+<script type="importmap">
+{ "imports": { "three": "../../assets/three-0.160.0/three.module.min.js" } }
+</script>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="../../">Alexandra Kallitsopoulou</a>
+  <nav class="nav"><a href="../../">Home</a><a href="../../notes/">Notes</a></nav>
+</div></header>
+
+<main class="wrap">
+  <article>
+    <header class="note-header">
+      <h1>P2 mesh wall: glue holder in 3D</h1>
+      <p class="muted">Option A (sliding shoe) and option B (film stencil) moving along a 76&nbsp;mm piece of the real
+      bottom edge of the P2 board. Drag to turn, scroll to zoom, right-drag to pan.</p>
+      <div class="meta-row">
+        <span class="pill">Detector R&amp;D</span>
+        <time datetime="2026-11-05">2026-11-05</time>
+        <span class="faint">follows <a href="2026-11-05-p2-mesh-wall-gluing-the-mesh-holder-options.html">the options note</a></span>
+      </div>
+    </header>
+
+    <div class="note-body">
+      <div class="bar" role="group" aria-label="option">
+        <button id="optA" aria-pressed="true">A · sliding shoe</button>
+        <button id="optB" aria-pressed="false">B · film stencil</button>
+        <span style="flex:1"></span>
+        <button id="play">❚❚ pause</button>
+        <input id="time" type="range" min="0" max="1000" value="0" aria-label="animation time">
+      </div>
+
+      <div class="stage">
+        <canvas id="view"></canvas>
+        <div class="caption" id="caption"></div>
+      </div>
+
+      <div class="bar">
+        <label>views
+          <button id="camOver">overview</button>
+          <button id="camEnd">end-on</button>
+          <button id="camTop">from above</button>
+        </label>
+        <label><input type="checkbox" id="section"> cut through the tool (hides labels)</label>
+        <label><input type="checkbox" id="labels" checked> labels</label>
+        <label>height ×<select id="exag"><option>1</option><option>3</option><option selected>5</option><option>10</option></select></label>
+      </div>
+      <div class="bar">
+        <label>laid glue height <input type="range" id="hLaid" min="30" max="200" step="5" value="70"> <strong id="hLaidV"></strong></label>
+        <label>insulation t₁ <input type="range" id="t1" min="0" max="100" step="5" value="50"> <strong id="t1V"></strong></label>
+      </div>
+      <div class="readout">
+        <div><small>line laid (width × height)</small><strong id="rLine"></strong></div>
+        <div><small>glue per mm of wall</small><strong id="rVol"></strong></div>
+        <div><small>whole detector (1684 mm)</small><strong id="rTot"></strong></div>
+        <div><small>after the mesh: glue width</small><strong id="rW"></strong></div>
+      </div>
+      <p class="faint" style="font-size:.85rem">Heights are exaggerated by the "height ×" factor (the whole scene, tools included); widths and lengths are true.</p>
+
+      <h2>What you are looking at</h2>
+      <p><strong>The board</strong> is the bottom straight edge between x&nbsp;=&nbsp;302 and 378&nbsp;mm, as measured from
+      the V1 films and the Apr26 PCB: insulation frame (blue) out to the board edge, the 2.66&nbsp;mm Dynamask rim wall (green),
+      the 0.57&nbsp;mm M1 line under its inner border, copper pads, and the 0.8&nbsp;mm pillars on their real 4&nbsp;mm lattice.
+      The two Ø3.5&nbsp;mm screw holes at x&nbsp;=&nbsp;318.3 and 354.8&nbsp;mm (y&nbsp;=&nbsp;−7.5) are the ones the tools
+      are pinned to. The PCB core is 0.2&nbsp;mm, so the board is shown on a flat table.</p>
+
+      <h3>A · sliding shoe, your way</h3>
+      <ul>
+        <li><strong>Two runners on the wall's borders</strong> (0.35&nbsp;mm wide, PTFE-faced), one on each edge of the wall.
+        The inner runner is the dam: glue cannot pass under it towards the pillars.</li>
+        <li><strong>The glue cavity</strong> between them is fed by the syringe. At the back, a <strong>lip</strong> 1.0&nbsp;mm wide
+        sits at the laid-height above the wall and leaves a line of that height.</li>
+        <li><strong>Two overflow channels</strong>, one along the inside of each runner, between runner and lip.
+        Glue pushed sideways goes up into them instead of under the runners. They are the inner groove
+        that collects what overflows, so the glue that stays is inside the wall.</li>
+        <li>A <strong>fence arm</strong> rides against a printed guide bar pinned in two screw holes, which keeps the runners on the
+        2.66&nbsp;mm wall. A straight bar for each straight side, an arc bar for each arc.</li>
+        <li>Print the body. Make the runners and lip from shim or PTFE strip glued in: 0.35&nbsp;mm features are below what FDM holds.</li>
+      </ul>
+
+      <h3>B · film stencil</h3>
+      <ul>
+        <li>A 50–100&nbsp;µm PET or Kapton film with a 0.7&nbsp;mm slot over the middle of the wall, pinned in the same screw holes.
+        It rests on the wall and on the outer pillar tops.</li>
+        <li>The squeegee fills the slot. Lifting the film leaves a line as tall as the film <em>plus</em> the depth of the groove
+        under it (t₁): the slider shows how that adds volume.</li>
+      </ul>
+
+      <h3>The mesh step</h3>
+      <p>In both options the glue is spread by the mesh, as you said. The mesh lands on the highest points: the rails
+      (if t₁&nbsp;&gt;&nbsp;0) and the pillars. The glue has to fill the groove up to the mesh and wet it (~40&nbsp;µm assumed),
+      so the width it spreads to is <em>volume ÷ (t₁ + 40&nbsp;µm)</em>. That is the "after the mesh" number. It must stay
+      under the 2.11&nbsp;mm between the rails; above 2.66&nbsp;mm it leaves the wall. A deep groove (large t₁) helps
+      contain the glue, but it also needs more glue before the glue touches the mesh at all.</p>
+
+      <div class="callout">Still open: the real t₁ (a profile across a developed wall), the glue and its viscosity, and the
+      mesh thickness after stretching. Once these are known, the shoe or the stencil can be drawn for the workshop.</div>
+    </div>
+  </article>
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <span>Alexandra Kallitsopoulou</span>
+  <span><a href="../../notes/">← all notes</a></span>
+</div></footer>
+
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "../../assets/three-0.160.0/OrbitControls.js";
+
+// ---------------------------------------------------------------- measured geometry (mm, bottom edge)
+// s = across the edge (outside < 0 < active side); x = along the edge (board x).
+const X0 = 302, X1 = 378, XC = 340;
+const EDGE = -10.0;                 // board edge
+const WALL = [1.84, 4.50];          // M2 rim wall
+const M1F = 2.12;                   // M1 insulation frame ends
+const M1L = [4.23, 4.80];           // M1 line on the active edge
+const PADS = 5.04;                  // first copper pad
+const S_MAX = 15;
+const HOLES = [318.29, 354.81], HOLE_S = -7.5, HOLE_D = 3.5;
+const DYNA = 0.200, CU = 0.018, FR4 = 0.236;
+const WALL_C = (WALL[0] + WALL[1]) / 2;
+const MESH_WET = 0.040;
+const PATH_LEN = 1684;
+// shoe
+const RUN_W = 0.35, LIP = [2.67, 3.67], SHOE_L = 16;
+// stencil
+const SLOT = [2.82, 3.52];
+
+const state = { opt: "A", t: 0, playing: true, t1: 0.05, h: 0.07, V: 5, section: false, labels: true };
+
+// ---------------------------------------------------------------- renderer
+const canvas = document.getElementById("view");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
+renderer.localClippingEnabled = false;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(35, 2, 0.1, 2000);
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+scene.add(new THREE.HemisphereLight(0xffffff, 0x667788, 1.6));
+const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(-30, 60, 40); scene.add(sun);
+
+function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+function themeColors() {
+  const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  scene.background = new THREE.Color(css("--bg-elev") || (dark ? "#1c1f25" : "#ffffff"));
+  return dark;
+}
+let DARK = themeColors();
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { DARK = themeColors(); build(); });
+
+const clipPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 0);
+const mats = {};
+function mat(name, color, extra = {}) {
+  const m = new THREE.MeshStandardMaterial({ color, roughness: 0.65, metalness: 0.05, side: THREE.DoubleSide, ...extra });
+  mats[name] = m; return m;
+}
+const M = {
+  table: mat("table", 0x9aa3ad), fr4: mat("fr4", 0xc9c2a6), cu: mat("cu", 0xc8742c, { metalness: 0.5, roughness: 0.4 }),
+  ins: mat("ins", 0x4f8fbf), dyna: mat("dyna", 0x3f9a5c), glue: mat("glue", 0xf2b705, { roughness: 0.3 }),
+  hole: mat("hole", 0x111111), pin: mat("pin", 0xb8bec6, { metalness: 0.8, roughness: 0.3 }),
+  tool: mat("tool", 0x7a6fa8, { transparent: true, opacity: 0.9 }), ptfe: mat("ptfe", 0xeeeeee),
+  chan: mat("chan", 0x2a2440), guide: mat("guide", 0x8e83b8), syr: mat("syr", 0xdfe6ee, { transparent: true, opacity: 0.55 }),
+  film: mat("film", 0xd9b45a, { transparent: true, opacity: 0.55 }), blade: mat("blade", 0x6d8fb3, { transparent: true, opacity: 0.8, roughness: 0.5 }),
+};
+
+// ---------------------------------------------------------------- mesh texture
+function meshTexture() {
+  const c = document.createElement("canvas"); c.width = c.height = 64;
+  const g = c.getContext("2d"); g.clearRect(0, 0, 64, 64);
+  g.strokeStyle = "rgba(200,60,60,0.95)"; g.lineWidth = 6;
+  g.beginPath(); g.moveTo(0, 32); g.lineTo(64, 32); g.moveTo(32, 0); g.lineTo(32, 64); g.stroke();
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(76 / 0.5, 18 / 0.5);
+  t.anisotropy = 4; return t;
+}
+const meshMat = new THREE.MeshStandardMaterial({ map: meshTexture(), transparent: true, opacity: 0.9, side: THREE.DoubleSide, depthWrite: false });
+
+// ---------------------------------------------------------------- helpers
+let root = new THREE.Group(); scene.add(root);
+function box(x0, x1, y0, y1, s0, s1, m, parent = root) {
+  const g = new THREE.BoxGeometry(Math.abs(x1 - x0), Math.max(1e-4, Math.abs(y1 - y0)), Math.abs(s1 - s0));
+  const o = new THREE.Mesh(g, m);
+  o.position.set((x0 + x1) / 2 - XC, (y0 + y1) / 2, (s0 + s1) / 2);
+  parent.add(o); return o;
+}
+function cyl(x, s, y0, y1, r, m, parent = root, seg = 32) {
+  const o = new THREE.Mesh(new THREE.CylinderGeometry(r, r, y1 - y0, seg), m);
+  o.position.set(x - XC, (y0 + y1) / 2, s); parent.add(o); return o;
+}
+const labelSprites = [];
+function label(text, x, y, s) {
+  const parent = root;
+  const c = document.createElement("canvas"); const g = c.getContext("2d");
+  const f = 44; g.font = `600 ${f}px system-ui, sans-serif`;
+  const w = Math.ceil(g.measureText(text).width) + 28; c.width = w; c.height = f + 24;
+  g.font = `600 ${f}px system-ui, sans-serif`;
+  g.fillStyle = DARK ? "rgba(28,31,37,0.85)" : "rgba(255,255,255,0.88)";
+  g.strokeStyle = DARK ? "#6c717a" : "#9aa0aa"; g.lineWidth = 3;
+  g.beginPath(); g.roundRect(2, 2, w - 4, f + 20, 14); g.fill(); g.stroke();
+  g.fillStyle = DARK ? "#e8e8e4" : "#1d1f24"; g.textBaseline = "middle"; g.fillText(text, 14, (f + 24) / 2 + 2);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, depthTest: false, transparent: true }));
+  const k = 0.016; sp.scale.set(w * k, (f + 24) * k, 1); sp.renderOrder = 10;
+  sp.userData.base = [x, y, s]; sp.visible = state.labels;
+  parent.add(sp); labelSprites.push(sp); return sp;
+}
+function placeLabels() {
+  for (const sp of labelSprites) {
+    const [x, y, s] = sp.userData.base;
+    sp.position.set(x - XC, y * state.V, s);
+    sp.visible = state.labels && !state.section && sp.userData.show !== false;
+  }
+}
+
+// ---------------------------------------------------------------- the scene
+let dyn = {};   // moving parts rebuilt with the parameters
+function build() {
+  scene.remove(root); root = new THREE.Group(); scene.add(root);
+  labelSprites.length = 0; dyn = {};
+  const t1 = state.t1, h = state.h;
+  const geo = new THREE.Group(); root.add(geo); geo.scale.y = state.V;
+  const railTop = t1 + DYNA, grooveTop = DYNA, pillTop = CU + DYNA;
+  const meshB = Math.max(railTop, pillTop);
+
+  // table + board
+  box(X0 - 6, X1 + 6, -FR4 - 1.2, -FR4, EDGE - 6, S_MAX + 3, M.table, geo);
+  box(X0, X1, -FR4, 0, EDGE, S_MAX, M.fr4, geo);
+  // copper pads (12 mm pitch, illustrative) on the active side
+  for (let x = 298; x < X1; x += 12) {
+    const a = Math.max(X0, x + 0.1), b = Math.min(X1, x + 11.9);
+    if (b > a) box(a, b, 0, CU, PADS, S_MAX, M.cu, geo);
+  }
+  // insulation: frame out to the edge, and the M1 line
+  box(X0, X1, 0, t1 || 1e-4, EDGE, M1F, M.ins, geo);
+  box(X0, X1, 0, t1 || 1e-4, M1L[0], M1L[1], M.ins, geo);
+  // rim wall: follows the insulation step (rails over the two overlaps)
+  box(X0, X1, t1, t1 + DYNA, WALL[0], M1F, M.dyna, geo);
+  box(X0, X1, 0, DYNA, M1F, M1L[0], M.dyna, geo);
+  box(X0, X1, t1, t1 + DYNA, M1L[0], WALL[1], M.dyna, geo);
+  // pillars: V1 hex lattice, pitch 4 mm (rows at s = 5.993, 9.457, 12.921)
+  const pg = new THREE.CylinderGeometry(0.4, 0.4, DYNA, 20);
+  const rows = [[5.993, 0.51], [9.457, 2.51], [12.921, 0.51]];
+  let n = 0; const cents = [];
+  for (const [s, off] of rows) for (let x = 296 + off; x < X1; x += 4) if (x > X0 + 0.4) cents.push([x, s]);
+  const inst = new THREE.InstancedMesh(pg, M.dyna, cents.length);
+  const m4 = new THREE.Matrix4();
+  for (const [x, s] of cents) { m4.makeTranslation(x - XC, CU + DYNA / 2, s); inst.setMatrixAt(n++, m4); }
+  geo.add(inst);
+  // screw holes (dark discs through the insulation)
+  for (const x of HOLES) cyl(x, HOLE_S, 0, t1 + 0.002, HOLE_D / 2, M.hole, geo);
+
+  // ---- option A
+  const A = new THREE.Group(); geo.add(A); dyn.A = A;
+  if (state.opt === "A") {
+    const gd = new THREE.Group(); A.add(gd); dyn.fixture = gd;
+    box(X0, X1, t1, t1 + 2.5, -9.6, -5.5, M.guide, gd);                   // guide bar on the frame
+    for (const x of HOLES) cyl(x, HOLE_S, -FR4 - 1.0, t1 + 3.0, 1.7, M.pin, gd);
+    const shoe = new THREE.Group(); A.add(shoe); dyn.shoe = shoe;
+    const headB = railTop + 0.5, headT = headB + 2.5;
+    const L = SHOE_L / 2;
+    // body
+    const c = XC;   // shoe parts are built around x = 0 of the shoe
+    box(c - L, c + L, headB, headT, 1.4, 5.2, M.tool, shoe);
+    box(c - 6, c + 6, headB + 0.8, headT, -5.4, 1.4, M.tool, shoe);       // fence arm
+    // runners on the wall borders
+    box(c - L, c + L, railTop, headB, WALL[0], WALL[0] + RUN_W, M.ptfe, shoe);
+    box(c - L, c + L, railTop, headB, WALL[1] - RUN_W, WALL[1], M.ptfe, shoe);
+    // trailing lip
+    box(c - L, c - L + 2, grooveTop + h, headB, LIP[0], LIP[1], M.ptfe, shoe);
+    // overflow channels (recesses up into the body)
+    box(c - L, c + L, headB - 0.001, headB + 1.2, WALL[0] + RUN_W, LIP[0], M.chan, shoe);
+    box(c - L, c + L, headB - 0.001, headB + 1.2, LIP[1], WALL[1] - RUN_W, M.chan, shoe);
+    // glue in the cavity
+    box(c - L + 2, c + L - 3, grooveTop, headB, WALL[0] + RUN_W + 0.02, WALL[1] - RUN_W - 0.02, M.glue, shoe);
+    // syringe
+    cyl(c, WALL_C, headT, headT + 3.5, 2.2, M.syr, shoe);
+    cyl(c, WALL_C, headT + 0.4, headT + 2.6, 2.0, M.glue, shoe);
+    shoe.userData.x = 0;
+    // laid glue line (stretched in update)
+    dyn.lineA = box(0, 1, grooveTop, grooveTop + h, LIP[0], LIP[1], M.glue, A);
+    label("guide bar, pinned in 2 screw holes", 352, t1 + 2.9, -7.6);
+    dyn.lblShoe = label("shoe: runners on the wall borders", XC, headT + 4.2, 3.2);
+    dyn.lblLip = label("lip + overflow channels", XC, headB - 0.2, 7.2);
+  }
+
+  // ---- option B
+  const B = new THREE.Group(); geo.add(B); dyn.B = B;
+  if (state.opt === "B") {
+    const gd = new THREE.Group(); B.add(gd); dyn.fixture = gd;
+    for (const x of HOLES) cyl(x, HOLE_S, -FR4 - 1.0, t1 + 1.6, 1.7, M.pin, gd);
+    const film = new THREE.Group(); B.add(film); dyn.film = film;
+    const fB = meshB, fT = meshB + h;
+    box(X0, X1, fB, fT, -9.5, SLOT[0], M.film, film);
+    box(X0, X1, fB, fT, SLOT[1], 9.0, M.film, film);
+    box(X0, X0 + 4, fB, fT, SLOT[0], SLOT[1], M.film, film);
+    box(X1 - 4, X1, fB, fT, SLOT[0], SLOT[1], M.film, film);
+    dyn.filmB = fB;
+    const sq = new THREE.Group(); B.add(sq); dyn.sq = sq;
+    const piv = new THREE.Group(); piv.position.y = fT; sq.add(piv);
+    box(XC - 0.5, XC + 0.5, 0, 3, -7, 8.5, M.blade, piv);
+    piv.rotation.z = 0.45;   // leaning back
+    dyn.bead = box(0, 1, fT, fT + 0.9, -1, 7, M.glue, B);
+    dyn.lineB = box(0, 1, grooveTop, fT, SLOT[0], SLOT[1], M.glue, B);
+    dyn.lineBtop = fT;
+    label("film stencil, 0.7 mm slot over the wall", 312, fT + 1.0, -6.5);
+    dyn.lblSq = label("squeegee", XC, fT + 3.6, 1);
+    label("pins in screw holes", 354.8, t1 + 2.1, -7.5);
+  }
+
+  // ---- mesh (both)
+  const mg = new THREE.Mesh(new THREE.PlaneGeometry(X1 - X0, 18), meshMat);
+  mg.rotation.x = -Math.PI / 2; mg.position.set(0, meshB + 0.02, 5.5);
+  geo.add(mg); dyn.mesh = mg; dyn.meshB = meshB;
+  dyn.spread = box(0, 1, grooveTop, meshB + MESH_WET * 0.5, 0, 1, M.glue, geo);
+
+  // fixed labels
+  label("rim wall 2.66 mm (M2)", 368, railTop + 0.9, WALL_C + 0.5);
+  label("insulation frame (M1)", 304, t1 + 0.6, -3);
+  label("pillars Ø0.8, pitch 4", 372, pillTop + 0.6, 11);
+  dyn.geo = geo;
+  update();
+}
+
+// ---------------------------------------------------------------- numbers
+function numbers() {
+  const t1 = state.t1, h = state.h;
+  let w, hh;
+  if (state.opt === "A") { w = LIP[1] - LIP[0]; hh = h; }
+  else { w = SLOT[1] - SLOT[0]; hh = h + Math.max(0, Math.max(t1 + DYNA, CU + DYNA) - DYNA); }
+  const vol = w * hh;                         // mm^3 per mm
+  const fill = Math.max(0, Math.max(t1 + DYNA, CU + DYNA) - DYNA) + MESH_WET;   // height the glue must fill
+  const wf = vol / fill;
+  return { w, hh, vol, wf, fill };
+}
+function readout() {
+  const r = numbers();
+  document.getElementById("hLaidV").textContent = `${Math.round(state.h * 1000)} µm`;
+  document.getElementById("t1V").textContent = `${Math.round(state.t1 * 1000)} µm`;
+  document.getElementById("rLine").textContent = `${r.w.toFixed(2)} mm × ${Math.round(r.hh * 1000)} µm`;
+  document.getElementById("rVol").textContent = `${r.vol.toFixed(3)} mm³`;
+  document.getElementById("rTot").textContent = `${(r.vol * PATH_LEN / 1000).toFixed(2)} mL`;
+  const el = document.getElementById("rW");
+  let msg, cls;
+  if (r.wf > WALL[1] - WALL[0]) { msg = "off the wall"; cls = "bad"; }
+  else if (r.wf > M1L[0] - M1F) { msg = "over the rails"; cls = "bad"; }
+  else if (r.wf < 0.8) { msg = "narrow bond"; cls = "bad"; }
+  else { msg = "inside the groove"; cls = "ok"; }
+  el.innerHTML = `${Math.min(r.wf, 9.99).toFixed(2)} mm — <span class="${cls}">${msg}</span>`;
+}
+
+// ---------------------------------------------------------------- animation
+const STEPS = {
+  A: [
+    [0.00, "<b>A.</b> The guide bar is pinned in two screw holes of the board. The shoe's fence arm rides along it, which keeps the runners on the 2.66 mm wall."],
+    [0.06, "<b>A.</b> The shoe slides on its two runners, one on each border of the wall. Glue from the syringe fills the cavity; the trailing lip leaves a 1.0 mm line; glue pushed sideways rises into the two overflow channels instead of passing under the runners."],
+    [0.66, "<b>A.</b> The shoe is lifted off: one line in the middle of the wall, both borders and the active side clean."],
+    [0.76, "<b>Mesh.</b> The stretched mesh comes down on the rails and the pillars and spreads the glue across the groove. Check the width below: it must stay inside the 2.11 mm between the rails."],
+  ],
+  B: [
+    [0.00, "<b>B.</b> The film stencil is lowered over two pins in the screw holes. It rests on the wall and on the outer pillar tops; its 0.7 mm slot runs along the middle of the wall."],
+    [0.10, "<b>B.</b> The squeegee pushes a bead of glue along the film and fills the slot. The film itself protects the active side."],
+    [0.56, "<b>B.</b> The film is lifted straight up: a line as tall as the film plus the groove under it."],
+    [0.72, "<b>Mesh.</b> The stretched mesh comes down on the rails and the pillars and spreads the glue across the groove."],
+  ],
+};
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const ease = (u) => u * u * (3 - 2 * u);
+const XS = X0 + 9, XE = X1 - 9;        // travel of the tool (centre)
+
+function setSpan(o, xa, xb) {          // stretch a unit box along x between board coords xa..xb
+  const L = Math.max(1e-3, xb - xa);
+  o.scale.x = L; o.position.x = (xa + xb) / 2 - XC;
+  o.visible = xb - xa > 1e-3;
+}
+function update() {
+  const t = state.t, r = numbers();
+  const cap = STEPS[state.opt].filter(s => t >= s[0]).pop();
+  document.getElementById("caption").innerHTML = cap[1];
+  let toolX = XS, cutX = XC;
+  const meshStart = state.opt === "A" ? 0.76 : 0.72;
+  if (state.opt === "A" && dyn.shoe) {
+    const u = ease(clamp((t - 0.06) / 0.58));
+    toolX = XS + (XE - XS) * u;
+    const lift = ease(clamp((t - 0.66) / 0.08));
+    dyn.shoe.position.set(toolX - XC, lift * 6, 0);
+    dyn.shoe.visible = t < 0.75;
+    setSpan(dyn.lineA, XS - SHOE_L / 2 + 2, Math.max(XS - SHOE_L / 2 + 2, toolX - SHOE_L / 2 + 1));
+    dyn.lineA.visible = t > 0.07 && t < meshStart + 0.04;
+    dyn.lblShoe.userData.base = [toolX, dyn.lblShoe.userData.base[1], dyn.lblShoe.userData.base[2]];
+    dyn.lblLip.userData.base = [toolX - 6, dyn.lblLip.userData.base[1], dyn.lblLip.userData.base[2]];
+    dyn.lblShoe.userData.show = dyn.lblLip.userData.show = t < 0.75;
+    cutX = toolX - SHOE_L / 2 + 1;
+  }
+  if (state.opt === "B" && dyn.film) {
+    const down = 1 - ease(clamp(t / 0.09));
+    const up = ease(clamp((t - 0.56) / 0.12));
+    dyn.film.position.y = (down + up) * 4;
+    dyn.film.visible = t < 0.7;
+    const u = ease(clamp((t - 0.10) / 0.44));
+    toolX = (X0 + 5) + (X1 - 5 - (X0 + 5)) * u;
+    dyn.sq.position.set(toolX - XC, 0, 0);
+    dyn.sq.visible = t > 0.08 && t < 0.58;
+    setSpan(dyn.bead, toolX + 0.4, toolX + 1.6);
+    dyn.bead.visible = dyn.sq.visible && t < 0.54;
+    setSpan(dyn.lineB, X0 + 4, Math.max(X0 + 4, toolX));
+    dyn.lineB.visible = t > 0.1 && t < meshStart + 0.04;
+    dyn.lblSq.userData.base = [toolX + 4, dyn.lblSq.userData.base[1], dyn.lblSq.userData.base[2]];
+    dyn.lblSq.userData.show = t < 0.58;
+    cutX = Math.max(X0 + 6, toolX - 3);
+  }
+  // fixture (guide bar / pins) goes away before the mesh comes
+  if (dyn.fixture) dyn.fixture.visible = t < meshStart;
+  // mesh
+  const m = ease(clamp((t - meshStart) / 0.14));
+  dyn.mesh.visible = t >= meshStart;
+  dyn.mesh.position.y = dyn.meshB + 0.02 + (1 - m) * 1.2;
+  const wNow = (state.opt === "A" ? (LIP[1] - LIP[0]) : (SLOT[1] - SLOT[0]));
+  const wEnd = Math.min(r.wf, 2.9);
+  const sp = ease(clamp((t - meshStart - 0.1) / 0.12));
+  const w = wNow + (wEnd - wNow) * sp;
+  const xa = state.opt === "A" ? XS - SHOE_L / 2 + 2 : X0 + 4;
+  const xb = state.opt === "A" ? XE - SHOE_L / 2 + 1 : X1 - 5;
+  dyn.spread.visible = t >= meshStart + 0.04;
+  dyn.spread.scale.set(xb - xa, 1, w);
+  dyn.spread.position.set((xa + xb) / 2 - XC, dyn.spread.position.y, WALL_C);
+
+  // section plane follows the tool
+  renderer.clippingPlanes = state.section ? [clipPlane] : [];
+  clipPlane.constant = cutX - XC;
+  state.cutX = cutX;
+  placeLabels();
+  document.getElementById("time").value = Math.round(t * 1000);
+}
+
+// ---------------------------------------------------------------- cameras
+function cam(kind) {
+  const V = state.V;
+  if (kind === "end") {
+    const cx = (state.cutX ?? XC) - XC;
+    camera.position.set(cx + 9, 0.5 * V + 0.6, 3.0); controls.target.set(cx, 0.3 * V, 3.0);
+  }
+  else if (kind === "top") { camera.position.set(0, 95, 6); controls.target.set(0, 0, 2.5); }
+  else { camera.position.set(-58, 16 + 4 * V, 56); controls.target.set(4, 0.4 * V, 2); }
+  controls.update();
+}
+
+// ---------------------------------------------------------------- UI
+const $ = (id) => document.getElementById(id);
+function setOpt(o) {
+  state.opt = o; state.t = 0;
+  $("optA").setAttribute("aria-pressed", o === "A"); $("optB").setAttribute("aria-pressed", o === "B");
+  state.h = o === "A" ? 0.07 : 0.10; $("hLaid").value = Math.round(state.h * 1000);
+  build(); readout();
+}
+$("optA").onclick = () => setOpt("A");
+$("optB").onclick = () => setOpt("B");
+$("play").onclick = () => { state.playing = !state.playing; $("play").textContent = state.playing ? "❚❚ pause" : "▶ play"; };
+$("time").oninput = (e) => { state.t = e.target.value / 1000; state.playing = false; $("play").textContent = "▶ play"; update(); };
+$("camOver").onclick = () => cam("over");
+$("camEnd").onclick = () => { state.section = true; $("section").checked = true; update(); cam("end"); };
+$("camTop").onclick = () => cam("top");
+$("section").onchange = (e) => { state.section = e.target.checked; update(); };
+$("labels").onchange = (e) => { state.labels = e.target.checked; placeLabels(); };
+$("exag").onchange = (e) => { state.V = +e.target.value; build(); };
+$("hLaid").oninput = (e) => { state.h = e.target.value / 1000; build(); readout(); };
+$("t1").oninput = (e) => { state.t1 = e.target.value / 1000; build(); readout(); };
+
+function resize() {
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  if (canvas.width !== Math.round(w * renderer.getPixelRatio()) || canvas.height !== Math.round(h * renderer.getPixelRatio())) {
+    renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+  }
+}
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min(0.1, (now - last) / 1000); last = now;
+  if (state.playing) { state.t += dt / 16; if (state.t > 1.08) state.t = 0; update(); }
+  resize(); controls.update(); renderer.render(scene, camera);
+  requestAnimationFrame(loop);
+}
+// URL parameters, e.g. ?opt=B&t=0.4&cam=end&section=1  (a fixed t pauses the animation)
+const q = new URLSearchParams(location.search);
+if (q.get("opt") === "B") { state.opt = "B"; state.h = 0.10; $("hLaid").value = 100;
+  $("optA").setAttribute("aria-pressed", false); $("optB").setAttribute("aria-pressed", true); }
+if (q.has("x")) { state.V = +q.get("x"); $("exag").value = q.get("x"); }
+if (q.has("t1")) { state.t1 = +q.get("t1") / 1000; $("t1").value = q.get("t1"); }
+if (q.has("t")) { state.t = +q.get("t"); state.playing = false; $("play").textContent = "▶ play"; }
+if (q.get("section") === "1") { state.section = true; $("section").checked = true; }
+build(); readout(); cam(q.get("cam") || "over"); requestAnimationFrame(loop);
+</script>
+</body>
+</html>
