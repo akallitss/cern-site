@@ -462,8 +462,10 @@ function setSpan(o, xa, xb) {          // stretch a unit box along x between boa
   o.visible = xb - xa > 1e-3;
 }
 function update() {
+  if (!(state.t >= 0)) state.t = 0;     // also catches NaN (e.g. a bad ?t=)
   const t = state.t, r = numbers();
-  const cap = STEPS[state.opt].filter(s => t >= s[0]).pop();
+  const steps = STEPS[state.opt] || STEPS.A;
+  const cap = steps.filter(s => t >= s[0]).pop() || steps[0];
   document.getElementById("caption").innerHTML = cap[1];
   let toolX = XS, cutX = XC;
   const meshStart = state.opt === "A" ? 0.76 : 0.72;
@@ -563,7 +565,8 @@ function resize() {
 }
 let last = performance.now();
 function loop(now) {
-  const dt = Math.min(0.1, (now - last) / 1000); last = now;
+  // the first rAF timestamp can be earlier than `last` (frame start < script time): never step backwards
+  const dt = clamp((now - last) / 1000, 0, 0.1); last = now;
   if (state.playing) { state.t += dt / 16; if (state.t > 1.08) state.t = 0; update(); }
   resize(); controls.update(); renderer.render(scene, camera);
   requestAnimationFrame(loop);
