@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
 <title>P2 mesh wall: glue holder in 3D</title>
-<meta name="description" content="Options A (sliding shoe with overflow channels on a pinned guide bar), B (film stencil) and C (one short shoe guided by the board outline) moving along the real P2 rim wall in 3D, with the glue volume worked out live.">
+<meta name="description" content="Options A (sliding shoe with overflow channels on a pinned guide bar), B (film stencil) and C (one short shoe guided by loose rails at the board edge) moving along the real P2 rim wall in 3D, with the glue volume worked out live.">
 <meta name="category" content="Detector R&amp;D">
 <meta name="keywords" content="P2,BASKET,Micromegas,bulk,mesh,glue,holder,3D">
 <meta name="date" content="2026-11-05">
@@ -110,11 +110,16 @@
       <ul>
         <li><strong>Two runners on the wall's borders</strong> (0.35&nbsp;mm wide, PTFE-faced), one on each edge of the wall.
         The inner runner is the dam: glue cannot pass under it towards the pillars.</li>
-        <li><strong>The glue cavity</strong> between them is fed by the syringe. At the back, a <strong>lip</strong> 1.0&nbsp;mm wide
-        sits at the laid-height above the wall and leaves a line of that height.</li>
-        <li><strong>Two overflow channels</strong>, one along the inside of each runner, between runner and lip.
+        <li><strong>The glue is laid first</strong>: a thin bead along the middle of the wall, by syringe, ahead of the shoe.
+        The shoe has no feed. Its front is open, with an entry pocket 1.8&nbsp;mm tall, so the bead runs into the cavity between
+        the runners instead of being pushed along. Keep the bead lower than that.</li>
+        <li>At the back, a <strong>rear scraper</strong> touches the wall between the runners. Its <strong>notch</strong>, 1.0&nbsp;mm wide and
+        as high as the laid line, leaves the line; everything else is wiped off the wall.</li>
+        <li><strong>Lay about the volume of the line</strong> (0.10&nbsp;mm³ per mm, a bead about 0.4&nbsp;mm across). The shoe only meters the
+        height. Its channels hold about 15&nbsp;mm³ in all, and any larger excess rides ahead in the entry pocket.</li>
+        <li><strong>Two overflow channels</strong>, one along the inside of each runner, between runner and notch, closed by the rear scraper.
         Glue pushed sideways goes up into them instead of under the runners. They collect what overflows,
-        so the line that stays on the wall is the one the lip sets. The top of the wall is flat, so the shoe, not the wall,
+        so the line that stays on the wall is the one the notch sets. The top of the wall is flat, so the shoe, not the wall,
         does the containing: the runners have to be kept on the wall's borders by the user.</li>
         <li>A <strong>fence arm</strong> rides against a printed guide bar pinned in two screw holes, which keeps the runners on the
         2.66&nbsp;mm wall. A straight bar for each straight side, an arc bar for each arc.</li>
@@ -132,19 +137,22 @@
       </ul>
 
       <h3>C · one shoe, guided by the board outline</h3>
-      <p>The shoe is the same as in A: two runners, the glue cavity, the lip and the two overflow channels, as in A.
-      The difference is how it is kept on the wall. There is no set of pinned bars: the shoe is slid all the way round
-      in one pass, and a fence arm rides against the outline of the board.</p>
+      <p>The glue head is the same as in A: two runners, the open front, the rear scraper with its notch, and the two overflow
+      channels. The difference is how it is kept on the wall. There is no set of pinned bars: the shoe is slid all the way round,
+      and its fence rides against loose rails laid against the board edge.</p>
       <ul>
         <li><strong>The board edge alone is too thin to steer on.</strong> The stack-up is 0.2&nbsp;mm FR4 + 2 × 18&nbsp;µm copper,
-        so the edge is 0.24&nbsp;mm tall. The board therefore lies in a <strong>nest plate</strong>: a plate cut to the
-        Edge_Cuts outline, about 2&nbsp;mm thicker than the board, located with pins in two or three screw holes (drilled holes
-        are more accurate than the routed edge). Its rim is the fence for the whole perimeter, in one piece.</li>
-        <li><strong>A short shoe, 10&nbsp;mm instead of 16&nbsp;mm</strong>, so it follows the arcs. The fence arm has two PTFE buttons
-        against the rim; you push the shoe forward and slightly outwards.</li>
-        <li>The arm reach changes with the side (table below): 12&nbsp;mm for the bottom and the 60° side,
-        17&nbsp;mm for the inner arc, 52&nbsp;mm for the outer arc. Make it three swappable arms, or one arm with a slot and a screw.</li>
+        so the edge is 0.24&nbsp;mm tall. So <strong>loose printed rails</strong> (20&nbsp;mm wide, 4.60&nbsp;mm tall) are laid on the table
+        and pushed against the board edge, held with tape or a weight: no pins, no screws in the board. Their inner face is the fence
+        reference; their top carries the shoe.</li>
+        <li><strong>A short shoe, 10&nbsp;mm instead of 16&nbsp;mm</strong>, so it follows the arcs. A 30&nbsp;mm fence foot hangs just inside
+        the board edge. Two M2 set screws in it bear on the rail; you set them on the board until the runners sit on the wall
+        borders, which takes up the routing tolerance. The underside of the arm is a skid that slides on the rail top.</li>
+        <li>The arm reach changes with the side (table below): 11.84&nbsp;mm for the bottom and the 60° side,
+        16.85&nbsp;mm for the inner arc, 51.98&nbsp;mm for the outer arc. So there are three shoes.</li>
       </ul>
+      <p class="faint">Printable files (STEP/STL, three shoes and 11 rail pieces) and the two workshop sheets:
+      <code>Detector_Drawings/P2_Revision_2026/mesh_glue_tools/</code>.</p>
       <p><strong>What the Gerber says</strong> (Apr26 Edge_Cuts against the M1 active outline, sampled every 0.5&nbsp;mm round the
       1684&nbsp;mm path; reach = board edge to the outer border of the wall):</p>
       <table>
@@ -159,16 +167,15 @@
         </tbody>
       </table>
       <ul>
-        <li><strong>About 1580&nbsp;mm of the 1684&nbsp;mm</strong> can follow the nest rim: the bottom, the 60° side and the inner arc
-        with the 12/17&nbsp;mm arms, and the outer arc with the 52&nbsp;mm arm. The connectors are not soldered when the mesh is glued,
-        so the long arm passes over the bare connector pads. Keep it clear of them (no contact) so the pads stay clean, and make it stiff
-        (aluminium rather than print): over 52&nbsp;mm a small flex already uses up the 0.3&nbsp;mm margin.</li>
-        <li><strong>The ~100&nbsp;mm at the two ends of the outer arc</strong> have nothing parallel to follow: guide by hand there,
-        or add two short corner pieces to the nest.</li>
-        <li>The routed edge has a break-out tab every 75&nbsp;mm (about 3&nbsp;mm wide, up to 0.5&nbsp;mm proud). Sand the stubs flush
-        so the board sits against the nest.</li>
+        <li><strong>About 1580&nbsp;mm of the 1684&nbsp;mm</strong> can follow a rail: the bottom, the 60° side and the inner arc
+        with the 11.84/16.85&nbsp;mm shoes, and the outer arc with the 51.98&nbsp;mm shoe. The connectors are not soldered when the mesh is glued,
+        so the long arm passes over the bare connector pads. It hovers 4.4&nbsp;mm above them, so the pads stay clean. Check that the printed arm does not flex:
+        over 52&nbsp;mm a small flex already uses up the 0.3&nbsp;mm margin.</li>
+        <li><strong>The ~100&nbsp;mm at the two ends of the outer arc</strong> have nothing parallel to follow: guide by hand there.</li>
+        <li>The routed edge has a break-out tab every 75&nbsp;mm (about 3&nbsp;mm wide, up to 0.5&nbsp;mm proud). File the stubs flush
+        so the rails sit against the edge.</li>
         <li>The margin is small: a runner can wander about 0.3&nbsp;mm before it leaves the wall, and a routed edge is typically good to
-        ±0.1–0.2&nbsp;mm. That is why the nest is pinned in the screw holes and not just pushed against the board edge.</li>
+        ±0.1–0.2&nbsp;mm. That is why the shoe has set screws: they are adjusted on each board.</li>
       </ul>
       <p class="faint">This C is new. The "C · fill the groove level" in the options note was a different idea (a flat blade on the rails);
       it is ruled out, because the top of the wall is flat.</p>
@@ -392,21 +399,24 @@ function build() {
   // ---- the shoe with the groove (A and C share it; C is shorter)
   function shoeParts(shoe, L, headB, headT) {
     const c = XC;   // shoe parts are built around x = 0 of the shoe
+    const r0 = WALL[0] + RUN_W, r1 = WALL[1] - RUN_W, ER = 1.2, EN = 2.5;
     box(c - L, c + L, headB, headT, 1.4, 5.2, M.tool, shoe);
     // runners on the wall borders
-    box(c - L, c + L, railTop, headB, WALL[0], WALL[0] + RUN_W, M.ptfe, shoe);
-    box(c - L, c + L, railTop, headB, WALL[1] - RUN_W, WALL[1], M.ptfe, shoe);
-    // trailing lip
-    box(c - L, c - L + 2, grooveTop + h, headB, LIP[0], LIP[1], M.ptfe, shoe);
-    // overflow channels (recesses up into the body)
-    box(c - L, c + L, headB - 0.001, headB + 1.2, WALL[0] + RUN_W, LIP[0], M.chan, shoe);
-    box(c - L, c + L, headB - 0.001, headB + 1.2, LIP[1], WALL[1] - RUN_W, M.chan, shoe);
+    box(c - L, c + L, railTop, headB, WALL[0], r0, M.ptfe, shoe);
+    box(c - L, c + L, railTop, headB, r1, WALL[1], M.ptfe, shoe);
+    // rear scraper between the runners, with the notch that leaves the line
+    box(c - L, c - L + ER, grooveTop, headB, r0, LIP[0], M.ptfe, shoe);
+    box(c - L, c - L + ER, grooveTop, headB, LIP[1], r1, M.ptfe, shoe);
+    box(c - L, c - L + ER, grooveTop + h, headB, LIP[0], LIP[1], M.ptfe, shoe);
+    // overflow channels (closed at the rear, open at the front) and the entry pocket at the open front
+    box(c - L + ER, c + L, headB - 0.001, headB + 1.2, r0, LIP[0], M.chan, shoe);
+    box(c - L + ER, c + L, headB - 0.001, headB + 1.2, LIP[1], r1, M.chan, shoe);
+    box(c + L - EN, c + L, headB - 0.001, headB + 1.2, LIP[0], LIP[1], M.chan, shoe);
     // glue in the cavity
-    box(c - L + 2, c + L - 3, grooveTop, headB, WALL[0] + RUN_W + 0.02, WALL[1] - RUN_W - 0.02, M.glue, shoe);
-    // syringe
-    cyl(c, WALL_C, headT, headT + 3.5, 2.2, M.syr, shoe);
-    cyl(c, WALL_C, headT + 0.4, headT + 2.6, 2.0, M.glue, shoe);
+    box(c - L + ER, c + L - 0.6, grooveTop, headB, r0 + 0.02, r1 - 0.02, M.glue, shoe);
   }
+  // the bead laid on the wall ahead of the shoe (stretched in update)
+  function bead(parent) { return box(0, 1, grooveTop, grooveTop + 0.3, WALL_C - 0.22, WALL_C + 0.22, M.glue, parent); }
 
   // ---- option A
   const A = new THREE.Group(); geo.add(A); dyn.A = A;
@@ -420,28 +430,33 @@ function build() {
     box(XC - 6, XC + 6, headB + 0.8, headT, -5.4, 1.4, M.tool, shoe);     // fence arm
     // laid glue line (stretched in update)
     dyn.lineA = box(0, 1, grooveTop, grooveTop + h, LIP[0], LIP[1], M.glue, A);
+    dyn.beadA = bead(A);
     dyn.fixLbl = label("guide bar, pinned in 2 screw holes", 352, t1 + 2.9, -7.6);
     dyn.lblShoe = label("shoe: runners on the wall borders", XC, headT + 4.2, 3.2);
-    dyn.lblLip = label("lip + overflow channels (under the shoe)", XC, headB - 0.2, 7.2);
+    dyn.lblLip = label("notch + overflow channels (under the shoe)", XC, headB - 0.2, 7.2);
   }
 
-  // ---- option C: one short shoe, fence arm against the nest plate that holds the board
+  // ---- option C: one short shoe, fence foot (2 set screws) against a loose rail laid on the table at the board edge
   const Cg = new THREE.Group(); geo.add(Cg); dyn.C = Cg;
   if (state.opt === "C") {
-    const nest = new THREE.Group(); Cg.add(nest); dyn.fixture = nest;
-    box(X0 - 6, X1 + 6, -FR4, 1.8, EDGE - 5.5, EDGE - 0.03, M.nest, nest);   // nest rim, cut to the Edge_Cuts outline
-    for (const x of HOLES) cyl(x, HOLE_S, -FR4 - 1.0, t1 + 0.9, 1.7, M.pin, nest);   // locating pins in the screw holes
+    const RAIL_TOP = 4.364;                                                   // rail 4.60 tall, its top 4.364 above the PCB
+    const rail = new THREE.Group(); Cg.add(rail); dyn.fixture = rail;
+    box(X0 - 6, X1 + 6, -FR4, RAIL_TOP, EDGE - 20, EDGE - 0.02, M.nest, rail);   // loose rail against the PCB edge
     const shoe = new THREE.Group(); Cg.add(shoe); dyn.shoe = shoe;
-    const headB = railTop + 0.5, headT = headB + 2.5;
+    const headB = DYNA + 0.6, headT = 8.4;
     shoeParts(shoe, SHOE_LC / 2, headB, headT);
-    box(XC - 4, XC + 4, headB + 0.8, headT, EDGE + 0.9, 1.4, M.tool, shoe);     // arm, 11.8 mm reach
-    box(XC - 4, XC + 4, t1 + 0.35, headT, EDGE + 0.08, EDGE + 0.9, M.tool, shoe); // fence foot beside the rim
-    for (const dx of [-2.8, 2.8]) box(XC + dx - 0.7, XC + dx + 0.7, t1 + 0.45, 1.6, EDGE + 0.0, EDGE + 0.08, M.ptfe, shoe);
+    box(XC - 15, XC + 15, RAIL_TOP, headT, EDGE - 12, 1.41, M.tool, shoe);        // arm; its underside is the skid on the rail
+    box(XC - 15, XC + 15, 0.4, RAIL_TOP, EDGE + 1, EDGE + 4, M.tool, shoe);       // fence foot, just inside the edge
+    for (const dx of [-12, 12]) {                                             // M2 set screws bearing on the rail face
+      const sc = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.0, 4.2, 16), M.pin);
+      sc.rotation.x = Math.PI / 2; sc.position.set(dx, 2.4, EDGE + 2.1); shoe.add(sc);
+    }
     dyn.lineA = box(0, 1, grooveTop, grooveTop + h, LIP[0], LIP[1], M.glue, Cg);
-    dyn.lblFence = label("fence arm: 2 PTFE buttons on the rim", XC, 3.4, -9.4);
-    dyn.fixLbl = label("nest plate: rim cut to the board outline, pinned", 352, 2.3, -12.5);
-    dyn.lblShoe = label("one 10 mm shoe, fence on the rim", XC, headT + 4.2, -2);
-    dyn.lblLip = label("lip + overflow channels (under the shoe)", XC, headB - 0.2, 7.2);
+    dyn.beadA = bead(Cg);
+    dyn.lblFence = label("fence foot: 2 M2 set screws on the rail", XC, 5.4, -9.4);
+    dyn.fixLbl = label("loose rail, pushed against the PCB edge", 352, RAIL_TOP + 0.6, -21);
+    dyn.lblShoe = label("one 10 mm shoe, skid on the rail", XC, headT + 2.5, -2);
+    dyn.lblLip = label("notch + overflow channels (under the shoe)", XC, headB - 0.2, 7.2);
   }
 
   // ---- option B
@@ -511,15 +526,15 @@ function readout() {
 // ---------------------------------------------------------------- animation
 const STEPS = {
   A: [
-    [0.00, "<b>A.</b> The guide bar is pinned in two screw holes of the board. The shoe's fence arm rides along it, which keeps the runners on the 2.66 mm wall."],
-    [0.06, "<b>A.</b> The shoe slides on its two runners, one on each border of the wall. Glue from the syringe fills the cavity; the trailing lip leaves a 1.0 mm line; glue pushed sideways rises into the two overflow channels instead of passing under the runners."],
+    [0.00, "<b>A.</b> A thin bead of glue has been laid along the middle of the wall by syringe. The guide bar is pinned in two screw holes of the board; the shoe's fence arm rides along it, which keeps the runners on the 2.66 mm wall."],
+    [0.06, "<b>A.</b> The shoe slides on its two runners, one on each border of the wall. The bead runs in at its open front; the notch in the rear scraper leaves a 1.0 mm line; the excess rises into the two overflow channels instead of passing under the runners."],
     [0.66, "<b>A.</b> The shoe is lifted off: one line in the middle of the wall, both borders and the active side clean."],
     [0.76, "<b>Mesh.</b> The stretched mesh comes down on the pillars and its weight spreads the glue across the flat top of the wall. Check the width below: it must stay inside the 2.66 mm wall."],
   ],
   C: [
-    [0.00, "<b>C.</b> The board lies in a nest plate, pinned in the screw holes; the plate's rim follows the board outline. The fence arm of the short shoe bears on the rim with two PTFE buttons. The overflow channels are under the shoe: press end-on to see them."],
-    [0.06, "<b>C.</b> One pass, all the way round: push the shoe forward and slightly outwards against the rim. The runners stay on the wall's borders, the lip leaves a 1.0 mm line, and what spreads sideways rises into the two overflow channels."],
-    [0.66, "<b>C.</b> The shoe is lifted off. On the outer arc a 52 mm arm reaches over the (not yet soldered) connector pads to the rim; only the ~50 mm at each end of that arc have to be guided by hand: see the table below."],
+    [0.00, "<b>C.</b> A thin bead of glue has been laid along the middle of the wall. A loose rail lies on the table against the board edge (no pins). The short shoe's fence foot bears on it with two set screws, and its arm slides on the rail top. Press end-on to see the channels under the shoe."],
+    [0.06, "<b>C.</b> Push the shoe forward and slightly outwards against the rail. The bead runs in at the open front, the notch in the rear scraper leaves a 1.0 mm line, and the excess rises into the two overflow channels."],
+    [0.66, "<b>C.</b> The shoe is lifted off. On the outer arc a 52 mm arm reaches over the (not yet soldered) connector pads to the rail; only the ~50 mm at each end of that arc have to be guided by hand: see the table below."],
     [0.76, "<b>Mesh.</b> The stretched mesh comes down on the pillars and its weight spreads the glue across the flat top of the wall. Check the width below: it must stay inside the 2.66 mm wall."],
   ],
   B: [
@@ -555,6 +570,8 @@ function update() {
     dyn.shoe.visible = t < 0.75;
     setSpan(dyn.lineA, XS - SL / 2 + 2, Math.max(XS - SL / 2 + 2, toolX - SL / 2 + 1));
     dyn.lineA.visible = t > 0.07 && t < meshStart + 0.04;
+    if (dyn.beadA) { setSpan(dyn.beadA, Math.min(toolX + SL / 2 - 0.6, XE + SL / 2 - 0.6), XE + SL / 2);
+      dyn.beadA.visible = t < 0.64; }
     dyn.lblShoe.userData.base = [toolX, dyn.lblShoe.userData.base[1], dyn.lblShoe.userData.base[2]];
     dyn.lblLip.userData.base = [toolX - 6, dyn.lblLip.userData.base[1], dyn.lblLip.userData.base[2]];
     dyn.lblShoe.userData.show = dyn.lblLip.userData.show = t < 0.75;
@@ -611,6 +628,7 @@ function cam(kind) {
     camera.position.set(cx + 9, 0.5 * V + 0.6, 3.0); controls.target.set(cx, 0.3 * V, 3.0);
   }
   else if (kind === "top") { camera.position.set(0, 95, 6); controls.target.set(0, 0, 2.5); }
+  else if (state.opt === "C") { camera.position.set(-70, 30 + 6 * V, 78); controls.target.set(4, 1.2 * V, -4); }
   else { camera.position.set(-58, 16 + 4 * V, 56); controls.target.set(4, 0.4 * V, 2); }
   controls.update();
 }
@@ -621,7 +639,7 @@ function setOpt(o) {
   state.opt = o; state.t = 0;
   for (const k of ["A", "B", "C"]) $("opt" + k).setAttribute("aria-pressed", o === k);
   state.h = 0.10; $("hLaid").value = Math.round(state.h * 1000);
-  build(); readout();
+  build(); readout(); cam("over");
 }
 $("optA").onclick = () => setOpt("A");
 $("optB").onclick = () => setOpt("B");
