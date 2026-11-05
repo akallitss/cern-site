@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>P2 mesh wall: gluing the mesh, holder options</title>
+<meta name="description" content="The P2 bulk rim wall measured from the V1 films and the PCB, how much glue it can take, and three ways to lay the glue line without tape or Teflon on the active side.">
+<meta name="category" content="Detector R&amp;D">
+<meta name="keywords" content="P2,BASKET,Micromegas,bulk,mesh,glue,Dynamask,holder">
+<meta name="date" content="2026-11-05">
+<meta name="updated" content="2026-11-05">
+<meta name="visibility" content="unlisted">
+<meta name="robots" content="noindex, nofollow">
+<!-- ======================================================================= -->
+<link rel="stylesheet" href="../../assets/site.css">
+<style>
+  :root {
+    --fr4: #c9c2a6; --cu: #c8742c; --ins: #4f8fbf; --dyna: #3f9a5c; --glue: #e0a100;
+    --tool: #7a6fa8; --ptfe: #d9d9d9; --dim: #5f6570; --mesh: #b23a3a;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --fr4: #6f6a55; --cu: #d98a45; --ins: #6aa8d6; --dyna: #5cbf7c; --glue: #f2be2e;
+    --tool: #a79ad8; --ptfe: #8d8d8d; --dim: #a5a9b1; --mesh: #f07a6a; } }
+  :root[data-theme="dark"] {
+    --fr4: #6f6a55; --cu: #d98a45; --ins: #6aa8d6; --dyna: #5cbf7c; --glue: #f2be2e;
+    --tool: #a79ad8; --ptfe: #8d8d8d; --dim: #a5a9b1; --mesh: #f07a6a; }
+  svg { width: 100%; height: auto; display: block; }
+  svg text { font: 15px var(--font); fill: var(--fg); }
+  svg .small { font-size: 13px; fill: var(--fg-muted); }
+  svg .dimline { stroke: var(--dim); stroke-width: 1; fill: none; }
+  .fr4 { fill: var(--fr4); } .cu { fill: var(--cu); } .ins { fill: var(--ins); }
+  .dyna { fill: var(--dyna); } .glue { fill: var(--glue); } .tool { fill: var(--tool); }
+  .ptfe { fill: var(--ptfe); }
+  .opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin: 1rem 0; }
+  .opt { border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev); padding: 12px 14px; }
+  .opt h3 { margin: .2rem 0 .4rem; font-size: 1.05rem; }
+  .opt ul { padding-left: 1.1rem; margin: .4rem 0; }
+  .opt .tag { font-size: .8rem; color: var(--fg-muted); }
+  .key { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .9rem; margin: .5rem 0 0; }
+  .key span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; background: var(--c); }
+</style>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="../../">Alexandra Kallitsopoulou</a>
+  <nav class="nav"><a href="../../">Home</a><a href="../../notes/">Notes</a></nav>
+</div></header>
+
+<main class="wrap">
+  <article>
+    <header class="note-header">
+      <h1>P2 mesh wall: gluing the mesh, holder options</h1>
+      <p class="muted">The rim wall measured on the boards we have (V1 films + Apr26 PCB), how much glue it can take, and three ways to lay the glue line without tape or Teflon on the active side.</p>
+      <div class="meta-row">
+        <span class="pill">Detector R&amp;D</span>
+        <time datetime="2026-11-05">2026-11-05</time>
+        <span class="faint">options to choose from — nothing built yet</span>
+      </div>
+    </header>
+
+    <div class="note-body">
+
+      <p>The process here is not the usual bulk: the pillars and the rim wall are grown first
+      (insulation film through M1, then Dynamask through M2, about 200&nbsp;µm), and the mesh
+      is glued afterwards onto the top of the wall. The difficulty is keeping the glue on the wall:
+      tape works on the outside, but on the active side tape or Teflon is messy to remove.</p>
+
+      <h2>1. The wall, measured</h2>
+      <p>Profiles taken across the edge from the Gerbers (10&nbsp;µm pixels), at three places on each
+      straight side and each arc. Widths are in the plane of the board.</p>
+
+      <figure>
+        <svg viewBox="0 0 900 425" role="img" aria-label="Cross-section of the P2 rim wall at the bottom straight edge">
+          <!-- x(s) = 40 + (s+1)*95 ; y(h) = 300 - h*475 (h in mm, vertical x5) -->
+          <rect class="fr4" x="40" y="300" width="760" height="40"/>
+          <text x="48" y="325" class="small">PCB (FR4)</text>
+          <rect class="cu" x="86.6" y="291.5" width="51.3" height="8.5"/>
+          <rect class="cu" x="613.8" y="291.5" width="186.2" height="8.5"/>
+          <rect class="ins" x="40" y="276.3" width="296.4" height="23.7"/>
+          <rect class="ins" x="536.9" y="276.3" width="54.1" height="23.7"/>
+          <polygon class="dyna" points="309.8,276.3 336.4,276.3 336.4,300 536.9,300 536.9,276.3 562.5,276.3 562.5,181.3 536.9,181.3 536.9,205 336.4,205 336.4,181.3 309.8,181.3"/>
+          <rect class="dyna" x="666" y="196.5" width="76" height="95"/>
+          <rect x="336.4" y="181.3" width="200.5" height="23.7" fill="none" stroke="var(--glue)" stroke-width="2" stroke-dasharray="5 3"/>
+          <text x="388" y="198" class="small">glue goes here</text>
+          <path d="M290 177 L562.5 177 L742 192.5 L800 192.5" fill="none" stroke="var(--mesh)" stroke-width="2" stroke-dasharray="7 4"/>
+          <text x="640" y="172" class="small" style="fill:var(--mesh)">mesh</text>
+
+          <!-- dimensions above -->
+          <path class="dimline" d="M309.8 165 V120 M562.5 165 V120 M309.8 128 H562.5"/>
+          <text x="370" y="122">rim wall (M2)  2.66 mm</text>
+          <path class="dimline" d="M336.4 175 V145 M536.9 175 V145 M336.4 152 H536.9"/>
+          <text x="392" y="148" class="small">groove 2.11 mm</text>
+          <text x="262" y="160" class="small">rail 0.28</text>
+          <text x="540" y="160" class="small">rail 0.27</text>
+
+          <!-- dimensions below -->
+          <path class="dimline" d="M562.5 345 V372 M613.8 345 V372 M562.5 366 H613.8"/>
+          <text x="440" y="390" class="small">0.54 to the first pad</text>
+          <path class="dimline" d="M666 300 V386 M562.5 380 H666"/>
+          <text x="676" y="396" class="small">first pillar: 1.1 mm here</text>
+          <text x="676" y="412" class="small">(0 – 3 mm along the edge)</text>
+          <path class="dimline" d="M591 300 V352 M562.5 352 H591"/>
+          <text x="380" y="358" class="small">M1 line sticks out 0.30 →</text>
+
+          <!-- side labels -->
+          <text x="44" y="262" class="small">insulation frame (M1)</text>
+          <text x="752" y="250" class="small">active zone →</text>
+          <text x="44" y="30">bottom straight edge, x = 300 mm</text>
+          <text x="44" y="48" class="small">horizontal to scale · vertical ×5 · insulation thickness t₁ not known, drawn 50 µm · Dynamask 200 µm</text>
+          <!-- 200 um bar -->
+          <path class="dimline" d="M862 300 V205 M856 300 H868 M856 205 H868"/>
+          <text x="836" y="196" class="small">200 µm</text>
+        </svg>
+        <div class="key">
+          <span style="--c:var(--ins)">insulation (M1)</span>
+          <span style="--c:var(--dyna)">Dynamask: wall and pillars (M2)</span>
+          <span style="--c:var(--cu)">copper</span>
+          <span style="--c:var(--glue)">glue</span>
+          <span style="--c:var(--mesh)">mesh</span>
+        </div>
+        <figcaption>The M2 wall fills the 2.1&nbsp;mm band that M1 leaves bare and laps about 0.27&nbsp;mm onto
+        the insulation on each side. If the Dynamask follows the step underneath (a laminated dry film
+        partly does), the top of the wall has two rails, t₁ higher than the middle — and higher than the
+        pillars, so the mesh lands on them first.</figcaption>
+      </figure>
+
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>edge</th><th>wall (M2)</th><th>M1 line</th><th>overlap on the active side</th><th>wall → first pad</th></tr></thead>
+        <tbody>
+          <tr><td>bottom straight</td><td>2.66 mm</td><td>0.57 mm</td><td>0.27 mm</td><td>0.54 mm</td></tr>
+          <tr><td>60° straight</td><td>2.70 → 2.79 mm (widens with r)</td><td>0.60 – 0.63 mm</td><td>0.27 – 0.28 mm</td><td>0.56 – 0.62 mm</td></tr>
+          <tr><td>inner arc (r ≈ 115)</td><td>2.65 – 2.67 mm</td><td>0.60 – 0.64 mm</td><td>0.30 – 0.33 mm</td><td>0.52 mm</td></tr>
+          <tr><td>outer arc (r ≈ 595)</td><td>2.73 – 2.80 mm</td><td>0.52 – 0.57 mm</td><td>0.22 – 0.27 mm</td><td>0.49 mm</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <ul>
+        <li><strong>Glue path:</strong> 1684&nbsp;mm all round.</li>
+        <li><strong>No room beside the wall on the active side.</strong> The first pillar row is 0 to 3&nbsp;mm
+        from the wall (one pillar on the outer arc, θ ≈ 38°, touches it). Any tool has to stay on or above
+        the wall, never dip down next to it.</li>
+        <li><strong>Alignment.</strong> In the files both films sit on the copper crosses to within 6&nbsp;µm.
+        By hand, each mask cross leaves ±0.45&nbsp;mm before the copper line touches its outline, so a
+        shifted film moves the wall towards the pads, which are only ~0.5&nbsp;mm away. The width of the
+        wall itself does not change: M2 alone sets both of its edges.</li>
+      </ul>
+
+      <h2>2. How much glue</h2>
+      <p>The glue does not stay as laid. When the mesh comes down it squeezes the bead flat and the
+      glue fills the mesh openings. What has to be controlled is the <strong>volume per millimetre of wall</strong>:</p>
+      <p style="text-align:center"><em>laid width × laid height = final width × final height</em></p>
+      <p>Aim for a final strip about 1.8&nbsp;mm wide (inside the groove, clear of both rails) and about
+      40&nbsp;µm thick (roughly the thickness of the ASADA 45/19 mesh, an estimate). That is
+      ≈&nbsp;0.07&nbsp;mm³ per mm, or <strong>≈&nbsp;0.12&nbsp;mL for the whole detector</strong>.</p>
+
+      <table>
+        <thead><tr><th>laid height</th><th>laid width for the same volume</th></tr></thead>
+        <tbody>
+          <tr><td>50 µm</td><td>1.4 mm</td></tr>
+          <tr><td>100 µm</td><td>0.7 mm</td></tr>
+          <tr><td>200 µm</td><td>0.36 mm</td></tr>
+        </tbody>
+      </table>
+      <div class="callout warn">A 200&nbsp;µm layer over the full wall width carries about five times too much glue:
+      it is what overflows today. At 200&nbsp;µm the line must be only ~0.4&nbsp;mm wide; a wider line has to be thinner.</div>
+
+      <h2>3. Three ways to lay the line</h2>
+      <p>All three keep the glue on top of the wall, need nothing stuck to the active side, and can be
+      positioned from the board's own screw holes (about 12–15&nbsp;mm outside the wall).</p>
+
+      <div class="opts">
+        <!-- A: rail shoe -->
+        <div class="opt">
+          <span class="tag">A · your idea, made precise</span>
+          <h3>Sliding shoe</h3>
+          <svg viewBox="0 0 300 210" role="img" aria-label="Sliding shoe riding on the two rails of the wall">
+            <rect class="fr4" x="0" y="190" width="300" height="20"/>
+            <rect class="ins" x="0" y="177.5" width="106" height="12.5"/>
+            <rect class="ins" x="211.5" y="177.5" width="28.5" height="12.5"/>
+            <polygon class="dyna" points="92,177.5 106,177.5 106,190 211.5,190 211.5,177.5 225,177.5 225,127.5 211.5,127.5 211.5,140 106,140 106,127.5 92,127.5"/>
+            <rect class="dyna" x="270" y="140" width="30" height="50"/>
+            <rect class="tool" x="10" y="40" width="230" height="74"/>
+            <rect class="ptfe" x="92" y="114" width="14" height="13.5"/>
+            <rect class="ptfe" x="211.5" y="114" width="13.5" height="13.5"/>
+            <rect x="149" y="40" width="20" height="74" fill="var(--bg-elev)"/>
+            <rect class="glue" x="152" y="60" width="14" height="80"/>
+            <rect class="tool" x="10" y="114" width="16" height="76"/>
+            <text x="30" y="60" style="fill:#fff">printed shoe</text>
+            <text x="150" y="30" class="small">syringe →</text>
+            <text x="30" y="142" class="small">fence</text><text x="30" y="157" class="small">on pins</text>
+          </svg>
+          <ul>
+            <li>Two PTFE-faced runners ride on the wall; the slot between them lays a 0.7–1.0&nbsp;mm line.</li>
+            <li>The inner runner is the dam on the active side: nothing to peel off afterwards.</li>
+            <li>Kept on line by a fence on pins in the screw holes: one straight guide per side, one arc guide per arc.</li>
+            <li>Line height set by a feeler-gauge shim (e.g. 100&nbsp;µm), not by the printer.</li>
+          </ul>
+          <p class="tag">− glue flow depends on push speed and pressure; corners need care.</p>
+        </div>
+
+        <!-- B: stencil -->
+        <div class="opt">
+          <span class="tag">B · recommended first try</span>
+          <h3>Film stencil + squeegee</h3>
+          <svg viewBox="0 0 300 210" role="img" aria-label="Thin film stencil with a slot above the wall">
+            <rect class="fr4" x="0" y="190" width="300" height="20"/>
+            <rect class="ins" x="0" y="177.5" width="106" height="12.5"/>
+            <rect class="ins" x="211.5" y="177.5" width="28.5" height="12.5"/>
+            <polygon class="dyna" points="92,177.5 106,177.5 106,190 211.5,190 211.5,177.5 225,177.5 225,127.5 211.5,127.5 211.5,140 106,140 106,127.5 92,127.5"/>
+            <rect class="dyna" x="270" y="140" width="30" height="50"/>
+            <rect class="tool" x="0" y="102.5" width="141" height="25"/>
+            <rect class="tool" x="177" y="102.5" width="123" height="25"/>
+            <rect class="glue" x="141" y="102.5" width="36" height="37.5"/>
+            <polygon class="ptfe" points="120,30 136,30 170,100 154,100"/>
+            <text x="10" y="95" class="small">100 µm film, laser-cut slot</text>
+            <text x="180" y="60" class="small">squeegee →</text>
+          </svg>
+          <ul>
+            <li>A PET or Kapton film (50–100&nbsp;µm) with a 0.7–1.4&nbsp;mm slot along the wall centre, cut from the M2 Gerber.</li>
+            <li>Line height = film thickness, exactly; no 3D-print tolerance involved.</li>
+            <li>Aligned like M1 and M2: same crosses on the film, or pins in the screw holes. The slot has ±0.4&nbsp;mm of room in the groove.</li>
+            <li>Lift it straight up and the active side is clean: the film is the protection, in one piece.</li>
+          </ul>
+          <p class="tag">− lies on the outer pillar tops (light film, no pressure); needs a laser cutter, or 2–4 segments.</p>
+        </div>
+
+        <!-- C: groove fill -->
+        <div class="opt">
+          <span class="tag">C · cheapest, if the rails are real</span>
+          <h3>Fill the groove level</h3>
+          <svg viewBox="0 0 300 210" role="img" aria-label="Blade wiping across the two rails, leaving glue only in the groove">
+            <rect class="fr4" x="0" y="190" width="300" height="20"/>
+            <rect class="ins" x="0" y="177.5" width="106" height="12.5"/>
+            <rect class="ins" x="211.5" y="177.5" width="28.5" height="12.5"/>
+            <polygon class="dyna" points="92,177.5 106,177.5 106,190 211.5,190 211.5,177.5 225,177.5 225,127.5 211.5,127.5 211.5,140 106,140 106,127.5 92,127.5"/>
+            <rect class="glue" x="106" y="127.5" width="105.5" height="12.5"/>
+            <rect class="dyna" x="270" y="140" width="30" height="50"/>
+            <rect class="tool" x="80" y="50" width="160" height="65"/>
+            <rect class="ptfe" x="80" y="115" width="160" height="12.5"/>
+            <text x="100" y="88" style="fill:#fff">flat PTFE blade</text>
+            <text x="110" y="40" class="small">wipe along the wall →</text>
+          </svg>
+          <ul>
+            <li>The two rails are a stencil already built into the wall: a flat blade riding on them leaves glue only in the groove.</li>
+            <li>The volume comes out right on its own if the groove is ~30–40&nbsp;µm deep (2.1&nbsp;mm × 35&nbsp;µm ≈ 0.07&nbsp;mm³/mm).</li>
+            <li>No tool to make beyond a straight PTFE-faced blade.</li>
+          </ul>
+          <p class="tag">− works only if the rails are actually there; measure first.</p>
+        </div>
+      </div>
+
+      <h2>4. To settle before making anything</h2>
+      <ol>
+        <li><strong>Profile of a finished wall.</strong> Run a profilometer or dial gauge across the wall of a developed
+        board (the debulked one would do). This shows whether the rails exist and how high they are (t₁), and decides
+        between B and C. It also shows whether the mesh sits on the rails above the pillars.</li>
+        <li><strong>The glue:</strong> which glue, its viscosity and pot life. A stencil and a squeegee want a paste; a syringe shoe takes a runnier glue.</li>
+        <li><strong>The mesh thickness</strong> after stretching (≈&nbsp;40&nbsp;µm assumed above). It sets the final glue thickness, and with it the volume.</li>
+      </ol>
+
+      <details>
+        <summary>How the numbers were obtained</summary>
+        <p>Films: <code>Version_Apr26/Insulation_masks/V1/P2_BASKET-Mask_M1_V1.gbr</code> and <code>…M2_V1.gbr</code>
+        (clear = resist kept, as in the bulk-stack artifact). PCB: <code>Version_Apr26/FABRICATION_P2/Gerber/F_Cu</code> and <code>Edge_Cuts</code>.
+        The CEA films (three concatenated Gerbers) are rasterised with the polarity-aware reader from
+        <code>Version_Sept26/tools/render_gerber.py</code>; the PCB with gerbonara. Profiles run along the edge normal at
+        x = 150/300/450 (bottom), r = 150/300/450 (60° side), θ = 10/30/50° (arcs). The pillar-to-wall distance uses
+        all 12&nbsp;477 V1 pillars against the M1 line (the active outline). The crosses were compared by the
+        centroid of each feature in a ±4&nbsp;mm window. Heights do not come from the Gerbers: the 200&nbsp;µm is the
+        Dynamask height used in the lab, and t₁ is unknown.</p>
+      </details>
+    </div>
+  </article>
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <span>Alexandra Kallitsopoulou</span>
+  <span><a href="../../notes/">← all notes</a></span>
+</div></footer>
+</body>
+</html>
