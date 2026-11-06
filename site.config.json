@@ -7,7 +7,7 @@
   },
   "notes_dir": "notes",
   "unlisted_subdir": "unlisted",
-  "private_hub": "notes/hub-all-7c1e9a4d.html",
+  "private_hub": "notes/unlisted/index.html",
   "categories": [
     { "name": "Detector R&D",  "keywords": ["micromegas", "picosec", "detector", "gem", "rpc", "gas", "drift", "amplification", "pillar", "mesh", "fem", "simulation", "garfield", "comsol", "ansys"] },
     { "name": "Analysis",      "keywords": ["analysis", "fit", "resolution", "efficiency", "root", "histogram", "calibration", "test beam", "testbeam", "beam test", "waveform", "timing"] },

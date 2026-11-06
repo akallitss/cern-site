@@ -42,9 +42,10 @@ Edit the scaffolded file. Rules:
   (title from `<title>`, date from git). Optionally prepend the meta block to them.
 - Long tables/wide content: wrap in a scrolling container (`<div style="overflow-x:auto">`).
 - Math: keep it light (Unicode / `<sup>`/`<sub>`); no MathJax from CDN.
-- If the note is personal/private, make sure `visibility` is `unlisted` **and** it lives under
-  `notes/unlisted/`. Unlisted notes are deployed but excluded from `notes/index.html`; they appear
-  only in the private hub (`private_hub` in `site.config.json`) — treat that URL as a secret.
+- If the note is personal/private, it **must** live under `notes/unlisted/` (a `visibility=unlisted`
+  tag elsewhere only hides it, it is not protected). That folder is behind CERN SSO, owner only
+  (`notes/unlisted/.htaccess`); unlisted notes appear only in the private hub
+  `notes/unlisted/index.html`. Links to the private area from public notes will ask for a login.
 
 ## 3. Build, check, commit, deploy
 

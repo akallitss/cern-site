@@ -9,8 +9,9 @@ assets/site.css         shared stylesheet (front page, hub, notes)
 notes/                  every *.html here is a note; sub-folders become categories
 notes/index.html        GENERATED public hub (do not edit)
 notes/notes.json        GENERATED manifest (used by index.html "latest notes")
-notes/unlisted/         notes deployed but hidden from the public hub
-notes/hub-all-*.html    GENERATED private hub listing everything (keep the URL to yourself)
+notes/unlisted/         private area: hidden from the public hub AND behind CERN SSO (owner only)
+notes/unlisted/.htaccess  SSO rule for that folder (hand-written, committed)
+notes/unlisted/index.html GENERATED private hub listing everything
 templates/note.html     scaffold used by scripts/new_note.py
 scripts/build_hub.py    scans notes → hub + manifest (title, category, tags, dates)
 scripts/new_note.py     scaffold a note
@@ -55,10 +56,29 @@ reads only the first 200 kB for metadata and never modifies note files.
 | public notes hub | https://alexandra-kallitsopoulou.web.cern.ch/notes/ |
 | manifest | https://alexandra-kallitsopoulou.web.cern.ch/notes/notes.json |
 | a note | `https://alexandra-kallitsopoulou.web.cern.ch/notes/<path-under-notes>` |
-| private hub (everything, incl. unlisted) | `/notes/<private_hub file from site.config.json>` — not linked anywhere; treat as unlisted, not secret |
+| private hub (everything, incl. unlisted) | https://alexandra-kallitsopoulou.web.cern.ch/notes/unlisted/ — CERN login, owner only |
 
-To rotate the private-hub URL: change `private_hub` in `site.config.json`, `make hub`, delete the old
-file locally, and run `scripts/deploy.sh --delete` (or `rm` it on lxplus) so the old URL dies.
+## Private area (`notes/unlisted/`)
+
+`notes/unlisted/.htaccess` puts the folder behind CERN SSO (webEOS, https://webeos.docs.cern.ch/authorization/):
+
+```
+AuthType openid-connect
+Require claim cern_roles:owner
+```
+
+One-time setup, outside the repo:
+1. Web Services Portal → site → webEOS settings: enable **Use .htaccess files** (keep Guest Access on for the public part).
+2. https://application-portal.web.cern.ch/ → `webframeworks-webeos-alexandra-kallitsopoulou` → add Application role
+   `owner`, map it to an e-group containing only you.
+   (Untested shortcut: `Require claim cern_upn:akallits` in the `.htaccess`, no role/e-group.)
+
+Only files physically inside `notes/unlisted/` are protected. `<meta name="visibility" content="unlisted">`
+elsewhere only hides a note from the hub; `build_hub.py` warns about that. When moving a note in, leave a stub at
+the old path with `<meta name="visibility" content="redirect">` (the builder skips those).
+
+Check after deploy: open `/notes/unlisted/` in a private window → it must ask for a CERN login, and a
+non-owner account must get 403.
 
 ## Deploy details
 

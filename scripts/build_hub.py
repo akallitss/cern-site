@@ -4,8 +4,10 @@ build_hub.py — scan notes/**/*.html, extract metadata, and generate:
 
   notes/index.html      public hub (all *listed* notes)
   notes/notes.json      machine-readable manifest of the same
-  <private_hub>         hub listing *everything* incl. unlisted notes (path from site.config.json)
-  notes/unlisted/index.html   redirect stub so the folder never shows a directory listing
+  <private_hub>         hub listing *everything* incl. unlisted notes (path from site.config.json;
+                        normally notes/unlisted/index.html, which notes/unlisted/.htaccess puts
+                        behind CERN SSO). If the private hub lives elsewhere, notes/unlisted/index.html
+                        gets a redirect stub so the folder never shows a directory listing.
 
 Metadata sources, in priority order:
   title        <meta name="title">  ->  <title>  ->  first <h1>  ->  filename
@@ -15,6 +17,9 @@ Metadata sources, in priority order:
   date         <meta name="date">  ->  git first-commit date  ->  file mtime
   updated      <meta name="updated">  ->  git last-commit date  ->  file mtime
   visibility   <meta name="visibility" content="unlisted">  or  living in notes/unlisted/  -> unlisted
+               <meta name="visibility" content="redirect">  -> a "moved" stub, not indexed at all
+               Only files *inside* notes/unlisted/ are access-protected; a warning is printed for
+               notes tagged unlisted that live elsewhere.
 
 Only the standard library is used.
 """
@@ -124,6 +129,8 @@ def scan() -> list[dict]:
         rel_root = p.relative_to(ROOT).as_posix()
         text = read_head(p)
         meta = parse_meta(text)
+        if meta.get("visibility", "").lower() == "redirect":
+            continue  # "moved" stub left at an old URL
         # for fallback title/description/category, ignore inline scripts & styles (huge in Plotly/JSROOT exports)
         prose = SCRIPT_RE.sub(" ", text)
         subdir = p.parent.relative_to(NOTES_DIR).as_posix()
@@ -149,8 +156,12 @@ def scan() -> list[dict]:
 
         tags = [t.strip() for t in re.split(r"[,;]", meta.get("keywords", "")) if t.strip()]
 
-        unlisted = meta.get("visibility", "").lower() in {"unlisted", "private", "hidden"} or \
-            subdir.split("/")[0] == UNLISTED_SUBDIR
+        in_unlisted_dir = subdir.split("/")[0] == UNLISTED_SUBDIR
+        tagged_unlisted = meta.get("visibility", "").lower() in {"unlisted", "private", "hidden"}
+        unlisted = tagged_unlisted or in_unlisted_dir
+        if tagged_unlisted and not in_unlisted_dir:
+            print(f"WARNING: {rel_root} is tagged unlisted but is outside notes/{UNLISTED_SUBDIR}/ "
+                  f"- it is hidden from the hub but NOT access-protected; move it there.", file=sys.stderr)
 
         category = meta.get("category") or ""
         if not category and subdir and subdir.split("/")[0] != UNLISTED_SUBDIR:
@@ -355,8 +366,13 @@ def main() -> int:
         out.write_text(render_hub(notes, title="All notes (incl. unlisted)", private=True, base_rel=base_rel), encoding="utf-8")
 
     unl = NOTES_DIR / UNLISTED_SUBDIR
-    if unl.exists():
-        (unl / "index.html").write_text(REDIRECT_STUB, encoding="utf-8")
+    unl_index = unl / "index.html"
+    hub_is_unl_index = bool(private_hub) and (ROOT / private_hub).resolve() == unl_index.resolve()
+    if unl.exists() and not hub_is_unl_index:
+        unl_index.write_text(REDIRECT_STUB, encoding="utf-8")
+    if unl.exists() and not (unl / ".htaccess").exists():
+        print(f"WARNING: notes/{UNLISTED_SUBDIR}/.htaccess is missing - the unlisted folder is NOT "
+              f"behind CERN SSO.", file=sys.stderr)
 
     n_unl = len(notes) - len(listed)
     print(f"hub: {len(listed)} listed, {n_unl} unlisted, {len({n['category'] for n in notes})} categories")

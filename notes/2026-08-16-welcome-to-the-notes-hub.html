@@ -63,13 +63,13 @@
       How-to, Personal). Add or edit rules there and rebuild.</p>
 
       <h2>Unlisted pages</h2>
-      <p>Files under <code>notes/unlisted/</code> (or with <code>visibility=unlisted</code>) are deployed to
-      the web server like everything else, but never appear in <code>notes/index.html</code> or the
-      manifest. They only show up in the private hub whose path is set by <code>private_hub</code> in
-      <code>site.config.json</code>. Anyone with the exact URL can still open them — this is
-      <em>unlisted</em>, not <em>authenticated</em>.</p>
-      <div class="callout warn">Do not put secrets (passwords, tokens, unpublished data you are not
-      allowed to share) in unlisted pages. Obscurity is not access control.</div>
+      <p>Files under <code>notes/unlisted/</code> are deployed like everything else, but never appear in
+      <code>notes/index.html</code> or the manifest. The folder is behind CERN SSO
+      (<code>notes/unlisted/.htaccess</code>) and only the site owner can open it; its
+      <code>index.html</code> is the private hub listing everything.</p>
+      <div class="callout warn">Only files <em>inside</em> <code>notes/unlisted/</code> are protected.
+      A note tagged <code>visibility=unlisted</code> elsewhere is merely hidden from the hub — the
+      builder warns about those.</div>
 
       <h2>Publishing workflow</h2>
       <pre><code># scaffold

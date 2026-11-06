@@ -1,0 +1,9 @@
+# Restrict notes/unlisted/ (private hub + unlisted notes) to the site owner via CERN SSO.
+# Requires "Use .htaccess files" enabled for the site in the Web Services Portal, and an
+# application role "owner" (mapped to an e-group containing only akallits) on
+# webframeworks-webeos-alexandra-kallitsopoulou in https://application-portal.web.cern.ch/.
+# Docs: https://webeos.docs.cern.ch/authorization/
+AuthType openid-connect
+Require claim cern_roles:owner
+# Undocumented shortcut (no role / e-group needed) - test before relying on it:
+# Require claim cern_upn:akallits
