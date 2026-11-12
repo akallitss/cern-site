@@ -1,7 +1,26 @@
 {
-  "latest_update": "2026-10-07",
-  "count": 19,
+  "latest_update": "2026-11-12",
+  "count": 20,
   "notes": [
+    {
+      "title": "VMM DAQ code map: from the browser to the chip",
+      "description": "Which program does what in the P2 VMM DAQ, who owns it, and how a threshold travels from a text file to a VMM channel",
+      "category": "Software",
+      "tags": [
+        "vmm",
+        "daq",
+        "p2",
+        "slow-control",
+        "how-to"
+      ],
+      "date": "2026-11-12",
+      "updated": "2026-11-12",
+      "unlisted": false,
+      "path": "2026-11-12-vmm-daq-code-map-from-the-browser-to-the-chip.html",
+      "url": "/notes/2026-11-12-vmm-daq-code-map-from-the-browser-to-the-chip.html",
+      "size": 29042,
+      "size_h": "28.4 kB"
+    },
     {
       "title": "VMM3a / SRS data flow — schematics",
       "description": "How a hit travels from detector strip to UDP packet, and how the absolute hit timestamp is reconstructed — four reference schematics for VMM3a/SRS pcapng analysis.",

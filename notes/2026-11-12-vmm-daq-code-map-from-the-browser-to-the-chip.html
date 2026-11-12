@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>VMM DAQ code map: from the browser to the chip</title>
+<meta name="description" content="Which program does what in the P2 VMM DAQ, who owns it, and how a threshold travels from a text file to a VMM channel">
+<meta name="category" content="Software">
+<meta name="keywords" content="vmm,daq,p2,slow-control,how-to">
+<meta name="date" content="2026-11-12">
+<meta name="updated" content="2026-11-12">
+<meta name="visibility" content="public">
+<!-- ======================================================================= -->
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+  /* note-local styles go here */
+</style>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="../">Alexandra Kallitsopoulou</a>
+  <nav class="nav"><a href="../">Home</a><a href="../notes/">Notes</a></nav>
+</div></header>
+
+<main class="wrap">
+  <article>
+    <header class="note-header">
+      <h1>VMM DAQ code map: from the browser to the chip</h1>
+      <p class="muted">Which program does what in the P2 VMM DAQ, who owns it, and how a threshold travels from a text file to a VMM channel</p>
+      <div class="meta-row">
+        <span class="pill">Software</span>
+        <time datetime="2026-11-12">2026-11-12</time>
+        <span class="faint">vmm,daq,p2,slow-control,how-to</span>
+      </div>
+    </header>
+
+    <div class="note-body">
+      <p>When you press <b>Configure chip</b> or <b>Start Run</b> in the DAQ web page, four different
+      pieces of software written by different people run one after the other before anything
+      reaches a VMM chip. This page says which piece does what, where it lives on the DAQ
+      machine, who owns it, and which files you are meant to edit. It ends with the path a
+      threshold takes from a text file to a channel, and what is and is not possible today for
+      thresholds <em>per channel</em>.</p>
+
+      <p class="muted">State of the DAQ machine on 12 November 2026. All paths are on the DAQ
+      machine. Words in <em>italics</em> at first use are in the <a href="#glossary">glossary</a>.</p>
+
+      <div class="callout">
+        <b>The short version.</b>
+        <ul>
+          <li>Five layers: web page and run control → bench scripts → slow-control program → firmware → chips.
+              Each layer only calls the one below it.</li>
+          <li>As a physicist you edit <b>one kind of file</b>: the exception files in <code>config_ext/</code>.
+              Everything else is either generated or owned by a developer.</li>
+          <li>A chip is always written <b>in full</b>. There is no "change one channel" command.</li>
+          <li>What is in the chips cannot be read back. The record is the exception file, which is copied into every run folder.</li>
+          <li>A threshold per channel can already be <b>set</b> through the existing files (never tried yet). It cannot yet be <b>measured</b>.</li>
+        </ul>
+      </div>
+
+      <h2 id="layers">1. The five layers</h2>
+
+      <figure>
+      <svg viewBox="0 0 760 470" role="img" aria-label="The five software layers between the browser and the VMM chips" style="width:100%;height:auto;max-width:760px;font-family:inherit">
+        <style>
+          .bx{fill:none;stroke:currentColor;stroke-width:1.4;rx:8}
+          .t{fill:currentColor;font-size:15px;font-weight:600}
+          .s{fill:currentColor;font-size:12.5px;opacity:.8}
+          .a{stroke:currentColor;stroke-width:1.4;fill:none;marker-end:url(#ah)}
+          .l{fill:currentColor;font-size:12px;opacity:.75;font-style:italic}
+        </style>
+        <defs><marker id="ah" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="currentColor"/></marker></defs>
+        <rect class="bx" x="20" y="10" width="520" height="62"/>
+        <text class="t" x="36" y="36">5 · Web page and run control</text>
+        <text class="s" x="36" y="57">DAQ_Control_VMM_Beam — Python — ours</text>
+        <path class="a" d="M280 72 V104"/><text class="l" x="292" y="93">starts a script and waits for its exit code</text>
+        <rect class="bx" x="20" y="106" width="520" height="62"/>
+        <text class="t" x="36" y="132">4 · Bench scripts and configuration files</text>
+        <text class="s" x="36" y="153">TestBenchCERN — Python, YAML, text — P2 group</text>
+        <path class="a" d="M280 168 V200"/><text class="l" x="292" y="189">Python calls into the library</text>
+        <rect class="bx" x="20" y="202" width="520" height="62"/>
+        <text class="t" x="36" y="228">3 · Slow-control program  p2basket-sc</text>
+        <text class="s" x="36" y="249">C++ library, command-line tool, Python module — slow-control developer</text>
+        <path class="a" d="M280 264 V296"/><text class="l" x="292" y="285">UDP packets on the slow-control network</text>
+        <rect class="bx" x="20" y="298" width="520" height="62"/>
+        <text class="t" x="36" y="324">2 · Firmware</text>
+        <text class="s" x="36" y="345">FEC board and the FPGA on each hybrid — firmware developers</text>
+        <path class="a" d="M280 360 V392"/><text class="l" x="292" y="381">serial line into each chip</text>
+        <rect class="bx" x="20" y="394" width="520" height="62"/>
+        <text class="t" x="36" y="420">1 · Hardware</text>
+        <text class="s" x="36" y="441">10 hybrids × 2 VMM3a chips × 64 channels</text>
+        <rect class="bx" x="580" y="10" width="160" height="62" stroke-dasharray="5 4"/>
+        <text class="t" x="594" y="36">Readout, analysis</text>
+        <text class="s" x="594" y="57">reads the data files</text>
+        <path class="a" d="M540 41 H578"/>
+        <path class="a" d="M660 394 V74" stroke-dasharray="5 4"/>
+        <text class="l" x="668" y="240" transform="rotate(90 668 240)">data network (separate cable)</text>
+      </svg>
+      <figcaption>Control goes down the left column. Data comes back on a separate network and is only
+      written to disk by layer 5; the analysis reads those files and never talks to the chips.</figcaption>
+      </figure>
+
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Layer</th><th>Folder on the DAQ machine</th><th>Owner</th><th>May a physicist change it?</th></tr></thead>
+        <tbody>
+          <tr><td>5 · web page, run control</td><td><code>/local/p2/DAQ_Control_VMM_Beam</code></td><td>us</td>
+              <td>Through git only: change on your own computer, push, then "Git Reset" in the web page. Anything edited directly on the DAQ machine is erased at the next reset.</td></tr>
+          <tr><td>4 · bench scripts</td><td><code>/local/p2/p2testbench/TestBenchCERN</code></td><td>P2 group</td>
+              <td><b>Yes for the files in <code>config_ext/</code></b> (add new ones). The scripts are called as they are and not modified.</td></tr>
+          <tr><td>3 · slow control</td><td><code>/local/p2/deploy</code></td><td>slow-control developer</td>
+              <td>No. A new version arrives as a new dated folder; <code>deploy/bin</code> points to the newest.</td></tr>
+          <tr><td>2 · firmware</td><td>not on the machine as source</td><td>firmware developers</td><td>No.</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2 id="hardware">2. The hardware, as the software names it</h2>
+      <ul>
+        <li>One <em>FEC</em> board, called <code>fec[00]</code>, inside <code>subsystem[00]</code>.</li>
+        <li>Ten <em>hybrids</em>, <code>hybrid[00]</code> to <code>hybrid[09]</code>. Hybrid 0 is the trigger hybrid
+            (it receives the scintillator signal). Hybrids 1 to 9 read the detectors.</li>
+        <li>Two VMM3a chips per hybrid, <code>vmm[00]</code> and <code>vmm[01]</code>.
+            In the analysis a chip has one number: <b>chip = 2 × hybrid + vmm</b>, so 0 to 19.
+            Example: chip 7 is hybrid 3, vmm 1.</li>
+        <li>64 channels per chip, <code>channel[00]</code> to <code>channel[63]</code>.</li>
+        <li>Each hybrid has a small ADC that can measure one analog voltage chosen inside the chip
+            (the <em>monitor output</em>): the temperature, the threshold voltage, or one channel.
+            This is the only way to measure anything analog in a chip without taking data.</li>
+      </ul>
+
+      <h2 id="l5">3. Layer 5: the web page and run control</h2>
+      <p>This is the program you see in the browser. It decides when data is taken, writes the data
+      files, shows plots and raises alarms. It does <b>not</b> know how to talk to a chip. For that it
+      starts programs of layers 4 and 3 and looks at their <em>exit code</em>.</p>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>What you do</th><th>File that handles it</th><th>What it starts</th></tr></thead>
+        <tbody>
+          <tr><td>Press <b>Configure chip</b></td><td><code>flask_app/chip_config.py</code></td>
+              <td>first the warm-reset script, then the configuration script (section 4)</td></tr>
+          <tr><td>Press <b>Warm Reset</b></td><td><code>flask_app/chip_config.py</code></td><td>the warm-reset script alone</td></tr>
+          <tr><td>Press <b>Start Run</b></td><td><code>daq_control.py</code>, <code>vmm_daq_control.py</code></td>
+              <td>for every sub-run: <code>p2basket-sc --acq-on</code>, the capture program <code>dumpcap</code>, then <code>p2basket-sc --acq-off</code>. It also copies the exception file in use into the run folder.</td></tr>
+          <tr><td>Run a scan of chip settings</td><td><code>config_scan.py</code></td>
+              <td>for each exception file: configure, warm reset, one complete run</td></tr>
+          <tr><td>Prepare the files of a threshold scan</td><td><code>quick_scripts/make_cosmic_sdt_configs.py</code></td>
+              <td>nothing; it writes new exception files from a template</td></tr>
+          <tr><td>Switch the low voltage</td><td><code>flask_app/power_control.py</code></td><td>the TDK supply scripts of layer 4</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p>Four rules are built into this layer. Any new tool that touches the chips has to keep them.</p>
+      <ol>
+        <li>Never write to the chips while data is being captured.</li>
+        <li>A <em>warm reset</em> comes immediately <b>before</b> the configuration, never after it.
+            A warm reset after the configuration silently erases the settings of the trigger hybrid.</li>
+        <li>One chip operation at a time, and nobody else may be using the slow control at that moment (the <em>session lock</em>).</li>
+        <li>The exception file used for a run is copied into that run's folder.</li>
+      </ol>
+
+      <h2 id="l4">4. Layer 4: bench scripts and configuration files</h2>
+      <p>Folder: <code>/local/p2/p2testbench/TestBenchCERN</code>. Every slow-control command is started from inside this folder.</p>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>File</th><th>What it is</th></tr></thead>
+        <tbody>
+          <tr><td><code>config_base/p2b-config-cern-base.yaml</code></td>
+              <td>The <b>base file</b>: every register of every chip with its default value, about 30 000 lines. There must be exactly one <code>.yaml</code> file in this folder. You normally never edit it.</td></tr>
+          <tr><td><code>config_ext/*.txt</code></td>
+              <td>The <b>exception files</b>: short text files listing only what differs from the base (gain, peaking time, thresholds, masked channels). Every file in this folder appears in the drop-down list of the web page. <b>This is the file you edit or generate.</b></td></tr>
+          <tr><td><code>p2basket_sc_config.py</code></td>
+              <td>The configuration script. Loads the base file, applies the exception file on top, writes everything to the hardware.</td></tr>
+          <tr><td><code>p2basket_sc_warm_reset.py</code></td>
+              <td>Resets the links to the hybrids and checks them. Its exit code is the number of hybrids that are not ready; 0 means all good.</td></tr>
+          <tr><td><code>switchOn_tdk.sh</code>, <code>switchOff_tdk.sh</code>, <code>pilot_tdkl.py</code></td>
+              <td>Low-voltage supplies.</td></tr>
+          <tr><td>everything else (<code>daq_control.sh</code>, <code>loop_daq.sh</code>, <code>config_scan/</code>, …)</td>
+              <td>The older bench DAQ and colleagues' own tests. Not used by the web page.</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>The same thing by hand</h3>
+      <p>This is what <b>Configure chip</b> runs. You can type it in a terminal on the DAQ machine when no run is going on.</p>
+<pre><code>cd /local/p2/p2testbench/TestBenchCERN
+
+../TestBenchCosmics/p2basket_sc_warm_reset.py -c . -b config_base/p2b-config-cern-base.yaml -W -w 3
+
+./p2basket_sc_config.py -c . -b config_base/p2b-config-cern-base.yaml \
+    -e config_ext/p2b-config-cern-ext_gain4.5_peaktime200_opt.txt</code></pre>
+      <ul>
+        <li><code>-c .</code> the folder the two file names below are relative to (here: the current folder).</li>
+        <li><code>-b</code> the base file.</li>
+        <li><code>-e</code> the exception file.</li>
+        <li><code>-W</code> do a warm reset now. <code>-w 3</code> try up to 3 more times if a hybrid is not ready.</li>
+        <li>Add <code>-v</code> to the second command to see every exception line as it is applied.</li>
+      </ul>
+
+      <h3 id="grammar">How to read and write an exception file</h3>
+      <p>One setting per line. The words are separated by spaces and their <b>order is fixed</b>:</p>
+<pre><code>Sys 0 Bec 0 Hyb 3 Vmm 1 Reg bank1spi2 Field sg 3     # gain 4.5 mV/fC</code></pre>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Words</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>Sys 0 Bec 0</code></td><td>subsystem 0, FEC board 0. Always these values on our stand.</td></tr>
+          <tr><td><code>Hyb 3 Vmm 1</code></td><td>hybrid 3, its second chip (so chip 7).</td></tr>
+          <tr><td><code>Reg bank1spi2</code></td><td>the name of the <em>register</em> inside the chip.</td></tr>
+          <tr><td><code>Field sg</code></td><td>the name of the setting inside that register (here the gain).</td></tr>
+          <tr><td><code>3</code></td><td>the value, a whole number.</td></tr>
+          <tr><td><code># …</code></td><td>anything after the value is ignored: a comment.</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <ul>
+        <li>A line that does not start with <code>Sys</code> is ignored. Start a line with <code>#</code> to switch it off.</li>
+        <li>There is no "all channels" shortcut. Setting something on 64 channels takes 64 lines.</li>
+        <li>If the same setting appears twice, the last line wins.</li>
+        <li>The comments in the existing files were typed by hand and some are wrong. Trust the values, not the comments.</li>
+      </ul>
+
+      <h3>The settings you will meet</h3>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Register</th><th>Field</th><th>Meaning</th><th>Values</th></tr></thead>
+        <tbody>
+          <tr><td><code>bank1spi2</code></td><td><code>sg</code></td><td>gain</td><td>0…7 → 0.5, 1, 3, 4.5, 6, 9, 12, 16 mV/fC</td></tr>
+          <tr><td><code>bank1spi2</code></td><td><code>st</code></td><td>peaking time</td><td>0…3 → 200, 100, 50, 25 ns</td></tr>
+          <tr><td><code>bank1spi2</code></td><td><code>sp</code></td><td>polarity of the input charge</td><td>0 negative, 1 positive</td></tr>
+          <tr><td><code>bank1spi2</code></td><td><code>sng</code></td><td>neighbour logic (a channel is also read when its neighbour fires)</td><td>0 off, 1 on</td></tr>
+          <tr><td><code>bank1spi1</code> and <code>bank1spi2</code></td><td><code>sdt</code></td><td><b>threshold of the whole chip</b>, in two parts (see below)</td><td>0…1023 in total</td></tr>
+          <tr><td><code>channel[NN]</code></td><td><code>sm</code></td><td><b>mask</b> one channel</td><td>1 = channel switched off</td></tr>
+          <tr><td><code>channel[NN]</code></td><td><code>sd</code></td><td><b>threshold trim</b> of one channel</td><td>0…31</td></tr>
+          <tr><td><code>channel[NN]</code></td><td><code>st</code></td><td>connect this channel to the internal test pulser</td><td>0 off, 1 on</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="callout warn">Two different settings are both called <code>st</code>. In register
+      <code>bank1spi2</code> it is the peaking time of the chip. In a <code>channel[NN]</code> register it switches the test pulser onto that channel.</div>
+
+      <h2 id="l3">5. Layer 3: the slow-control program</h2>
+      <p><em>Slow control</em> means everything that sets up or checks the electronics, as opposed to the
+      fast data stream. Here it is one software package, <code>p2basket-sc</code>, installed in
+      <code>/local/p2/deploy</code>. It comes in three forms that do the same things:</p>
+      <ul>
+        <li><code>/local/p2/deploy/bin/p2basket-sc</code>, a command-line tool. This is what the run control calls to start and stop the data flow.</li>
+        <li>a Python module called <code>p2basket</code>. This is what the bench scripts of layer 4 use.
+            It only works when Python is started through <code>/local/p2/deploy/bin/p2basket-python</code>.</li>
+        <li><code>p2basket-gui</code>, a window program of the same developer, and <code>vmmdcs-p2b</code>,
+            the older program from the RD51 collaboration, which also contains calibration procedures.</li>
+      </ul>
+      <p>To see which version is installed and what it can do (both commands are harmless, they send nothing):</p>
+<pre><code>/local/p2/deploy/bin/p2basket-sc --version
+/local/p2/deploy/bin/p2basket-sc --help</code></pre>
+
+      <h3>What it can do</h3>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Command</th><th>Effect</th><th>Changes the chips?</th></tr></thead>
+        <tbody>
+          <tr><td><code>--config-file &lt;base.yaml&gt;</code></td><td>loads the description of the hardware into the program's memory</td><td>no</td></tr>
+          <tr><td><code>--read-link-status</code>, <code>--read-fw-version</code>, <code>--read-chip-id</code>, <code>--read-temperature</code></td><td>reads status information</td><td>no</td></tr>
+          <tr><td><code>--warm-reset</code></td><td>resets the FEC and its links to the hybrids</td><td>resets them</td></tr>
+          <tr><td><code>--config-fec-regs</code>, <code>--config-hyb-regs</code>, <code>--config-vmm-regs</code></td><td>writes the settings held in memory to the FEC, the hybrids, the chips</td><td><b>yes, these three only</b></td></tr>
+          <tr><td><code>--acq-on</code>, <code>--acq-off</code></td><td>starts and stops the data flow</td><td>no</td></tr>
+          <tr><td><code>--dry-run</code></td><td>do everything except actually sending to the hardware</td><td>no</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>Four properties that explain most surprises</h3>
+      <ol>
+        <li><b>A chip is always written in full.</b> <code>--config-vmm-regs</code> sends all 70 registers of
+            every chip in one go. Changing the trim of one channel therefore costs a complete
+            configuration, with the same rules as in section 3.</li>
+        <li><b>Nothing can be read back from a chip.</b> The VMM registers are write-only. The only record
+            of what a chip contains is "base file + the exception file applied last".</li>
+        <li><b>The program forgets everything when it ends.</b> Settings exist in memory only while a
+            command runs. That is why every command is given the base file again.</li>
+        <li><b>One user at a time.</b> The program takes a <em>session lock</em>. If a colleague is working with
+            the slow control, a run start fails with "Session locked by …". The lock needs a folder,
+            <code>/run/p2basket</code>, that disappears when the machine is rebooted.</li>
+      </ol>
+      <div class="callout warn"><b>After a reboot of the DAQ machine</b> the folder <code>/run/p2basket</code>
+      is missing and slow-control commands fail with <code>No P2basket Runtime Service directory</code>.
+      Someone with administrator rights has to run<br>
+      <code>sudo systemctl start p2basket.service</code><br>
+      once. This was the state on 12 November 2026 after the system update.</div>
+
+      <h2 id="threshold">6. How a threshold reaches a channel</h2>
+      <p>A VMM3a has <b>one threshold voltage per chip</b>, set by a 10-bit number called <code>sdt</code>
+      (0 to 1023). Each of the 64 channels can then shift its own threshold a little with a 5-bit
+      number called <code>sd</code> (0 to 31), the <em>trim</em>. So a channel does not have an independent
+      threshold: it has the chip threshold plus a small personal correction.</p>
+
+      <h3>The chip threshold: two lines</h3>
+      <p>The 10-bit number does not fit in one register, so it is split in two:</p>
+<pre><code>sdt = 64 × (value in bank1spi2) + (value in bank1spi1)
+
+Sys 0 Bec 0 Hyb 1 Vmm 0 Reg bank1spi1 Field sdt 46
+Sys 0 Bec 0 Hyb 1 Vmm 0 Reg bank1spi2 Field sdt  3      # 64 × 3 + 46 = 238</code></pre>
+      <p>To go the other way for a wanted value, for example 300: <code>bank1spi2</code> gets 300 ÷ 64
+      rounded down = 4, <code>bank1spi1</code> gets the remainder = 44.</p>
+
+      <h3>The path</h3>
+      <ol>
+        <li>You choose an exception file in the web page and press <b>Configure chip</b>.</li>
+        <li>Layer 5 runs the warm-reset script and checks that all hybrids are ready.</li>
+        <li>Layer 5 runs the configuration script with the base file and your exception file.</li>
+        <li>The script loads the base file, then changes one value in memory for each line of the exception file.</li>
+        <li>The script calls <code>config-vmm-regs</code>: layer 3 sends one packet per chip, 20 in total.</li>
+        <li>The firmware shifts each packet into its chip.</li>
+        <li>At <b>Start Run</b> the exception file is copied into the run folder.</li>
+      </ol>
+
+      <h2 id="perchannel">7. Thresholds per channel: what exists today</h2>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Question</th><th>Answer on 12 November 2026</th></tr></thead>
+        <tbody>
+          <tr><td>Can the hardware and firmware take a trim per channel?</td>
+              <td>Yes. The trim is part of the channel register that is already written at every configuration, and the older RD51 program wrote trims to this same electronics in November 2025.</td></tr>
+          <tr><td>Can we set one with our files?</td>
+              <td>The way exists: a line with <code>Field sd</code>, handled by the same code as the mask lines we use every day. It has <b>never been tried</b>: all 1280 trims are 0 in the base file and no exception file sets one.</td></tr>
+          <tr><td>Can we read back what was set?</td>
+              <td>Not from the chip. Only from the exception file kept with the run.</td></tr>
+          <tr><td>Can we measure the real threshold of a channel?</td>
+              <td>Not yet. The slow-control library contains code for it (through the monitor output and the hybrid ADC), but no command gives access to it. Only the temperature measurement is available.</td></tr>
+          <tr><td>Is there another way to see a channel's threshold?</td>
+              <td>From data: the lowest amplitude a channel records and its noise rate both move with the threshold. Slower, but it works today.</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p>A trim line would look like this (hybrid 3, second chip, channel 45, trim 12):</p>
+<pre><code>Sys 0 Bec 0 Hyb 3 Vmm 1 Reg channel[45] Field sd 12</code></pre>
+      <p>Channel numbers below 10 are written with two digits: <code>channel[07]</code>.</p>
+      <div class="callout warn">Do not use trim lines for real data yet. How much one trim step moves the
+      threshold on our chips, and in which direction, has not been measured. The first test is
+      planned on a single chip with half of its channels left untouched as a reference.</div>
+
+      <h3>Planned next steps</h3>
+      <ol>
+        <li>A small tool that turns a table of trims (chip, channel, value) into an exception file, and a
+            second one that prints what any exception file sets, chip by chip.</li>
+        <li>A test on one chip: the same settings with trim 0, 15 and 31, compared in the data.</li>
+        <li>Access to the threshold measurement, to be discussed with the slow-control developer.</li>
+        <li>Equalising all channels of each chip, and comparing the spread of noise rates before and after.</li>
+        <li>A panel in the web page, once the steps above work from the terminal.</li>
+      </ol>
+
+      <h2 id="other">8. Other folders you will see under <code>/local/p2</code></h2>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Folder</th><th>Content</th><th>Used by the DAQ?</th></tr></thead>
+        <tbody>
+          <tr><td><code>p2data</code></td><td>the run data</td><td>yes</td></tr>
+          <tr><td><code>p2-readout</code></td><td>our decoder, pad mapping and live monitor (<code>p2-decode</code>, <code>p2-mapping</code>, <code>p2-monitor</code>)</td><td>yes, for the plots</td></tr>
+          <tr><td><code>p2-setups</code></td><td>the description of the stand: detectors, cabling, high voltage</td><td>yes</td></tr>
+          <tr><td><code>p2soft/vmmsc</code>, <code>p2soft/_install</code></td><td>the RD51 slow-control program and its old configuration files</td><td>no, reference</td></tr>
+          <tr><td><code>p2soft/p2basket-sc</code></td><td>an old copy of the slow-control source code (December 2025) and firmware files</td><td>no, reference</td></tr>
+          <tr><td><code>p2soft/vmm-analysis</code></td><td>the first online analysis</td><td>no, replaced by <code>p2-readout</code></td></tr>
+          <tr><td><code>p2testbench/TestBenchCosmics</code></td><td>older sibling of <code>TestBenchCERN</code>; only its warm-reset script is used</td><td>one script</td></tr>
+          <tr><td><code>ops</code></td><td>helper scripts of the July 2026 beam test</td><td>no</td></tr>
+          <tr><td><code>p2equipment</code>, <code>p2setup</code></td><td>bench instruments and shell environment files</td><td>no</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2 id="glossary">Glossary</h2>
+      <dl>
+        <dt>Base file</dt><dd>The YAML file with every register of every chip and its default value.</dd>
+        <dt>Channel</dt><dd>One of the 64 amplifier inputs of a VMM chip; one detector pad or strip.</dd>
+        <dt>Exception file</dt><dd>A text file in <code>config_ext/</code> listing the settings that differ from the base file. Also called "ext file".</dd>
+        <dt>Exit code</dt><dd>A number every program returns when it ends. 0 means success. The run control uses it to know whether a script worked.</dd>
+        <dt>FEC</dt><dd>Front-End Concentrator: the board between the computer and the hybrids. Ours is an ALINX board.</dd>
+        <dt>Firmware</dt><dd>The program loaded into the programmable chips (FPGA) of the FEC and of each hybrid.</dd>
+        <dt>Hybrid</dt><dd>The small board plugged on the detector, carrying two VMM chips.</dd>
+        <dt>Mask</dt><dd>Switching a channel off so that it produces no hits (<code>sm 1</code>).</dd>
+        <dt>Monitor output</dt><dd>One analog pin of the VMM onto which a chosen internal voltage can be routed, to be measured by the ADC on the hybrid.</dd>
+        <dt>Register, field</dt><dd>A register is one 32-bit word of settings inside a chip. A field is one named setting inside that word.</dd>
+        <dt>Session lock</dt><dd>A file that marks the slow control as "in use by this person", so two people do not configure the chips at once.</dd>
+        <dt>Slow control</dt><dd>Setting up and checking the electronics (registers, links, temperatures), as opposed to reading the data.</dd>
+        <dt>Threshold (<code>sdt</code>)</dt><dd>The signal height above which a channel records a hit. One value per chip, 0 to 1023.</dd>
+        <dt>Trim (<code>sd</code>)</dt><dd>A small correction to the threshold of one channel, 0 to 31.</dd>
+        <dt>Warm reset</dt><dd>A reset of the FEC and of its links to the hybrids without switching the power off.</dd>
+        <dt>YAML</dt><dd>A plain-text file format for structured settings.</dd>
+      </dl>
+    </div>
+  </article>
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <span>Alexandra Kallitsopoulou</span>
+  <span><a href="../notes/">← all notes</a></span>
+</div></footer>
+</body>
+</html>
