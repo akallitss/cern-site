@@ -193,17 +193,34 @@ def scan() -> list[dict]:
 
 
 # --------------------------------------------------------------------------- render
-def render_hub(notes: list[dict], *, title: str, private: bool, base_rel: str) -> str:
-    """base_rel: relative path prefix from the hub file to the notes/ directory (e.g. '' or '')."""
+PRIVATE_CAT = "Private"
+
+
+def render_hub(notes: list[dict], *, title: str, private: bool, base_rel: str,
+               private_count: int = 0, private_latest: str = "") -> str:
+    """base_rel: relative path prefix from the hub file to the notes/ directory (e.g. '' or '').
+
+    Every hub gets a "Private" group, always shown last:
+      private hub -> the unlisted notes themselves are grouped there (their real category stays as a pill);
+      public hub  -> one entry linking to the SSO-protected notes/unlisted/ (titles are not revealed).
+    """
+    def group(n: dict) -> str:
+        return PRIVATE_CAT if n["unlisted"] else n["category"]
+
     cats: dict[str, list[dict]] = {}
     for n in notes:
-        cats.setdefault(n["category"], []).append(n)
-    cat_names = sorted(cats, key=lambda c: (-len(cats[c]), c))
+        cats.setdefault(group(n), []).append(n)
+    if not private and private_count:
+        cats[PRIVATE_CAT] = []  # represented by the single locked entry below
+
+    def count(c: str) -> int:
+        return private_count if (c == PRIVATE_CAT and not private) else len(cats[c])
+    cat_names = sorted(cats, key=lambda c: (c == PRIVATE_CAT, -count(c), c))
     esc = html.escape
     latest = max((n["updated"] for n in notes), default="—")  # deterministic: no wall-clock, so rebuilds don't churn git
 
     chips = ['<button class="chip active" data-cat="*">All <span class="cnt">%d</span></button>' % len(notes)]
-    chips += ['<button class="chip" data-cat="%s">%s <span class="cnt">%d</span></button>' % (esc(c), esc(c), len(cats[c])) for c in cat_names]
+    chips += ['<button class="chip" data-cat="%s">%s <span class="cnt">%d</span></button>' % (esc(c), esc(c), count(c)) for c in cat_names]
 
     items = []
     for n in notes:
@@ -212,7 +229,7 @@ def render_hub(notes: list[dict], *, title: str, private: bool, base_rel: str) -
         upd = f' · updated {esc(n["updated"])}' if n["updated"] != n["date"] else ""
         search = esc(" ".join([n["title"], n["description"], n["category"], " ".join(n["tags"]), n["path"]]).lower())
         items.append(f'''
-      <li class="note" data-cat="{esc(n["category"])}" data-search="{search}" data-date="{esc(n["date"])}">
+      <li class="note" data-cat="{esc(group(n))}" data-search="{search}" data-date="{esc(n["date"])}">
         <div class="note-main">
           <a class="note-title" href="{esc(base_rel + n["path"])}">{esc(n["title"])}</a>
           {('<p class="note-desc">' + esc(n["description"]) + '</p>') if n["description"] else ""}
@@ -222,6 +239,18 @@ def render_hub(notes: list[dict], *, title: str, private: bool, base_rel: str) -
           </div>
         </div>
         <time class="note-date" datetime="{esc(n["date"])}">{esc(n["date"])}<span class="faint small">{upd}</span></time>
+      </li>''')
+    if not private and private_count:
+        items.append(f'''
+      <li class="note" data-cat="{PRIVATE_CAT}" data-search="private unlisted notes login" data-date="{esc(private_latest)}">
+        <div class="note-main">
+          <a class="note-title" href="{esc(base_rel)}{UNLISTED_SUBDIR}/">Private notes ({private_count})</a>
+          <p class="note-desc">Work-in-progress and internal notes. CERN login required, site owner only.</p>
+          <div class="meta-row small">
+            <span class="pill" style="background:#fde8e8;color:#b42318">&#128274; login required</span>
+          </div>
+        </div>
+        <time class="note-date" datetime="{esc(private_latest)}">{esc(private_latest)}<span class="faint small">last update</span></time>
       </li>''')
 
     robots = '<meta name="robots" content="noindex,nofollow">' if private else ""
@@ -267,7 +296,7 @@ def render_hub(notes: list[dict], *, title: str, private: bool, base_rel: str) -
 <main class="wrap">
   <div class="hub-head">
     <h1>{esc(title)}</h1>
-    <span class="muted small">{len(notes)} notes · {len(cats)} categories · last update {esc(latest)}</span>
+    <span class="muted small">{len(notes)} notes · {len([c for c in cats if c != PRIVATE_CAT])} categories · last update {esc(latest)}</span>
   </div>
   <p class="muted">Everything I have written up as an HTML page, newest first. Filter by category or search by title, tag or text.</p>
 
@@ -314,7 +343,8 @@ def render_hub(notes: list[dict], *, title: str, private: bool, base_rel: str) -
     // group: move visible notes under headers, keeping date order inside each group
     const byCat = {{}};
     notes.forEach(el => {{ (byCat[el.dataset.cat] ||= []).push(el); }});
-    const order = Object.keys(byCat).sort((a, b) => byCat[b].length - byCat[a].length || a.localeCompare(b));
+    const P = '{PRIVATE_CAT}';
+    const order = Object.keys(byCat).sort((a, b) => (a === P) - (b === P) || byCat[b].length - byCat[a].length || a.localeCompare(b));
     order.forEach(c => {{
       const vis = byCat[c].filter(el => !el.classList.contains('hidden'));
       if (!vis.length) return;
@@ -351,7 +381,11 @@ def main() -> int:
     notes = scan()
     listed = [n for n in notes if not n["unlisted"]]
 
-    (NOTES_DIR / "index.html").write_text(render_hub(listed, title="Notes", private=False, base_rel=""), encoding="utf-8")
+    unlisted_notes = [n for n in notes if n["unlisted"]]
+    private_latest = max((n["updated"] for n in unlisted_notes), default="")
+    (NOTES_DIR / "index.html").write_text(
+        render_hub(listed, title="Notes", private=False, base_rel="",
+                   private_count=len(unlisted_notes), private_latest=private_latest), encoding="utf-8")
     latest = max((n["updated"] for n in listed), default="")
     manifest = {"latest_update": latest, "count": len(listed), "notes": listed}
     (NOTES_DIR / "notes.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")

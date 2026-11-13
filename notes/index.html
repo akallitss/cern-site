@@ -44,7 +44,7 @@
   <p class="muted">Everything I have written up as an HTML page, newest first. Filter by category or search by title, tag or text.</p>
 
   <input class="search" id="q" type="search" placeholder="Search notes…" autocomplete="off">
-  <div class="chips" id="chips"><button class="chip active" data-cat="*">All <span class="cnt">21</span></button><button class="chip" data-cat="Detector R&amp;D">Detector R&amp;D <span class="cnt">12</span></button><button class="chip" data-cat="Analysis">Analysis <span class="cnt">5</span></button><button class="chip" data-cat="Talks &amp; Papers">Talks &amp; Papers <span class="cnt">2</span></button><button class="chip" data-cat="How-to">How-to <span class="cnt">1</span></button><button class="chip" data-cat="Software">Software <span class="cnt">1</span></button></div>
+  <div class="chips" id="chips"><button class="chip active" data-cat="*">All <span class="cnt">21</span></button><button class="chip" data-cat="Detector R&amp;D">Detector R&amp;D <span class="cnt">12</span></button><button class="chip" data-cat="Analysis">Analysis <span class="cnt">5</span></button><button class="chip" data-cat="Talks &amp; Papers">Talks &amp; Papers <span class="cnt">2</span></button><button class="chip" data-cat="How-to">How-to <span class="cnt">1</span></button><button class="chip" data-cat="Software">Software <span class="cnt">1</span></button><button class="chip" data-cat="Private">Private <span class="cnt">13</span></button></div>
   <div class="toolbar">
     <label><input type="checkbox" id="grouped" checked> group by category</label>
     <span id="shown"></span>
@@ -282,6 +282,16 @@
         </div>
         <time class="note-date" datetime="2026-05-10">2026-05-10<span class="faint small"></span></time>
       </li>
+      <li class="note" data-cat="Private" data-search="private unlisted notes login" data-date="2026-11-05">
+        <div class="note-main">
+          <a class="note-title" href="unlisted/">Private notes (13)</a>
+          <p class="note-desc">Work-in-progress and internal notes. CERN login required, site owner only.</p>
+          <div class="meta-row small">
+            <span class="pill" style="background:#fde8e8;color:#b42318">&#128274; login required</span>
+          </div>
+        </div>
+        <time class="note-date" datetime="2026-11-05">2026-11-05<span class="faint small">last update</span></time>
+      </li>
   </ul>
   <p class="empty" id="empty">No notes match.</p>
 </main>
@@ -317,7 +327,8 @@
     // group: move visible notes under headers, keeping date order inside each group
     const byCat = {};
     notes.forEach(el => { (byCat[el.dataset.cat] ||= []).push(el); });
-    const order = Object.keys(byCat).sort((a, b) => byCat[b].length - byCat[a].length || a.localeCompare(b));
+    const P = 'Private';
+    const order = Object.keys(byCat).sort((a, b) => (a === P) - (b === P) || byCat[b].length - byCat[a].length || a.localeCompare(b));
     order.forEach(c => {
       const vis = byCat[c].filter(el => !el.classList.contains('hidden'));
       if (!vis.length) return;
