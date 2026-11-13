@@ -9,7 +9,7 @@
 <meta name="category" content="Software">
 <meta name="keywords" content="vmm,daq,p2,slow-control,how-to">
 <meta name="date" content="2026-11-12">
-<meta name="updated" content="2026-11-12">
+<meta name="updated" content="2026-11-13">
 <meta name="visibility" content="public">
 <!-- ======================================================================= -->
 <link rel="stylesheet" href="../assets/site.css">
@@ -55,7 +55,7 @@
               Everything else is either generated or owned by a developer.</li>
           <li>A chip is always written <b>in full</b>. There is no "change one channel" command.</li>
           <li>What is in the chips cannot be read back. The record is the exception file, which is copied into every run folder.</li>
-          <li>A threshold per channel can already be <b>set</b> through the existing files (never tried yet). It cannot yet be <b>measured</b>.</li>
+          <li>A threshold per channel can be <b>set</b> and <b>measured</b> since 13 November 2026 (section 7).</li>
         </ul>
       </div>
 
@@ -315,40 +315,20 @@ Sys 0 Bec 0 Hyb 1 Vmm 0 Reg bank1spi2 Field sdt  3      # 64 × 3 + 46 = 238</co
         <li>At <b>Start Run</b> the exception file is copied into the run folder.</li>
       </ol>
 
-      <h2 id="perchannel">7. Thresholds per channel: what exists today</h2>
-      <div style="overflow-x:auto">
-      <table>
-        <thead><tr><th>Question</th><th>Answer on 12 November 2026</th></tr></thead>
-        <tbody>
-          <tr><td>Can the hardware and firmware take a trim per channel?</td>
-              <td>Yes. The trim is part of the channel register that is already written at every configuration, and the older RD51 program wrote trims to this same electronics in November 2025.</td></tr>
-          <tr><td>Can we set one with our files?</td>
-              <td>The way exists: a line with <code>Field sd</code>, handled by the same code as the mask lines we use every day. It has <b>never been tried</b>: all 1280 trims are 0 in the base file and no exception file sets one.</td></tr>
-          <tr><td>Can we read back what was set?</td>
-              <td>Not from the chip. Only from the exception file kept with the run.</td></tr>
-          <tr><td>Can we measure the real threshold of a channel?</td>
-              <td>Not yet. The slow-control library contains code for it (through the monitor output and the hybrid ADC), but no command gives access to it. Only the temperature measurement is available.</td></tr>
-          <tr><td>Is there another way to see a channel's threshold?</td>
-              <td>From data: the lowest amplitude a channel records and its noise rate both move with the threshold. Slower, but it works today.</td></tr>
-        </tbody>
-      </table>
-      </div>
-      <p>A trim line would look like this (hybrid 3, second chip, channel 45, trim 12):</p>
-<pre><code>Sys 0 Bec 0 Hyb 3 Vmm 1 Reg channel[45] Field sd 12</code></pre>
-      <p>Channel numbers below 10 are written with two digits: <code>channel[07]</code>.</p>
-      <div class="callout warn">Do not use trim lines for real data yet. How much one trim step moves the
-      threshold on our chips, and in which direction, has not been measured. The first test is
-      planned on a single chip with half of its channels left untouched as a reference.</div>
-
-      <h3>Planned next steps</h3>
-      <ol>
-        <li>A small tool that turns a table of trims (chip, channel, value) into an exception file, and a
-            second one that prints what any exception file sets, chip by chip.</li>
-        <li>A test on one chip: the same settings with trim 0, 15 and 31, compared in the data.</li>
-        <li>Access to the threshold measurement, to be discussed with the slow-control developer.</li>
-        <li>Equalising all channels of each chip, and comparing the spread of noise rates before and after.</li>
-        <li>A panel in the web page, once the steps above work from the terminal.</li>
-      </ol>
+      <h2 id="perchannel">7. Thresholds per channel</h2>
+      <div class="callout ok"><b>Update, 13 November 2026.</b> The per-channel trim now works: it can be set from the
+      exception files, measured on the chips, and used to raise noisy channels instead of masking them.
+      Results and commands are on a separate page:
+      <a href="2026-11-13-vmm-thresholds-per-channel-measured-equalised-raised-instead-of-masked.html">VMM thresholds per channel</a>.</div>
+      <p>Three things changed compared with what this page said the day before:</p>
+      <ul>
+        <li>The analog baseline and threshold of every channel <b>can</b> be measured, with a small program of ours
+            that uses the slow-control library (<code>vmm_monitor_tool</code> in the DAQ repository).</li>
+        <li>Trim lines must be written by our tool <code>vmm_trim.py</code>, not by hand: the installed slow-control
+            version sends the five trim bits in reverse order, and the tool corrects for it.</li>
+        <li>Besides the trim, the per-channel leakage bit <code>sl</code> turned out to matter: it recovers 114 channels
+            that were blind.</li>
+      </ul>
 
       <h2 id="other">8. Other folders you will see under <code>/local/p2</code></h2>
       <div style="overflow-x:auto">

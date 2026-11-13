@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>VMM thresholds per channel: measured, equalised, raised instead of masked</title>
+<meta name="description" content="The 5-bit trim of every VMM3a channel now works on the P2 lab stand: how much it moves a threshold, how we read it back, what it does to noisy channels, and the commands">
+<meta name="category" content="Detector R&amp;D">
+<meta name="keywords" content="vmm,daq,p2,threshold,trim,noise,how-to">
+<meta name="date" content="2026-11-13">
+<meta name="updated" content="2026-11-13">
+<meta name="visibility" content="public">
+<!-- ======================================================================= -->
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+  /* note-local styles go here */
+</style>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="../">Alexandra Kallitsopoulou</a>
+  <nav class="nav"><a href="../">Home</a><a href="../notes/">Notes</a></nav>
+</div></header>
+
+<main class="wrap">
+  <article>
+    <header class="note-header">
+      <h1>VMM thresholds per channel: measured, equalised, raised instead of masked</h1>
+      <p class="muted">The 5-bit trim of every VMM3a channel now works on the P2 lab stand: how much it moves a threshold, how we read it back, what it does to noisy channels, and the commands</p>
+      <div class="meta-row">
+        <span class="pill">Detector R&amp;D</span>
+        <time datetime="2026-11-13">2026-11-13</time>
+        <span class="faint">vmm,daq,p2,threshold,trim,noise,how-to</span>
+      </div>
+    </header>
+
+    <div class="note-body">
+      <p>Until now the P2 lab stand had one threshold per VMM chip, and a channel that was too noisy
+      at that threshold was switched off (<em>masked</em>). Each VMM3a channel also has a small
+      individual correction, the <em>trim</em>, which had never been used with our slow control.
+      During the night of 12 to 13 November 2026 it was made to work, measured on the chips, and
+      used to replace masks. This page gives the numbers and the commands.</p>
+
+      <p class="muted">Lab stand at Saclay, 10 hybrids, 20 VMM3a, gain 4.5 mV/fC, peaking time 200 ns.
+      Low voltage on, <b>high voltage off</b>: everything here is electronic noise and test pulses,
+      no particles. For where the programs live, see the
+      <a href="2026-11-12-vmm-daq-code-map-from-the-browser-to-the-chip.html">code map</a>.
+      Chip number = 2 × hybrid + vmm.</p>
+
+      <div class="callout">
+        <b>Results in short</b>
+        <ul>
+          <li>The trim lowers one channel's threshold by about <b>1.1 mV per step</b>, 31 steps, so about 33 mV in total.
+              That is 4 % of the range of the chip threshold, but twice the distance between threshold and baseline we work at.</li>
+          <li>We can now <b>read back</b> the baseline and the threshold of every channel, in mV, in 9 minutes for all 1280 channels.</li>
+          <li>Equalising brings the spread between the channels of a chip from 3.8 to <b>0.7 mV</b> rms.</li>
+          <li>Noisy channels are <b>raised instead of masked</b>: one file now runs the 18 detector chips with 1 masked channel instead of 276.</li>
+          <li>114 channels on three chips were blind because of a configuration effect. One line per channel brings them back.</li>
+        </ul>
+      </div>
+
+      <h2 id="what">1. What a trim is</h2>
+      <p>A channel records a hit when its signal rises above the <em>threshold</em>. On a VMM3a:</p>
+<pre><code>threshold of a channel = threshold of its chip (sdt, 0…1023) − trim of the channel (0…31) × about 1.1 mV</code></pre>
+      <p>The trim can only <b>lower</b> a channel. To be able to raise single channels, all channels of a
+      chip first get a trim with some room (for example 20) and the chip threshold is raised to
+      compensate. Nothing has moved, but now a noisy channel can be given a smaller trim, which
+      raises it alone while its neighbours stay where they are.</p>
+
+      <h2 id="measured">2. What was measured</h2>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Quantity</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>One trim step</td><td>0.97 to 1.25 mV depending on the chip; a straight line over the 32 values (deviations of 1 to 3 mV)</td></tr>
+          <tr><td>One count of the chip threshold (<code>sdt</code>)</td><td>0.73 to 0.81 mV; so one trim step is about 1.4 counts</td></tr>
+          <tr><td>Baseline of a normal channel</td><td>150 to 180 mV; the same within 0.4 mV when measured twice</td></tr>
+          <tr><td>Threshold above baseline at the lowest point of our last scan</td><td>14 to 20 mV, chip by chip</td></tr>
+          <tr><td>Spread between the channels of one chip</td><td>3.8 mV rms (about ±9 mV) before; 0.7 mV rms (±2 mV) after two equalisation passes</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <figure>
+<svg viewBox="0 0 720 564" role="img" aria-label="Distance between threshold and baseline, relative to the chip median, for 1036 channels: before trimming, after the first and after the second equalisation pass" style="width:100%;height:auto;max-width:720px;font-family:inherit">
+<style>.ax{stroke:currentColor;stroke-opacity:.35;stroke-width:1}.gr{stroke:currentColor;stroke-opacity:.12;stroke-width:1}.tx{fill:currentColor;font-size:12px;opacity:.8}.ti{fill:currentColor;font-size:13.5px;font-weight:600}.b{fill:#2a78d6}@media (prefers-color-scheme: dark){.b{fill:#3987e5}}</style>
+<text class="ti" x="56" y="14">Before: spread 3.8 mV rms</text>
+<line class="ax" x1="56" x2="704" y1="146.0" y2="146.0"/>
+<text class="tx" x="50" y="150.0" text-anchor="end">0</text>
+<line class="gr" x1="56" x2="704" y1="86.0" y2="86.0"/>
+<text class="tx" x="50" y="90.0" text-anchor="end">350</text>
+<line class="gr" x1="56" x2="704" y1="26.0" y2="26.0"/>
+<text class="tx" x="50" y="30.0" text-anchor="end">700</text>
+<rect class="b" x="57.0" y="144.5" width="22.0" height="1.5" rx="2"><title>-14 mV: 1 channels</title></rect>
+<text class="tx" x="68.0" y="161" text-anchor="middle">-14</text>
+<rect class="b" x="81.0" y="144.5" width="22.0" height="1.5" rx="2"><title>-13 mV: 1 channels</title></rect>
+<rect class="b" x="105.0" y="144.5" width="22.0" height="1.5" rx="2"><title>-12 mV: 2 channels</title></rect>
+<text class="tx" x="116.0" y="161" text-anchor="middle">-12</text>
+<rect class="b" x="129.0" y="144.5" width="22.0" height="1.5" rx="2"><title>-11 mV: 1 channels</title></rect>
+<rect class="b" x="153.0" y="144.5" width="22.0" height="1.5" rx="2"><title>-10 mV: 1 channels</title></rect>
+<text class="tx" x="164.0" y="161" text-anchor="middle">-10</text>
+<rect class="b" x="177.0" y="144.3" width="22.0" height="1.7" rx="2"><title>-9 mV: 10 channels</title></rect>
+<rect class="b" x="201.0" y="144.5" width="22.0" height="1.5" rx="2"><title>-8 mV: 9 channels</title></rect>
+<text class="tx" x="212.0" y="161" text-anchor="middle">-8</text>
+<rect class="b" x="225.0" y="142.7" width="22.0" height="3.3" rx="2"><title>-7 mV: 19 channels</title></rect>
+<rect class="b" x="249.0" y="141.4" width="22.0" height="4.6" rx="2"><title>-6 mV: 27 channels</title></rect>
+<text class="tx" x="260.0" y="161" text-anchor="middle">-6</text>
+<rect class="b" x="273.0" y="138.5" width="22.0" height="7.5" rx="2"><title>-5 mV: 44 channels</title></rect>
+<rect class="b" x="297.0" y="134.2" width="22.0" height="11.8" rx="2"><title>-4 mV: 69 channels</title></rect>
+<text class="tx" x="308.0" y="161" text-anchor="middle">-4</text>
+<rect class="b" x="321.0" y="130.9" width="22.0" height="15.1" rx="2"><title>-3 mV: 88 channels</title></rect>
+<rect class="b" x="345.0" y="131.9" width="22.0" height="14.1" rx="2"><title>-2 mV: 82 channels</title></rect>
+<text class="tx" x="356.0" y="161" text-anchor="middle">-2</text>
+<rect class="b" x="369.0" y="128.3" width="22.0" height="17.7" rx="2"><title>-1 mV: 103 channels</title></rect>
+<rect class="b" x="393.0" y="123.9" width="22.0" height="22.1" rx="2"><title>+0 mV: 129 channels</title></rect>
+<text class="tx" x="404.0" y="161" text-anchor="middle">0</text>
+<rect class="b" x="417.0" y="129.5" width="22.0" height="16.5" rx="2"><title>+1 mV: 96 channels</title></rect>
+<rect class="b" x="441.0" y="130.4" width="22.0" height="15.6" rx="2"><title>+2 mV: 91 channels</title></rect>
+<text class="tx" x="452.0" y="161" text-anchor="middle">+2</text>
+<rect class="b" x="465.0" y="130.9" width="22.0" height="15.1" rx="2"><title>+3 mV: 88 channels</title></rect>
+<rect class="b" x="489.0" y="135.2" width="22.0" height="10.8" rx="2"><title>+4 mV: 63 channels</title></rect>
+<text class="tx" x="500.0" y="161" text-anchor="middle">+4</text>
+<rect class="b" x="513.0" y="140.0" width="22.0" height="6.0" rx="2"><title>+5 mV: 35 channels</title></rect>
+<rect class="b" x="537.0" y="140.3" width="22.0" height="5.7" rx="2"><title>+6 mV: 33 channels</title></rect>
+<text class="tx" x="548.0" y="161" text-anchor="middle">+6</text>
+<rect class="b" x="561.0" y="143.3" width="22.0" height="2.7" rx="2"><title>+7 mV: 16 channels</title></rect>
+<rect class="b" x="585.0" y="143.3" width="22.0" height="2.7" rx="2"><title>+8 mV: 16 channels</title></rect>
+<text class="tx" x="596.0" y="161" text-anchor="middle">+8</text>
+<rect class="b" x="609.0" y="144.5" width="22.0" height="1.5" rx="2"><title>+9 mV: 6 channels</title></rect>
+<rect class="b" x="633.0" y="144.5" width="22.0" height="1.5" rx="2"><title>+10 mV: 3 channels</title></rect>
+<text class="tx" x="644.0" y="161" text-anchor="middle">+10</text>
+<rect class="b" x="657.0" y="144.5" width="22.0" height="1.5" rx="2"><title>+11 mV: 2 channels</title></rect>
+<rect class="b" x="681.0" y="144.5" width="22.0" height="1.5" rx="2"><title>+12 mV: 1 channels</title></rect>
+<text class="tx" x="692.0" y="161" text-anchor="middle">+12</text>
+<text class="ti" x="56" y="212">After the first pass: 1.8 mV rms</text>
+<line class="ax" x1="56" x2="704" y1="344.0" y2="344.0"/>
+<text class="tx" x="50" y="348.0" text-anchor="end">0</text>
+<line class="gr" x1="56" x2="704" y1="284.0" y2="284.0"/>
+<text class="tx" x="50" y="288.0" text-anchor="end">350</text>
+<line class="gr" x1="56" x2="704" y1="224.0" y2="224.0"/>
+<text class="tx" x="50" y="228.0" text-anchor="end">700</text>
+<text class="tx" x="68.0" y="359" text-anchor="middle">-14</text>
+<text class="tx" x="116.0" y="359" text-anchor="middle">-12</text>
+<text class="tx" x="164.0" y="359" text-anchor="middle">-10</text>
+<text class="tx" x="212.0" y="359" text-anchor="middle">-8</text>
+<rect class="b" x="249.0" y="342.5" width="22.0" height="1.5" rx="2"><title>-6 mV: 1 channels</title></rect>
+<text class="tx" x="260.0" y="359" text-anchor="middle">-6</text>
+<rect class="b" x="273.0" y="342.5" width="22.0" height="1.5" rx="2"><title>-5 mV: 6 channels</title></rect>
+<rect class="b" x="297.0" y="340.6" width="22.0" height="3.4" rx="2"><title>-4 mV: 20 channels</title></rect>
+<text class="tx" x="308.0" y="359" text-anchor="middle">-4</text>
+<rect class="b" x="321.0" y="333.9" width="22.0" height="10.1" rx="2"><title>-3 mV: 59 channels</title></rect>
+<rect class="b" x="345.0" y="323.4" width="22.0" height="20.6" rx="2"><title>-2 mV: 120 channels</title></rect>
+<text class="tx" x="356.0" y="359" text-anchor="middle">-2</text>
+<rect class="b" x="369.0" y="313.0" width="22.0" height="31.0" rx="2"><title>-1 mV: 181 channels</title></rect>
+<rect class="b" x="393.0" y="301.3" width="22.0" height="42.7" rx="2"><title>+0 mV: 249 channels</title></rect>
+<text class="tx" x="404.0" y="359" text-anchor="middle">0</text>
+<rect class="b" x="417.0" y="309.9" width="22.0" height="34.1" rx="2"><title>+1 mV: 199 channels</title></rect>
+<rect class="b" x="441.0" y="323.9" width="22.0" height="20.1" rx="2"><title>+2 mV: 117 channels</title></rect>
+<text class="tx" x="452.0" y="359" text-anchor="middle">+2</text>
+<rect class="b" x="465.0" y="334.6" width="22.0" height="9.4" rx="2"><title>+3 mV: 55 channels</title></rect>
+<rect class="b" x="489.0" y="340.4" width="22.0" height="3.6" rx="2"><title>+4 mV: 21 channels</title></rect>
+<text class="tx" x="500.0" y="359" text-anchor="middle">+4</text>
+<rect class="b" x="513.0" y="342.5" width="22.0" height="1.5" rx="2"><title>+5 mV: 6 channels</title></rect>
+<rect class="b" x="537.0" y="342.5" width="22.0" height="1.5" rx="2"><title>+6 mV: 2 channels</title></rect>
+<text class="tx" x="548.0" y="359" text-anchor="middle">+6</text>
+<text class="tx" x="596.0" y="359" text-anchor="middle">+8</text>
+<text class="tx" x="644.0" y="359" text-anchor="middle">+10</text>
+<text class="tx" x="692.0" y="359" text-anchor="middle">+12</text>
+<text class="ti" x="56" y="410">After the second pass: 0.7 mV rms</text>
+<line class="ax" x1="56" x2="704" y1="542.0" y2="542.0"/>
+<text class="tx" x="50" y="546.0" text-anchor="end">0</text>
+<line class="gr" x1="56" x2="704" y1="482.0" y2="482.0"/>
+<text class="tx" x="50" y="486.0" text-anchor="end">350</text>
+<line class="gr" x1="56" x2="704" y1="422.0" y2="422.0"/>
+<text class="tx" x="50" y="426.0" text-anchor="end">700</text>
+<text class="tx" x="68.0" y="557" text-anchor="middle">-14</text>
+<text class="tx" x="116.0" y="557" text-anchor="middle">-12</text>
+<text class="tx" x="164.0" y="557" text-anchor="middle">-10</text>
+<text class="tx" x="212.0" y="557" text-anchor="middle">-8</text>
+<text class="tx" x="260.0" y="557" text-anchor="middle">-6</text>
+<text class="tx" x="308.0" y="557" text-anchor="middle">-4</text>
+<rect class="b" x="345.0" y="539.6" width="22.0" height="2.4" rx="2"><title>-2 mV: 14 channels</title></rect>
+<text class="tx" x="356.0" y="557" text-anchor="middle">-2</text>
+<rect class="b" x="369.0" y="520.2" width="22.0" height="21.8" rx="2"><title>-1 mV: 127 channels</title></rect>
+<rect class="b" x="393.0" y="429.4" width="22.0" height="112.6" rx="2"><title>+0 mV: 657 channels</title></rect>
+<text class="tx" x="404.0" y="557" text-anchor="middle">0</text>
+<rect class="b" x="417.0" y="506.0" width="22.0" height="36.0" rx="2"><title>+1 mV: 210 channels</title></rect>
+<rect class="b" x="441.0" y="537.5" width="22.0" height="4.5" rx="2"><title>+2 mV: 26 channels</title></rect>
+<text class="tx" x="452.0" y="557" text-anchor="middle">+2</text>
+<rect class="b" x="489.0" y="540.5" width="22.0" height="1.5" rx="2"><title>+4 mV: 1 channels</title></rect>
+<text class="tx" x="500.0" y="557" text-anchor="middle">+4</text>
+<rect class="b" x="513.0" y="540.5" width="22.0" height="1.5" rx="2"><title>+5 mV: 1 channels</title></rect>
+<text class="tx" x="548.0" y="557" text-anchor="middle">+6</text>
+<text class="tx" x="596.0" y="557" text-anchor="middle">+8</text>
+<text class="tx" x="644.0" y="557" text-anchor="middle">+10</text>
+<text class="tx" x="692.0" y="557" text-anchor="middle">+12</text>
+<text class="tx" x="12" y="86" transform="rotate(-90 12 86)" text-anchor="middle">channels</text>
+</svg>
+
+      <figcaption>Threshold minus baseline of 1036 channels on 18 chips, shown as the difference to the
+      median of each channel's own chip (horizontal axis, mV). Each panel is a new measurement on the chips.</figcaption>
+      </figure>
+
+      <h3>How the reading back works</h3>
+      <p>The registers of a VMM cannot be read. But the chip can put one internal voltage on an analog
+      pin, and a small ADC on each hybrid measures it. Selecting a channel gives its baseline; one more
+      bit gives its threshold after trimming. The slow-control library on the DAQ machine contains
+      this measurement but offers no command for it, so we wrote a small program of our own that
+      uses the library. Nothing of the installed slow control was changed.</p>
+      <div class="callout warn">Two traps found on the way. With the slow-control version installed on
+      5 November 2026 the five trim bits reach the chip in reverse order (writing 1 acts as 16), so
+      trim lines must not be typed by hand: our tool writes the right value and notes the real trim
+      in a comment. And a measurement leaves the chips in a special state: press
+      <b>Configure chip</b> before taking data (the tools do it for you).</div>
+
+      <h2 id="noise">3. Raising instead of masking: the test with data</h2>
+      <p>Starting point: the file of the lowest threshold of the last scan, where 244 channels on 15
+      well-behaved chips had been masked for noise. Those 244 were unmasked and 60-second noise
+      captures taken.</p>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>The 244 formerly masked channels…</th><th>above 50 Hz</th><th>above 1 kHz</th><th>loudest</th><th>data volume</th></tr></thead>
+        <tbody>
+          <tr><td>unmasked, at the same threshold as the others</td><td>75</td><td>35</td><td>529 kHz</td><td>328 MB/min</td></tr>
+          <tr><td>unmasked, raised by 6 trim steps (about 7 mV)</td><td>3</td><td>1</td><td>68 kHz</td><td>37 MB/min</td></tr>
+          <tr><td>unmasked, raised by 12 steps (about 13 mV)</td><td><b>0</b></td><td>0</td><td>–</td><td>12 MB/min</td></tr>
+          <tr><td>(for comparison: masked)</td><td>–</td><td>–</td><td>–</td><td>7 MB/min</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p>An automatic tuner then raises only the channels that need it, a few steps at a time, until no
+      channel is above 50 Hz. For all 18 detector chips it needed 6 captures (8 minutes) and raised 135
+      channels: 87 by 2 steps, 39 by 4, 8 by 6 and one by 8.</p>
+
+      <h2 id="floor">4. How much lower can the chips go?</h2>
+      <p>Less than one might hope, and that is a result in itself. The chip thresholds were lowered four
+      times by 3 mV, tuning again each time. The tuner always ends with a clean capture, but at the
+      last step it has raised four fifths of the channels back to where they were:</p>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Chip thresholds lowered by</th><th>channels above 50 Hz before tuning (of 960)</th><th>channels that ran out of trim</th><th>masks</th></tr></thead>
+        <tbody>
+          <tr><td>3 mV</td><td>274</td><td>0</td><td>0</td></tr>
+          <tr><td>6 mV</td><td>498</td><td>0</td><td>0</td></tr>
+          <tr><td>9 mV</td><td>688</td><td>4</td><td>0</td></tr>
+          <tr><td>12 mV</td><td>781</td><td>21</td><td>0</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p>Once the channels of a chip are equalised they reach the noise almost together, about 3 mV
+      below our previous lowest point. So what the trim buys is not a much lower threshold. It is
+      a detector with <b>no masked channels</b>, each channel sitting just above its own noise.</p>
+
+      <h2 id="blind">5. The blind channel blocks on chips 4, 7 and 9</h2>
+      <p>The first map showed something unexpected. On three chips a block of neighbouring channels
+      (28, 41 and 45 channels) had its baseline 30 to 270 mV <b>above</b> the threshold instead of
+      15 to 20 mV below it. A channel in that state cannot see a normal signal.</p>
+      <ul>
+        <li>In an earlier cosmic run exactly these channels count 0.2 Hz while their neighbours count 1 to 2 Hz.</li>
+        <li>With the internal test pulser, for small and medium pulses, normal channels see 100 % and these channels 0 %.</li>
+        <li>The channels we had masked by hand as "bursting" are those at the edge of the blocks.</li>
+        <li>It is not broken hardware. The shift grows with the gain and disappears when the chip's
+            leakage setting is changed. Something on the input of those channels draws a small
+            constant current; why is not understood yet.</li>
+      </ul>
+      <p>The cure that worked is one line per channel, the leakage bit <code>sl 1</code>. With it the same
+      channels see 100 % of the test pulses and look like their neighbours. One single channel
+      (chip 16, channel 33) is not cured and stays masked.</p>
+      <div class="callout warn">This was checked with test pulses and high voltage off. How these channels
+      behave with real signals is the first thing to look at in the next cosmic run.</div>
+
+      <h2 id="file">6. The file to try</h2>
+      <p><code>p2b-config-cern-ext_gain4.5_peaktime200_opt_cosmic_trimmed_Km18_v1.txt</code>, in the
+      drop-down list of the DAQ web page.</p>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th></th><th>previous file, same thresholds</th><th>trimmed v1</th></tr></thead>
+        <tbody>
+          <tr><td>masked channels on the 18 detector chips</td><td>276</td><td><b>1</b></td></tr>
+          <tr><td>blind channels</td><td>114</td><td>0</td></tr>
+          <tr><td>spread of threshold minus baseline inside a chip</td><td>3.8 mV rms</td><td>0.7 mV rms</td></tr>
+          <tr><td>noise capture with high voltage off</td><td>saturated that night by single channels at 0.5 to 0.9 MHz</td><td>6 MB/min, no channel above 50 Hz</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p>It was tuned without high voltage. With the detectors on, some channels will need to go up further.</p>
+
+      <h2 id="howto">7. The commands</h2>
+      <p>On the DAQ machine, in <code>~/trim_work/vmm_monitor_tool/</code> (also in the
+      <code>vmm_monitor_tool</code> folder of the DAQ repository). <code>FILE.txt</code> stands for an exception
+      file in <code>/local/p2/p2testbench/TestBenchCERN/config_ext/</code>. None of these commands
+      changes an existing file: they write a new one, given with <code>--out</code>.</p>
+
+      <h3>See what a file sets</h3>
+<pre><code>python3 vmm_trim.py summary FILE.txt
+python3 vmm_trim.py trims FILE.txt --chips 7</code></pre>
+      <p>The first prints one line per chip: chip threshold, gain, peaking time, number of masked channels,
+      range of the trims. The second prints the trim of each of the 64 channels of chip 7.</p>
+
+      <h3>Raise one or more channels instead of masking them</h3>
+<pre><code>python3 vmm_trim.py raise FILE.txt --out NEWFILE.txt --chip 7 --channels 12,13 --steps 4 --unmask</code></pre>
+      <ul>
+        <li><code>--chip 7</code> the chip; <code>--channels 12,13</code> the channels (a range is written <code>10-15</code>).</li>
+        <li><code>--steps 4</code> four trim steps up, about 4.4 mV.</li>
+        <li><code>--unmask</code> also removes the mask of these channels.</li>
+        <li>The command refuses if a channel has fewer than 4 steps left. With <code>--clip</code> it goes as far as it can.</li>
+      </ul>
+      <p>Then select <code>NEWFILE.txt</code> in the web page and press <b>Configure chip</b>.</p>
+
+      <h3>Lower or raise a whole chip</h3>
+<pre><code>python3 vmm_trim.py sdt FILE.txt --out NEWFILE.txt --chips 2-19 --by -4</code></pre>
+      <p><code>--by -4</code> lowers the chip threshold by 4 counts, about 3 mV. Chips 2 to 19 are the detector chips.</p>
+
+      <h3>Measure all channels (9 minutes)</h3>
+<pre><code>python3 vmm_monitor_scan.py map --unmask --bin ~/trim_work/build/vmm_monitor \
+    --ext /local/p2/p2testbench/TestBenchCERN/config_ext/FILE.txt --out maps/FILE.json</code></pre>
+      <ul>
+        <li><code>--ext</code> the file that describes the state to measure, with its full path.</li>
+        <li><code>--unmask</code> lifts the masks during the measurement; a masked channel has no baseline to read.</li>
+        <li><code>--bin</code> where our measurement program is.</li>
+        <li>It prints a table per chip and, at the end, configures the chips again with the file selected in the web page.</li>
+      </ul>
+
+      <h3>Let the tuner find which channels to raise (high voltage off)</h3>
+<pre><code>python3 trim_tune.py --ext FILE.txt --tag mytest --k -4 --chips 2-19 --steps 2</code></pre>
+      <ul>
+        <li><code>--k -4</code> first lowers the chip thresholds by 4 counts (0 keeps them).</li>
+        <li><code>--steps 2</code> a channel above the limit goes up 2 trim steps per round.</li>
+        <li><code>--ch-limit-hz 50</code> the limit; 50 Hz if not given.</li>
+        <li><code>--tag</code> a short name that ends up in the names of the files it writes.</li>
+        <li>It takes 60-second captures itself. It starts no run and does not touch the high voltage.</li>
+      </ul>
+
+      <h2 id="open">8. What is not done</h2>
+      <ul>
+        <li>Nothing here was tested with high voltage on or with particles.</li>
+        <li>The existing adaptive threshold scan has a new option that raises a noisy channel before masking it.
+            It passes its tests but has not been run on the stand yet.</li>
+        <li>The DAQ web page has no panel for any of this yet; everything is done from the terminal. The files
+            are ordinary exception files, so the drop-down list, the copy into the run folder and the scans work as before.</li>
+        <li>Our measurement program has to be rebuilt after every new version of the slow control.</li>
+        <li>The origin of the constant current on the three blind blocks is open.</li>
+      </ul>
+
+      <h2 id="glossary">Glossary</h2>
+      <dl>
+        <dt>Baseline</dt><dd>The voltage at the output of a channel's amplifier when there is no signal.</dd>
+        <dt>Exception file</dt><dd>The text file listing the chip settings that differ from the defaults; chosen in the DAQ web page.</dd>
+        <dt>Mask</dt><dd>Switching a channel off so that it records nothing.</dd>
+        <dt>rms</dt><dd>Root mean square: here, the typical size of the differences between channels.</dd>
+        <dt><code>sdt</code></dt><dd>The threshold setting of a whole chip, a number from 0 to 1023; one count is about 0.77 mV.</dd>
+        <dt><code>sl</code></dt><dd>A one-bit setting of each channel that switches off the chip's leakage-current compensation for that channel.</dd>
+        <dt>Test pulser</dt><dd>A circuit inside the chip that injects a known charge into chosen channels, to test them without a detector signal.</dd>
+        <dt>Threshold</dt><dd>The signal height above which a channel records a hit.</dd>
+        <dt>Trim</dt><dd>The per-channel correction to the threshold, 0 to 31; each step lowers the channel by about 1.1 mV.</dd>
+      </dl>
+    </div>
+  </article>
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <span>Alexandra Kallitsopoulou</span>
+  <span><a href="../notes/">← all notes</a></span>
+</div></footer>
+</body>
+</html>

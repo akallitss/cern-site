@@ -1,7 +1,28 @@
 {
-  "latest_update": "2026-11-12",
-  "count": 20,
+  "latest_update": "2026-11-13",
+  "count": 21,
   "notes": [
+    {
+      "title": "VMM thresholds per channel: measured, equalised, raised instead of masked",
+      "description": "The 5-bit trim of every VMM3a channel now works on the P2 lab stand: how much it moves a threshold, how we read it back, what it does to noisy channels, and the commands",
+      "category": "Detector R&D",
+      "tags": [
+        "vmm",
+        "daq",
+        "p2",
+        "threshold",
+        "trim",
+        "noise",
+        "how-to"
+      ],
+      "date": "2026-11-13",
+      "updated": "2026-11-13",
+      "unlisted": false,
+      "path": "2026-11-13-vmm-thresholds-per-channel-measured-equalised-raised-instead-of-masked.html",
+      "url": "/notes/2026-11-13-vmm-thresholds-per-channel-measured-equalised-raised-instead-of-masked.html",
+      "size": 26494,
+      "size_h": "25.9 kB"
+    },
     {
       "title": "VMM DAQ code map: from the browser to the chip",
       "description": "Which program does what in the P2 VMM DAQ, who owns it, and how a threshold travels from a text file to a VMM channel",
@@ -14,12 +35,12 @@
         "how-to"
       ],
       "date": "2026-11-12",
-      "updated": "2026-11-12",
+      "updated": "2026-11-13",
       "unlisted": false,
       "path": "2026-11-12-vmm-daq-code-map-from-the-browser-to-the-chip.html",
       "url": "/notes/2026-11-12-vmm-daq-code-map-from-the-browser-to-the-chip.html",
-      "size": 29042,
-      "size_h": "28.4 kB"
+      "size": 27460,
+      "size_h": "26.8 kB"
     },
     {
       "title": "VMM3a / SRS data flow — schematics",
