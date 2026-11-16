@@ -1,7 +1,27 @@
 {
-  "latest_update": "2026-11-13",
-  "count": 21,
+  "latest_update": "2026-11-16",
+  "count": 22,
   "notes": [
+    {
+      "title": "Single-channel efficiency on the VMM cosmic bench",
+      "description": "How we measure the absolute efficiency of one VMM channel (one pad) with cosmic muons: why the obvious way fails, counting in circles instead, scintillator-confirmed tags, closure tests and the real-data checks of the wk2 threshold scan.",
+      "category": "Analysis",
+      "tags": [
+        "VMM",
+        "efficiency",
+        "cosmics",
+        "P2",
+        "threshold",
+        "analysis"
+      ],
+      "date": "2026-11-16",
+      "updated": "2026-11-16",
+      "unlisted": false,
+      "path": "2026-11-16-single-channel-efficiency-on-the-vmm-cosmic-bench.html",
+      "url": "/notes/2026-11-16-single-channel-efficiency-on-the-vmm-cosmic-bench.html",
+      "size": 48041,
+      "size_h": "46.9 kB"
+    },
     {
       "title": "VMM thresholds per channel: measured, equalised, raised instead of masked",
       "description": "The 5-bit trim of every VMM3a channel now works on the P2 lab stand: how much it moves a threshold, how we read it back, what it does to noisy channels, and the commands",

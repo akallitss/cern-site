@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>Single-channel efficiency on the VMM cosmic bench</title>
+<meta name="description" content="How we measure the absolute efficiency of one VMM channel (one pad) with cosmic muons: why the obvious way fails, counting in circles instead, scintillator-confirmed tags, closure tests and the real-data checks of the wk2 threshold scan.">
+<meta name="category" content="Analysis">
+<meta name="keywords" content="VMM,efficiency,cosmics,P2,threshold,analysis">
+<meta name="date" content="2026-11-16">
+<meta name="updated" content="2026-11-16">
+<meta name="visibility" content="public">
+<!-- ======================================================================= -->
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+  :root { --c-in: #2a78d6; --c-mid: #eb6834; --c-out: #1baf7a; --c-ok: #178a50; --c-bad: #d4542b; --c-grid: rgba(0,0,0,.07);
+          --c-fake: #8a8a84; --c-pad: rgba(42,120,214,.10); }
+  @media (prefers-color-scheme: dark) {
+    :root { --c-in: #5b9ae6; --c-mid: #f08a5d; --c-out: #3cc493; --c-ok: #3cc47f; --c-bad: #f07b52; --c-grid: rgba(255,255,255,.07);
+            --c-fake: #9a9a94; --c-pad: rgba(91,154,230,.14); }
+  }
+  main.wrap, .site-header .wrap, .site-footer .wrap { max-width: 1180px; }
+  .note-body { max-width: none; }
+  .note-body p, .note-body ul, .note-body ol, .note-body .callout, .note-body details { max-width: 84ch; }
+  .sec { border-top: 1px solid var(--border); padding: 1.5rem 0 1rem; }
+  .sec:first-of-type { border-top: 0; }
+  .kicker { font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  .demo { border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev); padding: .8rem; margin: 1rem 0;
+          box-shadow: var(--shadow); }
+  .demo canvas { width: 100%; display: block; border-radius: 6px; touch-action: pan-y; }
+  .ctrls { display: flex; flex-wrap: wrap; gap: .5rem 1.2rem; align-items: center; margin: .7rem .2rem .2rem; font-size: .92rem; }
+  .ctrls label { display: inline-flex; align-items: center; gap: .45rem; color: var(--fg-muted); }
+  .ctrls input[type=range] { width: 140px; accent-color: var(--accent); }
+  .ctrls output { font-family: var(--mono); color: var(--fg); min-width: 5ch; display: inline-block; }
+  .ctrls button, .seg button { font: inherit; font-size: .9rem; border: 1px solid var(--border); background: var(--bg); color: var(--fg);
+          border-radius: 7px; padding: .3rem .75rem; cursor: pointer; }
+  .ctrls button:hover, .seg button:hover { border-color: var(--accent); }
+  .seg { display: inline-flex; }
+  .seg button { border-radius: 0; margin-left: -1px; }
+  .seg button:first-child { border-radius: 7px 0 0 7px; margin-left: 0; }
+  .seg button:last-child { border-radius: 0 7px 7px 0; }
+  .seg button.on { background: var(--accent); color: var(--bg-elev); border-color: var(--accent); }
+  .readout { display: flex; flex-wrap: wrap; gap: .5rem; margin: .6rem .2rem 0; }
+  .readout .chip { background: var(--code-bg); border-radius: 7px; padding: .3rem .65rem; font-size: .88rem; }
+  .readout .chip b { font-family: var(--mono); }
+  .take { border-left: 4px solid var(--accent); background: var(--accent-soft); padding: .6rem 1rem; border-radius: 0 8px 8px 0;
+          margin: 1rem 0; max-width: 84ch; }
+  .eq { font-family: var(--mono); background: var(--code-bg); padding: .55rem .9rem; border-radius: 8px; display: inline-block; line-height: 1.6; }
+  figure.data { margin: 1rem 0; }
+  figure.data img { width: 100%; height: auto; background: #fff; border-radius: 6px; border: 1px solid var(--border); }
+  figure.data.half img { max-width: 720px; }
+  figure.data figcaption { max-width: 90ch; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  @media (max-width: 760px) { .two { grid-template-columns: 1fr; } .ctrls input[type=range] { width: 110px; } }
+  table.res td, table.res th { text-align: right; } table.res td:first-child, table.res th:first-child { text-align: left; }
+  .check { display: grid; grid-template-columns: 1.6rem 1fr; gap: .2rem .4rem; max-width: 92ch; margin: .4rem 0; }
+  .check .ok { color: var(--c-ok); font-weight: 700; } .check .warn { color: #c98a00; font-weight: 700; }
+  svg.stand { width: 100%; max-width: 760px; height: auto; display: block; margin: .6rem 0; }
+  svg.stand text { font-family: var(--font); fill: var(--fg); font-size: 13px; }
+  svg.stand .sub { fill: var(--fg-muted); font-size: 11.5px; }
+  svg.stand .ch { fill: var(--bg-elev); stroke: var(--fg-muted); stroke-width: 1.4; }
+  svg.stand .probe { stroke: var(--c-mid); stroke-width: 2.4; }
+  svg.stand .sc { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.4; }
+  svg.stand .mu { stroke: var(--c-bad); stroke-width: 2; stroke-dasharray: 6 5; animation: mu 1.6s linear infinite; }
+  svg.stand .pred { fill: var(--c-mid); }
+  @keyframes mu { to { stroke-dashoffset: -22; } }
+  @media (prefers-reduced-motion: reduce) { svg.stand .mu { animation: none; } }
+  .toc { columns: 2; max-width: 84ch; font-size: .95rem; } @media (max-width: 760px) { .toc { columns: 1; } }
+</style>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="../">Alexandra Kallitsopoulou</a>
+  <nav class="nav"><a href="../">Home</a><a href="../notes/">Notes</a></nav>
+</div></header>
+
+<main class="wrap">
+  <article>
+    <header class="note-header">
+      <h1>Single-channel efficiency on the VMM cosmic bench</h1>
+      <p class="muted">How we measure the absolute efficiency of one VMM channel (one pad) with cosmic muons: why the obvious way fails, counting in circles instead, scintillator-confirmed tags, closure tests and the real-data checks of the wk2 threshold scan.</p>
+      <div class="meta-row">
+        <span class="pill">Analysis</span>
+        <time datetime="2026-11-16">2026-11-16</time>
+        <span class="faint">VMM, efficiency, cosmics, P2, threshold</span>
+      </div>
+    </header>
+
+    <div class="note-body">
+
+<div class="callout ok"><p><b>The answer first.</b> With the global thresholds of the November scan, one P2 pad records
+<b>75-80 % of the muons that cross it</b> while its threshold sits 20-40 mV above its own baseline
+(P2_IN 0.75 ± 0.02, P2_MID 0.75 ± 0.03, P2_OUT 0.79 ± 0.02). Further up it falls: about 0.6-0.7 at 45-60 mV and
+0.45-0.65 above 60 mV. Channels whose baseline sits above the threshold record nothing (0.000 ± 0.002).
+This page explains how that number is obtained, shows it moving in three small simulations, and shows every check on the
+real data.</p></div>
+
+<ol class="toc">
+  <li><a href="#q">The question and the stand</a></li>
+  <li><a href="#naive">The obvious way, and why it fails</a> (animation)</li>
+  <li><a href="#count">Counting in circles</a> (animation)</li>
+  <li><a href="#tags">Which tags are muons</a></li>
+  <li><a href="#closure">Does the method work? Simulated muons</a></li>
+  <li><a href="#checks">Checks on the real data</a></li>
+  <li><a href="#result">The result</a></li>
+  <li><a href="#history">How the method got here</a></li>
+  <li><a href="#limits">Limits and next steps</a></li>
+  <li><a href="#run">Running it, glossary</a></li>
+</ol>
+
+<!-- ===================================================================================================== 1 -->
+<section class="sec" id="q">
+<div class="kicker">1 · the question</div>
+<h2>The question and the stand</h2>
+<p>The <b>efficiency of a channel</b> is simple to say: of all the muons that cross its pad, which fraction does the
+channel record? It depends on how far the threshold sits above the channel's own baseline (in mV), and that is what we
+want to know to choose thresholds.</p>
+<p>On the Saclay stand three P2 chambers lie flat, one above the other (P2_IN at z = 320 mm, P2_MID at 630 mm, P2_OUT at
+940 mm), between two scintillator paddles that tell us when a muon really went through. We have no tracker, so the
+chambers check each other: a muon seen in two of them (a <b>tag</b>) predicts, with a straight line, where it crossed the
+third one (the <b>probe</b>). Then we look at the probe's pads.</p>
+
+<svg class="stand" viewBox="0 0 760 300" role="img" aria-label="side view of the stand: scintillator, three chambers, scintillator, a muon crossing them">
+  <rect class="sc" x="120" y="18" width="380" height="14" rx="3"/><text x="510" y="30">scintillator (top)</text>
+  <rect class="ch" x="80" y="78" width="460" height="16" rx="3"/><text x="550" y="91">P2_IN</text><text class="sub" x="610" y="91">z 320 mm · tag</text>
+  <rect class="ch probe" x="80" y="148" width="460" height="16" rx="3"/><text x="550" y="161">P2_MID</text><text class="sub" x="610" y="161">z 630 mm · probe</text>
+  <rect class="ch" x="80" y="218" width="460" height="16" rx="3"/><text x="550" y="231">P2_OUT</text><text class="sub" x="610" y="231">z 940 mm · tag</text>
+  <rect class="sc" x="120" y="270" width="380" height="14" rx="3"/><text x="510" y="282">scintillator (bottom)</text>
+  <line class="mu" x1="250" y1="0" x2="340" y2="300"/>
+  <circle cx="271" cy="86" r="5" fill="var(--c-in)"/><circle cx="313" cy="226" r="5" fill="var(--c-out)"/>
+  <circle class="pred" cx="292" cy="156" r="5"/><text class="sub" x="190" y="146">predicted point</text>
+  <text class="sub" x="140" y="74">hit (tag)</text><text class="sub" x="140" y="254">hit (tag)</text>
+</svg>
+<p class="muted">Any of the three chambers can be the probe: for P2_MID the predicted point lies <i>between</i> the two
+tag hits (interpolation), for P2_IN and P2_OUT it lies <i>outside</i> them (extrapolation), which is less precise.</p>
+</section>
+
+<!-- ===================================================================================================== 2 -->
+<section class="sec" id="naive">
+<div class="kicker">2 · the obvious way</div>
+<h2>The obvious way, and why it fails</h2>
+<p>The obvious measurement: for every tag, find the pad under the predicted point and ask "did it fire?". The trouble is
+that the predicted point is not exactly where the muon crossed. The two hits that make the line are only known to about
+a pad (12 mm), so the prediction is off by ~3 mm in the middle chamber and ~8 mm outside. Whenever it lands on the
+<i>neighbouring</i> pad, the obvious method counts a miss, although the pad the muon crossed did fire.</p>
+
+<div class="demo">
+  <canvas id="cv1" data-aspect="0.46" aria-label="simulation: muons crossing a pad grid, predicted points, naive efficiency"></canvas>
+  <div class="ctrls">
+    <label>prediction error σ <input id="n_sig" type="range" min="1" max="14" step="0.5" value="8"><output id="n_sig_o"></output></label>
+    <label>true efficiency <input id="n_eps" type="range" min="0.3" max="1" step="0.05" value="0.8"><output id="n_eps_o"></output></label>
+    <span class="seg" id="n_mode"><button data-v="smooth" class="on">smooth</button><button data-v="lattice">on the pad lattice</button></span>
+    <button id="n_reset">restart</button>
+  </div>
+  <div class="readout">
+    <span class="chip">muons <b id="n_n">0</b></span>
+    <span class="chip">true efficiency (pad crossed fired) <b id="n_true">-</b></span>
+    <span class="chip">naive: "the predicted pad fired" <b id="n_naive">-</b></span>
+  </div>
+</div>
+<p>Each ring is where a muon really crossed; the dot is where the other two chambers predict it. The pad lights up when
+it fired. A <span style="color:var(--c-ok);font-weight:600">green</span> dot is a naive success (the predicted pad is the
+one that fired); a <span style="color:var(--c-bad);font-weight:600">red</span> dot is a naive miss. Move σ: with 8 mm the
+naive number falls to about a quarter of the truth, whatever the true efficiency.</p>
+
+<p>The real data say the same. With scintillator-confirmed muons the naive number is 0.17 (P2_IN), 0.40 (P2_MID) and
+0.20 (P2_OUT): far below anything sensible, and lowest exactly in the two extrapolated chambers. The probability that a
+pad fires against the distance of the predicted point from its centre shows the smearing directly:</p>
+<figure class="data"><img src="2026-11-16-single-channel-efficiency-on-the-vmm-cosmic-bench_files/profiles_run218.png" alt="probability that a pad fires against the offset of the prediction from its centre, three chambers, run 218">
+<figcaption>Run 218 (K = 0), all pads: probability that a pad fires against the offset of the predicted point from its
+centre, along (top) and across (bottom) the pad. P2_MID: a narrow peak, the pad is ±6 mm, smearing σ ≈ 3 mm. P2_IN and
+P2_OUT: a wide, low and <i>lumpy</i> profile (σ ≈ 8.5 mm), with the peak at 0.12 instead of 0.5.</figcaption></figure>
+
+<p>The lumps are a second surprise: the predicted points are not spread smoothly. The tag clusters sit on pad centres and
+the three chambers share the same pad lattice, so a straight line through two pad centres lands again on a pad centre
+(extrapolation) or exactly half-way between two (interpolation):</p>
+<figure class="data"><img src="2026-11-16-single-channel-efficiency-on-the-vmm-cosmic-bench_files/v2_prediction_grid.png" alt="distance of the predicted point from the nearest pad centre, three chambers">
+<figcaption>Distance of the predicted point from the nearest pad centre, scintillator-confirmed tags of the whole scan.
+P2_IN / P2_OUT: 56 % / 53 % <i>exactly</i> on a pad centre. P2_MID: mostly ~6 mm away, half-way between two pads. Try the
+"on the pad lattice" button above: the naive number does not get better.</figcaption></figure>
+<div class="take">So "did the predicted pad fire?" measures the tracking, not the pad. And because the predictions sit on a
+lattice, any method that assumes a smooth (Gaussian) smearing fails too: a fit of that kind gave χ²/ndf of 40-60 on
+P2_IN and P2_OUT.</div>
+</section>
+
+<!-- ===================================================================================================== 3 -->
+<section class="sec" id="count">
+<div class="kicker">3 · the idea</div>
+<h2>Counting in circles</h2>
+<p>The way out needs no knowledge of the smearing at all. <b>The prediction error moves muons around, it does not create or
+remove them.</b> So, for one pad:</p>
+<p class="eq">times the pad fired = efficiency × (muons that really crossed the pad) + other hits<br>
+muons that really crossed the pad = muon density × pad area</p>
+<p>The density does not need precise tracks: count the predicted points in a circle of 40 mm around the pad and divide by
+the area. Then count how often the pad fired for tags predicted within a radius R of its centre, and let R grow. While R
+is smaller than the smearing, some of the pad's own muons are predicted outside the circle and the count is too low; once
+R is a few times the smearing, all of them are inside, and the curve stops rising. That level is the efficiency.</p>
+
+<div class="demo">
+  <canvas id="cv2" data-aspect="0.5" aria-label="simulation: predicted points around one pad, a growing circle, and the counting curve"></canvas>
+  <div class="ctrls">
+    <label>σ <input id="c_sig" type="range" min="1" max="14" step="0.5" value="8"><output id="c_sig_o"></output></label>
+    <label>true efficiency <input id="c_eps" type="range" min="0.3" max="1" step="0.05" value="0.75"><output id="c_eps_o"></output></label>
+    <label>other hits <input id="c_bg" type="range" min="0" max="3" step="0.25" value="1"><output id="c_bg_o"></output></label>
+    <label>non-muon tags <input id="c_fake" type="range" min="0" max="0.5" step="0.05" value="0"><output id="c_fake_o"></output></label>
+    <label><input id="c_gate" type="checkbox"> scintillator confirmation</label>
+    <span class="seg" id="c_mode"><button data-v="smooth" class="on">smooth</button><button data-v="lattice">lattice</button></span>
+    <button id="c_reset">restart</button>
+  </div>
+  <div class="readout">
+    <span class="chip">tags <b id="c_n">0</b></span>
+    <span class="chip">true efficiency <b id="c_true">-</b></span>
+    <span class="chip">counting estimate <b id="c_est">-</b></span>
+  </div>
+</div>
+<p>Left: the predicted points around one pad (large dots: that pad fired; dashes: non-muon tags), the counting circle sweeping out to 80 mm and
+the 40 mm density circle (dashed). Right: the counting curve, firings within R divided by the expected crossings. It rises
+while R is about the size of σ and levels off near the true efficiency (dashed). Things to try:</p>
+<ul>
+  <li><b>σ</b> from 3 to 14 mm: the curve rises later but levels at the same height. The smearing drops out.</li>
+  <li><b>lattice</b>: predictions snapped to pad centres. The curve climbs in steps, and still ends at the same height.</li>
+  <li><b>other hits</b>: the pad sometimes fires with a muon that crossed elsewhere (crosstalk, delta rays, the cluster of
+  another muon). Those come from everywhere, so they add a slow rise ∝ R². The estimate takes the value at R<sub>lo</sub>
+  = 40 mm minus that rise, measured from the points beyond 40 mm (the dashed line, drawn when the circle reaches 80 mm;
+  its value at R = 0 is the estimate). With ~500 muons crossing the pad per simulation, it scatters by about ±0.04 around
+  the truth; press restart to see it.</li>
+  <li><b>non-muon tags</b>: next section.</li>
+</ul>
+<p>Two details make this exact on the real stand. <b>Random hits</b> (noise in the 200 ns window) are measured with the same
+tags in a window 4 µs later and subtracted. And the <b>density</b> is counted in pad cells, not in a circle: each tag belongs
+to the pad nearest to its predicted point, and the density is the tags in the cells around the pad over the area of those
+cells. Cells tile the plane, so this is right both for smooth and for lattice-like predictions, and it follows the edges
+and the masked pads.</p>
+<p class="eq">K(R) = firings within R − random = ε · E + b · R²   for R ≥ R<sub>lo</sub>, &nbsp; ε = (K(R<sub>lo</sub>) − b R<sub>lo</sub>²) / E</p>
+</section>
+
+<!-- ===================================================================================================== 4 -->
+<section class="sec" id="tags">
+<div class="kicker">4 · purity</div>
+<h2>Which tags are muons</h2>
+<p>The counting takes the predicted crossings at face value. A "tag" that is not a muon (two chambers firing at the same
+time because of correlated noise) predicts a crossing that never happened, and the measured efficiency drops by exactly
+the fraction of such tags. No counting trick can fix that (move <b>non-muon tags</b> in the simulation above). The
+off-time subtraction removes the <i>random</i> coincidences, but not correlated noise, and the stand has plenty
+(whole-chamber events, shared noise).</p>
+<p>The fix is the scintillator coincidence: we keep only tags that come 140-310 ns after a signal of the scintillator
+coincidence channel (H0, VMM 0, channel 40). That is 26 746 tags of the scan, 10 % of all tags. Tick
+<b>scintillator confirmation</b> in the simulation: the fake tags disappear and the estimate goes back to the truth.</p>
+<div class="two">
+<figure class="data"><img src="2026-11-16-single-channel-efficiency-on-the-vmm-cosmic-bench_files/v1_scint_timing.png" alt="tag time minus scintillator time">
+<figcaption>Tag time minus the nearest scintillator coincidence: one sharp muon peak at ~200 ns, nothing else within
+±600 ns; grey: the window used.</figcaption></figure>
+<figure class="data"><img src="2026-11-16-single-channel-efficiency-on-the-vmm-cosmic-bench_files/v6_methods.png" alt="the same pads measured four ways">
+<figcaption>The same pads (18-40 mV above baseline), four ways: naive with all tags, naive with scintillator tags,
+counting with all tags (0.44 / 0.57 / 0.51) and counting with scintillator tags (0.75 / 0.75 / 0.79). The self-made tags
+are ~30-40 % non-muons.</figcaption></figure>
+</div>
+</section>
+
+<!-- ===================================================================================================== 5 -->
+<section class="sec" id="closure">
+<div class="kicker">5 · closure</div>
+<h2>Does the method work? Simulated muons</h2>
+<p>Before trusting it on data, the code is run on simulated muons with a known efficiency (0.85), crossing a grid of
+12 × 11.6 mm pads, measured exactly like the real ones (<code>channel_efficiency.py toy</code>; the same checks run
+automatically in <code>test_channel_efficiency.py</code>).</p>
+<figure class="data half"><img src="2026-11-16-single-channel-efficiency-on-the-vmm-cosmic-bench_files/v7_toy_closure.png" alt="toy closure test">
+<figcaption>True efficiency 0.85 (dashed). Dots: the counting result for a prediction error of 3, 8 and 12 mm; crosses: the
+naive number.</figcaption></figure>
+<table class="res">
+<thead><tr><th>simulated situation</th><th>counting result</th><th>what it shows</th></tr></thead>
+<tbody>
+<tr><td>smooth smearing, σ = 3 / 8 / 12 mm</td><td>0.85 / 0.85 / 0.85 (± 0.01)</td><td>the smearing drops out</td></tr>
+<tr><td>predictions on the pad lattice</td><td>0.85 / 0.85 / 0.85</td><td>no smooth smearing needed</td></tr>
+<tr><td>random hits</td><td>0.85</td><td>the off-time window removes them</td></tr>
+<tr><td>15 % of muons scattered by 20 mm</td><td>0.83 at R<sub>lo</sub> 40 mm, 0.85 at 56 mm</td><td>tails show as a result that still rises with R<sub>lo</sub></td></tr>
+<tr><td>30 % fake tags</td><td>0.60 = 0.85 × 0.7</td><td>impurity is NOT corrected: use scintillator tags</td></tr>
+</tbody></table>
+<p class="muted">The naive number in the same simulations: 0.55 (σ 3 mm), 0.22 (8 mm), 0.12 (12 mm), close to what the real
+data gave. The quoted errors are conservative: the spread over many simulated runs is about 0.6 of them.</p>
+</section>
+
+<!-- ===================================================================================================== 6 -->
+<section class="sec" id="checks">
+<div class="kicker">6 · verification</div>
+<h2>Checks on the real data</h2>
+<p>Data: the wk2 threshold scan, 3-5 November 2026, runs 181-225 (16 long runs at 12 thresholds, K = −16 … +64 DAC counts
+around each chip's base threshold). Threshold and baseline of every channel in mV from the on-chip monitor map of 13 Nov,
+shifted to each run's threshold with each chip's mV-per-DAC calibration. Pads with a masked or dead pad within 40 mm are
+left out (the density must be smooth).</p>
+
+<h3>The counting curve flattens, and the result does not depend on R<sub>lo</sub></h3>
+<figure class="data"><img src="2026-11-16-single-channel-efficiency-on-the-vmm-cosmic-bench_files/v3_counting_curves.png" alt="counting curves of the three chambers and the R_lo scan">
+<figcaption>Left: the counting curve of the real pads (18-40 mV above baseline). P2_MID rises within ~20 mm (σ ≈ 3 mm);
+P2_IN and P2_OUT need ~30-40 mm (σ ≈ 8 mm). Dashed: ε + b R² from 40 mm on. Right: the result for R<sub>lo</sub> from 24 to
+56 mm. P2_MID is flat (0.74 → 0.75, χ²/ndf 0.6); P2_IN and P2_OUT still rise by ~0.02-0.03 (χ²/ndf 4-6): the scattering
+tails of the extrapolated chambers, the same signature as in the simulation. This spread is the systematic error.</figcaption></figure>
+
+<div class="check"><span class="ok">✓</span><span><b>Blind channels read zero.</b> 470 pad-runs whose baseline sits above the
+threshold (the VMM 4/7/9 blocks): 0.000 ± 0.002. The obvious method gave them 0.06-0.23, because a neighbour fired.</span></div>
+<div class="check"><span class="ok">✓</span><span><b>The three chambers agree</b>: 0.75, 0.75, 0.79, although their smearing
+differs by a factor 3 and their naive numbers by a factor 2.</span></div>
+<div class="check"><span class="ok">✓</span><span><b>Repeated runs agree.</b> The same threshold (K = 0) was taken three
+times, days apart (runs 187, 196, 218): P2_IN 0.79 / 0.72 / 0.76, P2_MID 0.78 / 0.83 / 0.80, P2_OUT 0.80 / 0.81 / 0.82
+(errors 0.04-0.06).</span></div>
+<div class="check"><span class="ok">✓</span><span><b>Independent measurement.</b> The chamber-level scintillator efficiency (any
+hit within 30 mm of the prediction, live pads; a different, looser question) at K = 0: 0.74 / 0.68-0.71 / 0.80-0.82.</span></div>
+<div class="check"><span class="ok">✓</span><span><b>The smearing has the size the geometry says.</b> From the profile fit:
+P2_MID σ ≈ 3 mm; propagating the same tag errors to the outside chambers gives ~9 mm; the fit gives 8-8.6 mm.</span></div>
+<div class="check"><span class="warn">!</span><span><b>Statistics.</b> The scintillators see a muon every ~5 s, ~900 confirmed
+tags per chamber per run: enough for groups of channels, not for one channel alone.</span></div>
+
+<figure class="data half"><img src="2026-11-16-single-channel-efficiency-on-the-vmm-cosmic-bench_files/v5_runs.png" alt="efficiency per run">
+<figcaption>One point per run and chamber (all clean live pads of that run). The three K = 0 runs are drawn side by side.
+At low K many pads are masked, few clean pads are left and the errors grow.</figcaption></figure>
+</section>
+
+<!-- ===================================================================================================== 7 -->
+<section class="sec" id="result">
+<div class="kicker">7 · result</div>
+<h2>The result: efficiency against threshold − baseline</h2>
+<figure class="data half"><img src="2026-11-16-single-channel-efficiency-on-the-vmm-cosmic-bench_files/v4_eff_vs_distance.png" alt="absolute efficiency against threshold minus baseline">
+<figcaption>Absolute single-channel efficiency against how far the channel's threshold sits above its own baseline;
+every channel of every run goes into the bin of its own distance.</figcaption></figure>
+<table class="res">
+<thead><tr><th>threshold − baseline</th><th>P2_IN</th><th>P2_MID</th><th>P2_OUT</th></tr></thead>
+<tbody>
+<tr><td>22-30 mV</td><td>0.77 ± 0.05</td><td>0.75 ± 0.04</td><td>0.77-0.86 ± 0.04</td></tr>
+<tr><td>30-40 mV</td><td>0.66-0.79 ± 0.04</td><td>0.64-0.65 ± 0.07</td><td>0.73-0.76 ± 0.04</td></tr>
+<tr><td>40-58 mV</td><td>0.69-0.77 ± 0.07</td><td>0.57-0.75 ± 0.10</td><td>0.62-0.68 ± 0.05</td></tr>
+<tr><td>58-100 mV</td><td>0.54-0.66 ± 0.08</td><td>0.42-0.47 ± 0.09</td><td>0.43-0.53 ± 0.06</td></tr>
+<tr><td><b>plateau, 18-40 mV</b></td><td><b>0.75 ± 0.02</b></td><td><b>0.75 ± 0.03</b></td><td><b>0.79 ± 0.02</b></td></tr>
+</tbody></table>
+<p>The shape agrees with the first, relative measurement (each channel divided by its own mean over the scan): flat up to
+~40 mV, then down by ~30 % at 70-80 mV.</p>
+<details><summary>The relative measurement it confirms</summary>
+<figure class="data"><img src="2026-11-16-single-channel-efficiency-on-the-vmm-cosmic-bench_files/relative_own_pad.png" alt="relative own-pad efficiency">
+<figcaption>Own-pad efficiency of each channel divided by its own mean over the scan (all tags): the tracking factor
+cancels in the ratio, so the shape is right but the level is unknown. Right: channels grouped by baseline within their
+chip make no difference.</figcaption></figure></details>
+<div class="take">For choosing thresholds: on this bench the muon signals are well above 20-40 mV, so lowering the threshold
+below the "safe" level gains nothing; raising it beyond ~40-45 mV above baseline starts to cost efficiency.
+Why the plateau is 75-80 % and not ~95 % is the next question (gas gain at these HV settings, dead time after noise
+bursts, the edges of the pad response).</div>
+</section>
+
+<!-- ===================================================================================================== 8 -->
+<section class="sec" id="history">
+<div class="kicker">8 · how we got here</div>
+<h2>How the method got here</h2>
+<p>The number moved on the way, and each step is a lesson for future measurements:</p>
+<ol>
+  <li><b>Pad efficiency</b> (any pad within 15 mm of the prediction): 0.3-0.5, and blind pads at 0.06-0.23. Neighbours help.</li>
+  <li><b>Own pad only</b>: blind pads at 0, but 0.07-0.3: the tracking dominates. Only ratios are usable (the relative curve).</li>
+  <li><b>Fit of the firing profile</b> with a box ⊗ Gauss model: gave the smearing (3 / 8.5 mm) and showed that the pad
+  response is not wider than the pad, but the efficiency moved by ±20 % with the fit's weighting and failed on the lattice.</li>
+  <li><b>Self-made tags vs scintillator tags</b>: 0.44-0.57 against 0.75-0.79, the impurity.</li>
+  <li><b>First counting version</b> (radius up to 40 mm, density in a circle): 0.80 / 0.84 / 0.86, the figure below.
+  The simulation then showed two biases: a curve still rising at 40 mm (−5 % at σ = 8 mm) and the circle-counting of lattice
+  points (±2-3 %). Both were fixed by counting out to 80 mm, taking the density in pad cells, and subtracting random hits
+  from the off-time window. Final: 0.75 / 0.75 / 0.79.</li>
+</ol>
+<details><summary>The first counting version (eff_integral.png)</summary>
+<figure class="data"><img src="2026-11-16-single-channel-efficiency-on-the-vmm-cosmic-bench_files/first_version_eff_integral.png" alt="first counting version">
+<figcaption>First version: counting curve against R² up to 40 mm (left) and the absolute efficiency against threshold −
+baseline (right). Same shape as the final one, about 5 % higher.</figcaption></figure>
+<figure class="data"><img src="2026-11-16-single-channel-efficiency-on-the-vmm-cosmic-bench_files/efficiency_final.png" alt="final version output">
+<figcaption>The same figure from the final code (<code>channel_efficiency.py measure</code>): counting curve against R
+up to 80 mm with the ε + b R² line from 40 mm, and the result against threshold − baseline.</figcaption></figure>
+</details>
+</section>
+
+<!-- ===================================================================================================== 9 -->
+<section class="sec" id="limits">
+<div class="kicker">9 · limits</div>
+<h2>Limits and next steps</h2>
+<ul>
+  <li><b>Statistics</b>: one week gives ~900 scintillator tags per chamber per run: curves for groups of channels, not one
+  curve per channel. Per-channel curves need several weeks, or larger scintillators.</li>
+  <li><b>Masked neighbours</b>: pads with a masked pad within 40 mm are dropped; at the lowest thresholds few are left. The
+  trimmed configurations (raise instead of mask) will keep many more.</li>
+  <li><b>Scattering tails</b> in the extrapolated chambers: +0.02-0.03 between R<sub>lo</sub> = 40 and 56 mm (quoted as
+  systematic).</li>
+  <li><b>Baselines</b> were measured on 13 Nov, after the scan (and after a reboot). For the next scan, measure the monitor map
+  at the start.</li>
+  <li><b>Random scintillator coincidences</b> are negligible (0.19 Hz × 170 ns window).</li>
+</ul>
+</section>
+
+<!-- ===================================================================================================== 10 -->
+<section class="sec" id="run">
+<div class="kicker">10 · do it yourself</div>
+<h2>Running it</h2>
+<p>Everything is one program, <code>channel_efficiency.py</code> in <code>P2_basket_analysis/cosmic_vmm_analysis</code>
+(branch <code>eff-vs-threshold-distance</code>), with a step-by-step how-to in <code>CHANNEL_EFFICIENCY.md</code>. On lxplus:</p>
+<pre><code># Python with numpy/pandas/scipy, and where the pad map is
+source /cvmfs/sft.cern.ch/lcg/views/LCG_105/x86_64-el9-gcc13-opt/setup.sh
+export VMM_QA_DIR=~/tpc/vmm_qa
+# 1. decode the runs into per-muon records (about 1 min per run, 3 at a time)
+python3 channel_efficiency.py dump --runs-dir /eos/experiment/ntof/data/x17/p2_sps_july/vmm_cosmic_run_oct26/runs \
+    --out ~/wk2tags80 --jobs 3 181 184 187 190 193 196 199 202 205 208 211 214 218 221 223 225
+# 2. threshold, baseline and their distance for every channel in every run (mV)
+python3 channel_efficiency.py thr-table ~/wk2tags80 --map map_Km18_i5_unmasked.json --sdtcal sdtcal.json \
+    --run-sdt run_sdt.json -o thr.csv
+# 3. the efficiency, then the verification figures of this page
+python3 channel_efficiency.py measure ~/wk2tags80 thr.csv out_eff --scint 140:310
+python3 channel_efficiency_report.py out_eff ~/wk2tags80 out_eff/figs
+# closure tests (3 s), after any change to the code
+python3 test_channel_efficiency.py</code></pre>
+<p><code>dump</code> reads the raw captures and writes one record per tag. <code>thr-table</code> needs one monitor map
+(baseline and threshold per channel, measured on the chips) plus each chip's mV-per-DAC calibration and threshold in each
+run (<code>sdt-table</code>, run on the DAQ box). <code>measure</code> does the counting; <code>--scint</code> is the
+scintillator window, <code>--rlo</code> the radius R<sub>lo</sub> (default 40 mm), <code>--clean</code> the distance to the
+nearest masked pad (default 40 mm).</p>
+
+<h3>Glossary</h3>
+<dl>
+  <dt>tag</dt><dd>a muon candidate: a clean cluster in each of two chambers with the right time difference.</dd>
+  <dt>probe</dt><dd>the third chamber, whose pads are being measured.</dd>
+  <dt>prediction error, smearing, σ</dt><dd>how far the predicted point is from where the muon really crossed.</dd>
+  <dt>pad lattice</dt><dd>the grid of pad centres; the same in the three chambers.</dd>
+  <dt>off-time window / sideband</dt><dd>the same tags, hits looked for 4 µs later: only random hits are there.</dd>
+  <dt>scintillator-confirmed</dt><dd>the tag comes 140-310 ns after a scintillator coincidence: a real muon.</dd>
+  <dt>R<sub>lo</sub></dt><dd>the radius beyond which all of a pad's own muons are counted (40 mm, checked from 24 to 56 mm).</dd>
+  <dt>threshold − baseline</dt><dd>how far above its own baseline a channel's threshold sits, in mV.</dd>
+  <dt>K</dt><dd>threshold step of the scan, in DAC counts from each chip's base threshold (1 count ≈ 0.75 mV).</dd>
+  <dt>blind pad</dt><dd>a channel whose baseline is above the threshold; it cannot fire on signals.</dd>
+  <dt>closure test</dt><dd>running the analysis on simulated data where the answer is known.</dd>
+</dl>
+</section>
+
+    </div>
+  </article>
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <span>Alexandra Kallitsopoulou</span>
+  <span><a href="../notes/">← all notes</a></span>
+</div></footer>
+
+<script>
+(function () {
+'use strict';
+const $ = (s) => document.querySelector(s);
+let C = {};
+function readTheme() {
+  const cs = getComputedStyle(document.documentElement); const g = (v) => cs.getPropertyValue(v).trim();
+  C = { fg: g('--fg'), muted: g('--fg-muted'), faint: g('--fg-faint'), border: g('--border'), bg: g('--bg-elev'), accent: g('--accent'),
+        inn: g('--c-in'), mid: g('--c-mid'), out: g('--c-out'), ok: g('--c-ok'), bad: g('--c-bad'), grid: g('--c-grid'), fake: g('--c-fake'),
+        pad: g('--c-pad'), font: g('--font') || 'sans-serif', mono: g('--mono') || 'monospace' };
+}
+readTheme();
+function gauss() { let u = 0; while (u === 0) u = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * Math.random()); }
+const lin = (v, a, b, p, q) => p + (v - a) / (b - a) * (q - p);
+function fit(cv) { const w = cv.clientWidth || 600; const asp = +cv.dataset.aspect || 0.45; let h = Math.round(w * asp);
+  if (w < 560) h = Math.round(w * Math.min(1.1, asp * 1.9)); const dpr = window.devicePixelRatio || 1;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); cv.style.height = h + 'px';
+  const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); return { ctx, w, h }; }
+function txt(ctx, s, x, y, o) { o = o || {}; ctx.font = (o.bold ? '600 ' : '') + (o.size || 12) + 'px ' + (o.mono ? C.mono : C.font);
+  ctx.fillStyle = o.color || C.fg; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic'; ctx.fillText(s, x, y); }
+function seg(id, cb) { const el = $(id); el.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => {
+  el.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); cb(b.dataset.v); })); }
+function slider(id, fmt, cb) { const el = $(id), o = $(id + '_o'); const f = () => { o.textContent = fmt(+el.value); cb(+el.value); };
+  el.addEventListener('input', f); f(); }
+const W = 12.0, H = 11.6;   // pad size, mm
+const demos = [];
+const io = ('IntersectionObserver' in window) ? new IntersectionObserver((es) => es.forEach((e) => {
+  const d = demos.find((x) => x.cv === e.target); if (d) d.vis = e.isIntersecting; }), { threshold: 0.05 }) : null;
+function demo(cv, obj) { obj.cv = cv; obj.vis = !io; demos.push(obj); if (io) io.observe(cv); obj.size(); return obj; }
+const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ======================================================================================== demo 1: the naive method
+(function () {
+  const cv = $('#cv1'); const NX = 11, NY = 7;
+  const st = { sig: 8, eps: 0.8, lattice: false, mu: [], n: 0, nf: 0, nn: 0, nnaive: 0, fired: new Float32Array(NX * NY) };
+  function reset() { st.mu = []; st.n = st.nf = st.nn = st.nnaive = 0; st.fired.fill(0); }
+  function spawn() {
+    const tx = (Math.random() - 0.5) * (NX - 2) * W, ty = (Math.random() - 0.5) * (NY - 2) * H;
+    const ix = Math.round(tx / W), iy = Math.round(ty / H); const fired = Math.random() < st.eps;
+    let px = tx + gauss() * st.sig, py = ty + gauss() * st.sig;
+    if (st.lattice) { px = Math.round(px / W) * W; py = Math.round(py / H) * H; }
+    const jx = Math.round(px / W), jy = Math.round(py / H);
+    const inside = Math.abs(jx) <= (NX - 1) / 2 && Math.abs(jy) <= (NY - 1) / 2;
+    const ok = fired && jx === ix && jy === iy;
+    st.n++; if (fired) st.nf++; if (inside) { st.nn++; if (ok) st.nnaive++; }
+    if (fired) st.fired[(ix + (NX - 1) / 2) * NY + (iy + (NY - 1) / 2)] = 1;
+    st.mu.push({ tx, ty, px, py, ok, age: 0 }); if (st.mu.length > 70) st.mu.shift();
+  }
+  const d = demo(cv, {
+    size() { this.g = fit(cv); this.draw(); },
+    tick(dt) { this.acc = (this.acc || 0) + dt; while (this.acc > 0.09) { this.acc -= 0.09; spawn(); }
+      st.mu.forEach((m) => { m.age += dt; }); for (let i = 0; i < st.fired.length; i++) st.fired[i] = Math.max(0, st.fired[i] - dt * 1.2);
+      this.draw(); },
+    draw() { const { ctx, w, h } = this.g; ctx.clearRect(0, 0, w, h);
+      const sc = Math.min((w - 20) / (NX * W), (h - 34) / (NY * H)); const ox = w / 2, oy = 22 + (h - 22) / 2;
+      const X = (x) => ox + x * sc, Y = (y) => oy - y * sc;
+      for (let i = 0; i < NX; i++) for (let j = 0; j < NY; j++) {
+        const cx = (i - (NX - 1) / 2) * W, cy = (j - (NY - 1) / 2) * H; const f = st.fired[i * NY + j];
+        ctx.fillStyle = f > 0 ? `rgba(42,120,214,${0.08 + 0.45 * f})` : C.pad; ctx.strokeStyle = C.border; ctx.lineWidth = 1;
+        ctx.fillRect(X(cx - W / 2) + 1, Y(cy + H / 2) + 1, W * sc - 2, H * sc - 2); ctx.strokeRect(X(cx - W / 2) + 1, Y(cy + H / 2) + 1, W * sc - 2, H * sc - 2);
+      }
+      st.mu.forEach((m) => { const a = Math.max(0.15, 1 - m.age / 6);
+        ctx.globalAlpha = a; ctx.strokeStyle = C.muted; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(X(m.tx), Y(m.ty)); ctx.lineTo(X(m.px), Y(m.py)); ctx.stroke();
+        ctx.beginPath(); ctx.arc(X(m.tx), Y(m.ty), 4.5, 0, 7); ctx.strokeStyle = C.fg; ctx.lineWidth = 1.4; ctx.stroke();
+        ctx.beginPath(); ctx.arc(X(m.px), Y(m.py), 3.6, 0, 7); ctx.fillStyle = m.ok ? C.ok : C.bad; ctx.fill(); ctx.globalAlpha = 1; });
+      txt(ctx, 'top view of a probe chamber (pads 12 × 11.6 mm) · ring = true crossing · dot = prediction', 8, 15, { color: C.muted, size: 12 });
+      $('#n_n').textContent = st.n; $('#n_true').textContent = st.n ? (st.nf / st.n).toFixed(2) : '-';
+      $('#n_naive').textContent = st.nn ? (st.nnaive / st.nn).toFixed(2) : '-'; }
+  });
+  slider('#n_sig', (v) => v.toFixed(1) + ' mm', (v) => { st.sig = v; reset(); });
+  slider('#n_eps', (v) => v.toFixed(2), (v) => { st.eps = v; reset(); });
+  seg('#n_mode', (v) => { st.lattice = v === 'lattice'; reset(); });
+  $('#n_reset').addEventListener('click', reset);
+  if (reduce) for (let i = 0; i < 400; i++) spawn();
+})();
+
+// ======================================================================================== demo 2: counting in circles
+(function () {
+  const cv = $('#cv2'); const L = 92, RMAX = 80, RLO = 40, RD = 40, NMAX = 128000, NDRAW = 12000, DR = 2, NB = RMAX / DR;
+  const st = { sig: 8, eps: 0.75, bg: 1, fake: 0, gate: false, lattice: false, R: 0 };
+  let cells = 0; for (let i = -8; i <= 8; i++) for (let j = -8; j <= 8; j++) if (Math.hypot(i * W, j * H) < RD) cells++;
+  let draw = [], n = 0, nFake = 0, nd = 0, ndFake = 0, kb = new Float64Array(NB);
+  function reset() { draw = []; n = nFake = nd = ndFake = 0; kb = new Float64Array(NB); }
+  function addTag() {
+    const fakeTag = Math.random() < st.fake;
+    const tx = (Math.random() * 2 - 1) * L, ty = (Math.random() * 2 - 1) * L;
+    let px = tx, py = ty, fired = false;
+    if (!fakeTag) {
+      px = tx + gauss() * st.sig; py = ty + gauss() * st.sig;
+      const crossed = Math.abs(tx) < W / 2 && Math.abs(ty) < H / 2;
+      fired = crossed ? Math.random() < st.eps : (Math.hypot(tx, ty) < RMAX + 20 && Math.random() < st.bg * 4e-4);
+    }
+    if (st.lattice) { px = Math.round(px / W) * W; py = Math.round(py / H) * H; }
+    const inCell = Math.hypot(Math.round(px / W) * W, Math.round(py / H) * H) < RD;
+    if (fakeTag) { nFake++; if (inCell) ndFake++; } else { n++; if (inCell) nd++; }
+    if (fired) { const b = Math.floor(Math.hypot(px, py) / DR); if (b < NB) kb[b]++; }
+    if (draw.length < NDRAW) draw.push({ px, py, fired, fake: fakeTag });
+  }
+  function curve() {
+    const E = (nd + (st.gate ? 0 : ndFake)) / cells;           // expected crossings of the pad: density in cells x pad area
+    const Rs = [], ys = []; let k = 0;
+    for (let i = 0; i < NB; i++) { k += kb[i]; Rs.push((i + 1) * DR); ys.push(E > 0 ? k / E : NaN); }
+    let sx = 0, sy = 0, sxx = 0, sxy = 0, m = 0;
+    Rs.forEach((R, i) => { if (R >= RLO && isFinite(ys[i])) { const x = R * R; sx += x; sy += ys[i]; sxx += x * x; sxy += x * ys[i]; m++; } });
+    const b = m > 1 ? (m * sxy - sx * sy) / (m * sxx - sx * sx) : 0;
+    const yl = ys[Rs.indexOf(RLO)];
+    return { Rs, ys, b, a: yl - b * RLO * RLO, yl, n: n + (st.gate ? 0 : nFake) };
+  }
+  const d = demo(cv, {
+    size() { this.g = fit(cv); this.draw(); },
+    tick(dt) { for (let i = 0; i < 700 && n + nFake < NMAX; i++) addTag(); st.R = (st.R + dt * 22) % (RMAX + 18); this.draw(); },
+    draw() { const { ctx, w, h } = this.g; ctx.clearRect(0, 0, w, h); const c = curve();
+      const narrow = w < 560; const lw = narrow ? w : w * 0.47; const lh = narrow ? h * 0.52 : h;
+      const sc = Math.min(lw - 16, lh - 30) / (2 * (RMAX + 8)); const ox = lw / 2, oy = 22 + (lh - 22) / 2;
+      const X = (x) => ox + x * sc, Y = (y) => oy - y * sc;
+      ctx.strokeStyle = C.grid; ctx.lineWidth = 1;
+      for (let i = -7; i <= 7; i++) { ctx.beginPath(); ctx.moveTo(X(i * W - W / 2), Y(-(RMAX + 8))); ctx.lineTo(X(i * W - W / 2), Y(RMAX + 8)); ctx.stroke(); }
+      for (let j = -8; j <= 8; j++) { ctx.beginPath(); ctx.moveTo(X(-(RMAX + 8)), Y(j * H - H / 2)); ctx.lineTo(X(RMAX + 8), Y(j * H - H / 2)); ctx.stroke(); }
+      ctx.fillStyle = C.pad; ctx.fillRect(X(-W / 2), Y(H / 2), W * sc, H * sc);
+      for (const q of draw) { if (Math.abs(q.px) > RMAX + 8 || Math.abs(q.py) > RMAX + 8) continue; if (st.gate && q.fake) continue;
+        const r = q.fired ? 2.4 : 0.9; ctx.fillStyle = q.fake ? C.fake : (q.fired ? C.mid : C.faint);
+        if (q.fake) ctx.fillRect(X(q.px) - 1.5, Y(q.py) - 0.5, 3, 1.2); else ctx.fillRect(X(q.px) - r, Y(q.py) - r, 2 * r, 2 * r); }
+      ctx.strokeStyle = C.accent; ctx.lineWidth = 2; ctx.strokeRect(X(-W / 2), Y(H / 2), W * sc, H * sc);
+      ctx.setLineDash([5, 4]); ctx.strokeStyle = C.muted; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(X(0), Y(0), RD * sc, 0, 7); ctx.stroke(); ctx.setLineDash([]);
+      const R = Math.min(st.R, RMAX); ctx.strokeStyle = C.accent; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(0), Y(0), Math.max(R, 0.1) * sc, 0, 7); ctx.stroke();
+      txt(ctx, 'predicted points around one pad · large = the pad fired', 6, 15, { color: C.muted, size: 12 });
+      const bx = narrow ? 52 : lw + 58, by = narrow ? lh + 26 : 30, bw = (narrow ? w : w - lw) - 80, bh = (narrow ? h - lh : h) - 72;
+      const XR = (r) => lin(r, 0, RMAX, bx, bx + bw), YR = (y) => lin(Math.max(-0.05, Math.min(y, 1.2)), 0, 1.2, by + bh, by);
+      ctx.strokeStyle = C.grid; ctx.lineWidth = 1;
+      [0, 20, 40, 60, 80].forEach((r) => { ctx.beginPath(); ctx.moveTo(XR(r), by); ctx.lineTo(XR(r), by + bh); ctx.stroke(); txt(ctx, String(r), XR(r), by + bh + 14, { align: 'center', color: C.muted, size: 11 }); });
+      [0, 0.25, 0.5, 0.75, 1].forEach((y) => { ctx.beginPath(); ctx.moveTo(bx, YR(y)); ctx.lineTo(bx + bw, YR(y)); ctx.stroke(); txt(ctx, y.toFixed(2), bx - 6, YR(y) + 4, { align: 'right', color: C.muted, size: 11 }); });
+      ctx.strokeStyle = C.faint; ctx.strokeRect(bx + .5, by + .5, bw, bh);
+      txt(ctx, 'R (mm)', bx + bw / 2, by + bh + 30, { align: 'center', color: C.muted, size: 12 });
+      txt(ctx, 'pad firings within R / expected crossings', bx, by - 10, { color: C.muted, size: 12 });
+      ctx.setLineDash([6, 4]); ctx.strokeStyle = C.ok; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(bx, YR(st.eps)); ctx.lineTo(bx + bw, YR(st.eps)); ctx.stroke(); ctx.setLineDash([]);
+      txt(ctx, 'true efficiency', bx + bw - 4, YR(st.eps) - 5, { align: 'right', color: C.ok, size: 11 });
+      ctx.strokeStyle = C.muted; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(XR(RLO), by); ctx.lineTo(XR(RLO), by + bh); ctx.stroke(); ctx.setLineDash([]);
+      txt(ctx, 'R_lo', XR(RLO) + 3, by + 12, { color: C.muted, size: 11 });
+      const showFit = R >= RMAX - 1 || st.R > RMAX;
+      if (showFit && isFinite(c.a)) { ctx.strokeStyle = C.accent; ctx.lineWidth = 1.2; ctx.setLineDash([4, 3]); ctx.beginPath();
+        for (let r = 0; r <= RMAX; r += 2) { const y = c.a + c.b * r * r; r ? ctx.lineTo(XR(r), YR(y)) : ctx.moveTo(XR(r), YR(y)); } ctx.stroke(); ctx.setLineDash([]);
+        ctx.beginPath(); ctx.arc(XR(0), YR(c.a), 4.5, 0, 7); ctx.fillStyle = C.accent; ctx.fill();
+        txt(ctx, 'estimate ' + c.a.toFixed(2), XR(0) + 8, YR(c.a) + 15, { color: C.accent, size: 11, bold: true }); }
+      ctx.strokeStyle = C.mid; ctx.lineWidth = 2; ctx.beginPath(); let first = true;
+      c.Rs.forEach((r, i) => { if (r > R + 1 || !isFinite(c.ys[i])) return; first ? ctx.moveTo(XR(r), YR(c.ys[i])) : ctx.lineTo(XR(r), YR(c.ys[i])); first = false; }); ctx.stroke();
+      ctx.strokeStyle = C.accent; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(XR(R), by); ctx.lineTo(XR(R), by + bh); ctx.stroke();
+      $('#c_n').textContent = c.n; $('#c_true').textContent = st.eps.toFixed(2); $('#c_est').textContent = isFinite(c.a) ? c.a.toFixed(2) : '-'; }
+  });
+  slider('#c_sig', (v) => v.toFixed(1) + ' mm', (v) => { st.sig = v; reset(); });
+  slider('#c_eps', (v) => v.toFixed(2), (v) => { st.eps = v; reset(); });
+  slider('#c_bg', (v) => v.toFixed(2), (v) => { st.bg = v; reset(); });
+  slider('#c_fake', (v) => Math.round(v * 100) + ' %', (v) => { st.fake = v; reset(); });
+  $('#c_gate').addEventListener('change', (e) => { st.gate = e.target.checked; d.draw(); });
+  seg('#c_mode', (v) => { st.lattice = v === 'lattice'; reset(); });
+  $('#c_reset').addEventListener('click', reset);
+  if (reduce) { while (n + nFake < NMAX) addTag(); st.R = RMAX; }
+})();
+
+// ======================================================================================== loop, resize, theme
+let last = performance.now();
+function loop(now) { const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (!reduce) demos.forEach((d) => { if (d.vis) d.tick(dt); }); requestAnimationFrame(loop); }
+requestAnimationFrame(loop);
+let rz; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => demos.forEach((d) => d.size()), 120); });
+if (window.matchMedia) { const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  const f = () => { readTheme(); demos.forEach((d) => d.draw()); }; mq.addEventListener ? mq.addEventListener('change', f) : mq.addListener(f); }
+})();
+</script>
+</body>
+</html>
