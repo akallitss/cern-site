@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>VMM thresholds explained: from one scope trace to per-channel n-sigma</title>
+<meta name="description" content="Animated, step-by-step explainer for a talk: one hit on a scope, noise and the Rice rate, global vs equalised vs n-sigma per-channel thresholds, how the internal pulser measures sigma, and the tests for contamination, crosstalk and noise overestimation.">
+<meta name="category" content="Talks &amp; Papers">
+<meta name="keywords" content="VMM,threshold,noise,trim,pulser,crosstalk,efficiency,P2">
+<meta name="date" content="2026-11-16">
+<meta name="updated" content="2026-11-16">
+<meta name="visibility" content="unlisted">
+<meta name="robots" content="noindex, nofollow">
+<!-- ======================================================================= -->
+<link rel="stylesheet" href="../../assets/site.css">
+<style>
+  :root {
+    --c-sig: #2a78d6; --c-noise: #d4542b; --c-thr: #178a50; --c-raise: #d48a10; --c-mask: #c0392b;
+    --c-grid: rgba(0,0,0,.07); --scope-bg: #0d1712; --scope-grid: rgba(120,255,170,.10);
+    --scope-fg: #59f096; --scope-dim: rgba(89,240,150,.18); --scope-thr: #ffcc4d; --scope-txt: #bfe9cf;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --c-sig: #5b9ae6; --c-noise: #f07b52; --c-thr: #3cc47f; --c-raise: #f2b544; --c-mask: #ef6b5c;
+            --c-grid: rgba(255,255,255,.07); }
+  }
+  main.wrap, .site-header .wrap, .site-footer .wrap { max-width: 1180px; }
+  .note-body { max-width: none; }
+  .note-body p, .note-body ul, .note-body ol, .note-body .callout { max-width: 82ch; }
+  .slide { border-top: 1px solid var(--border); padding: 1.6rem 0 1.2rem; }
+  .slide:first-of-type { border-top: 0; }
+  .slide h2 { margin-top: .2rem; }
+  .kicker { font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  .demo { border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
+          padding: .8rem; margin: 1rem 0; box-shadow: var(--shadow); }
+  .demo canvas { width: 100%; display: block; border-radius: 6px; touch-action: pan-y; }
+  .ctrls { display: flex; flex-wrap: wrap; gap: .5rem 1.2rem; align-items: center; margin: .7rem .2rem .2rem; font-size: .92rem; }
+  .ctrls label { display: inline-flex; align-items: center; gap: .45rem; color: var(--fg-muted); }
+  .ctrls input[type=range] { width: 150px; accent-color: var(--accent); }
+  .ctrls output { font-family: var(--mono); color: var(--fg); min-width: 5.5ch; display: inline-block; }
+  .ctrls button, .seg button { font: inherit; font-size: .9rem; border: 1px solid var(--border); background: var(--bg);
+          color: var(--fg); border-radius: 7px; padding: .3rem .75rem; cursor: pointer; }
+  .ctrls button:hover, .seg button:hover { border-color: var(--accent); }
+  .seg { display: inline-flex; gap: 0; }
+  .seg button { border-radius: 0; margin-left: -1px; }
+  .seg button:first-child { border-radius: 7px 0 0 7px; margin-left: 0; }
+  .seg button:last-child { border-radius: 0 7px 7px 0; }
+  .seg button.on { background: var(--accent); color: var(--bg-elev); border-color: var(--accent); }
+  .readout { display: flex; flex-wrap: wrap; gap: .5rem; margin: .6rem .2rem 0; }
+  .readout .chip { background: var(--code-bg); border-radius: 7px; padding: .3rem .65rem; font-size: .88rem; }
+  .readout .chip b { font-family: var(--mono); }
+  .take { border-left: 4px solid var(--accent); background: var(--accent-soft); padding: .6rem 1rem; border-radius: 0 8px 8px 0;
+          margin: 1rem 0; max-width: 82ch; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  @media (max-width: 760px) { .two { grid-template-columns: 1fr; } .ctrls input[type=range] { width: 120px; } }
+  table.cmp td, table.cmp th { text-align: right; } table.cmp td:first-child, table.cmp th:first-child { text-align: left; }
+  table.cmp tr.on td { background: var(--accent-soft); font-weight: 600; }
+  .tag { display: inline-block; font-size: .75rem; font-weight: 700; padding: .05rem .5rem; border-radius: 99px; margin-left: .3rem; vertical-align: middle; }
+  .tag.done { background: #d9f2e4; color: #11683c; } .tag.prog { background: #fdf0d2; color: #8a5a00; } .tag.plan { background: #e7e9ee; color: #4a5160; }
+  @media (prefers-color-scheme: dark) {
+    .tag.done { background: #173a28; color: #7fe0a9; } .tag.prog { background: #3d3115; color: #f5c96b; } .tag.plan { background: #2a2e36; color: #b9bfca; }
+  }
+  .eq { font-family: var(--mono); background: var(--code-bg); padding: .55rem .9rem; border-radius: 8px; display: inline-block; }
+  svg.flow { width: 100%; height: auto; display: block; }
+  svg.flow text { font-family: var(--font); fill: var(--fg); font-size: 13px; }
+  svg.flow .sub { fill: var(--fg-muted); font-size: 11.5px; }
+  svg.flow .bx { fill: var(--bg); stroke: var(--fg-faint); stroke-width: 1.4; }
+  svg.flow .bx.done { stroke: var(--c-thr); stroke-width: 2.2; } svg.flow .bx.prog { stroke: var(--c-raise); stroke-width: 2.2; }
+  svg.flow .bx.plan { stroke-dasharray: 5 4; }
+  svg.flow .ar { stroke: var(--fg-muted); stroke-width: 1.6; fill: none; marker-end: url(#arr); }
+  svg.flow .dot { animation: pulse 2.4s ease-in-out infinite; fill: var(--accent); }
+  @keyframes pulse { 0%,100% { opacity: .25 } 50% { opacity: 1 } }
+  @media (prefers-reduced-motion: reduce) { svg.flow .dot { animation: none; } }
+  /* presentation mode */
+  #presentBtn { position: fixed; right: 16px; bottom: 16px; z-index: 20; font: inherit; font-size: .9rem; padding: .45rem .9rem;
+                border-radius: 99px; border: 1px solid var(--accent); background: var(--bg-elev); color: var(--accent); cursor: pointer; box-shadow: var(--shadow); }
+  #slideNo { display: none; }
+  body.present .site-header, body.present .site-footer, body.present .note-header { display: none; }
+  body.present main.wrap { max-width: 1400px; }
+  body.present .slide { display: none; border: 0; min-height: 100vh; padding: 2.2rem 1rem 3rem; }
+  body.present .slide.active { display: block; }
+  body.present .note-body { font-size: 1.12rem; }
+  body.present #slideNo { display: block; position: fixed; left: 16px; bottom: 18px; color: var(--fg-muted); font-size: .85rem; z-index: 20; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 99px; padding: .25rem .7rem; }
+</style>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="../../">Alexandra Kallitsopoulou</a>
+  <nav class="nav"><a href="../../">Home</a><a href="../../notes/">Notes</a></nav>
+</div></header>
+
+<main class="wrap">
+  <article>
+    <header class="note-header">
+      <h1>VMM thresholds explained: from one scope trace to per-channel n·σ</h1>
+      <p class="muted">An animated walk-through for the talk. It starts from one pulse on an oscilloscope and scales up, one idea at a time,
+      to the algorithm we use on the P2 cosmic stand: global threshold, per-channel trims, "raise instead of mask", and the next step,
+      thresholds at baseline + n·σ with σ measured by the internal pulser. The last part shows the three tests that keep the σ honest:
+      contamination, crosstalk and noise overestimation.</p>
+      <div class="meta-row">
+        <span class="pill">Talks &amp; Papers</span>
+        <time datetime="2026-11-16">2026-11-16</time>
+        <span class="faint">unlisted · press <b>P</b> (or the button bottom-right) for slide mode, arrows to move</span>
+      </div>
+    </header>
+
+    <div class="note-body">
+
+<!-- ================================================================ 0 -->
+<section class="slide" id="s0">
+  <div class="kicker">Overview</div>
+  <h2>The question: how low can each channel go?</h2>
+  <p>A VMM channel records a hit when its shaped signal crosses a threshold. Lower threshold → more of the small strip
+  signals are kept (efficiency) but also more noise hits. Today one chip-wide threshold (<code>sdt</code>) is shared by 64 channels
+  that do not have the same noise. The idea of this work: give <b>every channel its own threshold, just above its own noise</b>.</p>
+  <ol>
+    <li>One hit on a scope: signal, baseline, threshold, comparator.</li>
+    <li>Noise alone: the Gaussian, and how fast a threshold at n·σ fires (Rice formula).</li>
+    <li>Efficiency vs noise for a quiet and a noisy channel: why one threshold for both costs efficiency.</li>
+    <li>64 channels: global threshold + masks → equalised + "raise instead of mask" (done) → n·σ per channel (next).</li>
+    <li>Measuring σ per channel with the internal pulser and neighbour read-out.</li>
+    <li>Three tests: noisy-channel contamination, crosstalk, and is the pulser σ the real noise? (overestimation check).</li>
+    <li>The full algorithm and its status.</li>
+  </ol>
+  <div class="callout">Numbers marked <b>measured</b> come from the lab stand (HV off, 12–16 Nov 2026). Everything in the animations
+  is a <b>simulation</b> with realistic parameters, meant to show the mechanism; the noise scale in mV is illustrative until the
+  ADC→mV calibration (step 4.1 of the plan) is done.</div>
+</section>
+
+<!-- ================================================================ 1 -->
+<section class="slide" id="s1">
+  <div class="kicker">Step 1 · one channel, one pulse</div>
+  <h2>A single hit on the oscilloscope</h2>
+  <p>This is what one VMM channel "sees" after its shaper (peaking time 200 ns, gain 4.5 mV/fC): a baseline that wiggles
+  (electronic noise) and, when a particle passes, a shaped pulse. The comparator below fires while the trace is above the
+  threshold. The rising edge is the hit (time stamp); the ADC then stores the pulse height.</p>
+  <div class="demo">
+    <canvas id="cv1" data-aspect="0.42"></canvas>
+    <div class="ctrls">
+      <button id="d1run">Pause</button><button id="d1single">Single shot</button><button id="d1reset">Reset counters</button>
+      <label>signal <input id="d1amp" type="range" min="0" max="50" step="1" value="22"><output id="o1amp"></output></label>
+      <label>threshold <input id="d1thr" type="range" min="2" max="40" step="0.5" value="17"><output id="o1thr"></output></label>
+      <label>noise σ <input id="d1sig" type="range" min="0.5" max="6" step="0.1" value="3"><output id="o1sig"></output></label>
+    </div>
+    <div class="readout" id="r1"></div>
+  </div>
+  <div class="take">Try it: lower the <b>signal</b> to ~12 mV → pulses are missed (inefficiency). Then lower the <b>threshold</b> to
+  recover them → the baseline starts crossing on its own (noise hits, red). Every choice of threshold is a trade between these two.</div>
+</section>
+
+<!-- ================================================================ 2 -->
+<section class="slide" id="s2">
+  <div class="kicker">Step 2 · noise alone</div>
+  <h2>How often does pure noise cross a threshold?</h2>
+  <p>Sample the baseline many times: the values form a Gaussian of width σ (left). Put the threshold at <b>n·σ</b> above the
+  baseline. The rate of noise hits is not "the area of the tail"; it is the rate of up-crossings, given by Rice's formula:</p>
+  <p><span class="eq">R(n) = f₀ · exp(−n²/2)</span> &nbsp; with f₀ set by the shaper: 0.99 MHz (current noise) … 2.62 MHz (voltage noise) at 200 ns.</p>
+  <div class="demo">
+    <canvas id="cv2" data-aspect="0.36"></canvas>
+    <div class="ctrls">
+      <label>threshold n = <input id="d2n" type="range" min="2" max="6.5" step="0.05" value="4.5"><output id="o2n"></output> σ</label>
+      <button id="d2reset">Refill histogram</button>
+    </div>
+    <div class="readout" id="r2"></div>
+  </div>
+  <div class="take">The exponential is brutal: every extra σ divides the noise rate by ~100 near n = 4–5. So the accepted noise
+  rate fixes n: n = √(2·ln(f₀/R)). For R = 50 Hz per channel (the tuner's limit) n ≈ 4.5; for 5 Hz n ≈ 5.
+  The same <b>n</b> means a <b>different threshold in mV</b> for channels with different σ.</div>
+</section>
+
+<!-- ================================================================ 3 -->
+<section class="slide" id="s3">
+  <div class="kicker">Step 3 · two channels</div>
+  <h2>A quiet and a noisy channel under one threshold</h2>
+  <p>Blue: fraction of strip signals above the threshold (efficiency; a Landau-like spectrum of strip amplitudes, most-probable value adjustable).
+  Orange/red: noise rate of a <b>quiet</b> channel (small σ, e.g. at the chip ends) and a <b>noisy</b> one (large σ, chip middle).
+  Each channel has its own "noise edge" where its rate reaches the accepted limit.</p>
+  <div class="demo">
+    <canvas id="cv3" data-aspect="0.42"></canvas>
+    <div class="ctrls">
+      <label>σ quiet <input id="d3sq" type="range" min="1" max="4" step="0.1" value="2.0"><output id="o3sq"></output></label>
+      <label>σ noisy <input id="d3sn" type="range" min="2" max="6" step="0.1" value="3.6"><output id="o3sn"></output></label>
+      <label>accepted rate <input id="d3r" type="range" min="0" max="3" step="0.05" value="1.7"><output id="o3r"></output></label>
+      <label>signal MPV <input id="d3mpv" type="range" min="8" max="40" step="1" value="18"><output id="o3mpv"></output></label>
+    </div>
+    <div class="readout" id="r3"></div>
+  </div>
+  <div class="take">A single threshold has to sit at the <b>noisy</b> channel's edge, or that channel floods (and in the past it was then masked).
+  The quiet channel is then held far above its own noise: the green arrow is the efficiency it could recover with its own threshold.</div>
+</section>
+
+<!-- ================================================================ 4 -->
+<section class="slide" id="s4">
+  <div class="kicker">Step 4 · one chip, 64 channels</div>
+  <h2>Three ways to set 64 thresholds</h2>
+  <p>Each column is one channel. The orange glow is its noise (taller = larger σ), the grey dash its noise edge for the accepted rate,
+  the coloured tick its threshold (all in mV above the channel's own baseline). Switch strategy and watch the thresholds move.</p>
+  <div class="demo">
+    <canvas id="cv4" data-aspect="0.46"></canvas>
+    <div class="ctrls">
+      <span class="seg" id="d4mode"><button data-m="0" class="on">A · global + masks</button><button data-m="1">B · equalised + raise</button><button data-m="2">C · n·σ per channel</button></span>
+      <label>chip level <input id="d4L" type="range" min="8" max="30" step="0.5" value="17"><output id="o4L"></output></label>
+      <label>accepted rate <input id="d4r" type="range" min="0" max="3" step="0.05" value="1.7"><output id="o4r"></output></label>
+      <label><input id="d4trim" type="checkbox"> show sdt + trims</label>
+    </div>
+    <div class="readout" id="r4"></div>
+    <div style="overflow-x:auto"><table class="cmp" id="t4"></table></div>
+  </div>
+  <ul>
+    <li><b>A · global + masks</b> (the wk2 scan files): one <code>sdt</code>; each channel's real distance is shifted by its comparator
+      offset (measured spread 3.8 mV rms). Channels that end up too close to their noise are masked → lost entirely.</li>
+    <li><b>B · equalised + "raise instead of mask"</b> (done, file <code>trimmed_Km18_v1</code>): trims bring every channel to the same mV
+      distance (0.7 mV rms), then the tuner raises noisy channels by 3 trim steps per iteration. No masks, but every channel
+      sits at the same distance, so the quiet ones keep a margin they do not need.</li>
+    <li><b>C · n·σ per channel</b> (next): target = baseline + n·σ<sub>c</sub>. The chip <code>sdt</code> goes to the highest target plus
+      headroom; each trim lowers its channel to its own target. Quiet channels go <b>lower</b> than in B: that is the efficiency gain.</li>
+  </ul>
+  <div class="take">Tick "show sdt + trims" in C: a trim can only <b>lower</b> a channel (31 steps × ~1.1 mV ≈ 33 mV), so the chip level
+  must sit above the noisiest channel's target and every other channel is pulled down from there. One very noisy channel can use
+  up the trim range of the whole chip, which is why outliers are handled separately (raised by the tuner).</div>
+</section>
+
+<!-- ================================================================ 5 -->
+<section class="slide" id="s5">
+  <div class="kicker">Where we are · measured</div>
+  <h2>What strategy B already gave on the stand</h2>
+  <div style="overflow-x:auto">
+  <table class="cmp">
+    <tr><th></th><th>wk2 file (K=−18)</th><th>trimmed_Km18_v1</th></tr>
+    <tr><td>masked channels (18 detector chips)</td><td>276</td><td><b>1</b></td></tr>
+    <tr><td>blind channels (VMM 4/7/9 blocks)</td><td>114</td><td><b>0</b> (cured with <code>sl 1</code>)</td></tr>
+    <tr><td>spread of threshold − baseline in a chip</td><td>3.8 mV rms</td><td><b>0.7</b> mV rms</td></tr>
+    <tr><td>channels raised by the tuner</td><td>—</td><td>135</td></tr>
+    <tr><td>noise capture, HV off</td><td>saturated (single channels 0.5–0.9 MHz)</td><td>6.3 MB/min, none &gt; 50 Hz</td></tr>
+  </table></div>
+  <p>Measured on the chips: one trim step lowers a channel by 0.97–1.25 mV (linear over 0..31); one <code>sdt</code> count is
+  0.73–0.81 mV. Lowering the whole chip further (−4 … −16 counts) ends with the tuner raising most channels back:
+  with equal distances, the median channel's noise floor is ~3 mV below the K=−18 point. <b>Equal distances is the limit of B</b>;
+  going further needs each channel's own σ → strategy C → we need σ per channel.</p>
+</section>
+
+<!-- ================================================================ 6 -->
+<section class="slide" id="s6">
+  <div class="kicker">Step 5 · measuring σ</div>
+  <h2>Internal pulser + neighbour read-out (method of I. Mandjavidze)</h2>
+  <p>The FEC fires the chip's test pulser once per 4096-tick frame (10.85 kHz). Only channels with <code>st 1</code> get the pulse:
+  one channel in three (a "phase"). With neighbour read-out on (<code>sng 1</code>) the chip also reads the two neighbours of every
+  pulsed channel, <b>even below threshold</b>. Those neighbour ADC values are pure baseline samples: their mean is the pedestal and
+  their spread is σ. Three phases cover all 64 channels.</p>
+  <p><b>Test A — contamination by noisy channels.</b> If the chip threshold is low, a noisy channel also fires on its own: its own
+  above-threshold noise peaks land in its histogram (σ looks much bigger) and each of those hits reads out <i>its</i> neighbours too.
+  Toggle the chip threshold to see it.</p>
+  <div class="demo">
+    <canvas id="cv6" data-aspect="0.5"></canvas>
+    <div class="ctrls">
+      <span class="seg" id="d6phase"><button data-p="0" class="on">phase 0</button><button data-p="1">phase 1</button><button data-p="2">phase 2</button></span>
+      <span class="seg" id="d6thr"><button data-t="0">threshold K=−18 (as in the scan)</button><button data-t="1" class="on">threshold +40 counts</button></span>
+      <button id="d6reset">Clear histograms</button>
+    </div>
+    <div class="readout" id="r6"></div>
+  </div>
+  <div class="take"><b>Measured (chips 2–3, 16 Nov):</b> at K=−18 with the masks lifted, the pulsed channels of chip 3 got
+  <b>1.7 million</b> neighbour read-outs in 10 s that had nothing to do with the pulser; with the chip threshold +40 counts (~30 mV): <b>0</b>.
+  Every channel was then read exactly once per pulse (22 pulsed + 42 neighbours = 64). So: raise the chip threshold during the measurement.
+  Result: pedestal 39–54 ADC, σ 2.5–5.8 ADC, <b>low at the chip ends (2.5–3.7), high in the middle (4.5–5.8)</b>, exactly the per-channel
+  information strategy B lacks.</div>
+</section>
+
+<!-- ================================================================ 7 -->
+<section class="slide" id="s7">
+  <div class="kicker">Test B · crosstalk</div>
+  <h2>The pulse leaks into the neighbours, and inflates σ</h2>
+  <p>The neighbours are read at the moment their pulsed neighbour has a big pulse. A small fraction couples in: the pedestal moves
+  up and σ grows with the pulse size. Measured: doubling the pulse (<code>sdp10</code> 80 → 160, +87 ADC on the pulsed channel) moves the
+  neighbours' pedestal by ~3 ADC (≈ 3.5 %) and σ by +0.3–0.4 ADC; the lower (L) and upper (U) neighbours differ by 1–3 ADC.
+  A σ taken at one amplitude is therefore <b>overestimated</b>. Fix: measure at two amplitudes and extrapolate to zero pulse.</p>
+  <div class="demo">
+    <canvas id="cv7" data-aspect="0.38"></canvas>
+    <div class="ctrls">
+      <label>amplitude 1 <input id="d7a1" type="range" min="20" max="200" step="10" value="80"><output id="o7a1"></output></label>
+      <label>amplitude 2 <input id="d7a2" type="range" min="20" max="200" step="10" value="160"><output id="o7a2"></output></label>
+      <span class="seg" id="d7nb"><button data-n="L" class="on">lower neighbour</button><button data-n="U">upper neighbour</button></span>
+      <button id="d7go">Measure again</button>
+    </div>
+    <div class="readout" id="r7"></div>
+  </div>
+  <div class="take">Overestimating σ is not harmless: the threshold is n·σ, so +10 % on σ puts every channel 10 % higher than it needs to be
+  and gives back part of the efficiency we are trying to recover. Underestimating it is worse (noise). Hence two amplitudes, L and U kept
+  apart, and a flag when L and U disagree by more than ~2σ.</div>
+</section>
+
+<!-- ================================================================ 8 -->
+<section class="slide" id="s8">
+  <div class="kicker">Test C · is the pulser σ the real noise?</div>
+  <h2>Sample or peak? Cross-check with a noise-rate scan</h2>
+  <p>Open question: does the neighbour ADC take the baseline at one instant (a true sample → σ<sub>ADC</sub> is the noise), or the
+  <b>maximum in a window</b> like the peak detector does for real hits? A maximum of noise is shifted up and narrower, so its width is not the σ
+  that sets the noise rate. The animation shows both readings of the same noise waveform.</p>
+  <div class="demo">
+    <canvas id="cv8a" data-aspect="0.34"></canvas>
+  </div>
+  <p>The independent check uses only the definition of noise rate: lower the chip threshold in small steps (no pulser, no neighbour
+  read-out), count each channel, fit Rice's curve. ln R is a parabola in the distance d, its curvature gives <b>σ in mV</b> directly. Then
+  per channel k = σ<sub>mV</sub> / σ<sub>ADC</sub>: if k is the same for all channels of a chip (one ADC per chip), the pulser σ is validated
+  and the short pulser measurement can be used everywhere. If k follows the σ pattern, the neighbour ADC is biased and the rate scan wins.</p>
+  <div class="demo">
+    <canvas id="cv8b" data-aspect="0.36"></canvas>
+    <div class="ctrls">
+      <button id="d8go">Run the scan again</button>
+      <span class="seg" id="d8sc"><button data-s="0" class="on">outcome: plain sample</button><button data-s="1">outcome: peak / biased</button></span>
+    </div>
+    <div class="readout" id="r8"></div>
+  </div>
+  <div class="callout warn"><b>Status:</b> the rate scan on chips 2–3 is being analysed now (16 Nov). The right panel shows what each
+  outcome <i>would</i> look like (simulation), not the result.</div>
+</section>
+
+<!-- ================================================================ 9 -->
+<section class="slide" id="s9">
+  <div class="kicker">The algorithm</div>
+  <h2>From one channel to the whole detector</h2>
+  <svg class="flow" viewBox="0 0 1100 330" role="img" aria-label="Pipeline from pulser measurement to per-channel threshold file">
+    <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor" style="color:var(--fg-muted)"/></marker></defs>
+    <g>
+      <rect class="bx done" x="10" y="20" width="200" height="88" rx="10"/>
+      <text x="22" y="46">1 · pulser, 3 phases</text>
+      <text class="sub" x="22" y="66">chip thr +40 (test A)</text>
+      <text class="sub" x="22" y="84">2 amplitudes (test B)</text>
+      <text class="sub" x="22" y="100">→ pedestal, σ_ADC per ch</text>
+
+      <rect class="bx prog" x="250" y="20" width="200" height="88" rx="10"/>
+      <text x="262" y="46">2 · noise-rate scan</text>
+      <text class="sub" x="262" y="66">chips 2–3, Rice fit</text>
+      <text class="sub" x="262" y="84">→ σ_mV, f₀; k = σ_mV/σ_ADC</text>
+      <text class="sub" x="262" y="100">validates σ_ADC (test C)</text>
+
+      <rect class="bx plan" x="490" y="20" width="200" height="88" rx="10"/>
+      <text x="502" y="46">3 · target per channel</text>
+      <text class="sub" x="502" y="66">baseline_c + n·σ_c</text>
+      <text class="sub" x="502" y="84">n from accepted rate</text>
+      <text class="sub" x="502" y="100">outliers set aside</text>
+
+      <rect class="bx plan" x="730" y="20" width="200" height="88" rx="10"/>
+      <text x="742" y="46">4 · sdt + trims</text>
+      <text class="sub" x="742" y="66">sdt = max target + headroom</text>
+      <text class="sub" x="742" y="84">trim_c = (sdt − target)/step</text>
+      <text class="sub" x="742" y="100">refine with a monitor map</text>
+
+      <rect class="bx done" x="730" y="190" width="200" height="88" rx="10"/>
+      <text x="742" y="216">5 · noise probe + tuner</text>
+      <text class="sub" x="742" y="236">60 s, HV off, vs Rice</text>
+      <text class="sub" x="742" y="254">raise, mask only at trim 0</text>
+      <text class="sub" x="742" y="270">(tools exist)</text>
+
+      <rect class="bx plan" x="490" y="190" width="200" height="88" rx="10"/>
+      <text x="502" y="216">6 · HV on + cosmics</text>
+      <text class="sub" x="502" y="236">σ with detector noise</text>
+      <text class="sub" x="502" y="254">hits per coincidence</text>
+      <text class="sub" x="502" y="270">vs trimmed_Km18_v1</text>
+
+      <rect class="bx plan" x="250" y="190" width="200" height="88" rx="10"/>
+      <text x="262" y="216">7 · run control</text>
+      <text class="sub" x="262" y="236">"pedestal &amp; noise" button</text>
+      <text class="sub" x="262" y="254">redo after fw/gain/τ change</text>
+      <text class="sub" x="262" y="270">σ plot in the GUI</text>
+
+      <rect class="bx done" x="10" y="190" width="200" height="88" rx="10"/>
+      <text x="22" y="216">measured tools</text>
+      <text class="sub" x="22" y="236">trim 1.1 mV/step, sdt 0.77</text>
+      <text class="sub" x="22" y="254">monitor map 9 min</text>
+      <text class="sub" x="22" y="270">ext-file trims (bit-reversed)</text>
+
+      <path class="ar" d="M210,64 H248"/><path class="ar" d="M450,64 H488"/><path class="ar" d="M690,64 H728"/>
+      <path class="ar" d="M830,108 V188"/><path class="ar" d="M730,234 H692"/><path class="ar" d="M110,190 C110,150 780,150 790,112"/>
+      <path class="ar" d="M490,234 H452"/>
+      <circle class="dot" cx="350" cy="14" r="5"/>
+    </g>
+    <g transform="translate(10,305)">
+      <rect x="0" y="-11" width="14" height="14" rx="3" fill="none" stroke="var(--c-thr)" stroke-width="2.2"/><text x="20" y="1">done</text>
+      <rect x="80" y="-11" width="14" height="14" rx="3" fill="none" stroke="var(--c-raise)" stroke-width="2.2"/><text x="100" y="1">in progress</text>
+      <rect x="200" y="-11" width="14" height="14" rx="3" fill="none" stroke="var(--fg-faint)" stroke-dasharray="4 3" stroke-width="1.4"/><text x="220" y="1">planned</text>
+    </g>
+  </svg>
+  <ul>
+    <li><b>Global threshold</b> (<code>sdt</code>, one per chip): sets where the chip sits; must be above the highest target. <span class="tag done">measured 0.73–0.81 mV/count</span></li>
+    <li><b>Per-channel trim</b> (<code>sd</code>, 0..31): pulls each channel down to its own target. <span class="tag done">measured ~1.1 mV/step</span></li>
+    <li><b>σ per channel</b>: pulser + neighbour read-out, with tests A and B built in. <span class="tag done">chips 2–3</span> <span class="tag plan">all 18 chips ~20 min</span></li>
+    <li><b>σ in mV</b>: rate scan, test C. <span class="tag prog">analysis running</span></li>
+    <li><b>Check</b>: measured noise rate per channel against the Rice prediction for its n; outliers raised by the tuner. <span class="tag plan">next</span></li>
+  </ul>
+  <div class="take"><b>Where efficiency comes back from:</b> (1) masked channels returned to life (276 → 1, done); (2) blind blocks cured (114 → 0, done);
+  (3) quiet channels moved down to their own noise edge instead of the chip's worst one (strategy C, next). (1) and (2) are whole channels;
+  (3) is a few mV on many channels, which matters for the small strip signals at the cluster edges.</div>
+</section>
+
+    </div>
+  </article>
+</main>
+
+<button id="presentBtn" title="Slide mode (P)">▶ Present</button>
+<div id="slideNo"></div>
+
+<footer class="site-footer"><div class="wrap">
+  <span>Alexandra Kallitsopoulou</span>
+  <span><a href="../../notes/">← all notes</a></span>
+</div></footer>
+
+<script>
+(function () {
+'use strict';
+// ------------------------------------------------------------------ utilities
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+let C = {};
+function readTheme() {
+  const cs = getComputedStyle(document.documentElement);
+  const g = (v) => cs.getPropertyValue(v).trim();
+  C = { fg: g('--fg'), muted: g('--fg-muted'), faint: g('--fg-faint'), border: g('--border'), bg: g('--bg-elev'),
+        accent: g('--accent'), sig: g('--c-sig'), noise: g('--c-noise'), thr: g('--c-thr'), raise: g('--c-raise'),
+        mask: g('--c-mask'), grid: g('--c-grid'), sbg: g('--scope-bg'), sgrid: g('--scope-grid'), sfg: g('--scope-fg'),
+        sdim: g('--scope-dim'), sthr: g('--scope-thr'), stxt: g('--scope-txt'), font: g('--font'), mono: g('--mono') };
+}
+readTheme();
+if (window.matchMedia) {
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  (mq.addEventListener ? mq.addEventListener('change', () => { readTheme(); redrawAll(); }) : mq.addListener(() => { readTheme(); redrawAll(); }));
+}
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a);
+  t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const R0 = mulberry32(12345);
+function gauss(r) { r = r || Math.random; let u = 0, v = 0; while (u === 0) u = r(); v = r();
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+function poisson(l) { if (l > 50) return Math.max(0, Math.round(l + Math.sqrt(l) * gauss())); let L = Math.exp(-l), k = 0, p = 1;
+  do { k++; p *= Math.random(); } while (p > L); return k - 1; }
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const lin = (v, a, b, p, q) => p + (v - a) / (b - a) * (q - p);
+function fmtRate(r) { if (!r) return '0 Hz'; if (r >= 1e6) return (r / 1e6).toFixed(2) + ' MHz'; if (r >= 1e3) return (r / 1e3).toFixed(r >= 1e4 ? 0 : 1) + ' kHz';
+  if (r >= 10) return r.toFixed(0) + ' Hz'; if (r >= 0.1) return r.toFixed(1) + ' Hz'; return r.toExponential(0) + ' Hz'; }
+const F0 = 1.5e6;                       // Hz, middle of 0.99 .. 2.62 MHz
+const rice = (d, s, f0) => (f0 || F0) * Math.exp(-d * d / (2 * s * s));
+const nFor = (R, f0) => Math.sqrt(2 * Math.log((f0 || F0) / R));
+const rateFromSlider = (v) => Math.pow(10, +v);    // 0..3 -> 1 Hz .. 1 kHz
+
+// shaper: CR-RC^3-like, peak 1 at tp
+const TP = 200;
+const hshape = (t) => t <= 0 ? 0 : Math.pow(t / TP, 3) * Math.exp(3 * (1 - t / TP));
+
+// shaped (correlated) noise generator with unit rms
+function makeNoise(seed) {
+  const r = mulberry32(seed); let y1 = 0, y2 = 0, y3 = 0; const a = 0.075; let norm = 1;
+  function step() { const w = gauss(r); y1 += a * (w - y1); y2 += a * (y1 - y2); y3 += a * (y2 - y3); return y3 * norm; }
+  let s2 = 0; for (let i = 0; i < 2000; i++) step(); for (let i = 0; i < 60000; i++) { const v = step(); s2 += v * v; }
+  norm = 1 / Math.sqrt(s2 / 60000);
+  return step;
+}
+
+// signal spectrum (Moyal / Landau-like strip amplitudes, mV)
+const SIG = { mpv: 18, w: 5, cdf: null };
+function buildSig() { const N = 1600, dx = 0.125; const pdf = new Float64Array(N); let s = 0;
+  for (let i = 0; i < N; i++) { const x = i * dx, l = (x - SIG.mpv) / SIG.w; pdf[i] = Math.exp(-(l + Math.exp(-l)) / 2); s += pdf[i]; }
+  const sf = new Float64Array(N); let acc = 0; for (let i = N - 1; i >= 0; i--) { acc += pdf[i]; sf[i] = acc / s; }
+  SIG.cdf = sf; SIG.pdf = pdf; SIG.dx = dx; SIG.pmax = Math.max(...pdf); }
+const eff = (d) => { if (d <= 0) return 1; const i = Math.floor(d / SIG.dx); return i >= SIG.cdf.length ? 0 : SIG.cdf[i]; };
+buildSig();
+
+// canvas setup (hi-dpi, aspect from data-aspect)
+const canv = {};
+function fit(cv) { const w = cv.clientWidth || 600; const asp = +cv.dataset.aspect || 0.4;
+  const pres = document.body.classList.contains('present');
+  let h = Math.round(w * asp); if (pres) h = Math.min(h, Math.round(window.innerHeight * 0.58)); if (w < 560) h = Math.round(w * Math.min(0.9, asp * 1.5));
+  const dpr = window.devicePixelRatio || 1; cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); cv.style.height = h + 'px';
+  const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); return { ctx, w, h }; }
+function txt(ctx, s, x, y, o) { o = o || {}; ctx.font = (o.bold ? '600 ' : '') + (o.size || 12) + 'px ' + (o.mono ? C.mono : C.font);
+  ctx.fillStyle = o.color || C.fg; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic'; ctx.fillText(s, x, y); }
+function axes(ctx, b, o) {   // b = {x,y,w,h}; o = {xr,yr,xt,yt,xl,yl,ylog,xf,yf,right}
+  ctx.strokeStyle = C.grid; ctx.lineWidth = 1;
+  const X = (v) => lin(v, o.xr[0], o.xr[1], b.x, b.x + b.w);
+  const Y = o.ylog ? (v) => lin(Math.log10(Math.max(v, 1e-30)), Math.log10(o.yr[0]), Math.log10(o.yr[1]), b.y + b.h, b.y)
+                   : (v) => lin(v, o.yr[0], o.yr[1], b.y + b.h, b.y);
+  (o.xt || []).forEach((t) => { const x = X(t); ctx.beginPath(); ctx.moveTo(x, b.y); ctx.lineTo(x, b.y + b.h); ctx.stroke();
+    txt(ctx, o.xf ? o.xf(t) : String(t), x, b.y + b.h + 14, { align: 'center', color: C.muted, size: 11 }); });
+  (o.yt || []).forEach((t) => { const y = Y(t); ctx.beginPath(); ctx.moveTo(b.x, y); ctx.lineTo(b.x + b.w, y); ctx.stroke();
+    txt(ctx, o.yf ? o.yf(t) : String(t), o.right ? b.x + b.w + 5 : b.x - 5, y + 4, { align: o.right ? 'left' : 'right', color: C.muted, size: 11 }); });
+  ctx.strokeStyle = C.faint; ctx.strokeRect(b.x + .5, b.y + .5, b.w, b.h);
+  if (o.xl) txt(ctx, o.xl, b.x + b.w / 2, b.y + b.h + 30, { align: 'center', color: C.muted, size: 12 });
+  if (o.yl) { ctx.save(); ctx.translate(o.right ? b.x + b.w + 44 : b.x - 38, b.y + b.h / 2); ctx.rotate(-Math.PI / 2);
+    txt(ctx, o.yl, 0, 0, { align: 'center', color: C.muted, size: 12 }); ctx.restore(); }
+  return { X, Y };
+}
+function clip(ctx, b) { ctx.save(); ctx.beginPath(); ctx.rect(b.x, b.y, b.w, b.h); ctx.clip(); }
+function chips(el, items) { el.innerHTML = items.map(([k, v, col]) => `<span class="chip">${k} <b${col ? ` style="color:${col}"` : ''}>${v}</b></span>`).join(''); }
+function seg(id, cb) { const el = $(id); el.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return;
+  el.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); cb(b.dataset); }); }
+
+// animation manager: only visible demos run
+const demos = [];
+function demo(cv, obj) { obj.cv = cv; obj.vis = false; demos.push(obj); return obj; }
+const io = new IntersectionObserver((es) => es.forEach((e) => { const d = demos.find((x) => x.cv === e.target); if (d) d.vis = e.isIntersecting; }), { threshold: 0.05 });
+let last = performance.now();
+function loop(t) { const dt = Math.min(0.1, (t - last) / 1000); last = t;
+  demos.forEach((d) => { if (d.vis && d.tick) d.tick(dt); }); requestAnimationFrame(loop); }
+function redrawAll() { demos.forEach((d) => { d.g = fit(d.cv); d.draw && d.draw(); }); }
+window.addEventListener('resize', () => { clearTimeout(window.__rz); window.__rz = setTimeout(redrawAll, 120); });
+function bindRange(id, out, fmt, cb) { const el = $(id), o = $(out); const f = () => { if (o) o.textContent = fmt(+el.value); cb && cb(+el.value); };
+  el.addEventListener('input', f); f(); return el; }
+
+// =================================================================== DEMO 1: scope
+(function () {
+  const cv = $('#cv1'); const noise = makeNoise(7);
+  const N = 400, DT = 5, T0 = 500;   // 2 µs window
+  const P = { amp: 22, thr: 17, sig: 3, run: true };
+  const st = { shots: 0, seen: 0, ncross: 0, hist: [], cur: null, prog: 0, hold: 0 };
+  function shot() {
+    const v = new Float32Array(N); for (let i = 0; i < N; i++) v[i] = P.sig * noise() + P.amp * hshape(i * DT - T0);
+    let hit = false, nc = 0, tHit = -1, above = false;
+    for (let i = 0; i < N; i++) { const t = i * DT, a = v[i] > P.thr;
+      if (a && !above) { if (t >= T0 && t <= T0 + TP + 200) { if (!hit) { hit = true; tHit = t; } } else if (t < T0 - 50 || t > T0 + 500) nc++; }
+      above = a; }
+    if (st.cur) { st.hist.push(st.cur); if (st.hist.length > 14) st.hist.shift(); }
+    st.cur = { v, hit, tHit, nc, amp: P.amp }; st.prog = 0; st.hold = 0;
+    st.shots++; if (hit && P.amp > 0) st.seen++; st.ncross += nc; report();
+  }
+  function report() {
+    const effv = st.shots ? (100 * st.seen / st.shots).toFixed(0) + ' %' : '–';
+    const rate = st.shots ? st.ncross / (st.shots * 1.45e-6) : 0;
+    chips($('#r1'), [['shots', st.shots], ['pulses detected', st.seen + (P.amp > 0 ? ` (${effv})` : ''), C.sig],
+      ['noise crossings', st.ncross, C.noise], ['→ noise rate ≈', st.shots ? fmtRate(rate) : '–', C.noise],
+      ['threshold / σ', (P.thr / P.sig).toFixed(1) + ' σ']]);
+  }
+  const d = demo(cv, {
+    g: fit(cv),
+    draw() {
+      const { ctx, w, h } = this.g; ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = C.sbg; ctx.fillRect(0, 0, w, h);
+      const top = { x: 46, y: 14, w: w - 60, h: h * 0.66 }, bot = { x: 46, y: top.y + top.h + 34, w: w - 60, h: h * 0.13 };
+      const yr = [-15, 60]; const X = (t) => lin(t, 0, N * DT, top.x, top.x + top.w), Y = (v) => lin(v, yr[0], yr[1], top.y + top.h, top.y);
+      ctx.strokeStyle = C.sgrid; ctx.lineWidth = 1;
+      for (let t = 0; t <= 2000; t += 200) { ctx.beginPath(); ctx.moveTo(X(t), top.y); ctx.lineTo(X(t), top.y + top.h); ctx.stroke(); }
+      for (let v = -10; v <= 60; v += 10) { ctx.beginPath(); ctx.moveTo(top.x, Y(v)); ctx.lineTo(top.x + top.w, Y(v)); ctx.stroke();
+        txt(ctx, v + '', top.x - 6, Y(v) + 4, { align: 'right', color: C.stxt, size: 10, mono: true }); }
+      txt(ctx, 'mV', 8, top.y + 10, { color: C.stxt, size: 10 });
+      for (let t = 0; t <= 2000; t += 400) txt(ctx, (t / 1000).toFixed(1) + ' µs', X(t), top.y + top.h + 13, { align: 'center', color: C.stxt, size: 10 });
+      // baseline + threshold
+      ctx.setLineDash([2, 4]); ctx.strokeStyle = C.stxt; ctx.beginPath(); ctx.moveTo(top.x, Y(0)); ctx.lineTo(top.x + top.w, Y(0)); ctx.stroke();
+      ctx.setLineDash([7, 5]); ctx.strokeStyle = C.sthr; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(top.x, Y(P.thr)); ctx.lineTo(top.x + top.w, Y(P.thr)); ctx.stroke(); ctx.setLineDash([]);
+      txt(ctx, 'threshold', top.x + top.w - 4, Y(P.thr) - 5, { align: 'right', color: C.sthr, size: 11, bold: true });
+      txt(ctx, 'baseline', top.x + top.w - 4, Y(0) + 13, { align: 'right', color: C.stxt, size: 10 });
+      // persistence
+      ctx.lineWidth = 1;
+      st.hist.forEach((s, k) => { ctx.strokeStyle = C.sdim; ctx.globalAlpha = 0.25 + 0.75 * k / st.hist.length; ctx.beginPath();
+        for (let i = 0; i < N; i++) { const x = X(i * DT), y = Y(clamp(s.v[i], yr[0], yr[1])); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke(); });
+      ctx.globalAlpha = 1;
+      const s = st.cur; if (!s) return;
+      const n = Math.floor(st.prog * N);
+      ctx.strokeStyle = C.sfg; ctx.lineWidth = 2; ctx.shadowColor = C.sfg; ctx.shadowBlur = 6; ctx.beginPath();
+      for (let i = 0; i < n; i++) { const x = X(i * DT), y = Y(clamp(s.v[i], yr[0], yr[1])); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+      ctx.stroke(); ctx.shadowBlur = 0;
+      // comparator lane
+      ctx.strokeStyle = C.sgrid; ctx.strokeRect(bot.x, bot.y, bot.w, bot.h);
+      txt(ctx, 'comparator output', bot.x + 4, bot.y - 4, { color: C.stxt, size: 10 });
+      let above = false; ctx.lineWidth = 2;
+      for (let i = 0; i < n; i++) { const t = i * DT, a = s.v[i] > P.thr; const sigWin = t >= T0 && t <= T0 + TP + 200;
+        if (a) { ctx.fillStyle = sigWin ? 'rgba(91,154,230,.85)' : 'rgba(240,110,80,.9)'; ctx.fillRect(X(t), bot.y + 2, Math.max(1, X(DT) - X(0)), bot.h - 4); }
+        if (a && !above) { ctx.fillStyle = sigWin ? '#7fb6ff' : '#ff7a5c'; ctx.beginPath(); ctx.arc(X(t), Y(P.thr), 5, 0, 7); ctx.fill();
+          if (sigWin) txt(ctx, 'HIT', X(t), bot.y + bot.h + 13, { align: 'center', color: '#7fb6ff', size: 10, bold: true });
+          else txt(ctx, 'noise hit', X(t), bot.y + bot.h + 13, { align: 'center', color: '#ff7a5c', size: 10, bold: true }); }
+        above = a; }
+      if (st.prog >= 1 && s.amp > 0 && !s.hit) txt(ctx, 'pulse below threshold → MISSED', X(T0 + TP), Y(Math.max(s.amp + 8, P.thr + 8)), { align: 'center', color: '#ff7a5c', size: 12, bold: true });
+      if (st.prog >= 1 && s.hit) { const pk = s.amp; txt(ctx, 'ADC peak ≈ ' + pk.toFixed(0) + ' mV', X(T0 + TP), Y(pk) - 10, { align: 'center', color: C.stxt, size: 11 }); }
+    },
+    tick(dt) {
+      if (!st.cur) shot();
+      if (st.prog < 1) st.prog = Math.min(1, st.prog + dt / 0.45);
+      else if (P.run) { st.hold += dt; if (st.hold > 0.35) shot(); }
+      this.draw();
+    }
+  });
+  io.observe(cv);
+  bindRange('#d1amp', '#o1amp', (v) => v + ' mV', (v) => { P.amp = v; });
+  bindRange('#d1thr', '#o1thr', (v) => v + ' mV', (v) => { P.thr = v; d.draw(); report(); });
+  bindRange('#d1sig', '#o1sig', (v) => v.toFixed(1) + ' mV', (v) => { P.sig = v; report(); });
+  $('#d1run').onclick = (e) => { P.run = !P.run; e.target.textContent = P.run ? 'Pause' : 'Run'; };
+  $('#d1single').onclick = () => { P.run = false; $('#d1run').textContent = 'Run'; shot(); };
+  $('#d1reset').onclick = () => { st.shots = st.seen = st.ncross = 0; report(); };
+  report();
+})();
+
+// =================================================================== DEMO 2: Gaussian + Rice
+(function () {
+  const cv = $('#cv2'); const H = new Float64Array(120); let tot = 0; const lo = -5, hi = 7, bw = (hi - lo) / 120;
+  const P = { n: 4.5 };
+  function fill(k) { for (let i = 0; i < k; i++) { const v = gauss(); const b = Math.floor((v - lo) / bw); if (b >= 0 && b < 120) H[b]++; tot++; } }
+  const d = demo(cv, {
+    g: fit(cv),
+    draw() {
+      const { ctx, w, h } = this.g; ctx.clearRect(0, 0, w, h);
+      const half = w < 560 ? w : w / 2;
+      const b1 = { x: 44, y: 16, w: half - 64, h: h - 58 };
+      const hm = Math.max(1, ...H);
+      const A = axes(ctx, b1, { xr: [lo, hi], yr: [0, hm * 1.1], xt: [-4, -2, 0, 2, 4, 6], xf: (t) => (t === 0 ? 'baseline' : t + 'σ'),
+        xl: 'baseline sample (units of σ)', yl: 'entries' });
+      for (let i = 0; i < 120; i++) { const x0 = lo + i * bw; const tail = x0 >= P.n;
+        ctx.fillStyle = tail ? C.noise : C.sig; ctx.globalAlpha = tail ? 0.95 : 0.55;
+        const yy = A.Y(H[i]); ctx.fillRect(A.X(x0), yy, Math.max(1, A.X(x0 + bw) - A.X(x0) - 0.5), b1.y + b1.h - yy); }
+      ctx.globalAlpha = 1;
+      // gaussian curve
+      ctx.strokeStyle = C.fg; ctx.lineWidth = 1.3; ctx.beginPath();
+      for (let x = lo; x <= hi; x += 0.05) { const y = tot * bw * Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI); const px = A.X(x), py = A.Y(y); x === lo ? ctx.moveTo(px, py) : ctx.lineTo(px, py); }
+      ctx.stroke();
+      ctx.strokeStyle = C.thr; ctx.lineWidth = 2; ctx.setLineDash([6, 4]); ctx.beginPath(); ctx.moveTo(A.X(P.n), b1.y); ctx.lineTo(A.X(P.n), b1.y + b1.h); ctx.stroke(); ctx.setLineDash([]);
+      txt(ctx, 'threshold ' + P.n.toFixed(2) + 'σ', A.X(P.n) + (A.X(P.n) > b1.x + b1.w - 140 ? -5 : 5), b1.y + 14, { color: C.thr, bold: true, align: A.X(P.n) > b1.x + b1.w - 140 ? 'right' : 'left' });
+      const tail = 0.5 * erfc(P.n / Math.SQRT2);
+      const nearR = A.X(P.n) > b1.x + b1.w - 140; txt(ctx, 'samples above: ' + (tail < 1e-3 ? tail.toExponential(1) : (100 * tail).toFixed(2) + ' %'), A.X(P.n) + (nearR ? -5 : 5), b1.y + 30, { color: C.muted, size: 11, align: nearR ? 'right' : 'left' });
+      if (w < 560) return;
+      // rice
+      const b2 = { x: half + 76, y: 16, w: half - 120, h: h - 58 };
+      const B = axes(ctx, b2, { xr: [2, 6.5], yr: [0.1, 3e6], ylog: true, xt: [2, 3, 4, 5, 6], xf: (t) => t + 'σ',
+        yt: [0.1, 1, 10, 100, 1e3, 1e4, 1e5, 1e6], yf: (t) => fmtRate(t).replace(' ', ''), xl: 'threshold n (σ above baseline)', yl: '', right: false });
+      txt(ctx, 'noise rate per channel', b2.x + 6, b2.y + 14, { color: C.muted, size: 11 });
+      // band
+      clip(ctx, b2); ctx.fillStyle = C.noise; ctx.globalAlpha = 0.15; ctx.beginPath();
+      for (let x = 2; x <= 6.5; x += 0.05) ctx.lineTo(B.X(x), B.Y(rice(x, 1, 2.62e6)));
+      for (let x = 6.5; x >= 2; x -= 0.05) ctx.lineTo(B.X(x), B.Y(rice(x, 1, 0.99e6)));
+      ctx.fill(); ctx.globalAlpha = 1;
+      ctx.strokeStyle = C.noise; ctx.lineWidth = 2; ctx.beginPath();
+      for (let x = 2; x <= 6.5; x += 0.05) { const p = [B.X(x), B.Y(rice(x, 1))]; x === 2 ? ctx.moveTo(...p) : ctx.lineTo(...p); } ctx.stroke(); ctx.restore();
+      [[50, '50 Hz (tuner limit)'], [5, '5 Hz']].forEach(([r, l]) => { ctx.strokeStyle = C.faint; ctx.setLineDash([3, 3]); ctx.beginPath();
+        ctx.moveTo(b2.x, B.Y(r)); ctx.lineTo(b2.x + b2.w, B.Y(r)); ctx.stroke(); ctx.setLineDash([]); txt(ctx, l, b2.x + b2.w - 4, B.Y(r) - 4, { align: 'right', color: C.muted, size: 10 }); });
+      const r = rice(P.n, 1); ctx.fillStyle = C.thr; ctx.beginPath(); ctx.arc(B.X(P.n), B.Y(r), 6, 0, 7); ctx.fill();
+      txt(ctx, fmtRate(r), B.X(P.n) + 9, B.Y(r) - 6, { color: C.thr, bold: true });
+    },
+    tick() { if (tot < 400000) { fill(tot < 5000 ? 150 : 2500); this.draw(); } }
+  });
+  io.observe(cv);
+  bindRange('#d2n', '#o2n', (v) => v.toFixed(2), (v) => { P.n = v; d.draw();
+    const r = rice(v, 1), rl = rice(v, 1, 0.99e6), rh = rice(v, 1, 2.62e6);
+    chips($('#r2'), [['per channel', fmtRate(rl) + ' … ' + fmtRate(rh), C.noise], ['per chip (64 ch)', fmtRate(64 * r)],
+      ['18 detector chips', fmtRate(1152 * r)], ['full P2 (23 040 ch)', fmtRate(23040 * r)]]); });
+  $('#d2reset').onclick = () => { H.fill(0); tot = 0; };
+})();
+function erfc(x) { const t = 1 / (1 + 0.5 * Math.abs(x)); const y = t * Math.exp(-x * x - 1.26551223 + t * (1.00002368 + t * (0.37409196 + t * (0.09678418 +
+  t * (-0.18628806 + t * (0.27886807 + t * (-1.13520398 + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277))))))))); return x >= 0 ? y : 2 - y; }
+
+// =================================================================== DEMO 3: two channels
+const demo3 = (function () {
+  const cv = $('#cv3'); const P = { sq: 2.0, sn: 3.6, R: 50 };
+  const d = demo(cv, {
+    g: fit(cv),
+    draw() {
+      const { ctx, w, h } = this.g; ctx.clearRect(0, 0, w, h);
+      const b = { x: 52, y: 18, w: w - 130, h: h - 62 };
+      const A = axes(ctx, b, { xr: [0, 40], yr: [0, 100], xt: [0, 5, 10, 15, 20, 25, 30, 35, 40], yt: [0, 20, 40, 60, 80, 100], yf: (t) => t + '%',
+        xl: 'threshold above baseline (mV)', yl: 'signals kept (efficiency)' });
+      const yl = Math.log10(0.1), yh = Math.log10(3e6); const YR = (r) => lin(Math.log10(Math.max(r, 1e-3)), yl, yh, b.y + b.h, b.y);
+      [0.1, 1, 10, 100, 1e3, 1e4, 1e5, 1e6].forEach((t) => txt(ctx, fmtRate(t).replace(' ', ''), b.x + b.w + 5, YR(t) + 4, { color: C.noise, size: 10 }));
+      ctx.save(); ctx.translate(b.x + b.w + 62, b.y + b.h / 2); ctx.rotate(-Math.PI / 2); txt(ctx, 'noise rate per channel', 0, 0, { align: 'center', color: C.noise, size: 12 }); ctx.restore();
+      // signal spectrum faint
+      ctx.fillStyle = C.sig; ctx.globalAlpha = 0.12; ctx.beginPath(); ctx.moveTo(A.X(0), A.Y(0));
+      for (let x = 0; x <= 40; x += 0.25) ctx.lineTo(A.X(x), A.Y(55 * SIG.pdf[Math.floor(x / SIG.dx)] / SIG.pmax)); ctx.lineTo(A.X(40), A.Y(0)); ctx.fill(); ctx.globalAlpha = 1;
+      txt(ctx, 'strip-signal spectrum', A.X(SIG.mpv) + 4, A.Y(57), { color: C.sig, size: 10 });
+      // efficiency
+      ctx.strokeStyle = C.sig; ctx.lineWidth = 2.5; ctx.beginPath();
+      for (let x = 0; x <= 40; x += 0.2) { const p = [A.X(x), A.Y(100 * eff(x))]; x === 0 ? ctx.moveTo(...p) : ctx.lineTo(...p); } ctx.stroke();
+      // noise curves
+      clip(ctx, b); [[P.sq, 'quiet', 0.55], [P.sn, 'noisy', 1]].forEach(([s, l, a]) => { ctx.strokeStyle = C.noise; ctx.globalAlpha = a; ctx.lineWidth = 2; ctx.setLineDash(l === 'quiet' ? [6, 4] : []);
+        ctx.beginPath(); let first = true; for (let x = 0; x <= 40; x += 0.1) { const r = rice(x, s); if (r < 0.1) break; const p = [A.X(x), YR(r)]; first ? ctx.moveTo(...p) : ctx.lineTo(...p); first = false; }
+        ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1; }); ctx.restore();
+      ctx.strokeStyle = C.faint; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(b.x, YR(P.R)); ctx.lineTo(b.x + b.w, YR(P.R)); ctx.stroke(); ctx.setLineDash([]);
+      txt(ctx, 'accepted ' + fmtRate(P.R), b.x + 4, YR(P.R) - 4, { color: C.muted, size: 10 });
+      const n = nFor(P.R), dq = n * P.sq, dn = n * P.sn;
+      [[dq, 'quiet edge', 0.6], [dn, 'noisy edge = global threshold', 1]].forEach(([x, l, a]) => { if (x > 40) return; ctx.strokeStyle = C.thr; ctx.globalAlpha = a; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(A.X(x), b.y); ctx.lineTo(A.X(x), b.y + b.h); ctx.stroke(); ctx.globalAlpha = 1;
+        txt(ctx, l, A.X(x) + (l[0] === 'q' ? -6 : 6), b.y + 12 + (l[0] === 'q' ? 30 : 14), { color: C.thr, size: 11, bold: true, align: l[0] === 'q' ? 'right' : 'left' }); });
+      if (dn <= 40) { const e1 = 100 * eff(dn), e2 = 100 * eff(dq);
+        ctx.fillStyle = C.thr; [[dq, e2], [dn, e1]].forEach(([x, e]) => { ctx.beginPath(); ctx.arc(A.X(x), A.Y(e), 5, 0, 7); ctx.fill(); });
+        ctx.strokeStyle = C.thr; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(A.X(dq) + 2, A.Y(e1)); ctx.lineTo(A.X(dq) + 2, A.Y(e2) + 8); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(A.X(dq) - 3, A.Y(e2) + 12); ctx.lineTo(A.X(dq) + 2, A.Y(e2) + 4); ctx.lineTo(A.X(dq) + 7, A.Y(e2) + 12); ctx.stroke();
+        ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(A.X(dn), A.Y(e1)); ctx.lineTo(A.X(dq), A.Y(e1)); ctx.stroke(); ctx.setLineDash([]); }
+      chips($('#r3'), [['n for accepted rate', n.toFixed(2) + ' σ'], ['quiet edge', dq.toFixed(1) + ' mV'], ['noisy edge', dn.toFixed(1) + ' mV'],
+        ['quiet channel at global thr', (100 * eff(dn)).toFixed(1) + ' %', C.sig], ['at its own edge', (100 * eff(dq)).toFixed(1) + ' %', C.thr],
+        ['recovered', '+' + (100 * (eff(dq) - eff(dn))).toFixed(1) + ' pts', C.thr]]);
+    }
+  });
+  io.observe(cv);
+  bindRange('#d3sq', '#o3sq', (v) => v.toFixed(1) + ' mV', (v) => { P.sq = v; d.draw(); });
+  bindRange('#d3sn', '#o3sn', (v) => v.toFixed(1) + ' mV', (v) => { P.sn = v; d.draw(); });
+  bindRange('#d3r', '#o3r', (v) => fmtRate(rateFromSlider(v)), (v) => { P.R = rateFromSlider(v); d.draw(); });
+  bindRange('#d3mpv', '#o3mpv', (v) => v + ' mV', (v) => { SIG.mpv = v; buildSig(); d.draw(); if (window.__d4) window.__d4.recompute(); });
+  return d;
+})();
+
+// =================================================================== DEMO 4: 64 channels, 3 strategies
+(function () {
+  const cv = $('#cv4'); const r = mulberry32(2026);
+  const NCH = 64, STEP = 1.1, HEAD = 12;
+  const sig = [], off = [], res = [];
+  for (let c = 0; c < NCH; c++) { sig.push(1.9 + 1.7 * Math.pow(Math.sin(Math.PI * (c + 0.5) / NCH), 0.8) + 0.15 * gauss(r));
+    off.push(clamp(3.8 * gauss(r), -9, 9)); res.push(0.7 * gauss(r)); }
+  sig[22] = 4.9; sig[47] = 6.2;   // two outliers
+  const P = { mode: 0, L: 17, R: 50, trims: false };
+  const disp = new Float64Array(NCH).fill(17);
+  let tgt = [], state = [], tunerSeq = [], tunerI = 0, tunerT = 0, sdtLevel = 0, trimArr = [];
+  function modeA() { const d = [], s = []; for (let c = 0; c < NCH; c++) { const x = P.L + off[c]; d.push(x); s.push(rice(x, sig[c]) > P.R ? 'mask' : 'ok'); } return { d, s }; }
+  function modeBseq() { // equalise then tune
+    const seq = []; let d = sig.map((_, c) => P.L + res[c]); let s = sig.map(() => 'ok'); const raised = new Array(NCH).fill(0);
+    seq.push({ d: d.slice(), s: s.slice() });
+    for (let it = 0; it < 8; it++) { let changed = false;
+      for (let c = 0; c < NCH; c++) { if (s[c] === 'mask') continue; if (rice(d[c], sig[c]) > P.R) { changed = true;
+        if (raised[c] + 3 > HEAD) s[c] = 'mask'; else { raised[c] += 3; d[c] += 3 * STEP; s[c] = 'raise'; } } }
+      if (!changed) break; seq.push({ d: d.slice(), s: s.slice() }); }
+    return seq; }
+  function modeC() { const n = nFor(P.R); const t = sig.map((s) => n * s);
+    const sorted = sig.slice().sort((a, b) => a - b), med = sorted[32], mad = sorted.map((x) => Math.abs(x - med)).sort((a, b) => a - b)[32];
+    const outl = sig.map((s) => s > med + 3 * 1.4826 * mad);
+    sdtLevel = Math.max(...t.filter((_, c) => !outl[c])) + 6 * STEP;
+    const d = [], s = []; trimArr = [];
+    for (let c = 0; c < NCH; c++) {
+      if (outl[c]) { let x = sdtLevel; let k = 0; while (rice(x, sig[c]) > P.R && k < 10) { x += 3 * STEP; k++; }
+        d.push(x); trimArr.push(0); s.push(rice(x, sig[c]) > P.R ? 'mask' : 'raise'); continue; }
+      const tr = clamp(Math.floor((sdtLevel - t[c]) / STEP), 0, 31); trimArr.push(tr); d.push(sdtLevel - tr * STEP); s.push('ok'); }
+    return { d, s }; }
+  function stats(d, s) { let m = 0, nr = 0, e = 0, dl = []; for (let c = 0; c < NCH; c++) { if (s[c] === 'mask') { m++; continue; }
+      nr += rice(d[c], sig[c]); e += eff(d[c]); dl.push(d[c]); }
+    dl.sort((a, b) => a - b); return { m, nr, e: 100 * e / NCH, med: dl.length ? dl[dl.length >> 1] : 0, min: dl[0] || 0, raised: s.filter((x) => x === 'raise').length }; }
+  function recompute(restartTuner) {
+    const a = modeA(), bseq = modeBseq(), c = modeC(); const bfin = bseq[bseq.length - 1];
+    const SA = stats(a.d, a.s), SB = stats(bfin.d, bfin.s), SC = stats(c.d, c.s);
+    tunerSeq = bseq; if (restartTuner !== false) { tunerI = 0; tunerT = 0; }
+    if (P.mode === 0) { tgt = a.d; state = a.s; } else if (P.mode === 1) { tgt = bseq[tunerI].d; state = bseq[tunerI].s; } else { tgt = c.d; state = c.s; }
+    const row = (name, S, k) => `<tr class="${P.mode === k ? 'on' : ''}"><td>${name}</td><td>${S.m}</td><td>${S.raised}</td><td>${S.med.toFixed(1)} mV</td><td>${S.min.toFixed(1)} mV</td><td>${fmtRate(S.nr)}</td><td>${S.e.toFixed(1)} %</td></tr>`;
+    $('#t4').innerHTML = '<tr><th>strategy</th><th>masked</th><th>raised</th><th>median thr</th><th>lowest thr</th><th>chip noise</th><th>chip efficiency*</th></tr>' +
+      row('A · global + masks', SA, 0) + row('B · equalised + raise', SB, 1) + row('C · n·σ per channel', SC, 2) +
+      '<tr><td colspan="7" style="text-align:left;color:var(--fg-muted);font-size:.85em">* mean over the 64 channels of the fraction of strip signals above threshold (spectrum from step 3); a masked channel counts 0. Simulated chip: σ pattern shaped like chip 3 (low at the ends), two outliers (ch 22, 47). B and C put every live channel at or just under the accepted rate, so their chip noise is higher than A by design (at most 64 × accepted rate); A is quiet only because it masks.</td></tr>';
+    const cur = [SA, SB, SC][P.mode];
+    chips($('#r4'), [['n for accepted rate', nFor(P.R).toFixed(2) + ' σ'], ['masked', cur.m, cur.m ? C.mask : C.thr], ['raised', cur.raised, C.raise],
+      ['chip noise', fmtRate(cur.nr), C.noise], ['chip efficiency', cur.e.toFixed(1) + ' %', C.sig]].concat(P.mode === 1 ? [['tuner iteration', tunerI + ' / ' + (tunerSeq.length - 1)]] : []));
+  }
+  const d = demo(cv, {
+    g: fit(cv),
+    draw() {
+      const { ctx, w, h } = this.g; ctx.clearRect(0, 0, w, h);
+      const b = { x: 48, y: 16, w: w - 62, h: h - 52 }; const ymax = 42;
+      const A = axes(ctx, b, { xr: [-0.5, NCH - 0.5], yr: [0, ymax], xt: [0, 8, 16, 24, 32, 40, 48, 56, 63], yt: [0, 10, 20, 30, 40], yf: (t) => t,
+        xl: 'channel', yl: 'mV above baseline' });
+      const bw = (A.X(1) - A.X(0)); const n = nFor(P.R);
+      for (let c = 0; c < NCH; c++) { const x = A.X(c);
+        const top = A.Y(Math.min(ymax, 6 * sig[c])); const gr = ctx.createLinearGradient(0, A.Y(0), 0, top);
+        gr.addColorStop(0, C.noise + 'aa'); gr.addColorStop(1, C.noise + '00'); ctx.fillStyle = gr; ctx.fillRect(x - bw * 0.36, top, bw * 0.72, A.Y(0) - top);
+        ctx.strokeStyle = C.muted; ctx.lineWidth = 1.2; const ye = A.Y(Math.min(ymax, n * sig[c])); ctx.beginPath(); ctx.moveTo(x - bw * 0.3, ye); ctx.lineTo(x + bw * 0.3, ye); ctx.stroke(); }
+      if (P.mode === 2 && P.trims) { const ys = A.Y(Math.min(ymax, sdtLevel)); ctx.strokeStyle = C.accent; ctx.setLineDash([8, 4]); ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(b.x, ys); ctx.lineTo(b.x + b.w, ys); ctx.stroke(); ctx.setLineDash([]);
+        txt(ctx, 'chip level (sdt) = highest target + 6 steps', b.x + 6, ys - 5, { color: C.accent, size: 11, bold: true });
+        ctx.strokeStyle = C.accent; ctx.globalAlpha = 0.45; ctx.lineWidth = 1;
+        for (let c = 0; c < NCH; c++) { if (!trimArr[c]) continue; const x = A.X(c); ctx.beginPath(); ctx.moveTo(x, ys); ctx.lineTo(x, A.Y(disp[c]) - 3); ctx.stroke(); }
+        ctx.globalAlpha = 1; }
+      for (let c = 0; c < NCH; c++) { const x = A.X(c), y = A.Y(Math.min(ymax, disp[c])); const s = state[c];
+        const col = s === 'mask' ? C.mask : s === 'raise' ? C.raise : C.thr; ctx.strokeStyle = col; ctx.lineWidth = 3;
+        if (s === 'mask') { ctx.globalAlpha = 0.35; ctx.beginPath(); ctx.moveTo(x - bw * 0.42, y); ctx.lineTo(x + bw * 0.42, y); ctx.stroke(); ctx.globalAlpha = 1;
+          ctx.lineWidth = 2; const yy = A.Y(0) - 8; ctx.beginPath(); ctx.moveTo(x - 4, yy - 4); ctx.lineTo(x + 4, yy + 4); ctx.moveTo(x + 4, yy - 4); ctx.lineTo(x - 4, yy + 4); ctx.stroke(); }
+        else { ctx.beginPath(); ctx.moveTo(x - bw * 0.42, y); ctx.lineTo(x + bw * 0.42, y); ctx.stroke(); } }
+      const lg = [[C.thr, 'threshold'], [C.raise, 'raised by tuner'], [C.mask, 'masked (✕)'], [C.muted, 'noise edge (accepted rate)']];
+      let lx = b.x + b.w - 8; ctx.textAlign = 'right';
+      lg.slice().reverse().forEach(([col, l]) => { ctx.font = '11px ' + C.font; const tw = ctx.measureText(l).width; txt(ctx, l, lx, b.y + 14, { align: 'right', color: C.muted, size: 11 });
+        ctx.fillStyle = col; ctx.fillRect(lx - tw - 16, b.y + 7, 11, 4); lx -= tw + 30; });
+    },
+    tick(dt) { let moving = false;
+      for (let c = 0; c < NCH; c++) { const t = tgt[c] == null ? disp[c] : tgt[c]; const dd = t - disp[c]; if (Math.abs(dd) > 0.01) { disp[c] += dd * Math.min(1, dt * 5); moving = true; } }
+      if (P.mode === 1 && tunerI < tunerSeq.length - 1) { tunerT += dt; if (tunerT > 0.9) { tunerT = 0; tunerI++; recompute(false); } }
+      if (moving || this.dirty) { this.dirty = false; this.draw(); } }
+  });
+  io.observe(cv);
+  window.__d4 = { recompute: () => { recompute(false); d.dirty = true; } };
+  seg('#d4mode', (ds) => { P.mode = +ds.m; recompute(); d.dirty = true; });
+  bindRange('#d4L', '#o4L', (v) => v.toFixed(1) + ' mV', (v) => { P.L = v; recompute(); d.dirty = true; });
+  bindRange('#d4r', '#o4r', (v) => fmtRate(rateFromSlider(v)), (v) => { P.R = rateFromSlider(v); recompute(); d.dirty = true; });
+  $('#d4trim').onchange = (e) => { P.trims = e.target.checked; d.dirty = true; };
+  recompute();
+})();
+
+// =================================================================== DEMO 6: pulser + neighbour read-out (test A)
+(function () {
+  const cv = $('#cv6'); const r = mulberry32(99); const NC = 16;
+  const ped = [], sg = []; for (let c = 0; c < NC; c++) { ped.push(44 + 3 * gauss(r)); sg.push(2.6 + 0.13 * c + 0.2 * gauss(r)); }
+  const NOISY = 7, SHOW = [4, 7, 8], XT = 0.035 * 1.1 * 80;
+  const P = { phase: 0, raised: true };
+  const hist = {}; const reset = () => { SHOW.forEach((c) => { hist[c] = { h: new Float64Array(100), n: 0, s: 0, s2: 0 }; }); P.extra = 0; P.frames = 0; };
+  reset();
+  const add = (c, v) => { const H = hist[c]; if (!H) return; const b = Math.floor(v); if (b >= 0 && b < 100) H.h[b]++; H.n++; H.s += v; H.s2 += v * v; };
+  let fl = { t: 9, noisyT: 9, vals: {} };
+  const pulsed = (c) => c % 3 === P.phase;
+  function frame() { P.frames++;
+    fl.t = 0; fl.vals = {};
+    for (let c = 0; c < NC; c++) { if (pulsed(c)) continue; const v = ped[c] + XT + sg[c] * gauss(); fl.vals[c] = v; }
+    for (let k = 0; k < 150; k++) for (const c of SHOW) { if (pulsed(c)) continue; add(c, ped[c] + XT + sg[c] * gauss()); }
+    if (!P.raised) { fl.noisyT = 0.12;
+      for (let k = 0; k < 100; k++) { if (!pulsed(NOISY)) add(NOISY, ped[NOISY] + 3.2 * sg[NOISY] + 1.5 * sg[NOISY] * -Math.log(Math.random()));
+        [NOISY - 1, NOISY + 1].forEach((c) => { P.extra++; if (!pulsed(c) && SHOW.includes(c)) add(c, ped[c] + sg[c] * gauss()); }); } }
+    report(); }
+  function report() { const items = [['pulser frames', P.frames]];
+    SHOW.forEach((c) => { const H = hist[c]; if (pulsed(c)) { items.push(['ch ' + c, 'pulsed this phase']); return; } if (!H.n) return;
+      const m = H.s / H.n, s = Math.sqrt(Math.max(0, H.s2 / H.n - m * m)); const bias = 100 * (s / sg[c] - 1);
+      const bad = H.n > 1500 && Math.abs(bias) > 6; items.push(['ch ' + c + ' σ', s.toFixed(2) + ' (true ' + sg[c].toFixed(2) + ')' + (bad ? ' ' + (bias > 0 ? '+' : '') + bias.toFixed(0) + ' %' : ''), bad ? C.mask : C.thr]); });
+    items.push(['read-outs not from the pulser', P.extra, P.extra ? C.mask : C.thr]); chips($('#r6'), items); }
+  const d = demo(cv, {
+    g: fit(cv),
+    draw() {
+      const { ctx, w, h } = this.g; ctx.clearRect(0, 0, w, h);
+      const sx = 20, sw = w - 40, cw = sw / NC, sy = 26, shh = h * 0.36;
+      txt(ctx, 'VMM channels (strip of 16 of the 64)  ·  pulsed: st=1  ·  neighbours read out with sng=1', sx, 16, { color: C.muted, size: 11 });
+      const fade = Math.max(0, 1 - fl.t / 0.5);
+      for (let c = 0; c < NC; c++) { const x = sx + c * cw + 3, ww = cw - 6; const p = pulsed(c);
+        ctx.fillStyle = p ? C.sig : C.bg; ctx.globalAlpha = p ? 0.18 + 0.5 * fade : 1; ctx.fillRect(x, sy, ww, shh); ctx.globalAlpha = 1;
+        ctx.strokeStyle = c === NOISY && !P.raised ? C.mask : C.faint; ctx.lineWidth = c === NOISY && !P.raised ? 2 : 1; ctx.strokeRect(x + .5, sy + .5, ww, shh);
+        txt(ctx, String(c), x + ww / 2, sy + shh + 14, { align: 'center', color: C.muted, size: 11, mono: true });
+        const base = sy + shh - 6;
+        if (p) { const hh = (shh - 20) * fade; ctx.fillStyle = C.sig; ctx.fillRect(x + ww * 0.3, base - hh, ww * 0.4, hh);
+          if (fade > 0.2 && ww > 26) txt(ctx, 'pulse', x + ww / 2, sy + 12, { align: 'center', color: C.sig, size: 10, bold: true }); }
+        else if (fl.vals[c] != null && fade > 0) { const hh = (fl.vals[c] / 100) * (shh - 20) * 0.6; ctx.fillStyle = C.thr; ctx.globalAlpha = fade;
+          ctx.fillRect(x + ww * 0.3, base - hh, ww * 0.4, hh); ctx.globalAlpha = 1;
+          if (ww > 26) txt(ctx, fl.vals[c].toFixed(0), x + ww / 2, base - hh - 4, { align: 'center', color: C.thr, size: 10, mono: true }); }
+        if (c === NOISY && !P.raised && fl.noisyT > 0) { ctx.fillStyle = C.mask; ctx.globalAlpha = 0.6; ctx.fillRect(x, sy, ww, shh); ctx.globalAlpha = 1;
+          txt(ctx, 'fires', x + ww / 2, sy + shh / 2, { align: 'center', color: '#fff', size: 10, bold: true }); }
+        if (c === NOISY && !P.raised) txt(ctx, 'noisy', x + ww / 2, sy + shh + 27, { align: 'center', color: C.mask, size: 10, bold: true }); }
+      // arrows pulsed -> neighbours
+      if (fade > 0) { ctx.strokeStyle = C.sig; ctx.globalAlpha = fade; ctx.lineWidth = 1.5;
+        for (let c = 0; c < NC; c++) if (pulsed(c)) [c - 1, c + 1].forEach((q) => { if (q < 0 || q >= NC) return; const x1 = sx + c * cw + cw / 2, x2 = sx + q * cw + cw / 2;
+          ctx.beginPath(); ctx.moveTo(x1, sy - 2); ctx.quadraticCurveTo((x1 + x2) / 2, sy - 12, x2, sy - 2); ctx.stroke(); });
+        ctx.globalAlpha = 1; }
+      // histograms
+      const hy = sy + shh + 42, hh = h - hy - 34, hw = (w - 40 - 2 * 24) / 3;
+      SHOW.forEach((c, k) => { const b = { x: 20 + k * (hw + 24) + 16, y: hy, w: hw - 16, h: hh }; const H = hist[c];
+        const mx = Math.max(1, ...H.h);
+        const A = axes(ctx, b, { xr: [20, 100], yr: [0, mx * 1.15], xt: [20, 40, 60, 80, 100], xl: '' });
+        txt(ctx, 'ch ' + c + (c === NOISY && !P.raised ? ' (noisy)' : '') + ' · neighbour ADC', b.x + 4, b.y + 13, { color: c === NOISY && !P.raised ? C.mask : C.fg, size: 11, bold: true });
+        if (pulsed(c)) { txt(ctx, 'pulsed in this phase', b.x + b.w / 2, b.y + b.h / 2, { align: 'center', color: C.muted, size: 12 });
+          txt(ctx, '(measured in another phase)', b.x + b.w / 2, b.y + b.h / 2 + 16, { align: 'center', color: C.muted, size: 11 }); return; }
+        for (let i = 20; i < 100; i++) { if (!H.h[i]) continue; const y = A.Y(H.h[i]); const hi = i > ped[c] + XT + 3 * sg[c];
+          ctx.fillStyle = hi ? C.mask : C.thr; ctx.globalAlpha = 0.75; ctx.fillRect(A.X(i), y, A.X(i + 1) - A.X(i) - 0.5, b.y + b.h - y); }
+        ctx.globalAlpha = 1;
+        if (H.n > 50) { const m = H.s / H.n, s = Math.sqrt(Math.max(0, H.s2 / H.n - m * m));
+          ctx.strokeStyle = C.fg; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.moveTo(A.X(m), b.y + 18); ctx.lineTo(A.X(m), b.y + b.h); ctx.stroke();
+          ctx.strokeStyle = C.accent; ctx.beginPath(); ctx.moveTo(A.X(m - s), b.y + 24); ctx.lineTo(A.X(m + s), b.y + 24); ctx.stroke();
+          txt(ctx, 'pedestal ' + m.toFixed(1) + '  σ ' + s.toFixed(2), b.x + b.w - 4, b.y + 38, { align: 'right', color: C.accent, size: 11, mono: true }); }
+        txt(ctx, 'ADC counts', b.x + b.w / 2, b.y + b.h + 26, { align: 'center', color: C.muted, size: 10 }); });
+    },
+    tick(dt) { fl.t += dt; fl.noisyT -= dt; if (fl.t > 0.75) frame(); this.draw(); }
+  });
+  io.observe(cv);
+  seg('#d6phase', (ds) => { P.phase = +ds.p; reset(); frame(); });
+  seg('#d6thr', (ds) => { P.raised = ds.t === '1'; reset(); frame(); });
+  $('#d6reset').onclick = () => { reset(); report(); };
+  frame();
+})();
+
+// =================================================================== DEMO 7: crosstalk, two amplitudes
+(function () {
+  const cv = $('#cv7');
+  const M = { L: { p0: 41.0, c: 0.035 * 1.1, s0: 4.10, b: 0.0045 }, U: { p0: 43.0, c: 0.030 * 1.1, s0: 4.30, b: 0.0042 } };
+  const P = { a1: 80, a2: 160, nb: 'L', pts: [], anim: 0 };
+  function measure() { const m = M[P.nb]; P.pts = [P.a1, P.a2].map((a) => ({ a, p: m.p0 + m.c * a + 0.12 * gauss(), s: m.s0 + m.b * a + 0.03 * gauss() })); P.anim = 0; report(); }
+  function fitLine() { const [u, v] = P.pts; if (u.a === v.a) return null; const kp = (v.p - u.p) / (v.a - u.a), ks = (v.s - u.s) / (v.a - u.a);
+    return { p0: u.p - kp * u.a, s0: u.s - ks * u.a, kp, ks }; }
+  function report() { const m = M[P.nb], f = fitLine(); const one = P.pts[0];
+    const items = [['pulse on pulsed ch', '+' + (1.1 * P.a1).toFixed(0) + ' / +' + (1.1 * P.a2).toFixed(0) + ' ADC'],
+      ['single amplitude (' + P.a1 + '): σ', one.s.toFixed(2) + ' ADC (+' + (100 * (one.s / m.s0 - 1)).toFixed(0) + ' %)', C.mask]];
+    if (f) items.push(['extrapolated to 0: σ', f.s0.toFixed(2) + ' (true ' + m.s0.toFixed(2) + ')', C.thr], ['pedestal', f.p0.toFixed(1) + ' (true ' + m.p0.toFixed(1) + ')', C.thr],
+      ['crosstalk', (100 * f.kp / 1.1).toFixed(1) + ' % of the pulse']);
+    else items.push(['pick two different amplitudes', '']);
+    chips($('#r7'), items); }
+  const d = demo(cv, {
+    g: fit(cv),
+    draw() { const { ctx, w, h } = this.g; ctx.clearRect(0, 0, w, h); const m = M[P.nb], f = fitLine(); const pr = Math.min(1, P.anim);
+      const half = w < 560 ? w : w / 2;
+      const panels = [{ key: 'p', yr: [m.p0 - 2, m.p0 + 10], yl: 'neighbour pedestal (ADC)', tr: (a) => m.p0 + m.c * a, f0: f && f.p0, k: f && f.kp },
+                      { key: 's', yr: [m.s0 - 0.3, m.s0 + 1.2], yl: 'neighbour σ (ADC)', tr: (a) => m.s0 + m.b * a, f0: f && f.s0, k: f && f.ks }];
+      panels.forEach((pn, i) => { if (w < 560 && i === 1) return;
+        const b = { x: (i ? half : 0) + 56, y: 14, w: half - 76, h: h - 52 };
+        const A = axes(ctx, b, { xr: [0, 200], yr: pn.yr, xt: [0, 40, 80, 120, 160, 200], yt: niceTicks(pn.yr), yf: (t) => t.toFixed(pn.key === 's' ? 1 : 0),
+          xl: 'pulse amplitude (sdp10 counts)', yl: pn.yl });
+        ctx.strokeStyle = C.faint; ctx.setLineDash([2, 4]); ctx.beginPath(); ctx.moveTo(A.X(0), A.Y(pn.tr(0))); ctx.lineTo(A.X(200), A.Y(pn.tr(200))); ctx.stroke(); ctx.setLineDash([]);
+        txt(ctx, 'true (hidden in reality)', A.X(200) - 4, A.Y(pn.tr(200)) + 14, { align: 'right', color: C.faint, size: 10 });
+        // true zero-pulse value
+        ctx.fillStyle = C.thr; ctx.beginPath(); ctx.arc(A.X(0), A.Y(pn.tr(0)), 4, 0, 7); ctx.fill();
+        if (f) { const xa = Math.max(P.a1, P.a2); const xe = xa - pr * xa; ctx.strokeStyle = C.accent; ctx.lineWidth = 2; ctx.setLineDash([7, 4]);
+          ctx.beginPath(); ctx.moveTo(A.X(xa), A.Y(pn.f0 + pn.k * xa)); ctx.lineTo(A.X(xe), A.Y(pn.f0 + pn.k * xe)); ctx.stroke(); ctx.setLineDash([]);
+          if (pr >= 1) { ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(A.X(0), A.Y(pn.f0), 6, 0, 7); ctx.fill(); txt(ctx, 'extrapolated', A.X(0) + 9, A.Y(pn.f0) - 8, { color: C.accent, size: 11, bold: true }); } }
+        P.pts.forEach((q, k) => { const v = pn.key === 'p' ? q.p : q.s; const yy = A.Y(v); ctx.fillStyle = k ? C.noise : C.mask; ctx.beginPath(); ctx.arc(A.X(q.a), yy, 6, 0, 7); ctx.fill(); });
+        if (pn.key === 's') { const q = P.pts[0]; ctx.strokeStyle = C.mask; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(A.X(0), A.Y(q.s)); ctx.lineTo(A.X(q.a), A.Y(q.s)); ctx.stroke(); ctx.setLineDash([]);
+          txt(ctx, 'one amplitude → σ too big', A.X(2) + 4, A.Y(q.s) + 15, { color: C.mask, size: 11 }); } });
+    },
+    tick(dt) { if (P.anim < 1) { P.anim += dt / 0.9; this.draw(); } }
+  });
+  io.observe(cv);
+  bindRange('#d7a1', '#o7a1', (v) => v, (v) => { P.a1 = v; measure(); });
+  bindRange('#d7a2', '#o7a2', (v) => v, (v) => { P.a2 = v; measure(); });
+  seg('#d7nb', (ds) => { P.nb = ds.n; measure(); });
+  $('#d7go').onclick = measure;
+})();
+function niceTicks(r) { const span = r[1] - r[0]; const st = span > 6 ? 2 : span > 2 ? 0.5 : 0.25; const out = []; for (let v = Math.ceil(r[0] / st) * st; v <= r[1] + 1e-9; v += st) out.push(+v.toFixed(3)); return out; }
+
+// =================================================================== DEMO 8a: sample vs peak
+(function () {
+  const cv = $('#cv8a'); const noise = makeNoise(31); const NW = 200, DTW = 5, TS = 150; // 1 µs window
+  const HS = new Float64Array(80), HP = new Float64Array(80); const lo = -4, hi = 4, bw = 0.1;
+  const acc = { s: [0, 0, 0], p: [0, 0, 0] }; let wave = null, prog = 0, hold = 0;
+  function one() { for (let i = 0; i < 37; i++) noise(); const v = new Float32Array(NW); let mx = -9, im = 0;
+    for (let i = 0; i < NW; i++) { v[i] = noise(); if (v[i] > mx) { mx = v[i]; im = i; } } return { v, s: v[TS / DTW], p: mx, im }; }
+  function addH(H, a, x) { const b = Math.floor((x - lo) / bw); if (b >= 0 && b < 80) H[b]++; a[0]++; a[1] += x; a[2] += x * x; }
+  function next() { wave = one(); prog = 0; hold = 0; for (let k = 0; k < 60; k++) { const o = one(); addH(HS, acc.s, o.s); addH(HP, acc.p, o.p); } addH(HS, acc.s, wave.s); addH(HP, acc.p, wave.p); }
+  const ms = (a) => { const m = a[1] / a[0]; return [m, Math.sqrt(Math.max(0, a[2] / a[0] - m * m))]; };
+  const d = demo(cv, {
+    g: fit(cv),
+    draw() { const { ctx, w, h } = this.g; ctx.clearRect(0, 0, w, h); if (!wave) return;
+      const half = w < 560 ? w : w * 0.48;
+      const b = { x: 44, y: 16, w: half - 60, h: h - 52 };
+      const A = axes(ctx, b, { xr: [0, NW * DTW], yr: [-3.5, 3.5], xt: [0, 250, 500, 750, 1000], yt: [-3, -2, -1, 0, 1, 2, 3], yf: (t) => t + 'σ', xl: 'ns after the neighbour trigger', yl: 'baseline' });
+      const n = Math.floor(prog * NW); ctx.strokeStyle = C.fg; ctx.lineWidth = 1.6; ctx.beginPath();
+      for (let i = 0; i < n; i++) { const p = [A.X(i * DTW), A.Y(clamp(wave.v[i], -3.5, 3.5))]; i ? ctx.lineTo(...p) : ctx.moveTo(...p); } ctx.stroke();
+      if (prog >= 1) { ctx.fillStyle = C.thr; ctx.beginPath(); ctx.arc(A.X(TS), A.Y(wave.s), 6, 0, 7); ctx.fill(); txt(ctx, 'sample', A.X(TS) + 8, A.Y(wave.s) + 16, { color: C.thr, size: 11, bold: true });
+        ctx.fillStyle = C.mask; ctx.beginPath(); ctx.arc(A.X(wave.im * DTW), A.Y(wave.p), 6, 0, 7); ctx.fill(); txt(ctx, 'peak in window', A.X(wave.im * DTW) + 8, A.Y(wave.p) - 8, { color: C.mask, size: 11, bold: true }); }
+      if (w < 560) return;
+      const b2 = { x: half + 40, y: 16, w: w - half - 56, h: h - 52 }; const mx = Math.max(1, ...HS, ...HP);
+      const B = axes(ctx, b2, { xr: [lo, hi], yr: [0, mx * 1.1], xt: [-3, -2, -1, 0, 1, 2, 3], xf: (t) => t + 'σ', xl: 'value read (units of the true σ)' });
+      [[HS, C.thr], [HP, C.mask]].forEach(([H, col]) => { ctx.fillStyle = col; ctx.globalAlpha = 0.45; for (let i = 0; i < 80; i++) { if (!H[i]) continue; const y = B.Y(H[i]);
+        ctx.fillRect(B.X(lo + i * bw), y, B.X(lo + (i + 1) * bw) - B.X(lo + i * bw) - 0.5, b2.y + b2.h - y); } ctx.globalAlpha = 1; });
+      const [m1, s1] = ms(acc.s), [m2, s2] = ms(acc.p);
+      txt(ctx, 'sample: mean ' + m1.toFixed(2) + 'σ, width ' + s1.toFixed(2) + 'σ', b2.x + 6, b2.y + 14, { color: C.thr, size: 11, mono: true });
+      txt(ctx, 'peak:   mean ' + m2.toFixed(2) + 'σ, width ' + s2.toFixed(2) + 'σ', b2.x + 6, b2.y + 30, { color: C.mask, size: 11, mono: true });
+    },
+    tick(dt) { if (!wave) next(); if (prog < 1) prog = Math.min(1, prog + dt / 0.6); else { hold += dt; if (hold > 0.6) next(); } this.draw(); }
+  });
+  io.observe(cv);
+})();
+
+// =================================================================== DEMO 8b: rate scan + k per channel
+(function () {
+  const cv = $('#cv8b'); const S_TRUE = 3.0, F0T = 1.4e6, TCAP = 30;
+  const P = { pts: [], shown: 0, t: 0, sc: 0 }; const ds = []; for (let x = 7; x <= 20.6; x += 1.5) ds.push(x);
+  const rr = mulberry32(5); const kch = []; for (let c = 0; c < 64; c++) { const sA = 2.6 + 3.0 * Math.pow(Math.sin(Math.PI * (c + .5) / 64), .8) + 0.2 * gauss(rr); kch.push({ c, sA, j: gauss(rr) }); }
+  function scan() { P.pts = ds.map((d) => { const n = poisson(rice(d, S_TRUE, F0T) * TCAP); return { d, n, R: n / TCAP }; }); P.shown = 0; P.t = 0; P.fit = fitR(); report(); }
+  function fitR() { // weighted LSQ of ln R = a + b d^2, weight n
+    let sw = 0, sx = 0, sy = 0, sxx = 0, sxy = 0; P.pts.forEach((p) => { if (p.n < 3 || p.R > 3e4) return; const x = p.d * p.d, y = Math.log(p.R), wgt = p.n;
+      sw += wgt; sx += wgt * x; sy += wgt * y; sxx += wgt * x * x; sxy += wgt * x * y; });
+    const det = sw * sxx - sx * sx; if (!det) return null; const bb = (sw * sxy - sx * sy) / det, aa = (sy - bb * sx) / sw; if (bb >= 0) return null;
+    const vb = sw / det; return { sigma: Math.sqrt(-1 / (2 * bb)), f0: Math.exp(aa), es: 0.5 * Math.sqrt(vb) * Math.pow(-2 * bb, -1.5) * 2 }; }
+  function report() { const f = P.fit; chips($('#r8'), f ? [['fitted σ', f.sigma.toFixed(2) + ' mV (true ' + S_TRUE.toFixed(1) + ')', C.thr], ['fitted f₀', fmtRate(f.f0)],
+    ['scan', ds.length + ' thresholds × ' + TCAP + ' s'], ['then', 'k = σ_mV / σ_ADC per channel →']] : [['fit', 'not enough points']]); }
+  const d = demo(cv, {
+    g: fit(cv),
+    draw() { const { ctx, w, h } = this.g; ctx.clearRect(0, 0, w, h); const half = w < 560 ? w : w / 2;
+      const b = { x: 58, y: 16, w: half - 80, h: h - 52 };
+      const A = axes(ctx, b, { xr: [5, 22], yr: [0.02, 3e5], ylog: true, xt: [6, 9, 12, 15, 18, 21], yt: [0.1, 1, 10, 100, 1e3, 1e4, 1e5], yf: (t) => fmtRate(t).replace(' ', ''),
+        xl: 'threshold − baseline (mV, from monitor map + sdt shift)', yl: 'channel rate' });
+      txt(ctx, 'one channel, no pulser', b.x + b.w - 6, b.y + 14, { align: 'right', color: C.muted, size: 11 });
+      if (P.fit && P.shown >= ds.length) { const f = P.fit; clip(ctx, b); ctx.strokeStyle = C.accent; ctx.lineWidth = 2; ctx.beginPath(); let first = true;
+        for (let x = 5; x <= 22; x += 0.1) { const v = f.f0 * Math.exp(-x * x / (2 * f.sigma * f.sigma)); if (v < 0.02) break; const p = [A.X(x), A.Y(v)]; first ? ctx.moveTo(...p) : ctx.lineTo(...p); first = false; }
+        ctx.stroke(); ctx.restore(); txt(ctx, 'Rice fit: σ = ' + f.sigma.toFixed(2) + ' mV', b.x + 8, b.y + b.h - 10, { color: C.accent, size: 12, bold: true }); }
+      for (let i = 0; i < P.shown && i < P.pts.length; i++) { const p = P.pts[i]; if (p.n === 0) { txt(ctx, '0', A.X(p.d), b.y + b.h - 4, { align: 'center', color: C.muted, size: 10 }); continue; }
+        const e = Math.sqrt(p.n) / TCAP; ctx.strokeStyle = C.noise; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(A.X(p.d), A.Y(Math.max(0.02, p.R - e))); ctx.lineTo(A.X(p.d), A.Y(p.R + e)); ctx.stroke();
+        ctx.fillStyle = C.noise; ctx.beginPath(); ctx.arc(A.X(p.d), A.Y(p.R), 4.5, 0, 7); ctx.fill(); }
+      if (w < 560) return;
+      const b2 = { x: half + 50, y: 16, w: half - 70, h: h - 52 };
+      const B = axes(ctx, b2, { xr: [-0.5, 63.5], yr: [0, 1.6], xt: [0, 16, 32, 48, 63], yt: [0, 0.4, 0.8, 1.2, 1.6], yf: (t) => t.toFixed(1), xl: 'channel', yl: 'k = σ_mV / σ_ADC' });
+      txt(ctx, P.sc ? 'if biased: k follows the σ pattern → use the rate scan' : 'if a plain sample: k flat → pulser σ validated', b2.x + 6, b2.y + 14, { color: P.sc ? C.mask : C.thr, size: 11, bold: true });
+      txt(ctx, 'SIMULATED OUTCOME', b2.x + b2.w - 6, b2.y + b2.h - 8, { align: 'right', color: C.faint, size: 10, bold: true });
+      const kk = kch.map((q) => { const smv = 0.75 * q.sA; const sadc = P.sc ? 0.6 * q.sA + 1.3 : q.sA; return smv / sadc * (1 + 0.03 * q.j); });
+      const mean = kk.reduce((a, b) => a + b, 0) / 64;
+      ctx.strokeStyle = C.faint; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.moveTo(b2.x, B.Y(mean)); ctx.lineTo(b2.x + b2.w, B.Y(mean)); ctx.stroke(); ctx.setLineDash([]);
+      kk.forEach((k, c) => { ctx.fillStyle = P.sc ? C.mask : C.thr; ctx.beginPath(); ctx.arc(B.X(c), B.Y(k), 3.2, 0, 7); ctx.fill(); });
+    },
+    tick(dt) { if (P.shown < ds.length) { P.t += dt; if (P.t > 0.35) { P.t = 0; P.shown++; this.draw(); } } }
+  });
+  io.observe(cv);
+  $('#d8go').onclick = scan;
+  seg('#d8sc', (s) => { P.sc = +s.s; d.draw(); });
+  scan();
+})();
+
+// ------------------------------------------------------------------ first paint + loop
+redrawAll();
+requestAnimationFrame(loop);
+
+// ------------------------------------------------------------------ presentation mode
+const slides = $$('.slide'); let cur = 0;
+function show(i) { cur = clamp(i, 0, slides.length - 1); slides.forEach((s, k) => s.classList.toggle('active', k === cur));
+  $('#slideNo').textContent = (cur + 1) + ' / ' + slides.length + '  ·  ← →  ·  Esc'; window.scrollTo(0, 0); setTimeout(redrawAll, 30); }
+function toggle(on) { document.body.classList.toggle('present', on); $('#presentBtn').textContent = on ? '✕ Exit' : '▶ Present';
+  if (on) { const y = window.scrollY; let k = 0; slides.forEach((s, i) => { if (s.offsetTop - 80 <= y) k = i; }); show(k); }
+  else { slides.forEach((s) => s.classList.remove('active')); setTimeout(() => { redrawAll(); slides[cur].scrollIntoView(); }, 30); } }
+$('#presentBtn').onclick = () => toggle(!document.body.classList.contains('present'));
+document.addEventListener('keydown', (e) => { if (e.target.tagName === 'INPUT') return; const pres = document.body.classList.contains('present');
+  if (e.key === 'p' || e.key === 'P') { toggle(!pres); e.preventDefault(); return; }
+  if (!pres) return; if (e.key === 'Escape') toggle(false);
+  else if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { show(cur + 1); e.preventDefault(); }
+  else if (['ArrowLeft', 'PageUp'].includes(e.key)) { show(cur - 1); e.preventDefault(); } });
+const hm = /^#present(?:-(\d+))?$/.exec(location.hash); if (hm) { toggle(true); if (hm[1]) show(+hm[1] - 1); }
+})();
+</script>
+</body>
+</html>
