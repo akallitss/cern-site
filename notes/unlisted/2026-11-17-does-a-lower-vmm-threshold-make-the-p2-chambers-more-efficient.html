@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>Does a lower VMM threshold make the P2 chambers more efficient?</title>
+<meta name="description" content="Cosmic muons, HV on, a ladder of per-channel thresholds (night 16/17 Nov + day 17 Nov 2026): what we measured, the trap in the obvious plot, and why the answer is about 0.85 whatever the threshold between 14 and 20 mV.">
+<meta name="category" content="Analysis">
+<meta name="keywords" content="VMM,efficiency,cosmics,P2,threshold,HV">
+<meta name="date" content="2026-11-17">
+<meta name="updated" content="2026-11-17">
+<meta name="visibility" content="unlisted">
+<!-- ======================================================================= -->
+<link rel="stylesheet" href="../../assets/site.css">
+<style>
+  :root { --c-in: #2a78d6; --c-mid: #eb6834; --c-out: #1baf7a; --c-a: #2a78d6; --c-b: #b4532a; --c-ok: #178a50;
+          --c-warn: #c9761f; --c-grid: rgba(0,0,0,.07); --c-band: rgba(0,0,0,.06); --c-lost: #8a8a84; }
+  @media (prefers-color-scheme: dark) {
+    :root { --c-in: #5b9ae6; --c-mid: #f08a5d; --c-out: #3cc493; --c-a: #5b9ae6; --c-b: #e0855c; --c-ok: #3cc47f;
+            --c-warn: #e9a04f; --c-grid: rgba(255,255,255,.08); --c-band: rgba(255,255,255,.07); --c-lost: #9a9a94; }
+  }
+  main.wrap, .site-header .wrap, .site-footer .wrap { max-width: 1180px; }
+  .note-body { max-width: none; }
+  .note-body p, .note-body ul, .note-body ol, .note-body .callout, .note-body details { max-width: 84ch; }
+  .sec { border-top: 1px solid var(--border); padding: 1.6rem 0 1rem; }
+  .kicker { font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  .demo { border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev); padding: .8rem;
+          margin: 1rem 0; box-shadow: var(--shadow); }
+  .demo canvas { width: 100%; display: block; border-radius: 6px; }
+  .demo .cap { font-size: .86rem; color: var(--fg-muted); margin: .5rem .2rem 0; max-width: 100ch; }
+  .ctrls { display: flex; flex-wrap: wrap; gap: .5rem 1.2rem; align-items: center; margin: .7rem .2rem .2rem; font-size: .92rem; }
+  .ctrls label { display: inline-flex; align-items: center; gap: .45rem; color: var(--fg-muted); }
+  .ctrls input[type=range] { width: 170px; accent-color: var(--accent); }
+  .ctrls output { font-family: var(--mono); color: var(--fg); min-width: 6ch; display: inline-block; }
+  .ctrls button, .seg button { font: inherit; font-size: .9rem; border: 1px solid var(--border); background: var(--bg);
+          color: var(--fg); border-radius: 7px; padding: .3rem .75rem; cursor: pointer; }
+  .ctrls button:hover, .seg button:hover { border-color: var(--accent); }
+  .seg { display: inline-flex; }
+  .seg button { border-radius: 0; margin-left: -1px; }
+  .seg button:first-child { border-radius: 7px 0 0 7px; margin-left: 0; }
+  .seg button:last-child { border-radius: 0 7px 7px 0; }
+  .seg button.on { background: var(--accent-soft); border-color: var(--accent); color: var(--fg); font-weight: 600; }
+  .hero { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.2rem 0; }
+  .stat { border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev); padding: .9rem 1rem; }
+  .stat .lab { font-size: .82rem; color: var(--fg-muted); }
+  .stat .val { font-size: 2.1rem; font-weight: 700; line-height: 1.15; font-variant-numeric: tabular-nums; }
+  .stat .sub { font-size: .82rem; color: var(--fg-muted); }
+  .stat .sw { display: inline-block; width: .7rem; height: .7rem; border-radius: 3px; margin-right: .35rem; vertical-align: -1px; }
+  .answer { font-size: 1.15rem; max-width: 84ch; border-left: 4px solid var(--accent); padding: .6rem 1rem; background: var(--accent-soft);
+            border-radius: 0 var(--radius) var(--radius) 0; }
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 1rem; }
+  .chart { position: relative; }
+  .chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .chart svg text { fill: var(--fg-muted); font-size: 11px; font-family: var(--font); }
+  .chart svg .ttl { fill: var(--fg); font-size: 12.5px; font-weight: 600; }
+  .tip { position: absolute; pointer-events: none; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 7px;
+         padding: .35rem .55rem; font-size: .82rem; box-shadow: var(--shadow); color: var(--fg); white-space: nowrap; display: none; z-index: 5; }
+  .legend { display: flex; flex-wrap: wrap; gap: .3rem 1rem; font-size: .85rem; color: var(--fg-muted); margin: .2rem .2rem .3rem; }
+  .legend span { display: inline-flex; align-items: center; gap: .35rem; }
+  .legend i { display: inline-block; width: .75rem; height: .75rem; border-radius: 3px; }
+  .checks { list-style: none; padding: 0; margin: .6rem 0; }
+  .checks li { padding: .45rem 0 .45rem 2rem; position: relative; border-bottom: 1px solid var(--border); max-width: 92ch; }
+  .checks li::before { content: "✓"; position: absolute; left: .35rem; top: .4rem; color: var(--c-ok); font-weight: 700; }
+  .checks li.warn::before { content: "!"; color: var(--c-warn); left: .6rem; }
+  table.data { border-collapse: collapse; font-size: .9rem; font-variant-numeric: tabular-nums; }
+  table.data th, table.data td { padding: .3rem .6rem; border-bottom: 1px solid var(--border); text-align: right; }
+  table.data th:first-child, table.data td:first-child { text-align: left; }
+  table.data td.l, table.data th.l { text-align: left; }
+  .toc { columns: 2; max-width: 84ch; font-size: .95rem; }
+  .gloss dt { font-weight: 600; margin-top: .5rem; }
+  .gloss dd { margin: 0 0 0 1rem; color: var(--fg-muted); max-width: 84ch; }
+  @media (max-width: 640px) { .two { grid-template-columns: 1fr; } .toc { columns: 1; } }
+</style>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="../../">Alexandra Kallitsopoulou</a>
+  <nav class="nav"><a href="../../">Home</a><a href="../../notes/">Notes</a></nav>
+</div></header>
+
+<main class="wrap">
+  <article>
+    <header class="note-header">
+      <h1>Does a lower VMM threshold make the P2 chambers more efficient?</h1>
+      <p class="muted">Cosmic muons, HV on, a ladder of per-channel thresholds (night 16/17 Nov + day 17 Nov 2026): what we
+        measured, the trap in the obvious plot, and why the answer is about 0.85 whatever the threshold between 14 and 20 mV.</p>
+      <div class="meta-row">
+        <span class="pill">Analysis</span>
+        <time datetime="2026-11-17">2026-11-17</time>
+        <span class="faint">VMM, efficiency, cosmics, P2, threshold, HV</span>
+      </div>
+    </header>
+
+    <div class="note-body">
+
+<p class="answer"><b>Short answer: no, not in the range we could test.</b> Lowering each channel's threshold from about
+20 mV to about 14 mV above its baseline leaves the efficiency where it is, at about <b>0.85</b>. That is better than the
+0.75&ndash;0.79 of the 3&ndash;5 Nov scan, but still about 0.10 short of the ~0.95 we expect. The muons we miss are
+not "small signals just under the threshold": those would come back as the threshold goes down, and they do not.</p>
+
+<div class="hero" id="hero"></div>
+
+<ol class="toc">
+  <li><a href="#q">The question, with a toy</a></li>
+  <li><a href="#ran">What we ran</a></li>
+  <li><a href="#how">How one pad's efficiency is measured</a></li>
+  <li><a href="#trap">The trap in the obvious plot</a></li>
+  <li><a href="#res">The result</a></li>
+  <li><a href="#trust">Can we trust it?</a></li>
+  <li><a href="#chips">An open puzzle: the chips</a></li>
+  <li><a href="#next">Where the missing 15 % could be</a></li>
+  <li><a href="#ops">Also in this session: the HV ramp-down</a></li>
+  <li><a href="#files">Files, numbers, how to redo it</a></li>
+</ol>
+
+<section class="sec" id="q">
+<div class="kicker">1 · the question</div>
+<h2>A fence, some noise, and muons</h2>
+<p>Every pad of a P2 chamber is read by one VMM channel. The channel only records a hit when the signal crosses a
+<b>threshold</b>, a fence set a few millivolts above the channel's resting level (its <b>baseline</b>). The electronics
+also produce <b>noise</b>: small random wiggles around the baseline. A low fence lets more muon signals through, but
+also more noise; a high fence stops the noise, but may stop small muon signals too.</p>
+<p>So the natural hope is: <i>lower the fence and the efficiency (the fraction of muons the pad sees) goes up</i>. Whether
+that is true depends on <b>what the missed muons look like</b>. Play with the toy below: move the fence and switch between
+two possible worlds.</p>
+
+<div class="demo">
+  <canvas id="toy" height="300"></canvas>
+  <div class="ctrls">
+    <label>fence (threshold − baseline) <input type="range" id="toyThr" min="8" max="30" step="0.5" value="18"><output id="toyThrO"></output></label>
+    <span class="seg" id="toyWorld"><button data-w="a" class="on">world A: misses are "no signal"</button><button data-w="b">world B: misses are small signals</button></span>
+    <button id="toyPlay">pause</button>
+  </div>
+  <p class="cap">Illustration, not a fit. Left: one channel's signal over time. Grey wiggle = noise; coloured pulses = muons that
+  cross the pad; a hollow marker on the axis = a muon that crossed but gave no usable signal. The noise rate shown for the
+  fence comes from the real ladder below (per-channel median). Right: efficiency against the fence in the chosen world;
+  the orange squares are the <b>measured</b> P2_MID points (same pads at every fence). They are flat, like world A.</p>
+</div>
+</section>
+
+<section class="sec" id="ran">
+<div class="kicker">2 · what we ran</div>
+<h2>A ladder of thresholds, one rung per run</h2>
+<p>Instead of one fence height for every channel, each channel got its <b>own</b> fence: the height where <i>its own</i>
+noise rate, measured the night before with the high voltage on, falls to <b>R</b> hits per second. One configuration file
+per rung: R = 2, 5, 10, 20 and 50 Hz (100 Hz made too much data for the read-out and was left out). A sixth file,
+<b>Km18</b>, an older "equalised" file that puts every channel near 18 mV, serves as the reference.</p>
+<p>The day ran the ladder up and down (each rung twice, 50 min each) between two Km18 runs; the night before gave four
+shorter runs. In total <b>16 runs, about 11 hours of cosmic muons</b>, all with the HV at the low end of the usual range
+(P2_IN 420 V mesh / 720 V drift, P2_MID and P2_OUT 430 / 730).</p>
+
+<div class="demo">
+  <div class="chart" id="timeline"></div>
+  <p class="cap">Hover a bar for details. Run 233 is struck out: three minutes after it started, the read-out kept sending
+  data but almost no valid hits (a read-out fault reported to the firmware developers), so it is not used.</p>
+</div>
+
+<div style="overflow-x:auto"><table class="data">
+  <thead><tr><th>file (rung)</th><th>runs</th><th>median fence (mV above baseline)</th><th class="l">what it means</th></tr></thead>
+  <tbody>
+  <tr><td>Km18 (reference)</td><td>232 234 236 247</td><td>18.0</td><td class="l">every channel near the same height</td></tr>
+  <tr><td>R = 2 Hz</td><td>237 246</td><td>18.3</td><td class="l">very quiet: 2 noise hits per second per channel</td></tr>
+  <tr><td>R = 5 Hz</td><td>238 245</td><td>16.6</td><td class="l"></td></tr>
+  <tr><td>R = 10 Hz</td><td>239 244</td><td>15.9</td><td class="l"></td></tr>
+  <tr><td>R = 20 Hz</td><td>240 243</td><td>15.4</td><td class="l"></td></tr>
+  <tr><td>R = 50 Hz</td><td>231 235 241 242</td><td>14.5</td><td class="l">the lowest fence the read-out could take</td></tr>
+  </tbody>
+</table></div>
+<p>The fences of each run were not guessed: they were recomputed for every channel from the configuration file that run
+actually used, with the same calibration that built the files. For the Km18 file this gives back the measured map
+exactly; for the ladder files the real fence sits 0 to 1 mV above the requested one (the chips set it in steps of
+about 1.1 mV).</p>
+<div class="callout warn">The ladder is <b>narrow</b>: from the quietest to the noisiest rung the median fence moves by only
+~4 mV. That is the range this answer covers.</div>
+</section>
+
+<section class="sec" id="how">
+<div class="kicker">3 · the method, in short</div>
+<h2>How one pad's efficiency is measured</h2>
+<p>The method is the one written down on 16 Nov, unchanged; the <a href="../2026-11-16-single-channel-efficiency-on-the-vmm-cosmic-bench.html">animated
+explainer</a> goes through it step by step. In four lines:</p>
+<ol>
+  <li>Three chambers are stacked. A muon seen by <b>two</b> of them points to where it must have crossed the <b>third</b>.</li>
+  <li>Only muons that also fired the <b>scintillators</b> above and below are used, so that we know they are muons and not
+    noise that happened to line up.</li>
+  <li>The pointing is not perfect (3 mm in the middle chamber, 8 mm in the outer ones, for 12 mm pads), so we do not ask
+    "did the pointed pad fire?". We <b>count</b>: how many muons crossed the pad (from the local density of pointed
+    muons), and how many times the pad fired, with random hits removed.</li>
+  <li>Efficiency = firings / crossings, read off where the count stops depending on the size of the counting circle.</li>
+</ol>
+</section>
+
+<section class="sec" id="trap">
+<div class="kicker">4 · the trap</div>
+<h2>The obvious plot says "yes". It is lying.</h2>
+<p>The first plot anyone would make: put every pad of every run into bins of fence height, and compute the efficiency in each
+bin. Click <b>pooled bins</b>: P2_MID and P2_OUT climb to ~0.95 at the lowest fences. Now click <b>same pads</b>.</p>
+<div class="demo">
+  <div class="ctrls" style="margin-top:0"><span class="seg" id="trapSeg"><button data-v="pooled" class="on">pooled bins (misleading)</button><button data-v="same">same pads in every file</button></span></div>
+  <div class="legend" id="trapLeg"></div>
+  <div class="chart" id="trapChart"></div>
+  <p class="cap" id="trapCap"></p>
+</div>
+<p><b>Why the two disagree.</b> In the ladder files a channel's fence is set by <i>its own noise</i>. Quiet channels always
+get a low fence, noisy channels a high one, in every file. So the "low fence" bins are filled mostly with quiet channels,
+and the "high fence" bins with noisy ones. If the quiet channels also happen to sit on chips that are more efficient, the
+pooled plot shows a slope that has nothing to do with the fence. It is like ranking running shoes by marathon times when
+the fastest runners all buy the same brand.</p>
+<p>The fair comparison keeps the <b>same pads</b> and changes only the file. That removes the trap. The toy below builds the
+trap from scratch: 80 pads, two kinds, and <b>no pad changes its efficiency with the fence</b>.</p>
+<div class="demo">
+  <canvas id="sel" height="320"></canvas>
+  <div class="ctrls">
+    <label>rung R <input type="range" id="selR" min="0" max="4" step="1" value="0"><output id="selRO"></output></label>
+    <button id="selPlay">play the ladder</button>
+  </div>
+  <p class="cap">Illustration. Blue pads: quiet and efficient (0.95). Brown pads: noisy and less efficient (0.75). Each rung
+  lowers every fence a little. Grey line: pooled bins over all rungs climb to the left. Black line: the same 80 pads,
+  one point per rung, stay flat. Nothing about any pad changed.</p>
+</div>
+</section>
+
+<section class="sec" id="res">
+<div class="kicker">5 · the result</div>
+<h2>Same pads, lower fence: no gain</h2>
+<p>Below: the 744 pads that are usable in every file. Each point is one file; it sits at the average fence of those pads.
+Moving left lowers the fence by ~5 mV in total. Within the error bars (±0.025) nothing climbs.</p>
+<div class="two">
+  <div class="demo"><div class="legend" id="resLeg"></div><div class="chart" id="resChart"></div>
+    <p class="cap">The counting method of section 3, same 744 pads in every file. Grey band: the 3&ndash;5 Nov result
+    (0.75&ndash;0.79); dashed: 0.95.</p></div>
+  <div class="demo"><div class="legend" id="chLeg"></div><div class="chart" id="chChart"></div>
+    <p class="cap">An independent, simpler check: for muons pointed onto a pad, <b>did any pad within 30 mm fire?</b>
+    (random hits removed). No counting model at all. Same level, no trend.</p></div>
+</div>
+<table class="data">
+  <thead><tr><th>chamber</th><th>same pads, across the ladder</th><th>any pad within 30 mm</th><th>18&ndash;40 mV band (3&ndash;5 Nov definition)</th><th>3&ndash;5 Nov</th></tr></thead>
+  <tbody>
+  <tr><td>P2_IN</td><td>0.77 &ndash; 0.84</td><td>0.77 &ndash; 0.84</td><td>0.81 ± 0.015</td><td>0.75</td></tr>
+  <tr><td>P2_MID</td><td>0.85 &ndash; 0.87</td><td>0.82 &ndash; 0.85</td><td>0.81 ± 0.018</td><td>0.75</td></tr>
+  <tr><td>P2_OUT</td><td>0.84 &ndash; 0.91</td><td>0.79 &ndash; 0.87</td><td>0.83 ± 0.015</td><td>0.79</td></tr>
+  </tbody>
+</table>
+<p>P2_MID is the cleanest chamber for this measurement (it sits in the middle, so it is pointed at most precisely): it is
+flat at 0.86 from 17 down to 14 mV. P2_OUT moves around between files without a direction. P2_IN is, if anything, a little
+<i>lower</i> at the lowest fences.</p>
+</section>
+
+<section class="sec" id="trust">
+<div class="kicker">6 · checks</div>
+<h2>Can we trust it?</h2>
+<ul class="checks">
+  <li><b>The method still works</b> on simulated muons, run on the DAQ machine before touching the data: a true efficiency of
+    0.85 comes back as 0.845&ndash;0.849 for pointing errors of 3, 8 and 12 mm.</li>
+  <li><b>The muons are muons.</b> The time between the scintillator signal and the chamber hits peaks where it should; 99.7 % of
+    the 34 000 muon candidates fall inside the 140&ndash;310 ns window used (chart below).</li>
+  <li><b>Repeat runs agree.</b> Every rung was run twice, hours apart; the two runs agree within their errors, chamber by
+    chamber (chart below). The four Km18 runs (night and day) agree too.</li>
+  <li><b>Neighbouring pads do not inflate the count much.</b> A muon fires on average 1.04&ndash;1.07 pads, so charge shared
+    with a neighbour can push the numbers up by 5 % at most.</li>
+  <li><b>The counting circle is large enough</b> in P2_MID; in the outer chambers a slightly larger circle adds 0.01&ndash;0.02
+    (muons scattered further), exactly as on 3&ndash;5 Nov.</li>
+  <li class="warn"><b>Per chip, the numbers are not trustworthy yet</b>: see the next section. The chamber totals do not
+    depend on that, because they agree with the model-free check.</li>
+</ul>
+<div class="two">
+  <div class="demo"><div class="chart" id="scintChart"></div>
+    <p class="cap">Time from the scintillator signal to the muon candidate, all runs, 25 ns bins. Shaded: the window kept.</p></div>
+  <div class="demo"><div class="legend" id="repLeg"></div><div class="chart" id="repChart"></div>
+    <p class="cap">First run against second run of the same file, per chamber. On the diagonal = perfect agreement.</p></div>
+</div>
+</section>
+
+<section class="sec" id="chips">
+<div class="kicker">7 · open puzzle</div>
+<h2>The chips do not agree with each other</h2>
+<p>Split by VMM chip (each chip reads 64 pads), the same method gives very different numbers: some chips around 0.2&ndash;0.5,
+others <b>above 1</b>, which a real efficiency can never be. These numbers are reproducible (the two runs of each file
+agree), and a few chips change between files in a way that does not follow the fence (chip 19: 0.43 at R = 2, 0.78 at
+R = 5, 0.45 at R = 10).</p>
+<div class="demo"><div class="chart" id="chipChart"></div>
+  <p class="cap">Efficiency per chip (rows) and file (columns) from the counting method. Outlined cells are above 1. Chips
+  2&ndash;7 are P2_IN, 8&ndash;13 P2_MID, 14&ndash;19 P2_OUT. Treat as a symptom, not a measurement.</p></div>
+<p>The most likely reading: something about where the method thinks some pads are (the map from channel to pad position,
+pad areas) or how muons are pointed near certain chips is off. Per chip the errors do not cancel; summed over a whole
+chamber they largely do, which is why the chamber numbers agree with the simple "any pad within 30 mm" check. Next step:
+hit maps of chips 8 and 12 against the pad map, and the same split for the 3&ndash;5 Nov data.</p>
+</section>
+
+<section class="sec" id="next">
+<div class="kicker">8 · what now</div>
+<h2>Where the missing 15 % could be</h2>
+<p>If the misses were small signals just under the fence, lowering the fence by 5 mV would have recovered some of them.
+It did not, so the misses are mostly muons that give <b>no usable signal at all</b> on that pad, or signals far below any
+fence we can set. Candidates, and the test for each:</p>
+<div class="grid">
+  <div class="card"><b>Gain too low</b><br><span class="muted">The HV sits at the low end of the usual range. Test: an HV scan
+    with one fixed threshold file. If the efficiency rises with HV, the chambers are gain-limited.</span></div>
+  <div class="card"><b>Weak chips or regions</b><br><span class="muted">Chips 6, 7, 8 and 19 look low. If that is real, they alone
+    cost 0.05&ndash;0.1 per chamber. Test: the hit maps of section 7.</span></div>
+  <div class="card"><b>Much lower fences</b><br><span class="muted">Below ~12 mV on the same pads needs the noisy channels tamed
+    first (the 100 Hz rung was too much data). Test: closed-loop tuning of the tail, then a lower rung.</span></div>
+</div>
+</section>
+
+<section class="sec" id="ops">
+<div class="kicker">9 · operations</div>
+<h2>Also in this session: the HV ramp-down</h2>
+<p>At 20:00 the HV guard was meant to ramp all six HV channels down. It switched the first one off and then stopped: the HV
+supply answers "still on (status 5)" while a channel is ramping down, and the script took that answer for a refusal. Five
+channels stayed at full voltage until they were switched off by hand at 20:20. The script now accepts that answer, sends
+the off command again to any channel whose voltage is not falling, and reports loudly if anything is still on after
+5 minutes. It is tested with a fake supply that answers exactly as the real one did, and deployed on the DAQ machine.</p>
+</section>
+
+<section class="sec" id="files">
+<div class="kicker">10 · files</div>
+<h2>Files, numbers, how to redo it</h2>
+<ul>
+  <li>Write-up, scripts and every table: <code>DAQ_Control_VMM_Beam/docs/eff_ladder_20261117/</code> (README, <code>scripts/</code>,
+    <code>results/</code>).</li>
+  <li>Everything on the DAQ machine (dedippce185): <code>~/eff_work/</code> (outputs in <code>out/</code>, muon candidates in
+    <code>tags/</code>).</li>
+  <li>The method: <code>P2_basket_analysis/cosmic_vmm_analysis/channel_efficiency.py</code> and <code>CHANNEL_EFFICIENCY.md</code>
+    (branch <code>eff-vs-threshold-distance</code>).</li>
+</ul>
+<details><summary>Technical details (for whoever redoes it)</summary>
+<ul>
+  <li>The DAQ machine has 7 GB of RAM, so every run was decoded in pieces of at most 85 MB of capture files (495 pieces,
+    numbered run × 100 + piece), two at a time; every piece then got the dead/masked pad list of its whole run.</li>
+  <li>Fence of every channel in every run: d = d<sub>ref</sub> + (S − S<sub>ref</sub>)·k − (t − t<sub>ref</sub>)·step, from the
+    run's own configuration copy; references <code>pilot/map_eq.json</code> (ladder files) and
+    <code>fastscan_20261116/full/map_start.json</code> (Km18).</li>
+  <li>Settings: scintillator window 140&ndash;310 ns, counting radius 40 mm, pads within 40 mm of a dead pad dropped.</li>
+</ul>
+</details>
+<dl class="gloss">
+  <dt>baseline</dt><dd>the resting level of a channel's signal, in mV.</dd>
+  <dt>threshold (fence)</dt><dd>how far above its baseline a signal must go to be recorded.</dd>
+  <dt>noise rate R</dt><dd>how many times per second noise alone crosses the fence.</dd>
+  <dt>efficiency</dt><dd>of all muons that cross a pad, the fraction the pad records.</dd>
+  <dt>scintillator</dt><dd>plastic detectors above and below the stack; when both fire, a muon went through.</dd>
+</dl>
+</section>
+
+    </div>
+  </article>
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <span>Alexandra Kallitsopoulou</span>
+  <span><a href="../../notes/">← all notes</a></span>
+</div></footer>
+
+<script>
+(function () {
+const D = {"bins":[{"det":"P2_IN","x":7.149,"e":0.746,"u":0.063,"n":3833},{"det":"P2_IN","x":9.03,"e":0.805,"u":0.045,"n":6523},{"det":"P2_IN","x":11.024,"e":0.729,"u":0.033,"n":12349},{"det":"P2_IN","x":13.054,"e":0.823,"u":0.031,"n":14327},{"det":"P2_IN","x":15.071,"e":0.956,"u":0.028,"n":16893},{"det":"P2_IN","x":16.784,"e":0.947,"u":0.023,"n":21414},{"det":"P2_IN","x":18.905,"e":0.847,"u":0.025,"n":20626},{"det":"P2_IN","x":20.822,"e":0.807,"u":0.028,"n":12393},{"det":"P2_IN","x":23.55,"e":0.813,"u":0.033,"n":9455},{"det":"P2_IN","x":28.278,"e":0.751,"u":0.033,"n":6900},{"det":"P2_MID","x":6.887,"e":1.02,"u":0.048,"n":6641},{"det":"P2_MID","x":9.09,"e":0.863,"u":0.04,"n":8071},{"det":"P2_MID","x":11.074,"e":0.957,"u":0.035,"n":10727},{"det":"P2_MID","x":13.059,"e":0.862,"u":0.029,"n":16529},{"det":"P2_MID","x":14.902,"e":0.858,"u":0.024,"n":20472},{"det":"P2_MID","x":16.896,"e":0.872,"u":0.022,"n":24106},{"det":"P2_MID","x":18.797,"e":0.873,"u":0.026,"n":16483},{"det":"P2_MID","x":20.702,"e":0.764,"u":0.029,"n":11587},{"det":"P2_MID","x":23.195,"e":0.665,"u":0.043,"n":5972},{"det":"P2_OUT","x":7.017,"e":0.965,"u":0.039,"n":13219},{"det":"P2_OUT","x":9.0,"e":1.014,"u":0.044,"n":10610},{"det":"P2_OUT","x":10.951,"e":0.963,"u":0.034,"n":15771},{"det":"P2_OUT","x":12.939,"e":0.948,"u":0.029,"n":18644},{"det":"P2_OUT","x":14.929,"e":0.936,"u":0.026,"n":21737},{"det":"P2_OUT","x":16.878,"e":0.894,"u":0.028,"n":19288},{"det":"P2_OUT","x":18.841,"e":0.883,"u":0.021,"n":24097},{"det":"P2_OUT","x":20.841,"e":0.812,"u":0.033,"n":10108},{"det":"P2_OUT","x":23.345,"e":0.726,"u":0.033,"n":8042},{"det":"P2_OUT","x":29.055,"e":0.757,"u":0.065,"n":1320}],"paired":[{"det":"P2_IN","cfg":"trimmed_Km18","x":20.174,"e":0.838,"u":0.026},{"det":"P2_IN","cfg":"bscan_hvon2","x":19.558,"e":0.775,"u":0.03},{"det":"P2_IN","cfg":"bscan_hvon5","x":17.625,"e":0.814,"u":0.031},{"det":"P2_IN","cfg":"bscan_hvon10","x":16.711,"e":0.778,"u":0.031},{"det":"P2_IN","cfg":"bscan_hvon20","x":15.885,"e":0.796,"u":0.032},{"det":"P2_IN","cfg":"bscan_hvon50","x":15.09,"e":0.766,"u":0.025},{"det":"P2_MID","cfg":"trimmed_Km18","x":17.407,"e":0.873,"u":0.023},{"det":"P2_MID","cfg":"bscan_hvon2","x":16.984,"e":0.869,"u":0.027},{"det":"P2_MID","cfg":"bscan_hvon5","x":16.273,"e":0.87,"u":0.026},{"det":"P2_MID","cfg":"bscan_hvon10","x":15.644,"e":0.86,"u":0.027},{"det":"P2_MID","cfg":"bscan_hvon20","x":15.049,"e":0.848,"u":0.027},{"det":"P2_MID","cfg":"bscan_hvon50","x":14.342,"e":0.855,"u":0.022},{"det":"P2_OUT","cfg":"trimmed_Km18","x":16.631,"e":0.908,"u":0.022},{"det":"P2_OUT","cfg":"bscan_hvon2","x":19.615,"e":0.836,"u":0.027},{"det":"P2_OUT","cfg":"bscan_hvon5","x":15.989,"e":0.909,"u":0.027},{"det":"P2_OUT","cfg":"bscan_hvon10","x":15.087,"e":0.858,"u":0.028},{"det":"P2_OUT","cfg":"bscan_hvon20","x":14.432,"e":0.891,"u":0.027},{"det":"P2_OUT","cfg":"bscan_hvon50","x":13.747,"e":0.868,"u":0.023}],"chamber":[{"det":"P2_IN","cfg":"bscan_hvon50","a":0.771,"n":1213,"m":1.064},{"det":"P2_MID","cfg":"bscan_hvon50","a":0.827,"n":1770,"m":1.057},{"det":"P2_OUT","cfg":"bscan_hvon50","a":0.83,"n":1842,"m":1.048},{"det":"P2_IN","cfg":"trimmed_Km18","a":0.84,"n":2166,"m":1.066},{"det":"P2_MID","cfg":"trimmed_Km18","a":0.83,"n":1500,"m":1.063},{"det":"P2_OUT","cfg":"trimmed_Km18","a":0.869,"n":2150,"m":1.046},{"det":"P2_IN","cfg":"bscan_hvon2","a":0.806,"n":1475,"m":1.059},{"det":"P2_MID","cfg":"bscan_hvon2","a":0.84,"n":1132,"m":1.068},{"det":"P2_OUT","cfg":"bscan_hvon2","a":0.786,"n":1267,"m":1.047},{"det":"P2_IN","cfg":"bscan_hvon5","a":0.825,"n":1441,"m":1.068},{"det":"P2_MID","cfg":"bscan_hvon5","a":0.852,"n":1154,"m":1.037},{"det":"P2_OUT","cfg":"bscan_hvon5","a":0.866,"n":1289,"m":1.061},{"det":"P2_IN","cfg":"bscan_hvon10","a":0.79,"n":1407,"m":1.059},{"det":"P2_MID","cfg":"bscan_hvon10","a":0.816,"n":1197,"m":1.046},{"det":"P2_OUT","cfg":"bscan_hvon10","a":0.804,"n":1254,"m":1.047},{"det":"P2_IN","cfg":"bscan_hvon20","a":0.817,"n":1180,"m":1.063},{"det":"P2_MID","cfg":"bscan_hvon20","a":0.836,"n":1006,"m":1.053},{"det":"P2_OUT","cfg":"bscan_hvon20","a":0.858,"n":1084,"m":1.062}],"chip":[{"chip":2,"cfg":"trimmed_Km18","e":0.767,"u":0.053,"x":21.026},{"chip":2,"cfg":"bscan_hvon2","e":0.904,"u":0.076,"x":19.893},{"chip":2,"cfg":"bscan_hvon5","e":0.76,"u":0.067,"x":17.383},{"chip":2,"cfg":"bscan_hvon10","e":0.932,"u":0.082,"x":16.647},{"chip":2,"cfg":"bscan_hvon20","e":0.806,"u":0.071,"x":15.99},{"chip":2,"cfg":"bscan_hvon50","e":0.907,"u":0.064,"x":14.997},{"chip":3,"cfg":"trimmed_Km18","e":1.055,"u":0.054,"x":16.364},{"chip":3,"cfg":"bscan_hvon2","e":1.101,"u":0.071,"x":18.928},{"chip":3,"cfg":"bscan_hvon5","e":0.978,"u":0.064,"x":16.428},{"chip":3,"cfg":"bscan_hvon10","e":1.129,"u":0.076,"x":15.817},{"chip":3,"cfg":"bscan_hvon20","e":1.061,"u":0.072,"x":15.122},{"chip":3,"cfg":"bscan_hvon50","e":1.173,"u":0.071,"x":14.468},{"chip":4,"cfg":"trimmed_Km18","e":1.058,"u":0.05,"x":16.574},{"chip":4,"cfg":"bscan_hvon2","e":1.03,"u":0.06,"x":18.42},{"chip":4,"cfg":"bscan_hvon5","e":1.202,"u":0.064,"x":16.987},{"chip":4,"cfg":"bscan_hvon10","e":1.038,"u":0.062,"x":16.307},{"chip":4,"cfg":"bscan_hvon20","e":0.99,"u":0.071,"x":15.4},{"chip":4,"cfg":"bscan_hvon50","e":0.88,"u":0.084,"x":14.552},{"chip":5,"cfg":"trimmed_Km18","e":1.009,"u":0.048,"x":16.143},{"chip":5,"cfg":"bscan_hvon2","e":1.027,"u":0.057,"x":18.066},{"chip":5,"cfg":"bscan_hvon5","e":0.928,"u":0.056,"x":15.796},{"chip":5,"cfg":"bscan_hvon10","e":1.01,"u":0.059,"x":14.759},{"chip":5,"cfg":"bscan_hvon20","e":0.987,"u":0.07,"x":14.479},{"chip":5,"cfg":"bscan_hvon50","e":0.947,"u":0.093,"x":15.627},{"chip":6,"cfg":"trimmed_Km18","e":0.685,"u":0.043,"x":28.034},{"chip":6,"cfg":"bscan_hvon2","e":0.646,"u":0.047,"x":25.973},{"chip":6,"cfg":"bscan_hvon5","e":0.71,"u":0.053,"x":23.101},{"chip":6,"cfg":"bscan_hvon10","e":0.6,"u":0.047,"x":21.161},{"chip":6,"cfg":"bscan_hvon20","e":0.634,"u":0.052,"x":19.69},{"chip":6,"cfg":"bscan_hvon50","e":0.594,"u":0.05,"x":17.809},{"chip":7,"cfg":"trimmed_Km18","e":0.663,"u":0.047,"x":18.984},{"chip":7,"cfg":"bscan_hvon2","e":0.457,"u":0.042,"x":16.636},{"chip":7,"cfg":"bscan_hvon5","e":0.519,"u":0.049,"x":15.441},{"chip":7,"cfg":"bscan_hvon10","e":0.408,"u":0.041,"x":14.844},{"chip":7,"cfg":"bscan_hvon20","e":0.52,"u":0.05,"x":14.247},{"chip":7,"cfg":"bscan_hvon50","e":0.416,"u":0.035,"x":13.797},{"chip":8,"cfg":"trimmed_Km18","e":0.49,"u":0.049,"x":19.98},{"chip":8,"cfg":"bscan_hvon2","e":0.341,"u":0.043,"x":19.291},{"chip":8,"cfg":"bscan_hvon5","e":0.248,"u":0.036,"x":18.21},{"chip":8,"cfg":"bscan_hvon10","e":0.177,"u":0.027,"x":17.494},{"chip":8,"cfg":"bscan_hvon20","e":0.237,"u":0.036,"x":16.684},{"chip":8,"cfg":"bscan_hvon50","e":0.312,"u":0.033,"x":15.972},{"chip":9,"cfg":"trimmed_Km18","e":0.961,"u":0.055,"x":17.365},{"chip":9,"cfg":"bscan_hvon2","e":0.908,"u":0.06,"x":15.572},{"chip":9,"cfg":"bscan_hvon5","e":0.848,"u":0.056,"x":14.711},{"chip":9,"cfg":"bscan_hvon10","e":0.689,"u":0.049,"x":14.058},{"chip":9,"cfg":"bscan_hvon20","e":0.782,"u":0.056,"x":13.494},{"chip":9,"cfg":"bscan_hvon50","e":0.8,"u":0.046,"x":12.805},{"chip":10,"cfg":"trimmed_Km18","e":1.0,"u":0.051,"x":17.494},{"chip":10,"cfg":"bscan_hvon2","e":0.998,"u":0.06,"x":16.755},{"chip":10,"cfg":"bscan_hvon5","e":0.902,"u":0.055,"x":16.531},{"chip":10,"cfg":"bscan_hvon10","e":0.969,"u":0.058,"x":15.386},{"chip":10,"cfg":"bscan_hvon20","e":0.958,"u":0.06,"x":14.979},{"chip":10,"cfg":"bscan_hvon50","e":0.905,"u":0.047,"x":14.279},{"chip":11,"cfg":"trimmed_Km18","e":1.003,"u":0.051,"x":14.533},{"chip":11,"cfg":"bscan_hvon2","e":1.038,"u":0.062,"x":14.723},{"chip":11,"cfg":"bscan_hvon5","e":1.109,"u":0.063,"x":14.054},{"chip":11,"cfg":"bscan_hvon10","e":1.217,"u":0.071,"x":13.736},{"chip":11,"cfg":"bscan_hvon20","e":1.079,"u":0.067,"x":13.317},{"chip":11,"cfg":"bscan_hvon50","e":1.115,"u":0.053,"x":12.799},{"chip":12,"cfg":"trimmed_Km18","e":0.861,"u":0.056,"x":19.727},{"chip":12,"cfg":"bscan_hvon2","e":0.967,"u":0.073,"x":19.102},{"chip":12,"cfg":"bscan_hvon5","e":1.118,"u":0.079,"x":18.108},{"chip":12,"cfg":"bscan_hvon10","e":1.516,"u":0.11,"x":17.504},{"chip":12,"cfg":"bscan_hvon20","e":1.216,"u":0.098,"x":16.8},{"chip":12,"cfg":"bscan_hvon50","e":1.19,"u":0.069,"x":15.858},{"chip":13,"cfg":"trimmed_Km18","e":0.622,"u":0.051,"x":15.717},{"chip":13,"cfg":"bscan_hvon2","e":0.694,"u":0.07,"x":16.921},{"chip":13,"cfg":"bscan_hvon5","e":0.87,"u":0.084,"x":16.245},{"chip":13,"cfg":"bscan_hvon10","e":1.109,"u":0.127,"x":15.909},{"chip":13,"cfg":"bscan_hvon20","e":0.901,"u":0.124,"x":15.358},{"chip":13,"cfg":"bscan_hvon50","e":0.856,"u":0.07,"x":14.39},{"chip":14,"cfg":"trimmed_Km18","e":0.752,"u":0.048,"x":15.414},{"chip":14,"cfg":"bscan_hvon2","e":1.051,"u":0.078,"x":18.254},{"chip":14,"cfg":"bscan_hvon5","e":0.841,"u":0.065,"x":15.953},{"chip":14,"cfg":"bscan_hvon10","e":0.975,"u":0.076,"x":14.71},{"chip":14,"cfg":"bscan_hvon20","e":0.939,"u":0.071,"x":13.953},{"chip":14,"cfg":"bscan_hvon50","e":0.96,"u":0.062,"x":13.147},{"chip":15,"cfg":"trimmed_Km18","e":1.114,"u":0.054,"x":14.68},{"chip":15,"cfg":"bscan_hvon2","e":1.176,"u":0.074,"x":14.961},{"chip":15,"cfg":"bscan_hvon5","e":0.972,"u":0.064,"x":13.546},{"chip":15,"cfg":"bscan_hvon10","e":1.176,"u":0.075,"x":13.047},{"chip":15,"cfg":"bscan_hvon20","e":1.141,"u":0.072,"x":12.444},{"chip":15,"cfg":"bscan_hvon50","e":1.191,"u":0.063,"x":12.071},{"chip":16,"cfg":"trimmed_Km18","e":1.016,"u":0.057,"x":18.947},{"chip":16,"cfg":"bscan_hvon2","e":0.972,"u":0.072,"x":17.074},{"chip":16,"cfg":"bscan_hvon5","e":1.035,"u":0.073,"x":15.843},{"chip":16,"cfg":"bscan_hvon10","e":0.962,"u":0.074,"x":15.331},{"chip":16,"cfg":"bscan_hvon20","e":0.944,"u":0.082,"x":14.884},{"chip":16,"cfg":"bscan_hvon50","e":0.945,"u":0.06,"x":14.232},{"chip":17,"cfg":"trimmed_Km18","e":0.892,"u":0.053,"x":13.144},{"chip":17,"cfg":"bscan_hvon2","e":0.903,"u":0.069,"x":17.387},{"chip":17,"cfg":"bscan_hvon5","e":0.996,"u":0.071,"x":14.071},{"chip":17,"cfg":"bscan_hvon10","e":1.014,"u":0.075,"x":12.916},{"chip":17,"cfg":"bscan_hvon20","e":0.916,"u":0.08,"x":12.518},{"chip":17,"cfg":"bscan_hvon50","e":1.035,"u":0.062,"x":12.002},{"chip":18,"cfg":"trimmed_Km18","e":0.973,"u":0.051,"x":18.883},{"chip":18,"cfg":"bscan_hvon2","e":0.873,"u":0.059,"x":23.666},{"chip":18,"cfg":"bscan_hvon5","e":0.992,"u":0.064,"x":17.083},{"chip":18,"cfg":"bscan_hvon10","e":0.917,"u":0.062,"x":16.363},{"chip":18,"cfg":"bscan_hvon20","e":0.894,"u":0.067,"x":15.55},{"chip":18,"cfg":"bscan_hvon50","e":0.895,"u":0.05,"x":14.991},{"chip":19,"cfg":"trimmed_Km18","e":0.805,"u":0.042,"x":18.738},{"chip":19,"cfg":"bscan_hvon2","e":0.423,"u":0.037,"x":23.931},{"chip":19,"cfg":"bscan_hvon5","e":0.774,"u":0.051,"x":18.528},{"chip":19,"cfg":"bscan_hvon10","e":0.456,"u":0.04,"x":17.498},{"chip":19,"cfg":"bscan_hvon20","e":0.606,"u":0.046,"x":16.758},{"chip":19,"cfg":"bscan_hvon50","e":0.527,"u":0.034,"x":15.774}],"runs":[{"run":231,"cfg":"bscan_hvon50","det":"P2_IN","e":0.736,"u":0.054},{"run":231,"cfg":"bscan_hvon50","det":"P2_MID","e":0.88,"u":0.049},{"run":231,"cfg":"bscan_hvon50","det":"P2_OUT","e":0.866,"u":0.047},{"run":232,"cfg":"trimmed_Km18","det":"P2_IN","e":0.924,"u":0.047},{"run":232,"cfg":"trimmed_Km18","det":"P2_MID","e":0.886,"u":0.051},{"run":232,"cfg":"trimmed_Km18","det":"P2_OUT","e":0.925,"u":0.047},{"run":234,"cfg":"trimmed_Km18","det":"P2_IN","e":0.902,"u":0.047},{"run":234,"cfg":"trimmed_Km18","det":"P2_MID","e":0.863,"u":0.049},{"run":234,"cfg":"trimmed_Km18","det":"P2_OUT","e":0.923,"u":0.046},{"run":235,"cfg":"bscan_hvon50","det":"P2_IN","e":0.791,"u":0.068},{"run":235,"cfg":"bscan_hvon50","det":"P2_MID","e":0.886,"u":0.057},{"run":235,"cfg":"bscan_hvon50","det":"P2_OUT","e":0.885,"u":0.057},{"run":236,"cfg":"trimmed_Km18","det":"P2_IN","e":0.883,"u":0.036},{"run":236,"cfg":"trimmed_Km18","det":"P2_MID","e":0.857,"u":0.038},{"run":236,"cfg":"trimmed_Km18","det":"P2_OUT","e":0.916,"u":0.038},{"run":237,"cfg":"bscan_hvon2","det":"P2_IN","e":0.851,"u":0.034},{"run":237,"cfg":"bscan_hvon2","det":"P2_MID","e":0.868,"u":0.036},{"run":237,"cfg":"bscan_hvon2","det":"P2_OUT","e":0.861,"u":0.036},{"run":238,"cfg":"bscan_hvon5","det":"P2_IN","e":0.872,"u":0.034},{"run":238,"cfg":"bscan_hvon5","det":"P2_MID","e":0.861,"u":0.036},{"run":238,"cfg":"bscan_hvon5","det":"P2_OUT","e":0.939,"u":0.037},{"run":239,"cfg":"bscan_hvon10","det":"P2_IN","e":0.841,"u":0.034},{"run":239,"cfg":"bscan_hvon10","det":"P2_MID","e":0.85,"u":0.036},{"run":239,"cfg":"bscan_hvon10","det":"P2_OUT","e":0.893,"u":0.037},{"run":240,"cfg":"bscan_hvon20","det":"P2_IN","e":0.772,"u":0.036},{"run":240,"cfg":"bscan_hvon20","det":"P2_MID","e":0.821,"u":0.038},{"run":240,"cfg":"bscan_hvon20","det":"P2_OUT","e":0.895,"u":0.04},{"run":241,"cfg":"bscan_hvon50","det":"P2_IN","e":0.752,"u":0.042},{"run":241,"cfg":"bscan_hvon50","det":"P2_MID","e":0.854,"u":0.037},{"run":241,"cfg":"bscan_hvon50","det":"P2_OUT","e":0.907,"u":0.038},{"run":242,"cfg":"bscan_hvon50","det":"P2_IN","e":0.797,"u":0.044},{"run":242,"cfg":"bscan_hvon50","det":"P2_MID","e":0.873,"u":0.037},{"run":242,"cfg":"bscan_hvon50","det":"P2_OUT","e":0.893,"u":0.039},{"run":243,"cfg":"bscan_hvon20","det":"P2_IN","e":0.885,"u":0.038},{"run":243,"cfg":"bscan_hvon20","det":"P2_MID","e":0.876,"u":0.039},{"run":243,"cfg":"bscan_hvon20","det":"P2_OUT","e":0.879,"u":0.038},{"run":244,"cfg":"bscan_hvon10","det":"P2_IN","e":0.838,"u":0.035},{"run":244,"cfg":"bscan_hvon10","det":"P2_MID","e":0.881,"u":0.038},{"run":244,"cfg":"bscan_hvon10","det":"P2_OUT","e":0.877,"u":0.037},{"run":245,"cfg":"bscan_hvon5","det":"P2_IN","e":0.882,"u":0.035},{"run":245,"cfg":"bscan_hvon5","det":"P2_MID","e":0.871,"u":0.036},{"run":245,"cfg":"bscan_hvon5","det":"P2_OUT","e":0.915,"u":0.036},{"run":246,"cfg":"bscan_hvon2","det":"P2_IN","e":0.862,"u":0.033},{"run":246,"cfg":"bscan_hvon2","det":"P2_MID","e":0.847,"u":0.036},{"run":246,"cfg":"bscan_hvon2","det":"P2_OUT","e":0.862,"u":0.036},{"run":247,"cfg":"trimmed_Km18","det":"P2_IN","e":0.881,"u":0.036},{"run":247,"cfg":"trimmed_Km18","det":"P2_MID","e":0.857,"u":0.041},{"run":247,"cfg":"trimmed_Km18","det":"P2_OUT","e":0.931,"u":0.038}]};
+const DETS = ['P2_IN', 'P2_MID', 'P2_OUT'];
+const CFGS = ['trimmed_Km18', 'bscan_hvon2', 'bscan_hvon5', 'bscan_hvon10', 'bscan_hvon20', 'bscan_hvon50'];
+const SHORT = {trimmed_Km18: 'Km18', bscan_hvon2: 'R=2', bscan_hvon5: 'R=5', bscan_hvon10: 'R=10', bscan_hvon20: 'R=20', bscan_hvon50: 'R=50'};
+const MARK = {P2_IN: 'circle', P2_MID: 'square', P2_OUT: 'triangle'};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const COLV = {P2_IN: '--c-in', P2_MID: '--c-mid', P2_OUT: '--c-out'};
+const col = d => css(COLV[d]);
+const NS = 'http://www.w3.org/2000/svg';
+const el = (t, a, p) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+const fmt = (x, n = 2) => (+x).toFixed(n);
+
+/* ---------- generic scatter/error-bar chart with hover --------------------------------------------------------- */
+function chart(host, o) {
+  host.innerHTML = '';
+  const W = o.w || 560, H = o.h || 320, m = {l: 48, r: 16, t: o.title ? 26 : 10, b: 40};
+  const svg = el('svg', {viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': o.aria || o.title || 'chart'}, host);
+  const tip = document.createElement('div'); tip.className = 'tip'; host.appendChild(tip);
+  const X = v => m.l + (v - o.x[0]) / (o.x[1] - o.x[0]) * (W - m.l - m.r);
+  const Y = v => H - m.b - (v - o.y[0]) / (o.y[1] - o.y[0]) * (H - m.t - m.b);
+  if (o.title) el('text', {x: m.l, y: 15, class: 'ttl'}, svg).textContent = o.title;
+  const grid = css('--c-grid');
+  for (const v of o.yt) { el('line', {x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: grid}, svg);
+    el('text', {x: m.l - 6, y: Y(v) + 4, 'text-anchor': 'end'}, svg).textContent = o.yfmt ? o.yfmt(v) : v; }
+  (o.xt || []).forEach((v, i) => { el('text', {x: X(v), y: H - m.b + 16, 'text-anchor': 'middle'}, svg).textContent =
+    o.xlab ? o.xlab[i] : v; });
+  el('line', {x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, stroke: css('--fg-faint')}, svg);
+  if (o.xtitle) el('text', {x: (m.l + W - m.r) / 2, y: H - 6, 'text-anchor': 'middle'}, svg).textContent = o.xtitle;
+  if (o.ytitle) { const t = el('text', {x: 12, y: (m.t + H - m.b) / 2, 'text-anchor': 'middle',
+    transform: `rotate(-90 12 ${(m.t + H - m.b) / 2})`}, svg); t.textContent = o.ytitle; }
+  if (o.band) el('rect', {x: m.l, width: W - m.l - m.r, y: Y(o.band[1]), height: Y(o.band[0]) - Y(o.band[1]), fill: css('--c-band')}, svg);
+  for (const h of o.hlines || []) { el('line', {x1: m.l, x2: W - m.r, y1: Y(h.v), y2: Y(h.v), stroke: css('--fg-muted'),
+    'stroke-dasharray': '5 4'}, svg); el('text', {x: W - m.r, y: Y(h.v) - 5, 'text-anchor': 'end'}, svg).textContent = h.label; }
+  if (o.pre) o.pre(svg, X, Y);
+  const surf = css('--bg-elev');
+  for (const s of o.series) {
+    const c = s.color;
+    if (s.line && s.pts.length > 1) el('polyline', {points: s.pts.map(p => `${X(p.x)},${Y(p.y)}`).join(' '), fill: 'none',
+      stroke: c, 'stroke-width': 2, 'stroke-dasharray': s.dash || ''}, svg);
+    for (const p of s.pts) {
+      if (p.u) el('line', {x1: X(p.x), x2: X(p.x), y1: Y(p.y - p.u), y2: Y(p.y + p.u), stroke: c, 'stroke-width': 1.4}, svg);
+      const g = el('g', {}, svg), cx = X(p.x), cy = Y(p.y), r = s.r || 5;
+      const sh = s.mark || 'circle';
+      if (sh === 'square') el('rect', {x: cx - r, y: cy - r, width: 2 * r, height: 2 * r, rx: 1.5, fill: c, stroke: surf, 'stroke-width': 2}, g);
+      else if (sh === 'triangle') el('polygon', {points: `${cx},${cy - r * 1.2} ${cx - r * 1.1},${cy + r * .8} ${cx + r * 1.1},${cy + r * .8}`,
+        fill: c, stroke: surf, 'stroke-width': 2}, g);
+      else el('circle', {cx, cy, r, fill: c, stroke: surf, 'stroke-width': 2}, g);
+      el('circle', {cx, cy, r: 13, fill: 'transparent'}, g);
+      if (p.tip) {
+        g.addEventListener('mouseenter', () => { tip.innerHTML = p.tip; tip.style.display = 'block'; });
+        g.addEventListener('mousemove', e => { const b = host.getBoundingClientRect();
+          let x = e.clientX - b.left + 12; if (x > b.width - 190) x -= 210; tip.style.left = x + 'px'; tip.style.top = (e.clientY - b.top - 10) + 'px'; });
+        g.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+      }
+    }
+  }
+  return {svg, X, Y};
+}
+function legend(host, items) {
+  host.innerHTML = items.map(i => `<span><i style="background:${i.c}"></i>${i.t}</span>`).join('');
+}
+const detLegend = h => legend(h, DETS.map(d => ({c: col(d), t: d})));
+
+/* ---------- hero ------------------------------------------------------------------------------------------------- */
+function hero() {
+  const h = document.getElementById('hero');
+  const mean = d => { const v = D.paired.filter(p => p.det === d).map(p => p.e); return v.reduce((a, b) => a + b, 0) / v.length; };
+  const rng = d => { const v = D.paired.filter(p => p.det === d).map(p => p.e); return [Math.min(...v), Math.max(...v)]; };
+  h.innerHTML = DETS.map(d => { const r = rng(d); return `<div class="stat"><div class="lab"><span class="sw" style="background:${col(d)}"></span>${d}, same pads, all six files</div>
+    <div class="val">${fmt(mean(d))}</div><div class="sub">range ${fmt(r[0])}&ndash;${fmt(r[1])}, no trend with the fence</div></div>`; }).join('') +
+    `<div class="stat"><div class="lab">expected</div><div class="val">~0.95</div><div class="sub">3&ndash;5 Nov scan: 0.75&ndash;0.79</div></div>`;
+}
+
+/* ---------- the threshold toy ------------------------------------------------------------------------------------ */
+const LADDER = [[14.5, 50], [15.4, 20], [15.9, 10], [16.6, 5], [18.3, 2]];   // median fence (mV) -> noise rate (Hz), real
+function noiseRate(t) {                                                       // log-linear through the ladder, extrapolated
+  const L = LADDER; let a = L[0], b = L[1];
+  if (t > L[L.length - 1][0]) { a = L[L.length - 2]; b = L[L.length - 1]; }
+  else for (let i = 0; i < L.length - 1; i++) if (t >= L[i][0] && t <= L[i + 1][0]) { a = L[i]; b = L[i + 1]; }
+  const s = (Math.log(b[1]) - Math.log(a[1])) / (b[0] - a[0]);
+  return Math.exp(Math.log(a[1]) + s * (t - a[0]));
+}
+const erf = x => { const s = Math.sign(x); x = Math.abs(x); const t = 1 / (1 + .3275911 * x);
+  return s * (1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - .284496736) * t + .254829592) * t * Math.exp(-x * x)); };
+const lnCdf = (x, med, sg) => x <= 0 ? 0 : .5 * (1 + erf(Math.log(x / med) / (sg * Math.SQRT2)));
+const WORLD = {a: {lost: .15, med: 80, sg: .6}, b: {lost: 0, med: 25, sg: .6}};
+const effAt = (w, t) => (1 - WORLD[w].lost) * (1 - lnCdf(t, WORLD[w].med, WORLD[w].sg));
+function toy() {
+  const cv = document.getElementById('toy'), ctx = cv.getContext('2d');
+  const thrI = document.getElementById('toyThr'), thrO = document.getElementById('toyThrO');
+  let world = 'a', run = true, T = 0, events = [], last = performance.now(), nextMu = 0, caught = 0, seen = 0, noiseN = 0, nextNoise = 0;
+  const midPts = D.paired.filter(p => p.det === 'P2_MID');
+  document.querySelectorAll('#toyWorld button').forEach(b => b.onclick = () => {
+    document.querySelectorAll('#toyWorld button').forEach(x => x.classList.toggle('on', x === b)); world = b.dataset.w; caught = seen = 0; });
+  document.getElementById('toyPlay').onclick = e => { run = !run; e.target.textContent = run ? 'pause' : 'play'; };
+  thrI.oninput = () => { caught = seen = 0; };
+  const ln = (m, s) => { let u = 0, v = 0; while (!u) u = Math.random(); v = Math.random();
+    return m * Math.exp(s * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v)); };
+  function frame(now) {
+    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    const thr = +thrI.value; thrO.textContent = thr.toFixed(1) + ' mV';
+    const dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = 300;
+    if (cv.width !== W * dpr) { cv.width = W * dpr; cv.height = H * dpr; }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+    const split = W < 700 ? W : W * .6, span = 6;                       // seconds shown
+    if (run) {
+      T += dt;
+      if (T > nextMu) { const w = WORLD[world], lost = Math.random() < w.lost; const a = lost ? 0 : ln(w.med, w.sg);
+        events.push({t: T, a, mu: true, lost}); nextMu = T + .35 + Math.random() * .5; seen++; if (!lost && a > thr) caught++; }
+      if (T > nextNoise) { events.push({t: T, a: thr + 1 + Math.random() * 4, mu: false}); noiseN++;
+        const r = Math.min(noiseRate(thr), 60) / 10;                     // shown 10x slower than real, capped
+        nextNoise = T + (r > 0 ? -Math.log(Math.random()) / r : 1e9); }
+      events = events.filter(e => T - e.t < span);
+    }
+    // left: trace
+    const pl = 46, pr = split - 12, pt = 16, pb = H - 28, ymax = 120;
+    const Yv = v => pb - Math.min(v, ymax) / ymax * (pb - pt), Xt = t => pl + (1 - (T - t) / span) * (pr - pl);
+    ctx.font = '11px ' + css('--font'); ctx.fillStyle = css('--fg-muted');
+    ctx.strokeStyle = css('--c-grid'); ctx.lineWidth = 1;
+    for (const v of [0, 20, 40, 60, 80, 100, 120]) { ctx.beginPath(); ctx.moveTo(pl, Yv(v)); ctx.lineTo(pr, Yv(v)); ctx.stroke(); ctx.fillText(v, pl - 26, Yv(v) + 4); }
+    ctx.save(); ctx.translate(12, (pt + pb) / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = 'center'; ctx.fillText('signal above baseline (mV)', 0, 0); ctx.restore();
+    ctx.strokeStyle = css('--fg-faint'); ctx.beginPath();                      // noise wiggle
+    for (let x = pl; x <= pr; x += 2) { const y = Yv(3 + 3 * Math.sin(x * .9 + T * 40) * Math.cos(x * .37 - T * 23)); x === pl ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+    ctx.stroke();
+    for (const e of events) {
+      const x = Xt(e.t);
+      if (e.mu && e.lost) { ctx.strokeStyle = css('--c-lost'); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, pb - 2, 5, 0, 2 * Math.PI); ctx.stroke(); continue; }
+      const up = e.a > thr, c = e.mu ? (up ? css('--c-mid') : css('--c-lost')) : css('--fg-faint');
+      ctx.strokeStyle = c; ctx.lineWidth = e.mu ? 2.2 : 1.2; ctx.beginPath();
+      for (let k = -10; k <= 26; k++) { const s = k / 8, v = s < 0 ? 0 : e.a * Math.pow(s / 1, 2) * Math.exp(2 * (1 - s / 1)) / 1; const xx = x + k, yy = Yv(v);
+        k === -10 ? ctx.moveTo(xx, yy) : ctx.lineTo(xx, yy); }
+      ctx.stroke();
+      if (e.mu && !up) { ctx.fillStyle = css('--c-lost'); ctx.fillText('missed', x - 14, Yv(e.a) - 6); }
+    }
+    ctx.strokeStyle = css('--accent'); ctx.lineWidth = 2; ctx.setLineDash([6, 4]); ctx.beginPath(); ctx.moveTo(pl, Yv(thr)); ctx.lineTo(pr, Yv(thr)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = css('--accent'); ctx.fillText(`fence ${thr.toFixed(1)} mV  ·  noise ≈ ${noiseRate(thr) < 1 ? noiseRate(thr).toFixed(2) : noiseRate(thr).toFixed(0)} hits/s per channel (real ladder)`, pl + 6, Yv(thr) - 7);
+    ctx.fillStyle = css('--fg'); ctx.font = '600 12.5px ' + css('--font');
+    ctx.fillText(`muons crossing: ${seen}   recorded: ${caught}   →  ${seen ? (caught / seen).toFixed(2) : '—'}`, pl + 4, pt + 2);
+    // right: efficiency vs fence
+    if (W >= 700) {
+      const ql = split + 50, qr = W - 14, qt = 16, qb = H - 28, x0 = 8, x1 = 30;
+      const QX = v => ql + (v - x0) / (x1 - x0) * (qr - ql), QY = v => qb - v * (qb - qt);
+      ctx.font = '11px ' + css('--font'); ctx.fillStyle = css('--fg-muted'); ctx.strokeStyle = css('--c-grid'); ctx.lineWidth = 1;
+      for (const v of [0, .2, .4, .6, .8, 1]) { ctx.beginPath(); ctx.moveTo(ql, QY(v)); ctx.lineTo(qr, QY(v)); ctx.stroke(); ctx.fillText(v.toFixed(1), ql - 26, QY(v) + 4); }
+      for (const v of [10, 15, 20, 25, 30]) ctx.fillText(v, QX(v) - 6, qb + 15);
+      ctx.fillText('fence (mV above baseline)', (ql + qr) / 2 - 60, H - 2);
+      ctx.fillText('efficiency', ql - 6, qt - 4);
+      ctx.strokeStyle = css('--accent'); ctx.lineWidth = 2.4; ctx.beginPath();
+      for (let t = x0; t <= x1; t += .25) { const y = QY(effAt(world, t)); t === x0 ? ctx.moveTo(QX(t), y) : ctx.lineTo(QX(t), y); } ctx.stroke();
+      ctx.fillStyle = css('--accent'); ctx.beginPath(); ctx.arc(QX(thr), QY(effAt(world, thr)), 5, 0, 2 * Math.PI); ctx.fill();
+      ctx.fillText(`world ${world.toUpperCase()}: ${effAt(world, thr).toFixed(2)}`, QX(thr) + 8, QY(effAt(world, thr)) + 16);
+      for (const p of midPts) { const s = 4.5; ctx.fillStyle = css('--c-mid'); ctx.fillRect(QX(p.x) - s, QY(p.e) - s, 2 * s, 2 * s);
+        ctx.strokeStyle = css('--c-mid'); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(QX(p.x), QY(p.e - p.u)); ctx.lineTo(QX(p.x), QY(p.e + p.u)); ctx.stroke(); }
+      ctx.fillStyle = css('--fg-muted'); ctx.fillText('■ measured P2_MID', qr - 112, QY(.06));
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- run timeline ----------------------------------------------------------------------------------------- */
+const RUNS = [[231, '05:19', 30, 'bscan_hvon50', 'night'], [232, '05:51', 30, 'trimmed_Km18', 'night'], [233, '06:22', 30, 'bscan_hvon50', 'night'],
+  [234, '06:54', 30, 'trimmed_Km18', 'night'], [235, '07:26', 20, 'bscan_hvon50', 'night'], [236, '09:11', 50, 'trimmed_Km18'],
+  [237, '10:02', 50, 'bscan_hvon2'], [238, '10:53', 50, 'bscan_hvon5'], [239, '11:45', 50, 'bscan_hvon10'], [240, '12:36', 50, 'bscan_hvon20'],
+  [241, '13:28', 50, 'bscan_hvon50'], [242, '14:19', 50, 'bscan_hvon50'], [243, '15:10', 50, 'bscan_hvon20'], [244, '16:02', 50, 'bscan_hvon10'],
+  [245, '16:53', 50, 'bscan_hvon5'], [246, '17:45', 50, 'bscan_hvon2'], [247, '18:36', 50, 'trimmed_Km18']];
+const FENCE = {trimmed_Km18: 18.0, bscan_hvon2: 18.3, bscan_hvon5: 16.6, bscan_hvon10: 15.9, bscan_hvon20: 15.4, bscan_hvon50: 14.5};
+function timeline() {
+  const host = document.getElementById('timeline'); host.innerHTML = '';
+  const W = 1100, H = 190, l = 60, r = 14, t = 26, b = 40;
+  const svg = el('svg', {viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'run timeline'}, host);
+  const tip = document.createElement('div'); tip.className = 'tip'; host.appendChild(tip);
+  const mins = s => { const [h, m] = s.split(':').map(Number); return h * 60 + m; };
+  const X = m => l + (m - mins('05:00')) / (mins('19:40') - mins('05:00')) * (W - l - r);
+  const Y = f => H - b - (f - 13.5) / (19 - 13.5) * (H - t - b);
+  el('text', {x: l, y: 15, class: 'ttl'}, svg).textContent = 'median fence of each run (mV above baseline), 17 Nov';
+  for (const f of [14, 16, 18]) { el('line', {x1: l, x2: W - r, y1: Y(f), y2: Y(f), stroke: css('--c-grid')}, svg);
+    el('text', {x: l - 6, y: Y(f) + 4, 'text-anchor': 'end'}, svg).textContent = f; }
+  for (const h of [6, 8, 10, 12, 14, 16, 18]) el('text', {x: X(h * 60), y: H - b + 16, 'text-anchor': 'middle'}, svg).textContent = h + ':00';
+  el('text', {x: X(6.3 * 60), y: H - 6, 'text-anchor': 'middle'}, svg).textContent = 'night (HV on)';
+  el('text', {x: X(14.2 * 60), y: H - 6, 'text-anchor': 'middle'}, svg).textContent = 'day ladder: Km18, R 2 → 50, R 50 → 2, Km18';
+  for (const [run, st, dur, cfg] of RUNS) {
+    const x0 = X(mins(st)), x1 = X(mins(st) + dur), y = Y(FENCE[cfg]), bad = run === 233;
+    const g = el('g', {}, svg);
+    el('rect', {x: x0, y: y - 7, width: Math.max(3, x1 - x0 - 2), height: 14, rx: 4, fill: bad ? 'transparent' : css('--accent'),
+      stroke: bad ? css('--c-warn') : css('--bg-elev'), 'stroke-width': bad ? 1.5 : 2, 'stroke-dasharray': bad ? '4 3' : ''}, g);
+    if (bad) el('line', {x1: x0, x2: x1 - 2, y1: y, y2: y, stroke: css('--c-warn'), 'stroke-width': 1.5}, g);
+    el('text', {x: (x0 + x1) / 2, y: y - 11, 'text-anchor': 'middle'}, g).textContent = run;
+    el('rect', {x: x0, y: y - 18, width: x1 - x0, height: 30, fill: 'transparent'}, g);
+    g.addEventListener('mouseenter', () => { tip.innerHTML = `<b>run_${run}</b> ${st}, ${dur} min<br>${SHORT[cfg]} · median fence ${FENCE[cfg]} mV` +
+      (bad ? '<br><b>not used</b>: read-out fault' : ''); tip.style.display = 'block'; });
+    g.addEventListener('mousemove', e => { const bb = host.getBoundingClientRect(); let xx = e.clientX - bb.left + 12; if (xx > bb.width - 220) xx -= 240;
+      tip.style.left = xx + 'px'; tip.style.top = (e.clientY - bb.top - 10) + 'px'; });
+    g.addEventListener('mouseleave', () => tip.style.display = 'none');
+  }
+}
+
+/* ---------- trap chart ------------------------------------------------------------------------------------------- */
+let trapMode = 'pooled';
+function trap() {
+  const host = document.getElementById('trapChart');
+  detLegend(document.getElementById('trapLeg'));
+  const series = DETS.map(d => {
+    const pts = trapMode === 'pooled'
+      ? D.bins.filter(p => p.det === d).map(p => ({x: p.x, y: p.e, u: p.u, tip: `<b>${d}</b> pads with fence ≈ ${fmt(p.x, 1)} mV<br>efficiency ${fmt(p.e)} ± ${fmt(p.u)}<br>${p.n} pad-pieces, all files mixed`}))
+      : D.paired.filter(p => p.det === d).sort((a, b) => a.x - b.x).map(p => ({x: p.x, y: p.e, u: p.u, tip: `<b>${d}</b> file ${SHORT[p.cfg]}<br>same 744 pads, mean fence ${fmt(p.x, 1)} mV<br>efficiency ${fmt(p.e)} ± ${fmt(p.u)}`}));
+    return {pts, color: col(d), mark: MARK[d], line: true};
+  });
+  chart(host, {w: 1000, h: 360, x: [5, 30], y: [.55, 1.08], yt: [.6, .7, .8, .9, 1.0], xt: [5, 10, 15, 20, 25, 30],
+    xtitle: 'fence: threshold − baseline of the pads (mV)', ytitle: 'efficiency', band: [.75, .79],
+    hlines: [{v: .95, label: 'expected ~0.95'}], series, aria: 'efficiency against threshold'});
+  document.getElementById('trapCap').innerHTML = trapMode === 'pooled'
+    ? 'Pooled: every pad of every file, binned by its fence. Looks like "lower fence → higher efficiency". Grey band: 3–5 Nov result.'
+    : 'Same pads: the 744 pads usable in every file; one point per file, at their mean fence. The climb is gone.';
+}
+document.querySelectorAll('#trapSeg button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('#trapSeg button').forEach(x => x.classList.toggle('on', x === b)); trapMode = b.dataset.v; trap(); });
+
+/* ---------- selection toy ---------------------------------------------------------------------------------------- */
+function selToy() {
+  const cv = document.getElementById('sel'), ctx = cv.getContext('2d'), rI = document.getElementById('selR'), rO = document.getElementById('selRO');
+  const RS = [2, 5, 10, 20, 50], G = [18.3, 16.6, 15.9, 15.4, 14.5];
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const pads = []; for (let i = 0; i < 80; i++) { const q = i < 40; pads.push({q, eff: q ? .95 : .75, c: (q ? .82 : 1.18) * (0.92 + .16 * rnd())}); }
+  const thrOf = (p, k) => p.c * G[k];
+  const bins = []; for (let b = 10; b < 24; b += 2) bins.push(b);
+  function pooled() { return bins.map(b => { let s = 0, n = 0; for (let k = 0; k < 5; k++) for (const p of pads) { const t = thrOf(p, k); if (t >= b && t < b + 2) { s += p.eff; n++; } }
+    return n ? {x: b + 1, y: s / n} : null; }).filter(Boolean); }
+  const same = () => G.map((g, k) => ({x: pads.reduce((a, p) => a + thrOf(p, k), 0) / pads.length, y: pads.reduce((a, p) => a + p.eff, 0) / pads.length}));
+  let playing = false, tm = null;
+  document.getElementById('selPlay').onclick = e => { playing = !playing; e.target.textContent = playing ? 'stop' : 'play the ladder';
+    clearInterval(tm); if (playing) tm = setInterval(() => { rI.value = (+rI.value + 1) % 5; draw(); }, 1100); };
+  rI.oninput = draw;
+  function draw() {
+    const k = +rI.value; rO.textContent = 'R = ' + RS[k] + ' Hz';
+    const dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = 320;
+    cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+    ctx.font = '11px ' + css('--font');
+    const narrow = W < 700, gw = narrow ? W : W * .38;
+    // pads grid, colour = kind, label = fence
+    const cols = 10, sz = Math.min(28, (gw - 20) / cols - 4);
+    pads.forEach((p, i) => { const x = 10 + (i % cols) * (sz + 4), y = 22 + Math.floor(i / cols) * (sz + 4);
+      ctx.fillStyle = p.q ? css('--c-a') : css('--c-b'); ctx.globalAlpha = .25 + .75 * (1 - (thrOf(p, k) - 10) / 14); ctx.fillRect(x, y, sz, sz); ctx.globalAlpha = 1; });
+    ctx.fillStyle = css('--fg-muted'); ctx.fillText('80 pads · darker = lower fence at this rung', 10, 12);
+    if (narrow) return;
+    const ql = gw + 60, qr = W - 16, qt = 20, qb = H - 34, x0 = 10, x1 = 24, y0 = .65, y1 = 1.0;
+    const QX = v => ql + (v - x0) / (x1 - x0) * (qr - ql), QY = v => qb - (v - y0) / (y1 - y0) * (qb - qt);
+    ctx.strokeStyle = css('--c-grid'); ctx.lineWidth = 1;
+    for (const v of [.7, .8, .9, 1.0]) { ctx.beginPath(); ctx.moveTo(ql, QY(v)); ctx.lineTo(qr, QY(v)); ctx.stroke(); ctx.fillText(v.toFixed(1), ql - 26, QY(v) + 4); }
+    for (const v of [10, 14, 18, 22]) ctx.fillText(v, QX(v) - 6, qb + 15);
+    ctx.fillText('fence (mV)', (ql + qr) / 2 - 24, H - 4); ctx.fillText('efficiency', ql - 6, qt - 6);
+    for (const p of pads) { const t = thrOf(p, k); ctx.fillStyle = p.q ? css('--c-a') : css('--c-b'); ctx.globalAlpha = .55;
+      ctx.beginPath(); ctx.arc(QX(t), QY(p.eff) + (rnd() - .5) * 6, 3.2, 0, 2 * Math.PI); ctx.fill(); }
+    ctx.globalAlpha = 1;
+    const line = (pts, c, w, dash) => { ctx.strokeStyle = c; ctx.lineWidth = w; ctx.setLineDash(dash || []); ctx.beginPath();
+      pts.forEach((p, i) => i ? ctx.lineTo(QX(p.x), QY(p.y)) : ctx.moveTo(QX(p.x), QY(p.y))); ctx.stroke(); ctx.setLineDash([]);
+      pts.forEach(p => { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(QX(p.x), QY(p.y), 4, 0, 2 * Math.PI); ctx.fill(); }); };
+    const P = pooled(), S = same().sort((a, b) => a.x - b.x);
+    line(P, css('--fg-faint'), 2.4); line(S, css('--fg'), 2.4, [6, 4]);
+    ctx.fillStyle = css('--fg-muted'); ctx.fillText('pooled bins, all rungs', QX(P[0].x) + 6, QY(P[0].y) - 8);
+    ctx.fillStyle = css('--fg'); ctx.fillText('same 80 pads, one point per rung', QX(S[S.length - 1].x) - 150, QY(S[0].y) + 18);
+  }
+  draw(); window.addEventListener('resize', draw);
+}
+
+/* ---------- result charts ---------------------------------------------------------------------------------------- */
+function results() {
+  detLegend(document.getElementById('resLeg')); detLegend(document.getElementById('chLeg')); detLegend(document.getElementById('repLeg'));
+  const off = {P2_IN: -.12, P2_MID: 0, P2_OUT: .12};
+  chart(document.getElementById('resChart'), {w: 560, h: 330, x: [13.5, 20.5], y: [.65, 1.02], yt: [.7, .8, .9, 1.0], xt: [14, 15, 16, 17, 18, 19, 20],
+    xtitle: 'mean fence of the 744 pads (mV)', ytitle: 'efficiency', band: [.75, .79], hlines: [{v: .95, label: '0.95'}],
+    title: 'same pads, six files',
+    series: DETS.map(d => ({color: col(d), mark: MARK[d], pts: D.paired.filter(p => p.det === d).map(p => ({x: p.x + off[d], y: p.e, u: p.u,
+      tip: `<b>${d}</b> · ${SHORT[p.cfg]}<br>fence ${fmt(p.x, 1)} mV · efficiency ${fmt(p.e)} ± ${fmt(p.u)}`}))}))});
+  const ix = c => CFGS.indexOf(c);
+  chart(document.getElementById('chChart'), {w: 560, h: 330, x: [-.5, 5.5], y: [.65, 1.02], yt: [.7, .8, .9, 1.0], xt: [0, 1, 2, 3, 4, 5],
+    xlab: CFGS.map(c => SHORT[c]), xtitle: 'file (lower fence →)', ytitle: 'any pad within 30 mm', band: [.75, .79], hlines: [{v: .95, label: '0.95'}],
+    title: 'model-free chamber check',
+    series: DETS.map(d => ({color: col(d), mark: MARK[d], pts: D.chamber.filter(p => p.det === d).map(p => ({x: ix(p.cfg) + off[d] * 1.5, y: p.a,
+      u: Math.sqrt(p.a * (1 - p.a) / p.n), tip: `<b>${d}</b> · ${SHORT[p.cfg]}<br>${fmt(p.a)} of ${p.n} muons<br>pads fired per muon ${fmt(p.m)}`}))}))});
+  // scintillator timing
+  const H = {125: 79, 150: 1547, 175: 8966, 200: 14852, 225: 7400, 250: 1268, 275: 176, 300: 30, 325: 8, 100: 3, 75: 1, 350: 0, 375: 2, 400: 1};
+  const hs = Object.entries(H).map(([k, v]) => ({x: +k, v})).sort((a, b) => a.x - b.x);
+  chart(document.getElementById('scintChart'), {w: 560, h: 300, x: [50, 425], y: [0, 16000], yt: [0, 5000, 10000, 15000], yfmt: v => v / 1000 + 'k',
+    xt: [100, 150, 200, 250, 300, 350, 400], xtitle: 'chamber time − scintillator time (ns)', ytitle: 'muon candidates', title: 'the muons are on time',
+    pre: (svg, X, Y) => { el('rect', {x: X(140), y: Y(16000), width: X(310) - X(140), height: Y(0) - Y(16000), fill: css('--c-band')}, svg);
+      for (const b of hs) if (b.v) el('rect', {x: X(b.x) + 1, y: Y(b.v), width: X(b.x + 25) - X(b.x) - 2, height: Math.max(1, Y(0) - Y(b.v)), rx: 3,
+        fill: css('--accent')}, svg); }, series: []});
+  // repeats
+  const pairs = [[236, 247], [237, 246], [238, 245], [239, 244], [240, 243], [241, 242], [232, 234]];
+  const R = {}; D.runs.forEach(r => R[r.run + r.det] = r);
+  chart(document.getElementById('repChart'), {w: 560, h: 300, x: [.65, 1.0], y: [.65, 1.0], yt: [.7, .8, .9, 1.0], xt: [.7, .8, .9, 1.0],
+    xtitle: 'first run of the file', ytitle: 'second run', title: 'repeat runs agree',
+    pre: (svg, X, Y) => el('line', {x1: X(.65), y1: Y(.65), x2: X(1), y2: Y(1), stroke: css('--fg-faint'), 'stroke-dasharray': '4 4'}, svg),
+    series: DETS.map(d => ({color: col(d), mark: MARK[d], pts: pairs.map(([a, b]) => { const p = R[a + d], q = R[b + d];
+      return {x: p.e, y: q.e, tip: `<b>${d}</b> ${SHORT[p.cfg]}<br>run ${a}: ${fmt(p.e)} ± ${fmt(p.u)}<br>run ${b}: ${fmt(q.e)} ± ${fmt(q.u)}`}; })}))});
+}
+
+/* ---------- chip heat map ---------------------------------------------------------------------------------------- */
+function chips() {
+  const host = document.getElementById('chipChart'); host.innerHTML = '';
+  const W = 1000, rowH = 24, top = 46, left = 120, cw = (W - left - 20) / CFGS.length, H = top + 18 * rowH + 10;
+  const svg = el('svg', {viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'efficiency per chip and file'}, host);
+  const tip = document.createElement('div'); tip.className = 'tip'; host.appendChild(tip);
+  el('text', {x: left, y: 15, class: 'ttl'}, svg).textContent = 'per chip and file (counting method) — a symptom, not a measurement';
+  CFGS.forEach((c, j) => el('text', {x: left + j * cw + cw / 2, y: top - 10, 'text-anchor': 'middle'}, svg).textContent = SHORT[c]);
+  const acc = css('--accent');
+  for (let v = 2; v < 20; v++) {
+    const y = top + (v - 2) * rowH, det = v < 8 ? 'P2_IN' : v < 14 ? 'P2_MID' : 'P2_OUT';
+    el('text', {x: left - 10, y: y + rowH / 2 + 4, 'text-anchor': 'end'}, svg).textContent = `chip ${v} · ${det}`;
+    CFGS.forEach((c, j) => {
+      const r = D.chip.find(q => q.chip === v && q.cfg === c); if (!r) return;
+      const a = Math.max(.06, Math.min(1, (Math.min(r.e, 1.2) - .1) / 1.1));
+      const g = el('g', {}, svg);
+      el('rect', {x: left + j * cw + 1, y: y + 1, width: cw - 2, height: rowH - 2, rx: 4, fill: acc, 'fill-opacity': a * .85,
+        stroke: r.e >= 1.005 ? css('--c-warn') : 'none', 'stroke-width': r.e >= 1.005 ? 2 : 0}, g);
+      const t = el('text', {x: left + j * cw + cw / 2, y: y + rowH / 2 + 4, 'text-anchor': 'middle'}, g); t.textContent = fmt(r.e);
+      t.style.fill = a > .55 ? '#fff' : css('--fg');
+      g.addEventListener('mouseenter', () => { tip.innerHTML = `<b>chip ${v}</b> (${det}) · ${SHORT[c]}<br>${fmt(r.e)} ± ${fmt(r.u)} · fence ${fmt(r.x, 1)} mV` +
+        (r.e >= 1.005 ? '<br>above 1: not a real efficiency' : ''); tip.style.display = 'block'; });
+      g.addEventListener('mousemove', e => { const bb = host.getBoundingClientRect(); let xx = e.clientX - bb.left + 12; if (xx > bb.width - 220) xx -= 240;
+        tip.style.left = xx + 'px'; tip.style.top = (e.clientY - bb.top - 10) + 'px'; });
+      g.addEventListener('mouseleave', () => tip.style.display = 'none');
+    });
+    if (v === 7 || v === 13) el('line', {x1: 10, x2: W - 10, y1: y + rowH, y2: y + rowH, stroke: css('--fg-faint')}, svg);
+  }
+}
+
+function all() { hero(); timeline(); trap(); results(); chips(); }
+all(); toy(); selToy();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', all);
+})();
+</script>
+</body>
+</html>
