@@ -7,6 +7,8 @@ Saves four separate high-resolution PNGs:
   schematic_3_clock_timeline.png
   schematic_4_timestamp_reconstruction.png
 """
+import os
+
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -65,7 +67,9 @@ def brace_h(ax, x0, x1, y, label, color=VIO, fs=9):
     ax.text((x0 + x1) / 2, y - 0.03, label,
             ha='center', va='top', fontsize=fs, color=color, fontweight='bold')
 
-OUT = '/local/home/ak271430/Documents/PostDocSaclay/P2_basket_online_analysis/'
+# Write next to this script (the note's _files/ directory). It used to write into
+# P2_basket_online_analysis, which is retired (tag legacy-final).
+OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '')
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 1 · HARDWARE CHAIN
