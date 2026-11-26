@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>Chasing det2&#x27;s lost muons: a cosmic-bench efficiency investigation</title>
+<meta name="description" content="How P2 det2&#x27;s cosmic-bench efficiency went from 82% to 96% in one day of detective work: a flipped connector, dead and shorted pins, readout crosstalk, pillar shadows, pointing resolution and who to blame for the last misses, explained step by step with pictures.">
+<meta name="category" content="Analysis">
+<meta name="keywords" content="P2,det2,micromegas,efficiency,cosmics,crosstalk,pillars,analysis">
+<meta name="date" content="2026-11-26">
+<meta name="updated" content="2026-11-26">
+<meta name="visibility" content="public">
+<!-- ======================================================================= -->
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+  :root { --c1: #257de0; --c2: #f47230; --c3: #00b894; --c4: #6a4ce2; --c5: #ec4647; --c6: #f2a600;
+          --pad: #e7e4dc; --pad-dead: #9c9c9c; --grid: rgba(0,0,0,.08); }
+  @media (prefers-color-scheme: dark) {
+    :root { --c1: #4f9bf0; --c2: #f08a5d; --c3: #2fd1ac; --c4: #9887ef; --c5: #f07272; --c6: #f2b632;
+            --pad: #2f333b; --pad-dead: #5a5e66; --grid: rgba(255,255,255,.08); }
+  }
+  main.wrap, .site-header .wrap, .site-footer .wrap { max-width: 1180px; }
+  .note-body { max-width: none; }
+  .note-body p, .note-body ul, .note-body ol, .note-body .callout, .note-body details, .note-body table.t { max-width: 86ch; }
+  .sec { border-top: 1px solid var(--border); padding: 1.6rem 0 1rem; }
+  .kicker { font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin: 0; }
+  .sec h2 { margin-top: .2rem; }
+  .take { border-left: 4px solid var(--accent); background: var(--accent-soft); padding: .6rem 1rem; border-radius: 0 8px 8px 0;
+          margin: 1rem 0; max-width: 86ch; }
+  .take b:first-child { color: var(--accent); }
+  figure.data { margin: 1.1rem 0; }
+  figure.data img { width: 100%; height: auto; background: #fff; border-radius: 6px; border: 1px solid var(--border); }
+  figure.data.mid img { max-width: 880px; }
+  figure.data figcaption { max-width: 100ch; }
+  svg.ill { width: 100%; height: auto; display: block; margin: .8rem 0; }
+  svg.ill text { font-family: var(--font); fill: var(--fg); font-size: 13px; }
+  svg.ill .muted { fill: var(--fg-muted); font-size: 12px; }
+  svg.ill .small { font-size: 11px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start; }
+  @media (max-width: 820px) { .two { grid-template-columns: 1fr; } }
+  table.t td, table.t th { vertical-align: top; }
+  table.num td:not(:first-child), table.num th:not(:first-child) { text-align: right; }
+  .tag { display: inline-block; font-size: .78rem; padding: .05rem .5rem; border-radius: 999px; background: var(--code-bg); margin-right: .2rem; }
+  .toc { columns: 2; max-width: 86ch; font-size: .95rem; }
+  @media (max-width: 700px) { .toc { columns: 1; } }
+  .big { font-size: 2.2rem; font-weight: 700; color: var(--accent); line-height: 1.1; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: .8rem; margin: 1rem 0; max-width: 1000px; }
+  .kpi { border: 1px solid var(--border); border-radius: var(--radius); padding: .7rem .9rem; background: var(--bg-elev); }
+  .kpi .lbl { color: var(--fg-muted); font-size: .85rem; }
+</style>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="../">Alexandra Kallitsopoulou</a>
+  <nav class="nav"><a href="../">Home</a><a href="../notes/">Notes</a></nav>
+</div></header>
+
+<main class="wrap">
+  <article>
+    <header class="note-header">
+      <h1>Chasing det2&#x27;s lost muons: a cosmic-bench efficiency investigation</h1>
+      <p class="muted">How P2 det2&#x27;s cosmic-bench efficiency went from 82% to 96% in one day of detective work: a flipped connector, dead and shorted pins, readout crosstalk, pillar shadows, pointing resolution and who to blame for the last misses, explained step by step with pictures.</p>
+      <div class="meta-row">
+        <span class="pill">Analysis</span>
+        <time datetime="2026-11-26">2026-11-26</time>
+        <span class="faint">P2,det2,micromegas,efficiency,cosmics,crosstalk,pillars,analysis</span>
+      </div>
+    </header>
+
+    <div class="note-body">
+
+<!-- ============================================================ TL;DR -->
+<section class="sec" style="border-top:0">
+  <p class="kicker">In one paragraph</p>
+  <p>On 26 November we analysed the cosmic-ray run of the P2 Micromegas prototype <b>det2</b> at its operating point
+  (mesh 430 V, drift 730 V). The first answer was a disappointing <b>82%</b> efficiency, with strange holes and a whole
+  side of the detector that never seemed to see the muons. Following the clues one by one, every loss turned out to have a
+  concrete cause: a connector read in the wrong order, dead and shorted pins (most likely soldering), readout crosstalk,
+  the shadow of the mesh-support pillars, and the limited precision of the reference telescope. After correcting what was
+  an analysis problem and setting aside what is a hardware defect, det2 reaches <b>95.9%</b>, close to its
+  <b>96.8%</b> ceiling, and we can say what each of the missing 4% is.</p>
+
+  <div class="kpis">
+    <div class="kpi"><div class="lbl">Efficiency at the start</div><div class="big">82.1%</div></div>
+    <div class="kpi"><div class="lbl">Efficiency at the end</div><div class="big">95.9%</div></div>
+    <div class="kpi"><div class="lbl">Detector responded at all</div><div class="big">96.8%</div></div>
+    <div class="kpi"><div class="lbl">With a perfect reference track</div><div class="big">≈96.6%</div></div>
+  </div>
+
+  <!-- journey chart -->
+  <svg class="ill" viewBox="0 0 1000 300" role="img" aria-label="Efficiency after each step of the investigation">
+    <line x1="70" y1="250" x2="980" y2="250" stroke="var(--fg-faint)"/>
+    <g font-size="11">
+      <text x="62" y="254" text-anchor="end" class="muted">80%</text>
+      <text x="62" y="154" text-anchor="end" class="muted">90%</text>
+      <text x="62" y="54" text-anchor="end" class="muted">100%</text>
+    </g>
+    <line x1="70" y1="150" x2="980" y2="150" stroke="var(--grid)"/>
+    <line x1="70" y1="50" x2="980" y2="50" stroke="var(--grid)"/>
+    <!-- ceiling 96.8 -> y = 250 - 16.8*10 = 82 -->
+    <line x1="70" y1="82" x2="980" y2="82" stroke="var(--c5)" stroke-dasharray="5 4"/>
+    <text x="80" y="76" text-anchor="start" fill="var(--c5)" font-size="12">detector responded at all (ceiling): 96.8%</text>
+    <!-- bars: y = 250 - (eff-80)*10 -->
+    <g>
+      <rect x="95"  y="229" width="110" height="21"  rx="4" fill="var(--pad-dead)"/>
+      <rect x="245" y="162" width="110" height="88"  rx="4" fill="var(--c1)" opacity=".55"/>
+      <rect x="395" y="157" width="110" height="93"  rx="4" fill="var(--c1)" opacity=".65"/>
+      <rect x="545" y="126" width="110" height="124" rx="4" fill="var(--c1)" opacity=".75"/>
+      <rect x="695" y="106" width="110" height="144" rx="4" fill="var(--c1)" opacity=".88"/>
+      <rect x="845" y="91"  width="110" height="159" rx="4" fill="var(--c1)"/>
+    </g>
+    <g text-anchor="middle" font-weight="700">
+      <text x="150" y="222">82.1%</text><text x="300" y="155">88.8%</text><text x="450" y="150">89.3%</text>
+      <text x="600" y="119">92.4%</text><text x="750" y="99">94.4%</text><text x="900" y="84" dy="-2">95.9%</text>
+    </g>
+    <g text-anchor="middle" class="small" font-size="11">
+      <text x="150" y="268">first look</text>
+      <text x="300" y="268">connector 9 flip</text><text x="300" y="282">+ dead pin row</text>
+      <text x="450" y="268">+ dead-but-noisy</text><text x="450" y="282">pads removed</text>
+      <text x="600" y="268">+ clustering,</text><text x="600" y="282">shorts, dead cells</text>
+      <text x="750" y="268">+ 6 mm guard</text><text x="750" y="282">around dead pads</text>
+      <text x="900" y="268">+ "any cluster</text><text x="900" y="282">within 20 mm"</text>
+    </g>
+  </svg>
+  <p class="muted">Each bar is the efficiency after one more step of the investigation (same data each time). The red
+  dashed line is the fraction of muons for which the detector gave <i>any</i> signal at all: no reconstruction can do better.</p>
+
+  <ul class="toc">
+    <li><a href="#setup">1 · What are we measuring?</a></li>
+    <li><a href="#trip">2 · First, keep only the good hours</a></li>
+    <li><a href="#flip">3 · Clue 1: a side that never works</a></li>
+    <li><a href="#dead">4 · Clue 2: the dark spots (dead pins and pads)</a></li>
+    <li><a href="#xtalk">5 · Clue 3: crosstalk and shorted pins</a></li>
+    <li><a href="#cluster">6 · Fix: clustering instead of averaging</a></li>
+    <li><a href="#guard">7 · Fuzzy tracks next to dead pads</a></li>
+    <li><a href="#pillars">8 · Pillars cast shadows</a></li>
+    <li><a href="#misreco">9 · The wrong cluster wins: a second particle</a></li>
+    <li><a href="#blame">10 · Is it the telescope or the detector?</a></li>
+    <li><a href="#final">11 · The final picture</a></li>
+    <li><a href="#todo">12 · What to do on the bench</a></li>
+  </ul>
+</section>
+
+<!-- ============================================================ 1 setup -->
+<section class="sec" id="setup">
+  <p class="kicker">1 · The basics</p>
+  <h2>What are we measuring?</h2>
+  <p>Cosmic muons rain down through the bench. A <b>reference telescope</b> (the M3 tracker, several high-resolution planes)
+  measures each muon's straight-line path. We extend that line down to the plane of <b>det2</b>, a Micromegas detector
+  read out by about 1000 square <b>pads</b> of ≈12 mm, each connected to one electronics channel (FEU/Dream).</p>
+  <p>The <b>efficiency</b> asks a simple question: <i>when the telescope says a muon crossed det2 at point X, did det2 see
+  something there?</i> "There" means within <b>20 mm</b> of the predicted point, a circle a bit bigger than a pad.</p>
+
+  <svg class="ill" viewBox="0 0 1000 345" role="img" aria-label="Telescope, muon track and the 20 mm matching circle">
+    <!-- planes -->
+    <g>
+      <rect x="140" y="40" width="380" height="10" rx="3" fill="var(--c4)" opacity=".7"/>
+      <text x="530" y="50" class="muted">M3 telescope planes (reference)</text>
+      <rect x="140" y="95" width="380" height="10" rx="3" fill="var(--c4)" opacity=".7"/>
+      <rect x="140" y="270" width="380" height="10" rx="3" fill="var(--c4)" opacity=".7"/>
+      <rect x="140" y="215" width="380" height="14" rx="3" fill="var(--c2)" opacity=".85"/>
+      <text x="530" y="227">det2 (P2 pads)</text>
+    </g>
+    <!-- muon -->
+    <line x1="250" y1="10" x2="380" y2="315" stroke="var(--fg)" stroke-width="2"/>
+    <circle cx="267" cy="45" r="5" fill="var(--c4)"/><circle cx="291" cy="100" r="5" fill="var(--c4)"/>
+    <circle cx="365" cy="275" r="5" fill="var(--c4)"/>
+    <circle cx="341" cy="222" r="6" fill="none" stroke="var(--c2)" stroke-width="2"/>
+    <text x="275" y="22" class="muted">cosmic muon</text>
+    <!-- top view -->
+    <g transform="translate(700,40)">
+      <text x="0" y="0">Seen from above (det2 plane)</text>
+      <g transform="translate(20,20)">
+        <g fill="var(--pad)" stroke="var(--bg)" stroke-width="2">
+          <rect x="0" y="0" width="48" height="48"/><rect x="50" y="0" width="48" height="48"/><rect x="100" y="0" width="48" height="48"/><rect x="150" y="0" width="48" height="48"/>
+          <rect x="0" y="50" width="48" height="48"/><rect x="50" y="50" width="48" height="48"/><rect x="100" y="50" width="48" height="48"/><rect x="150" y="50" width="48" height="48"/>
+          <rect x="0" y="100" width="48" height="48"/><rect x="50" y="100" width="48" height="48"/><rect x="100" y="100" width="48" height="48"/><rect x="150" y="100" width="48" height="48"/>
+          <rect x="0" y="150" width="48" height="48"/><rect x="50" y="150" width="48" height="48"/><rect x="100" y="150" width="48" height="48"/><rect x="150" y="150" width="48" height="48"/>
+        </g>
+        <rect x="50" y="50" width="48" height="48" fill="var(--c3)" opacity=".8"/>
+        <circle cx="84" cy="88" r="82" fill="none" stroke="var(--c1)" stroke-width="2" stroke-dasharray="6 4"/>
+        <circle cx="84" cy="88" r="5" fill="var(--c1)"/>
+        <text x="-6" y="225" class="muted">blue dot = predicted point · green = pad that fired</text>
+        <text x="-6" y="243" class="muted">dashed = the 20 mm circle</text>
+      </g>
+    </g>
+  </svg>
+
+  <div class="two">
+    <div>
+      <p><b>Three possible outcomes for each muon:</b></p>
+      <ul>
+        <li><span class="tag" style="background:var(--c1);color:#fff">reconstructed</span> a cluster of fired pads lies within 20 mm,</li>
+        <li><span class="tag" style="background:var(--c2);color:#fff">fired but mis-reco</span> something fired, but farther away,</li>
+        <li><span class="tag" style="background:var(--c5);color:#fff">no hit</span> nothing fired at all.</li>
+      </ul>
+    </div>
+    <div class="callout">
+      <b>The data set.</b> Run <code>p2_det2_long_run_430_repositioned_11-25-26</code>: det2 at mesh 430 V / drift 730 V,
+      7.6 h of good data, about 36,000–48,000 telescope tracks crossing the active area (depending on the step).
+      All the analysis code lives in <code>P2_basket_analysis/cosmic_bench_analysis</code>.
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 2 trip -->
+<section class="sec" id="trip">
+  <p class="kicker">2 · Before anything else</p>
+  <h2>Keep only the hours when the detector was on</h2>
+  <p>During the night of 25→26 November the det2 mesh suddenly drew its maximum current (10 µA), its voltage collapsed
+  and the power supply switched it off at <b>01:07:36</b>. The data acquisition kept running for another five hours,
+  recording muons that det2 could not possibly see. Counting those as misses would be unfair.</p>
+  <svg class="ill" viewBox="0 0 1000 150" role="img" aria-label="Timeline of the run with the mesh trip">
+    <rect x="60" y="55" width="640" height="34" rx="6" fill="var(--c1)" opacity=".85"/>
+    <rect x="700" y="55" width="240" height="34" rx="6" fill="var(--pad-dead)"/>
+    <line x1="700" y1="40" x2="700" y2="105" stroke="var(--c5)" stroke-width="2.5"/>
+    <text x="704" y="35" fill="var(--c5)" font-weight="700">mesh trip 01:07 (7.61 h)</text>
+    <text x="70" y="77" fill="#fff" font-weight="700">used: 17:30 → 01:05 (cut at 7.58 h)</text>
+    <text x="712" y="77" fill="#fff">mesh off → dropped</text>
+    <text x="60" y="125" class="muted">17:30</text><text x="935" y="125" class="muted" text-anchor="end">05:55</text>
+  </svg>
+  <p>We checked the cut against the data itself: the number of hits per muon is flat (≈0.25 per FEU) right up to
+  <b>7.614 h</b> after the start, then drops to zero on one FEU while the other starts firing on noise. So we keep
+  everything up to 7.58 h (2 minutes of safety) and nothing after.</p>
+</section>
+
+<!-- ============================================================ 3 flip -->
+<section class="sec" id="flip">
+  <p class="kicker">3 · Clue 1</p>
+  <h2>A whole side of the detector that never works</h2>
+  <p>The first efficiency map showed a band along one straight edge where det2 <i>fired</i> (the pads gave signals) but
+  the reconstructed position was always far from the muon. A detector that fires in the right event but at the
+  wrong place is the signature of a <b>wrong channel-to-pad map</b>, not of a broken detector.</p>
+  <p>Looking at which channel fires when the muon crosses each pad of that region gave a crisp answer: for the top half
+  of <b>connector 9</b> (FEU 7, channels 448–511), a muon over the pad of channel <i>c</i> fires channel
+  <b>≈ 959 − c</b>. In other words the 64 channels of that half are read in <b>reverse order</b>: the ribbon cable or
+  adapter of that half is mounted the other way round compared with all the others.</p>
+  <svg class="ill" viewBox="0 0 1000 200" role="img" aria-label="A reversed connector half maps channels to mirrored pads">
+    <text x="20" y="22">What the map assumed</text>
+    <text x="520" y="22">What the cable really does</text>
+    <g font-size="11" text-anchor="middle">
+      <!-- left -->
+      <g transform="translate(20,40)">
+        <rect x="0" y="0" width="420" height="40" rx="6" fill="var(--pad)"/>
+        <g fill="var(--c1)"><rect x="10" y="8" width="44" height="24" rx="3"/><rect x="60" y="8" width="44" height="24" rx="3"/><rect x="110" y="8" width="44" height="24" rx="3"/></g>
+        <g fill="var(--c2)"><rect x="366" y="8" width="44" height="24" rx="3"/><rect x="316" y="8" width="44" height="24" rx="3"/></g>
+        <text x="32" y="25" fill="#fff">448</text><text x="82" y="25" fill="#fff">449</text><text x="132" y="25" fill="#fff">450</text>
+        <text x="210" y="25">…</text><text x="338" y="25" fill="#fff">510</text><text x="388" y="25" fill="#fff">511</text>
+        <text x="210" y="62" class="muted">channel 448 → pad at the left end …</text>
+      </g>
+      <!-- right -->
+      <g transform="translate(520,40)">
+        <rect x="0" y="0" width="420" height="40" rx="6" fill="var(--pad)"/>
+        <g fill="var(--c2)"><rect x="10" y="8" width="44" height="24" rx="3"/><rect x="60" y="8" width="44" height="24" rx="3"/></g>
+        <g fill="var(--c1)"><rect x="366" y="8" width="44" height="24" rx="3"/><rect x="316" y="8" width="44" height="24" rx="3"/><rect x="266" y="8" width="44" height="24" rx="3"/></g>
+        <text x="32" y="25" fill="#fff">511</text><text x="82" y="25" fill="#fff">510</text>
+        <text x="190" y="25">…</text><text x="288" y="25" fill="#fff">450</text><text x="338" y="25" fill="#fff">449</text><text x="388" y="25" fill="#fff">448</text>
+        <text x="210" y="62" class="muted">… but channel 448 is really at the right end</text>
+      </g>
+    </g>
+    <text x="20" y="150">Muon over a pad on the left → the electronics reports channel 511 → the analysis places the hit</text>
+    <text x="20" y="170">on the <tspan font-weight="700">mirror-image pad</tspan>, up to 300 mm away → "fired but mis-reconstructed".</text>
+  </svg>
+  <div class="take"><b>Fix:</b> one line in the configuration, <code>strategy_overrides={(9, 'top'): 'linear'}</code>, which
+  tells the map to read that half in the opposite order. The same flip is present in the 24 November data, so the
+  earlier scans were re-analysed too. (det5 had exactly the same problem on its connector 8.)</div>
+</section>
+
+<!-- ============================================================ 4 dead -->
+<section class="sec" id="dead">
+  <p class="kicker">4 · Clue 2</p>
+  <h2>The dark spots: dead pins and dead pads</h2>
+  <p>The efficiency map was dotted with dark spots, often in diagonal chains. A dark spot can mean three different
+  things, and the data can tell them apart by asking two questions: <i>does the channel fire at all?</i> and
+  <i>does it fire when the muon crosses its own pad?</i></p>
+  <div style="overflow-x:auto">
+  <table class="t">
+    <tr><th>Type</th><th>Channels</th><th>What we see</th><th>What it means</th><th>What we do</th></tr>
+    <tr><td><b>Dead pins</b></td><td>FEU 6, every <i>even</i> channel 384–446 (connector 5, bottom half)</td>
+        <td>almost never fires (≈10% of a normal pad's rate, noise only) and never on a muon</td>
+        <td>a whole <b>row</b> of pins of one connector is not connected: no contact, no signal, no noise</td>
+        <td>removed from the map</td></tr>
+    <tr><td><b>Dead-but-noisy pads</b></td><td>FEU 6 odd 217–227 and even 246–254; FEU 7 254 and 281</td>
+        <td>fires 1.4–4.7× <i>more</i> than normal, small pulses (40–70 ADC), but essentially never when the muon is on
+        its pad</td>
+        <td>the input is <b>floating</b> (not connected to its pad), so it picks up noise. Their noise hits also pulled
+        the reconstructed positions of real muons away.</td>
+        <td>removed from the map</td></tr>
+    <tr><td><b>Weak pads</b></td><td>FEU 6 452, 456; FEU 7 261 (FEU 7 29 is a new candidate)</td>
+        <td>responds to muons on its own pad, but only ≈27% of the time</td>
+        <td>a real low-gain region of the detector</td>
+        <td><b>kept</b>: this is a genuine detector inefficiency</td></tr>
+  </table>
+  </div>
+  <p>"Removed from the map" has a precise meaning: the pad's area is taken out of the measurement, so a muon crossing a
+  dead pad is <i>neither a success nor a failure</i>. That is fair: we want to know how well the detector works where it
+  is connected, and to list separately what is not connected.</p>
+</section>
+
+<!-- ============================================================ 5 xtalk -->
+<section class="sec" id="xtalk">
+  <p class="kicker">5 · Clue 3</p>
+  <h2>Channels that talk to their neighbours</h2>
+  <p>Even after the fixes above, some muons fired the right pad <i>and</i> a second pad far away, at the same time. When
+  we looked at which channels fired together, a pattern appeared: they were almost always <b>neighbours in the
+  electronics</b> (channel n and n±1 or n±2), even though their pads sit 70–300 mm apart on the detector. That is
+  <b>crosstalk</b>: a little of the signal leaks from one wire into the next one in the cable or connector.</p>
+
+  <p>We measured it directly from the recorded <b>waveforms</b> (the 32-sample pulse shape of every channel). For each muon
+  we took the pulse on the pad under the track as the "source" and looked at what its electronic neighbours recorded in
+  the same event:</p>
+  <figure class="data mid">
+    <img src="2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation_files/xtalk_shapes.png" alt="Average source pulse and the same-event neighbour waveforms">
+    <figcaption>Left: the average muon pulse. Right: what the neighbouring channels see in the same event, as a fraction
+    of the source pulse. Channels ±1 and ±2 carry a <b>copy of the pulse with the same shape</b>, about <b>0.85%</b> of its
+    height; ±3 only 0.15%; a far channel on the same chip (control, pink) nothing.</figcaption>
+  </figure>
+  <p>0.85% is tiny: a typical 1000 ADC muon gives an 8 ADC echo, well below the 40 ADC threshold. It only becomes a
+  "hit" for very large pulses (above ≈2500 ADC the neighbour fires 63% of the time). That part is <b>harmless</b>
+  once the reconstruction handles it (next section).</p>
+
+  <h3>…and channels that are short-circuited</h3>
+  <p>A handful of channel groups were different: their waveforms were <b>identical</b> (amplitude ratio 1.00 ± 0.04,
+  firing together &gt;90% of the time). That is not leakage but a <b>short circuit</b>: two or more pins connected
+  together. We found <b>8 groups, 21 channels</b>:</p>
+  <p><span class="tag">FEU6 48–51</span><span class="tag">FEU6 209/211</span><span class="tag">FEU6 236/238</span><span class="tag">FEU6 241/243</span>
+     <span class="tag">FEU7 271–273</span><span class="tag">FEU7 338–340</span><span class="tag">FEU7 351/352</span><span class="tag">FEU7 353–355</span></p>
+  <p>Where do these sit? On the detector their pads are far apart (46–354 mm), so they cannot be touching there. But on
+  the <b>connector footprint</b> of the detector board the picture changes completely:</p>
+
+  <svg class="ill" viewBox="0 0 1000 250" role="img" aria-label="Two-row connector pin layout and where shorts happen">
+    <text x="20" y="22">The board connector (seen from above): two rows of pins, 0.5 mm apart along a row</text>
+    <g transform="translate(60,50)">
+      <rect x="0" y="0" width="600" height="130" rx="10" fill="var(--pad)"/>
+      <g fill="var(--fg-faint)">
+        <!-- row A (even) y=35, row B (odd) y=95 -->
+        <rect x="30" y="27" width="16" height="16" rx="2"/><rect x="100" y="27" width="16" height="16" rx="2"/><rect x="170" y="27" width="16" height="16" rx="2"/>
+        <rect x="240" y="27" width="16" height="16" rx="2"/><rect x="310" y="27" width="16" height="16" rx="2"/><rect x="380" y="27" width="16" height="16" rx="2"/>
+        <rect x="450" y="27" width="16" height="16" rx="2"/><rect x="520" y="27" width="16" height="16" rx="2"/>
+        <rect x="30" y="87" width="16" height="16" rx="2"/><rect x="100" y="87" width="16" height="16" rx="2"/><rect x="170" y="87" width="16" height="16" rx="2"/>
+        <rect x="240" y="87" width="16" height="16" rx="2"/><rect x="310" y="87" width="16" height="16" rx="2"/><rect x="380" y="87" width="16" height="16" rx="2"/>
+        <rect x="450" y="87" width="16" height="16" rx="2"/><rect x="520" y="87" width="16" height="16" rx="2"/>
+      </g>
+      <!-- highlight n, n+2 (same row) and n+1 (facing) -->
+      <rect x="240" y="27" width="16" height="16" rx="2" fill="var(--c1)"/>
+      <rect x="310" y="27" width="16" height="16" rx="2" fill="var(--c1)"/>
+      <rect x="240" y="87" width="16" height="16" rx="2" fill="var(--c2)"/>
+      <path d="M256 35 H310" stroke="var(--c5)" stroke-width="5" stroke-linecap="round"/>
+      <text x="248" y="20" text-anchor="middle" font-size="12">n</text>
+      <text x="318" y="20" text-anchor="middle" font-size="12">n+2</text>
+      <text x="248" y="122" text-anchor="middle" font-size="12">n+1</text>
+      <text x="10" y="40" class="muted small">even</text><text x="10" y="100" class="muted small">odd</text>
+    </g>
+    <g transform="translate(700,60)">
+      <text x="0" y="0"><tspan fill="var(--c5)" font-weight="700">━</tspan> a solder bridge between</text>
+      <text x="0" y="20">neighbouring pins n and n+2</text>
+      <text x="0" y="50" class="muted">n+1 faces n across the rows: far on</text>
+      <text x="0" y="68" class="muted">the board (8.3 mm), but next to it on</text>
+      <text x="0" y="86" class="muted">the electronics side (ribbon/adapter).</text>
+    </g>
+    <text x="20" y="215">Every shorted group contains pins that are direct neighbours on the connector, while their pads are</text>
+    <text x="20" y="235">tens of centimetres apart. On connector 3 the shorts sit right next to runs of open, noisy pins.</text>
+  </svg>
+
+  <figure class="data">
+    <img src="2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation_files/crosstalk_illustration.png" alt="Shorted groups on the detector vs on the connector footprints, waveforms and coupling">
+    <figcaption><b>A</b>: the pads of each shorted group (same colour) are spread across the detector; black crosses are
+    dead pads. <b>B1–B5</b>: the same channels on the connector footprints (from the board Gerber), where they are adjacent
+    pins. <b>C1</b>: one event where four shorted channels record exactly the same pulse. <b>C2</b>: ordinary crosstalk, a
+    small same-shaped copy on the neighbours of a big pulse. <b>D</b>: the coupling vs channel offset.</figcaption>
+  </figure>
+  <div class="take"><b>Conclusion:</b> shorts next to opens on the same connectors point to a <b>soldering problem</b>
+  on the detector-board connectors (mainly 2, 3 and 8), plus a fully open row on connector 5. A hit on a shorted group
+  cannot be placed on one pad, so these 21 channels are treated like dead ones in the analysis.</div>
+</section>
+
+<!-- ============================================================ 6 clustering -->
+<section class="sec" id="cluster">
+  <p class="kicker">6 · A better reconstruction</p>
+  <h2>Clustering instead of averaging</h2>
+  <p>The original reconstruction took the <b>charge-weighted average</b> of all fired pads. That works for a clean muon
+  (1–3 neighbouring pads), but a single far-away extra hit drags the average into the middle of nowhere:</p>
+  <svg class="ill" viewBox="0 0 1000 210" role="img" aria-label="Average vs clustering with a far-away extra hit">
+    <g transform="translate(20,20)">
+      <text x="0" y="0">Old: average of all pads</text>
+      <rect x="0" y="20" width="440" height="150" rx="8" fill="var(--pad)" opacity=".6"/>
+      <rect x="40" y="70" width="40" height="40" rx="4" fill="var(--c3)"/><rect x="82" y="70" width="40" height="40" rx="4" fill="var(--c3)" opacity=".6"/>
+      <rect x="360" y="90" width="40" height="40" rx="4" fill="var(--c2)"/>
+      <circle cx="85" cy="90" r="6" fill="var(--c1)"/><text x="58" y="140" class="muted small">muon</text>
+      <circle cx="215" cy="98" r="8" fill="none" stroke="var(--c5)" stroke-width="3"/>
+      <text x="175" y="70" fill="var(--c5)" font-size="12">reconstructed here ✗</text>
+      <text x="345" y="150" class="muted small">extra hit</text>
+    </g>
+    <g transform="translate(520,20)">
+      <text x="0" y="0">New: group touching pads, keep the clusters</text>
+      <rect x="0" y="20" width="440" height="150" rx="8" fill="var(--pad)" opacity=".6"/>
+      <rect x="40" y="70" width="40" height="40" rx="4" fill="var(--c3)"/><rect x="82" y="70" width="40" height="40" rx="4" fill="var(--c3)" opacity=".6"/>
+      <rect x="30" y="60" width="102" height="60" rx="8" fill="none" stroke="var(--c3)" stroke-width="2" stroke-dasharray="5 3"/>
+      <rect x="360" y="90" width="40" height="40" rx="4" fill="var(--c2)"/>
+      <rect x="350" y="80" width="60" height="60" rx="8" fill="none" stroke="var(--c2)" stroke-width="2" stroke-dasharray="5 3"/>
+      <circle cx="85" cy="90" r="6" fill="var(--c1)"/>
+      <circle cx="74" cy="90" r="8" fill="none" stroke="var(--c3)" stroke-width="3"/>
+      <text x="140" y="80" fill="var(--c3)" font-size="12">cluster at the muon ✓</text>
+      <text x="300" y="160" class="muted small">separate cluster</text>
+    </g>
+  </svg>
+  <p>Pads closer than 20 mm are linked into a <b>cluster</b> (that includes diagonal neighbours). Each cluster gets its own
+  position. Isolated crosstalk hits form their own small clusters instead of polluting the real one. This alone gained
+  about 2 points.</p>
+</section>
+
+<!-- ============================================================ 7 guard -->
+<section class="sec" id="guard">
+  <p class="kicker">7 · Pointing resolution</p>
+  <h2>Fuzzy tracks next to dead pads</h2>
+  <p>The telescope does not tell us exactly where the muon crossed det2. Its prediction is uncertain by about
+  <b>3 mm</b> in each direction (we measured this from the spread of the residuals: 4.5 mm total, of which 3.4 mm is just
+  the pad size). So a muon "predicted" 2 mm inside a good pad may actually have crossed the dead pad next to it, and of
+  course left no signal.</p>
+  <svg class="ill" viewBox="0 0 1000 200" role="img" aria-label="Pointing uncertainty next to a dead pad">
+    <g transform="translate(40,30)">
+      <rect x="0" y="0" width="140" height="140" fill="var(--pad)"/>
+      <rect x="140" y="0" width="140" height="140" fill="var(--pad-dead)"/>
+      <rect x="280" y="0" width="140" height="140" fill="var(--pad)"/>
+      <text x="210" y="75" text-anchor="middle" fill="#fff" font-weight="700">dead pad</text>
+      <circle cx="122" cy="70" r="5" fill="var(--c1)"/>
+      <circle cx="122" cy="70" r="30" fill="var(--c1)" opacity=".18"/>
+      <circle cx="122" cy="70" r="60" fill="none" stroke="var(--c1)" stroke-dasharray="4 3"/>
+      <rect x="80" y="0" width="60" height="140" fill="var(--c5)" opacity=".18"/>
+      <rect x="280" y="0" width="60" height="140" fill="var(--c5)" opacity=".18"/>
+      <text x="70" y="160" class="muted small">6 mm guard band (removed)</text>
+    </g>
+    <g transform="translate(520,40)">
+      <text x="0" y="0">• blue dot = where the telescope says the muon was</text>
+      <text x="0" y="24">• shaded disc = where it really could have been (±3 mm)</text>
+      <text x="0" y="48">• near a dead pad, part of that disc is dead</text>
+      <text x="0" y="80" font-weight="700">Measured: 29% misses right at a dead edge,</text>
+      <text x="0" y="100" font-weight="700">back to normal (5.5%) by 6 mm ≈ 2 × 3 mm.</text>
+      <text x="0" y="132" class="muted">So we also remove a 6 mm band around every dead pad.</text>
+    </g>
+  </svg>
+  <!-- miss rate vs distance to a dead pad, measured BEFORE the guard (stage 30, first pass) -->
+  <svg class="ill" viewBox="0 0 1000 300" role="img" aria-label="Miss rate vs distance to the nearest dead pad">
+    <text x="70" y="22" font-weight="700">Miss rate vs distance from the track to the nearest dead pad (before the guard)</text>
+    <line x1="80" y1="250" x2="960" y2="250" stroke="var(--fg-faint)"/>
+    <line x1="80" y1="40" x2="80" y2="250" stroke="var(--fg-faint)"/>
+    <!-- y: 0%->250, 30%->40  => 7 px per % ; x: 0mm->80, 20mm->960 => 44 px per mm -->
+    <g class="muted small" font-size="11">
+      <text x="72" y="254" text-anchor="end">0%</text><text x="72" y="184" text-anchor="end">10%</text>
+      <text x="72" y="114" text-anchor="end">20%</text><text x="72" y="44" text-anchor="end">30%</text>
+      <text x="80" y="268" text-anchor="middle">0</text><text x="300" y="268" text-anchor="middle">5</text>
+      <text x="520" y="268" text-anchor="middle">10</text><text x="740" y="268" text-anchor="middle">15</text>
+      <text x="960" y="268" text-anchor="middle">20 mm</text>
+    </g>
+    <line x1="80" y1="180" x2="960" y2="180" stroke="var(--grid)"/><line x1="80" y1="110" x2="960" y2="110" stroke="var(--grid)"/>
+    <rect x="80" y="40" width="264" height="210" fill="var(--c5)" opacity=".08"/>
+    <text x="90" y="240" fill="var(--c5)" font-size="12">removed by the 6 mm guard</text>
+    <line x1="80" y1="211" x2="960" y2="211" stroke="var(--fg-muted)" stroke-dasharray="5 4"/>
+    <text x="955" y="205" text-anchor="end" class="muted small">interior level 5.5%</text>
+    <polyline fill="none" stroke="var(--c5)" stroke-width="2.5"
+      points="102,44 146,60 190,103 234,151 278,177 322,197 388,213 476,210 630,210 960,211"/>
+    <g fill="var(--c5)">
+      <circle cx="102" cy="44" r="4"/><circle cx="146" cy="60" r="4"/><circle cx="190" cy="103" r="4"/><circle cx="234" cy="151" r="4"/>
+      <circle cx="278" cy="177" r="4"/><circle cx="322" cy="197" r="4"/><circle cx="388" cy="213" r="4"/><circle cx="476" cy="210" r="4"/>
+      <circle cx="630" cy="210" r="4"/>
+    </g>
+    <text x="110" y="40" font-size="12" font-weight="700" fill="var(--c5)">29%</text>
+    <text x="520" y="290" text-anchor="middle" class="muted">distance from the predicted point to the edge of the nearest dead pad [mm]</text>
+  </svg>
+  <figure class="data">
+    <img src="2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation_files/miss_anatomy.png" alt="Anatomy of the remaining misses">
+    <figcaption>The miss-anatomy study <i>after</i> the 6 mm guard was applied: in panel <b>B</b> the dead-pad curve now
+    starts at 6 mm and stays at the interior level, while the outer edge of the detector (purple) shows no excess at all.
+    <b>D</b>: interior misses vs track angle (see next section). <b>E</b>: vs time: slightly fewer misses in the last 2 h
+    before the mesh trip. <b>F</b>: in no-hit events the pad under the track shows no pulse at all, just like a random
+    channel: the charge never arrived.</figcaption>
+  </figure>
+  <p>Removing the band costs 17% of the statistics, but it is the honest way to say "the detector where it is
+  connected". The efficiency went from 92.4% to <b>94.4%</b>.</p>
+</section>
+
+<!-- ============================================================ 8 pillars -->
+<section class="sec" id="pillars">
+  <p class="kicker">8 · A property of the design</p>
+  <h2>Pillars cast shadows</h2>
+  <p>The Micromegas mesh is held 128 µm above the pads by small insulating <b>pillars</b>: 12,477 of them, 0.8 mm wide,
+  on a 4 mm grid (the Saclay V1 mask, read from its Gerber file), plus 5 big ones 6 mm wide. Electrons that drift onto
+  a pillar are lost.</p>
+  <p>At first, comparing misses with the distance to the nearest pillar showed <i>nothing</i>. The reason: with 3 mm
+  pointing uncertainty you cannot tell whether a muon hit a 0.8 mm pillar. The trick was to look at the <b>angle</b>
+  of the track instead.</p>
+  <svg class="ill" viewBox="0 0 1000 230" role="img" aria-label="Vertical vs inclined track over a pillar">
+    <g transform="translate(40,20)">
+      <text x="0" y="0">Near-vertical muon</text>
+      <rect x="0" y="20" width="380" height="110" fill="var(--c1)" opacity=".08"/>
+      <text x="8" y="40" class="muted small">4 mm drift gap</text>
+      <line x1="0" y1="130" x2="380" y2="130" stroke="var(--fg-muted)" stroke-dasharray="3 3"/>
+      <text x="300" y="148" class="muted small">mesh</text>
+      <rect x="170" y="130" width="34" height="40" fill="var(--c4)" opacity=".8"/>
+      <text x="155" y="190" class="muted small">pillar</text>
+      <line x1="185" y1="10" x2="189" y2="130" stroke="var(--fg)" stroke-width="2"/>
+      <g fill="var(--c2)"><circle cx="186" cy="45" r="3"/><circle cx="187" cy="70" r="3"/><circle cx="188" cy="95" r="3"/><circle cx="188" cy="118" r="3"/></g>
+      <text x="230" y="80" fill="var(--c5)" font-weight="700">all electrons land</text>
+      <text x="230" y="98" fill="var(--c5)" font-weight="700">on the pillar → lost</text>
+    </g>
+    <g transform="translate(540,20)">
+      <text x="0" y="0">Inclined muon (20°)</text>
+      <rect x="0" y="20" width="380" height="110" fill="var(--c1)" opacity=".08"/>
+      <line x1="0" y1="130" x2="380" y2="130" stroke="var(--fg-muted)" stroke-dasharray="3 3"/>
+      <rect x="170" y="130" width="34" height="40" fill="var(--c4)" opacity=".8"/>
+      <line x1="140" y1="10" x2="200" y2="130" stroke="var(--fg)" stroke-width="2"/>
+      <g fill="var(--c2)"><circle cx="157" cy="45" r="3"/><circle cx="170" cy="70" r="3"/><circle cx="182" cy="95" r="3"/><circle cx="194" cy="118" r="3"/></g>
+      <text x="230" y="80" fill="var(--c3)" font-weight="700">electrons spread over</text>
+      <text x="230" y="98" fill="var(--c3)" font-weight="700">~1.5 mm → most survive</text>
+    </g>
+  </svg>
+  <p>A track crossing the 4 mm gap at angle θ spreads its electrons over a streak of length 4 mm × tan θ. For a
+  near-vertical muon the streak is shorter than a pillar, and if it lands on one <i>everything</i> is lost. That gives a
+  clean prediction: the no-hit rate should be highest for vertical tracks and vanish above ≈13°. The data agree:</p>
+  <figure class="data">
+    <img src="2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation_files/pillar_shadow.png" alt="No-hit rate vs track angle and vs distance to the big pillars">
+    <figcaption><b>Left</b>: no-hit rate falls from 6% for vertical tracks to 0.8% above 20°. The simple shadow model (blue)
+    fits a pillar radius of <b>0.48 mm</b>, close to the 0.40 mm of the drawing. <b>Middle</b>: around the 5 big pillars,
+    the loss vs distance is a fully dead disc blurred by the 2.4 mm pointing; its fitted radius is <b>4.3 mm</b> instead of
+    the drawn 3.0 mm. <b>Right</b>: the distribution of track angles in the telescope acceptance.</figcaption>
+  </figure>
+  <div class="take"><b>Lesson:</b> both kinds of pillar are effectively a bit bigger than drawn (a thin dead ring at their
+  edge, probably from field distortion), and together they cost about <b>2.3%</b> of muons. This is a real property of
+  the detector design, so it rightly stays in the efficiency. The gaps between pads, by contrast, are tiny (median
+  0.07 mm) and cost almost nothing.</div>
+</section>
+
+<!-- ============================================================ 9 misreco -->
+<section class="sec" id="misreco">
+  <p class="kicker">9 · The mis-reconstructions</p>
+  <h2>When the wrong cluster wins: a second particle</h2>
+  <p>With clustering, an event can have several clusters. We used to keep the one with the <b>most charge</b>. In 1.3% of
+  muons, there was a cluster right at the muon (A) but a <b>bigger one far away</b> (B) won. Was B crosstalk? A pointing
+  error? We checked:</p>
+  <ul>
+    <li>B is <b>not crosstalk</b>: only 1.5% of B clusters are electronic neighbours of A (while 91% of the tiny extra
+    clusters in normal events are).</li>
+    <li>B is <b>not a pointing error</b>: it sits typically 14 cm from the track, far more than the 3 mm uncertainty.</li>
+    <li>B is a <b>real particle</b>: same pulse height and same arrival time as muons. When the telescope's muon misses det2
+    completely, det2 still sees such a particle in <b>2.7%</b> of events (shower companions, or particles outside the
+    telescope's view). 2.7% × "B bigger than A half the time" ≈ 1.4%, exactly what we see.</li>
+  </ul>
+  <figure class="data">
+    <img src="2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation_files/misreco_anatomy.png" alt="Anatomy of the mis-reconstructions">
+    <figcaption><b>A</b>: how far the winning cluster is from the track. <b>B</b>: the winner is not made of electronic
+    neighbours and the muon pad is not saturated, unlike crosstalk. <b>C</b>: the winner (orange) carries more charge than
+    the cluster at the muon (green). <b>D, E</b>: the three classes vs track angle and telescope fit quality. <b>F</b>:
+    the residual width grows a little for inclined tracks.</figcaption>
+  </figure>
+  <div class="take"><b>Decision:</b> det2 <i>did</i> see the muon in these events, so the efficiency is now defined as
+  <b>"a cluster within 20 mm of the track"</b> (the closest one), not "the biggest cluster within 20 mm". The chance that
+  an unrelated particle lands within 20 mm by accident is ≈0.02%, negligible. Efficiency: 94.4% → <b>95.9%</b>.</div>
+</section>
+
+<!-- ============================================================ 10 blame -->
+<section class="sec" id="blame">
+  <p class="kicker">10 · Telescope or detector?</p>
+  <h2>Who is to blame for the last few misses?</h2>
+  <p>The telescope fit returns a quality number, the χ² (small = the planes agree on a clean straight line). Plotting
+  det2's efficiency against it tells us whether the reference is limiting:</p>
+  <figure class="data">
+    <img src="2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation_files/eff_vs_chi2.png" alt="Efficiency vs M3 track chi2">
+    <figcaption>The "any pad fired" curve (orange) is <b>flat</b> for χ² &lt; 3: the no-hit losses do not come from bad tracks.
+    The reconstruction (blue) degrades slowly for poorer tracks, because they point less precisely: 96.0% for the χ² &lt; 5
+    we use, ≈96.4% for the very best tracks.</figcaption>
+  </figure>
+  <p>The remaining <b>0.65%</b> "only distant hits" (something fired, but nowhere near the track) can come from two
+  stories: the telescope mis-pointed (det2's fault: none), or det2 missed the muon while a random particle hit it
+  elsewhere (det2's fault). Three independent methods split them:</p>
+  <figure class="data">
+    <img src="2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation_files/blame.png" alt="Reference vs P2 share of the only-distant hits">
+    <figcaption><b>1</b>: extrapolate the rate to a perfect track (χ² → 0). <b>3</b>: mis-pointing puts the cluster close to
+    the track while random coincidences are flat; the flat part is measured far away (&gt;150 mm) with a template built by
+    mixing events. <b>Right</b>: all methods agree that det2's share is only <b>0.09–0.19%</b>; the rest (≈0.5%) is
+    the telescope.</figcaption>
+  </figure>
+  <div class="take"><b>So:</b> with a perfect telescope det2 would measure ≈<b>96.6%</b>, just below its 96.8% "any
+  signal" ceiling. What det2 still loses is essentially the pillar shadow and signals below threshold.</div>
+</section>
+
+<!-- ============================================================ 11 final -->
+<section class="sec" id="final">
+  <p class="kicker">11 · Putting it together</p>
+  <h2>The final picture</h2>
+  <figure class="data">
+    <img src="2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation_files/map_final.png" alt="Final sliding-window efficiency maps">
+    <figcaption>Final efficiency maps. Grey holes are the removed dead/shorted pads with their 6 mm guard; red circles mark
+    the 5 big pillars. Left: reconstructed within 20 mm. Middle: any pad fired. Right: statistics per point.</figcaption>
+  </figure>
+  <p>Where does every crossing muon go? The breakdown below attributes each loss to a cause. With the "any cluster within
+  20 mm" definition the "wrong cluster won" bar is, by construction, zero.</p>
+  <figure class="data">
+    <img src="2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation_files/loss_breakdown.png" alt="Loss breakdown">
+  </figure>
+
+  <div style="overflow-x:auto">
+  <table class="t num">
+    <tr><th>Final accounting (repositioned long run, 36,382 tracks)</th><th>% of muons</th><th>whose fault?</th></tr>
+    <tr><td><b>Reconstructed within 20 mm</b></td><td><b>95.9</b></td><td></td></tr>
+    <tr><td>Only distant hits (telescope mis-pointed)</td><td>0.65</td><td>mostly telescope (det2 ≈0.1–0.2)</td></tr>
+    <tr><td>Resolution tail (20–40 mm)</td><td>0.27</td><td>mostly telescope</td></tr>
+    <tr><td>Small pillars, near-vertical tracks</td><td>2.0</td><td>detector design</td></tr>
+    <tr><td>Signal below threshold</td><td>≈0.8</td><td>detector (gain fluctuations)</td></tr>
+    <tr><td>Big pillars</td><td>0.26</td><td>detector design</td></tr>
+    <tr><td>Pad edges</td><td>0.14</td><td>detector</td></tr>
+  </table>
+  </div>
+
+  <div class="two">
+    <figure class="data">
+      <img src="2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation_files/mesh_scan.png" alt="Efficiency vs mesh voltage">
+      <figcaption>Mesh scan (24 Nov, re-analysed with all fixes): from 64% at 340 V to <b>97.0%</b> at 420 V.</figcaption>
+    </figure>
+    <figure class="data">
+      <img src="2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation_files/drift_scan.png" alt="Efficiency vs drift voltage">
+      <figcaption>Drift scan at mesh 430 V: plateau of <b>96–98%</b> from ≈700 V; 96.2% at the 730 V operating point.</figcaption>
+    </figure>
+  </div>
+  <p>Other numbers from the same run: 14 sparks (1.1 per hour, 0.5% dead time); time resolution ≈19 ns for multi-pad
+  clusters.</p>
+</section>
+
+<!-- ============================================================ 12 todo -->
+<section class="sec" id="todo">
+  <p class="kicker">12 · Action items</p>
+  <h2>What to check on the bench</h2>
+  <ul>
+    <li><b>Inspect and re-solder the detector-board connectors 3, 2 and 8</b>: 8 groups of shorted pins (solder bridges),
+    with open/noisy pins right next to them on connector 3.</li>
+    <li><b>Connector 5</b>: a full row of pins (FEU 6 even channels 384–446) is not connected.</li>
+    <li><b>Connector 9, top half</b>: the cable/adapter is mounted reversed. Harmless now that the map knows it, but worth
+    labelling (det5 had the same issue on connector 8).</li>
+    <li><b>Weak pads</b> FEU 6 452/456, FEU 7 261 (and candidate FEU 7 29): ≈27% response, a genuine low-gain area.</li>
+    <li><b>The mesh trip</b> of 01:07 (10 µA at 430 V) left a resistive leak; the mesh no longer holds voltage. This must
+    be understood before the next run.</li>
+  </ul>
+  <details>
+    <summary>Glossary</summary>
+    <ul>
+      <li><b>Pad</b>: a ≈12 mm square electrode under the mesh, read by one electronics channel.</li>
+      <li><b>FEU / Dream channel</b>: the electronics; one FEU reads 512 channels in blocks of 64.</li>
+      <li><b>Cluster</b>: a group of neighbouring pads that fired in the same event.</li>
+      <li><b>Crosstalk</b>: a small copy of a signal leaking into a neighbouring channel.</li>
+      <li><b>Short</b>: two channels electrically connected; they record identical signals.</li>
+      <li><b>Pillar</b>: an insulating spacer holding the mesh; electrons landing on it are lost.</li>
+      <li><b>Pointing resolution</b>: how precisely the telescope predicts the crossing point (≈3 mm here).</li>
+      <li><b>χ²</b>: the quality of the telescope's straight-line fit; small is good.</li>
+    </ul>
+  </details>
+  <p class="muted">Analysis stages behind each section: 02/06/10/12 (efficiency and maps), 26 and 29 (crosstalk and shorts),
+  27 (loss breakdown), 28 (χ²), 30 (miss anatomy), 31 (pillar shadow), 32 (mis-reconstructions), 33 (telescope vs
+  detector), all on branch <code>det2-p1-scans-11-24-26</code> of <code>P2_basket_analysis</code>.</p>
+</section>
+
+    </div>
+  </article>
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <span>Alexandra Kallitsopoulou</span>
+  <span><a href="../notes/">← all notes</a></span>
+</div></footer>
+</body>
+</html>

@@ -1,7 +1,29 @@
 {
-  "latest_update": "2026-11-16",
-  "count": 22,
+  "latest_update": "2026-11-26",
+  "count": 23,
   "notes": [
+    {
+      "title": "Chasing det2's lost muons: a cosmic-bench efficiency investigation",
+      "description": "How P2 det2's cosmic-bench efficiency went from 82% to 96% in one day of detective work: a flipped connector, dead and shorted pins, readout crosstalk, pillar shadows, pointing resolution and who to blame for the last misses, explained step by step with pictures.",
+      "category": "Analysis",
+      "tags": [
+        "P2",
+        "det2",
+        "micromegas",
+        "efficiency",
+        "cosmics",
+        "crosstalk",
+        "pillars",
+        "analysis"
+      ],
+      "date": "2026-11-26",
+      "updated": "2026-11-26",
+      "unlisted": false,
+      "path": "2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation.html",
+      "url": "/notes/2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation.html",
+      "size": 48674,
+      "size_h": "47.5 kB"
+    },
     {
       "title": "Single-channel efficiency on the VMM cosmic bench",
       "description": "How we measure the absolute efficiency of one VMM channel (one pad) with cosmic muons: why the obvious way fails, counting in circles instead, scintillator-confirmed tags, closure tests and the real-data checks of the wk2 threshold scan.",
