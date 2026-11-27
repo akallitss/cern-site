@@ -128,13 +128,13 @@
 <section class="sec" style="border-top:0">
   <p class="kicker">In one paragraph</p>
   <p>A Micromegas has two gas gaps stacked on top of each other: a thick <b class="c-drift">drift gap</b> (4 mm by design) where the muon leaves its charge, and a thin
-  <b class="c-ion">amplification gap</b> (0.128 mm) where that charge is multiplied. If the chamber is not flat, either gap can change from place to place, and both change the
+  <b class="c-ion">amplification gap</b> (0.15 mm) where that charge is multiplied. If the chamber is not flat, either gap can change from place to place, and both change the
   signal. With hits alone (one time and one amplitude per pad) the two effects look the same. With the full waveforms they can be told apart. Doing that on the cosmic-bench
   data of <b>det2</b> (24 and 25 November, mesh 430 V, drift 730 V) shows a chamber whose drift gap is far from uniform, and it explains where the muons are lost.</p>
   <div class="kpis">
     <div class="kpi"><div class="big c-drift">3.3 → 7.2 mm</div><div class="lbl">drift gap across the chamber (design 4.0 mm): thin centre, thick ridge along the left side; on the dry-gas scale, probably about 10 % more (see section 8)</div></div>
     <div class="kpi"><div class="big">±1.5 mm</div><div class="lbl">in the ridge both faces move apart: window up, board down, by about the same amount</div></div>
-    <div class="kpi"><div class="big c-ion">≈ 8 µm rms</div><div class="lbl">amplification-gap variation that would explain the gain map (on 128 µm)</div></div>
+    <div class="kpi"><div class="big c-ion">≈ 10 µm rms</div><div class="lbl">amplification-gap variation that would explain the gain map (on 150 µm)</div></div>
     <div class="kpi"><div class="big">3.4 % → 0.9 %</div><div class="lbl">muons lost where the gap is 4.0 mm versus 6.3 mm; the price is 32 ns instead of 21 ns time spread</div></div>
   </div>
   <ol class="toc">
@@ -159,7 +159,7 @@
   <h2>The chamber in one picture</h2>
   <div class="two">
     <figure>
-      <svg class="ill" viewBox="0 0 620 400" role="img" aria-label="Cross-section of the chamber: window on top, 4 mm drift gap, mesh, 0.128 mm amplification gap, read-out pads. A muon crosses and leaves electrons that drift down to the mesh.">
+      <svg class="ill" viewBox="0 0 620 400" role="img" aria-label="Cross-section of the chamber: window on top, 4 mm drift gap, mesh, 0.15 mm amplification gap, read-out pads. A muon crosses and leaves electrons that drift down to the mesh.">
         <defs>
           <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-fg"/></marker>
           <marker id="ahb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-drift"/></marker>
@@ -197,15 +197,15 @@
         <text x="72" y="204" class="m">they drift down at ~31 µm/ns</text>
         <text x="496" y="274" class="m">mesh, −430 V</text>
         <text x="496" y="292" class="b" style="fill:var(--ion)">amplification gap</text>
-        <text x="496" y="308" class="m">0.128 mm (drawn</text>
-        <text x="496" y="323" class="m">30× too tall)</text>
+        <text x="496" y="308" class="m">0.15 mm (drawn</text>
+        <text x="496" y="323" class="m">4.5× too tall)</text>
         <text x="60" y="338" class="m">read-out pads, 12 mm wide, at ground</text>
         <text x="113" y="262" class="m sm" text-anchor="middle">pillar</text>
         <!-- dimension -->
         <line x1="40" y1="72" x2="40" y2="268" class="s-muted" stroke-width="1" marker-start="url(#ah)" marker-end="url(#ah)"/>
         <text x="34" y="174" class="m" text-anchor="middle" transform="rotate(-90 34 174)">≈ 128 ns to cross</text>
       </svg>
-      <figcaption>Not to scale: the amplification gap is thirty times thinner than the drift gap. The window is a thin aluminised foil glued on a frame; on the bench it is on top and the board below.</figcaption>
+      <figcaption>Not to scale: the amplification gap is 27 times thinner than the drift gap. The window is a thin aluminised foil glued on a frame; on the bench it is on top and the board below.</figcaption>
     </figure>
     <div>
       <p>The life of one signal, in four steps:</p>
@@ -279,18 +279,18 @@
   <p>Move the sliders and try to make the pulse arrive 20 ns later in three different ways. Then look at the dots: each dot is the peak time of one muon. Only one slider makes the cloud of dots wider.</p>
   <div class="ctl">
     <div><label for="sl-gap"><span class="sw" style="background:var(--drift)"></span>Drift gap <output id="o-gap">4.0 mm</output></label><input id="sl-gap" type="range" min="3" max="8" step="0.1" value="4"></div>
-    <div><label for="sl-amp"><span class="sw" style="background:var(--ion)"></span>Amplification gap <output id="o-amp">128 µm</output></label><input id="sl-amp" type="range" min="100" max="160" step="1" value="128"></div>
+    <div><label for="sl-amp"><span class="sw" style="background:var(--ion)"></span>Amplification gap <output id="o-amp">150 µm</output></label><input id="sl-amp" type="range" min="120" max="185" step="1" value="150"></div>
     <div><label for="sl-del"><span class="sw" style="background:var(--delay)"></span>Cable delay <output id="o-del">0 ns</output></label><input id="sl-del" type="range" min="-40" max="40" step="1" value="0"></div>
   </div>
   <div class="seg" role="group" aria-label="Presets">
-    <button type="button" data-preset="4,128,0">Flat chamber</button>
-    <button type="button" data-preset="3.3,128,0">det2 centre (3.3 mm)</button>
-    <button type="button" data-preset="6.8,128,0">det2 ridge (6.8 mm)</button>
-    <button type="button" data-preset="4,143,0">Low-gain corner (+15 µm)</button>
-    <button type="button" data-preset="4,128,25">Longer cable (+25 ns)</button>
+    <button type="button" data-preset="4,150,0">Flat chamber</button>
+    <button type="button" data-preset="3.3,150,0">det2 centre (3.3 mm)</button>
+    <button type="button" data-preset="6.8,150,0">det2 ridge (6.8 mm)</button>
+    <button type="button" data-preset="4,165,0">Low-gain corner (+15 µm)</button>
+    <button type="button" data-preset="4,150,25">Longer cable (+25 ns)</button>
   </div>
   <div class="chart"><div id="builder-chart"></div>
-    <div class="legend"><span><i class="dash"></i>flat chamber (4.0 mm, 128 µm)</span><span><i style="background:var(--fg)"></i>your chamber</span><span><i class="dot" style="background:var(--drift)"></i>peak time of 24 muons</span></div>
+    <div class="legend"><span><i class="dash"></i>flat chamber (4.0 mm, 150 µm)</span><span><i style="background:var(--fg)"></i>your chamber</span><span><i class="dot" style="background:var(--drift)"></i>peak time of 24 muons</span></div>
   </div>
   <div class="reads">
     <div class="read"><div class="v" id="r-peak">–</div><div class="l">peak time of the average pulse</div></div>
@@ -298,7 +298,7 @@
     <div class="read"><div class="v" id="r-spread">–</div><div class="l">scatter of the 24 muons</div></div>
     <div class="read"><div class="v" id="r-amp">–</div><div class="l">pulse height, relative</div></div>
   </div>
-  <p class="muted small">A simplified model with round numbers (drift speed 31 µm/ns, ion crossing 80 ns at 128 µm, 150 ns shaping, gain falling 3.6 % per µm of amplification gap). It shows the logic, it is not the fit.</p>
+  <p class="muted small">A simplified model with round numbers (drift speed 31 µm/ns, ion crossing 80 ns at 150 µm, 150 ns shaping, gain falling 2.9 % per µm of amplification gap). It shows the logic, it is not the fit.</p>
 </section>
 
 <!-- ============================================================ 4 trick 1 -->
@@ -544,16 +544,16 @@
             <text x="100" y="140" text-anchor="middle" class="m">long way back: long ion tail</text>
           </g>
         </svg>
-        <figcaption>At fixed voltage a thicker amplification gap lowers the gain (about 3.6 % per micron here) and lengthens the ion drift. A dirty mesh or a weaker electronics channel would lower the gain without touching the tail.</figcaption>
+        <figcaption>At fixed voltage a thicker amplification gap lowers the gain (about 2.9 % per micron here) and lengthens the ion drift. A dirty mesh or a weaker electronics channel would lower the gain without touching the tail.</figcaption>
       </figure>
     </div>
     <div>
       <figure><div class="chart" id="c-ser"></div>
         <figcaption>48 regions of det2. Horizontal: gain after removing the drift-gap effects. Vertical: the part of the average pulse length that is not drift time (average-pulse result minus scatter result). Lower gain goes with a longer tail.</figcaption></figure>
       <p>Is that gain map really the amplification gap? The test is the ion tail. From tricks 1 and 2 we have two drift times per zone: one from the scatter (blind to the ions) and one from the average pulse
-      (which also grows when the ion tail grows). Their difference is the ion part. It is longer where the gain is lower: <b>−16 ± 5 ns for every factor e (2.7) of gain</b>, the size expected if the
-      whole gain map is the gap.</p>
-      <p>If so, the amplification gap varies by about <b>8 µm rms</b> around 128 µm (−17 to +12 µm). The X-ray (Fe55) data of July, taken on other electronics channels, show the same gain map
+      (which also grows when the ion tail grows). Their difference is the ion part. It is longer where the gain is lower: <b>−16 ± 5 ns for every factor e (2.7) of gain</b>, of the size expected if
+      most of the gain map is the gap.</p>
+      <p>If so, the amplification gap varies by about <b>10 µm rms</b> around 150 µm (−21 to +16 µm). The X-ray (Fe55) data of July, taken on other electronics channels, show the same gain map
       (correlation 0.81) and the same link between gain and rise time.</p>
     </div>
   </div>
@@ -883,11 +883,11 @@ bars('c-ampl', { title: 'Relative to the 4.0 mm pads', ymax: 2, yt: [0, 0.5, 1, 
   var seed = 12345, rnd = function () { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; };
   var F = []; for (i = 0; i < 24; i++) { var a = 0, w = 0; for (var j = 0; j < 5; j++) { var ww = 0.3 + rnd(); a += ww * rnd(); w += ww; } F.push(a / w); }
   function build(gap, g, del) {
-    var Td = gap / V, Ti = 80 * Math.pow(g / 128, 2), t0 = 150 + del, cur = new Float64Array(N), p = new Float64Array(N);
+    var Td = gap / V, Ti = 80 * Math.pow(g / 150, 2), t0 = 150 + del, cur = new Float64Array(N), p = new Float64Array(N);
     var nd = Math.max(1, Math.round(Td / DT)), ni = Math.max(1, Math.round(Ti / DT)), i0 = Math.round(t0 / DT);
     for (var a = 0; a < nd; a++) for (var b = 0; b < ni; b++) { var k = i0 + a + b; if (k < N) cur[k] += 1 / (nd * ni); }
     for (var n = 0; n < N; n++) { var acc = 0; for (var m = Math.max(0, n - 159); m <= n; m++) acc += cur[m] * sh[n - m]; p[n] = acc; }
-    var q = (gap / 4) * Math.exp(-0.036 * (g - 128));
+    var q = (gap / 4) * Math.exp(-0.029 * (g - 150));
     for (n = 0; n < N; n++) p[n] *= q;
     var im = 0; for (n = 1; n < N; n++) if (p[n] > p[im]) im = n;
     var off = 0; if (im > 0 && im < N - 1) { var d = p[im - 1] - 2 * p[im] + p[im + 1]; off = d ? 0.5 * (p[im - 1] - p[im + 1]) / d : 0; }
@@ -895,7 +895,7 @@ bars('c-ampl', { title: 'Relative to the 4.0 mm pads', ymax: 2, yt: [0, 0.5, 1, 
     var lt = l + (half - p[l]) / (p[l + 1] - p[l]), rt = r - (half - p[r]) / (p[r - 1] - p[r]);
     return { p: p, peak: (im + off) * DT, amp: pk, fwhm: (rt - lt) * DT, Td: Td, Ti: Ti };
   }
-  var ref = build(4, 128, 0), refAmp = ref.amp;
+  var ref = build(4, 150, 0), refAmp = ref.amp;
   var ig = document.getElementById('sl-gap'), ia = document.getElementById('sl-amp'), id = document.getElementById('sl-del');
   function sd(a) { var m = a.reduce(function (s, v) { return s + v; }, 0) / a.length; return Math.sqrt(a.reduce(function (s, v) { return s + (v - m) * (v - m); }, 0) / a.length); }
   function draw() {
