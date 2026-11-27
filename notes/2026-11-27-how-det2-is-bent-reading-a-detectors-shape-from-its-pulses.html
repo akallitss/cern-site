@@ -132,7 +132,7 @@
   signal. With hits alone (one time and one amplitude per pad) the two effects look the same. With the full waveforms they can be told apart. Doing that on the cosmic-bench
   data of <b>det2</b> (24 and 25 November, mesh 430 V, drift 730 V) shows a chamber whose drift gap is far from uniform, and it explains where the muons are lost.</p>
   <div class="kpis">
-    <div class="kpi"><div class="big c-drift">3.3 → 7.2 mm</div><div class="lbl">drift gap across the chamber (design 4.0 mm): thin centre, thick ridge along the left side; up to 18 % more if the gas is wet</div></div>
+    <div class="kpi"><div class="big c-drift">3.3 → 7.2 mm</div><div class="lbl">drift gap across the chamber (design 4.0 mm): thin centre, thick ridge along the left side; on the dry-gas scale, probably 17 % more (see section 8)</div></div>
     <div class="kpi"><div class="big">±1.5 mm</div><div class="lbl">in the ridge both faces move apart: window up, board down, by about the same amount</div></div>
     <div class="kpi"><div class="big c-ion">≈ 8 µm rms</div><div class="lbl">amplification-gap variation that would explain the gain map (on 128 µm)</div></div>
     <div class="kpi"><div class="big">3.4 % → 0.9 %</div><div class="lbl">muons lost where the gap is 4.0 mm versus 6.3 mm; the price is 32 ns instead of 21 ns time spread</div></div>
@@ -447,8 +447,11 @@
     its drift scan, in the zones where the gap is nominal. With the textbook speed the ridge would come out at 8.2 mm instead of 7.2 mm.</p>
     <p><b>Why is the gas slow?</b> A scan of gas mixtures in Magboltz gives a clear answer: about <b>0.7 % of water vapour</b> reproduces the whole drift scan, from 62 to 1312 V/cm, with one gas and one gap.
     Dry gas, extra air and extra isobutane do not. Water through the thin foil window is plausible at low gas flow; a hygrometer on the exhaust would confirm it.</p>
-    <p><b>What it means for the map.</b> The same water would also make the gas 18 % faster at the operating field. The drift times are measured; the millimetres are drift time times speed. So all gaps
-    share one scale factor between 1.0 (dry gas: main zone 4.0 mm, ridge 7.2 mm) and 1.18 (0.7 % water: 4.7 mm and 8.5 mm). The shape of the map and all ratios do not change.</p></div>
+    <p><b>Could a thicker gap do the same as the water?</b> No. A thicker gap only stretches the curve; the data need the drift speed to keep rising up to 450 V/cm, which dry gas never does (no gap between 3 and 6 mm
+    comes close). What the scan alone cannot decide is the mix: a little more water with a thinner gap fits as well as a little less water with a thicker one (0.9 % at 3.5 mm, 0.75 % at 4.0 mm, 0.5 % at 5.0 mm).</p>
+    <p><b>Trick 3 breaks the tie.</b> Along that line of solutions the drift time at the operating point changes from 96 to 132 ns, and the pad pairs measure it directly: 129 ± 3 ns. Together they give
+    <b>about 0.55 % water and a main-zone gap of 4.7 mm</b> (4.2–5.0). So the millimetres on this page, which use the dry-gas speed, are probably all about 17 % too small: main zone 4.7 mm, thin centre 4.0 mm
+    (the design value), ridge up to 8.4 mm. The shape of the map and all ratios do not change.</p></div>
     <figure><div class="chart" id="c-vd"></div><div class="legend"><span><i style="background:var(--drift)"></i>measured in det2</span><span><i class="dash"></i>dry-gas calculation</span></div></figure></div>
   </details>
 </section>
@@ -595,7 +598,7 @@
       <ul>
         <li>What holds the two faces 3 mm apart along the left side. The run log calls this chamber "bulked with misaligned wall"; the data cannot say whether that is the cause.</li>
         <li>Window or board in the thin centre.</li>
-        <li>The water content of the gas (0.7 % fits the drift scan; not yet measured directly). It fixes the common millimetre scale of the map.</li>
+        <li>The water content of the gas (0.55 % from the fit; not yet measured directly). It fixes the common millimetre scale of the map.</li>
         <li>Why the pulse height drops at very low drift field. It is not electrons lost on the way: the timing rules that out.</li>
         <li>Why the gain contrast is 1.5 times larger now than in the July X-ray map.</li>
       </ul>
