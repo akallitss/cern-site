@@ -1,7 +1,31 @@
 {
   "latest_update": "2026-11-27",
-  "count": 23,
+  "count": 24,
   "notes": [
+    {
+      "title": "How det2 is bent: reading a detector's shape from its pulses",
+      "description": "A step-by-step, picture-first explanation of how the cosmic-ray pulses of the P2 Micromegas det2 reveal its shape: a drift gap that is 3.3 mm in the centre and up to 7 mm along one side, an amplification gap that varies by a few microns, and what both do to the signal and to the lost muons.",
+      "category": "Analysis",
+      "tags": [
+        "P2",
+        "det2",
+        "micromegas",
+        "drift gap",
+        "amplification gap",
+        "waveform",
+        "timing",
+        "cosmics",
+        "deformation",
+        "analysis"
+      ],
+      "date": "2026-11-27",
+      "updated": "2026-11-27",
+      "unlisted": false,
+      "path": "2026-11-27-how-det2-is-bent-reading-a-detectors-shape-from-its-pulses.html",
+      "url": "/notes/2026-11-27-how-det2-is-bent-reading-a-detectors-shape-from-its-pulses.html",
+      "size": 147454,
+      "size_h": "144.0 kB"
+    },
     {
       "title": "Chasing det2's lost muons: a cosmic-bench efficiency investigation",
       "description": "How P2 det2's cosmic-bench efficiency went from 82% to 96% in one day of detective work: a flipped connector, dead and shorted pins, readout crosstalk, pillar shadows, pointing resolution and who to blame for the last misses, explained step by step with pictures.",
