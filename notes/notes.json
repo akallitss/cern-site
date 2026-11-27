@@ -1,5 +1,5 @@
 {
-  "latest_update": "2026-11-26",
+  "latest_update": "2026-11-27",
   "count": 23,
   "notes": [
     {
@@ -17,12 +17,12 @@
         "analysis"
       ],
       "date": "2026-11-26",
-      "updated": "2026-11-26",
+      "updated": "2026-11-27",
       "unlisted": false,
       "path": "2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation.html",
       "url": "/notes/2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation.html",
-      "size": 48674,
-      "size_h": "47.5 kB"
+      "size": 62191,
+      "size_h": "60.7 kB"
     },
     {
       "title": "Single-channel efficiency on the VMM cosmic bench",

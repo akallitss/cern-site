@@ -9,7 +9,7 @@
 <meta name="category" content="Analysis">
 <meta name="keywords" content="P2,det2,micromegas,efficiency,cosmics,crosstalk,pillars,analysis">
 <meta name="date" content="2026-11-26">
-<meta name="updated" content="2026-11-26">
+<meta name="updated" content="2026-11-27">
 <meta name="visibility" content="public">
 <!-- ======================================================================= -->
 <link rel="stylesheet" href="../assets/site.css">
@@ -138,8 +138,16 @@
     <li><a href="#misreco">9 · The wrong cluster wins: a second particle</a></li>
     <li><a href="#blame">10 · Is it the telescope or the detector?</a></li>
     <li><a href="#final">11 · The final picture</a></li>
-    <li><a href="#todo">12 · What to do on the bench</a></li>
+    <li><a href="#align">12 · Update 27 Nov: the alignment was slightly shrunk</a></li>
+    <li><a href="#todo">13 · What to do on the bench</a></li>
   </ul>
+
+  <div class="callout warn"><b>Update, 27 November.</b> The pad-to-telescope alignment used in sections 7–11 was biased:
+  a few percent of mismatched pairs shrank the detector map by 2.2%. Corrected (<a href="#align">section 12</a>), the
+  telescope's pointing resolution is <b>0.7 mm, not 3 mm</b>, the guard band around dead pads shrinks from
+  <b>6 mm to 2 mm</b> and the same 2 mm rule now applies at the outer edge. The efficiency stays at <b>95.9%</b> but on
+  11% more tracks, and the active area is now set by measurement rather than by a tuned band. With the sharper pointing,
+  the "pillar shadow" reading of section 8 no longer holds as it stands and is being re-examined.</div>
 </section>
 
 <!-- ============================================================ 1 setup -->
@@ -418,6 +426,9 @@
   <b>3 mm</b> in each direction (we measured this from the spread of the residuals: 4.5 mm total, of which 3.4 mm is just
   the pad size). So a muon "predicted" 2 mm inside a good pad may actually have crossed the dead pad next to it, and of
   course left no signal.</p>
+  <p class="callout warn small"><b>Corrected 27 Nov (section 12):</b> the 3 mm was an artefact of a slightly shrunk
+  alignment. With the alignment fixed the pointing is <b>0.7 mm</b>, the dead-pad excess is gone by 2 mm and the guard
+  is now <b>2 mm</b>. The 6 mm band below was, in effect, compensating for the misalignment.</p>
   <svg class="ill" viewBox="0 0 1000 200" role="img" aria-label="Pointing uncertainty next to a dead pad">
     <g transform="translate(40,30)">
       <rect x="0" y="0" width="140" height="140" fill="var(--pad)"/>
@@ -515,6 +526,10 @@
       <text x="230" y="98" fill="var(--c3)" font-weight="700">~1.5 mm → most survive</text>
     </g>
   </svg>
+  <p class="callout warn small"><b>Under re-examination (27 Nov, section 12):</b> with the corrected 0.7 mm pointing the
+  pillar positions can be tested directly, and the fall of the no-hit rate with angle is <i>just as strong for tracks
+  at least 1.4 mm from any pillar</i>. Pillars therefore cannot be its main cause; the numbers below are kept as they
+  were first derived.</p>
   <p>A track crossing the 4 mm gap at angle θ spreads its electrons over a streak of length 4 mm × tan θ. For a
   near-vertical muon the streak is shorter than a pillar, and if it lands on one <i>everything</i> is lost. That gives a
   clean prediction: the no-hit rate should be highest for vertical tracks and vanish above ≈13°. The data agree:</p>
@@ -605,7 +620,7 @@
     <tr><td><b>Reconstructed within 20 mm</b></td><td><b>95.9</b></td><td></td></tr>
     <tr><td>Only distant hits (telescope mis-pointed)</td><td>0.65</td><td>mostly telescope (det2 ≈0.1–0.2)</td></tr>
     <tr><td>Resolution tail (20–40 mm)</td><td>0.27</td><td>mostly telescope</td></tr>
-    <tr><td>Small pillars, near-vertical tracks</td><td>2.0</td><td>detector design</td></tr>
+    <tr><td>Small pillars, near-vertical tracks <span class="small muted">(re-examined in §12: angle-dependent no-hit, cause open)</span></td><td>2.0</td><td>detector design?</td></tr>
     <tr><td>Signal below threshold</td><td>≈0.8</td><td>detector (gain fluctuations)</td></tr>
     <tr><td>Big pillars</td><td>0.26</td><td>detector design</td></tr>
     <tr><td>Pad edges</td><td>0.14</td><td>detector</td></tr>
@@ -626,9 +641,146 @@
   clusters.</p>
 </section>
 
-<!-- ============================================================ 12 todo -->
+<!-- ============================================================ 12 alignment update -->
+<section class="sec" id="align">
+  <p class="kicker">12 · Update, 27 November</p>
+  <h2>The alignment was slightly shrunk</h2>
+  <p>Every number above rests on the <b>alignment</b>: the rotation, shift and scale that carry a pad's position on det2
+  into the telescope's coordinates. It is found by matching, event by event, the telescope track with the det2 cluster
+  and asking which transformation makes the pairs agree best (a least-squares fit). Two questions from the bench sent us
+  back to it: <i>could det2 be tilted?</i> and <i>could the misses at pad borders just be misalignment?</i></p>
+
+  <h3>No tilt, but a shrink</h3>
+  <p>First the tilt. We fitted a plane tilted in any direction, plus a possible bow, by using the fact that a height error
+  shifts inclined tracks sideways (by height × slope). Result: a tilt of <b>0.06° ± 0.05°</b>, i.e. less than 0.1 mm at the
+  edges. det2 is flat and level; a 3D rotation plays no role.</p>
+  <p>But the same fit found something else: the map from pads to telescope was <b>2.2% too small</b> (scale 0.978 instead
+  of 1.000) and the det2 plane was placed 6 mm too low (240 mm instead of 246 mm). Why would a fit get the scale wrong?
+  Because about <b>5% of the pairs are not the muon</b> (the second particle of section 9, or noise, typically 10 cm
+  away). The least-squares scale is, roughly, ⟨pad · track⟩ / ⟨pad²⟩: an unrelated pair adds nothing on average to the
+  top but its full weight to the bottom, so it pulls the scale <i>down</i>. At 20 cm from the centre, 2.2% is 4.4 mm:
+  more than the telescope's real pointing error.</p>
+  <svg class="ill" viewBox="0 0 1000 230" role="img" aria-label="How a few unrelated pairs shrink a least-squares scale">
+    <g transform="translate(60,20)">
+      <text x="0" y="0">track position vs pad position (one axis)</text>
+      <line x1="0" y1="190" x2="400" y2="190" stroke="var(--fg-faint)"/><line x1="200" y1="10" x2="200" y2="190" stroke="var(--fg-faint)"/>
+      <line x1="20" y1="185" x2="380" y2="15" stroke="var(--c3)" stroke-width="2.5"/>
+      <g fill="var(--c3)"><circle cx="50" cy="168" r="4"/><circle cx="90" cy="150" r="4"/><circle cx="130" cy="131" r="4"/><circle cx="170" cy="113" r="4"/><circle cx="230" cy="86" r="4"/><circle cx="270" cy="67" r="4"/><circle cx="310" cy="48" r="4"/><circle cx="350" cy="30" r="4"/></g>
+      <g fill="var(--c5)"><circle cx="60" cy="60" r="5"/><circle cx="340" cy="160" r="5"/></g>
+      <line x1="20" y1="168" x2="380" y2="32" stroke="var(--c5)" stroke-width="2" stroke-dasharray="6 4"/>
+      <text x="300" y="185" fill="var(--c5)" font-size="12">2 unrelated pairs</text>
+    </g>
+    <g transform="translate(540,40)">
+      <text x="0" y="0" fill="var(--c3)" font-weight="700">green: the true map, slope = scale = 1</text>
+      <text x="0" y="28" fill="var(--c5)" font-weight="700">dashed red: least squares with the</text>
+      <text x="0" y="46" fill="var(--c5)" font-weight="700">two unrelated pairs included → flatter</text>
+      <text x="0" y="80">On det2: 4.7% unrelated pairs → scale 0.978.</text>
+      <text x="0" y="104">Fix: refit using only pairs within 15 mm of</text>
+      <text x="0" y="122">the previous fit ("trimmed" fit) → scale 1.000.</text>
+      <text x="0" y="156" class="muted">Height: from how the residual grows with</text>
+      <text x="0" y="174" class="muted">track slope → 246 mm (the z-scan now agrees).</text>
+    </g>
+  </svg>
+  <figure class="data">
+    <img src="2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation_files/align_residual_maps.png" alt="Median cluster minus track residual over the detector, before and after the alignment fix">
+    <figcaption>Median (cluster − track) in 40 mm cells, arrows magnified ×16.7. <b>Left</b>, the alignment used in sections
+    7–11: every arrow points to the centre, the signature of a too-small scale (up to 2.5 mm at the edges). <b>Right</b>,
+    corrected: residuals below 0.5 mm everywhere, and the residual width falls from 4.4 to 3.5 mm.</figcaption>
+  </figure>
+
+  <h3>The telescope is four times sharper than we thought</h3>
+  <p>Section 7 estimated the pointing as "4.5 mm of residual, of which 3.4 mm is the pad size, leaves ≈3 mm". Most of
+  those 4.5 mm were the shrink. Measured properly: when a muon fires a <b>single pad</b>, the distribution of the
+  track position across that pad is the flat pad width blurred by the pointing error. Fitting exactly that shape:</p>
+  <figure class="data">
+    <img src="2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation_files/align_pointing_resolution.png" alt="Track minus pad centre for single-pad hits, with box times Gaussian fits, and resolution vs angle">
+    <figcaption>Single-pad hits (33,095 tracks). The edges of the box are sharp: the pointing blur is <b>σ = 0.70 mm</b>
+    and <b>0.75 mm</b> along the two pad axes, growing from ≈0.65 mm for vertical tracks to ≈0.9 mm at 25°. An
+    independent measurement from the sharpness of the detector edge (below) gives 0.63 mm.</figcaption>
+  </figure>
+
+  <h3>What it changes at the edges, step by step</h3>
+  <p>With a sharp and correctly scaled pointing, a track near a dead pad or near the outer edge can be trusted to within
+  about 1 mm. The left panel below repeats the dead-pad curve of section 7: with the corrected alignment the excess is
+  <b>gone by 2 mm</b> (it was 6 mm). The middle panel looks at the <b>outer edge</b> of the pad array: with the old
+  alignment, tracks 2–4 mm <i>outside</i> the detector were still "seen" 70–98% of the time, impossible unless the map is
+  off; corrected, the edge is a clean step: everything outside is missed, and from about 1 mm inside the miss rate is back to normal.</p>
+  <figure class="data">
+    <img src="2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation_files/align_steps_profiles.png" alt="Miss rate vs distance to dead pads and to the outer edge, and efficiency step by step">
+    <figcaption><b>Left</b>: miss rate vs distance to the nearest dead/shorted/unplugged pad (grey: old alignment,
+    blue: corrected; dashed lines: the 6 mm and 2 mm guards). <b>Middle</b>: miss rate vs signed distance to the outer edge
+    of the pad array (log scale). <b>Right</b>: the efficiency after each change of the table below.</figcaption>
+  </figure>
+  <div style="overflow-x:auto">
+  <table class="t num">
+    <tr><th>Step (same data, one change at a time)</th><th>tracks counted</th><th>efficiency %</th></tr>
+    <tr><td>A · as in sections 7–11 (old fit, z 240 mm, 6 mm dead-pad guard)</td><td>36,382</td><td>95.89</td></tr>
+    <tr><td>B · + trimmed alignment fit (scale 0.978 → 1.000)</td><td>37,892</td><td>95.38</td></tr>
+    <tr><td>C · + det2 plane at 246 mm</td><td>37,827</td><td>95.40</td></tr>
+    <tr><td>D · + dead-pad guard 6 → 2 mm</td><td>43,202</td><td>95.48</td></tr>
+    <tr><td><b>E · + 2 mm guard at the outer edge too (new default for det2)</b></td><td><b>40,530</b></td><td><b>95.92</b></td></tr>
+    <tr><td class="muted">control · 2 mm guards but the OLD alignment</td><td class="muted">39,103</td><td class="muted">95.09</td></tr>
+  </table>
+  </div>
+  <p>How to read it. <b>B</b>: once the map has its true size it reaches further out, and the "active area" (any point
+  within 8.4 mm of a pad centre) now includes tracks that really passed up to 2.4 mm beyond the last pads; they are
+  missed, so the efficiency drops. The old shrunk map had been hiding them. <b>D</b>: the narrower dead-pad guard
+  returns 5,400 tracks at no cost. <b>E</b>: applying the same 2 mm rule at the outer edge removes the tracks that were
+  never over the detector. The <b>control</b> row shows that the narrow guards are only valid with the corrected
+  alignment.</p>
+  <div class="take"><b>Bottom line:</b> the headline efficiency does not move (<b>95.9%</b>), but it now stands on
+  <b>11% more tracks</b>, one geometric rule (2 mm ≈ 3σ of the measured pointing) at every boundary, and an
+  alignment whose residuals are flat across the detector. The old number was right because two errors cancelled: the
+  shrunk map hid the out-of-edge tracks, and the wide guard hid the misalignment at dead pads. Random coincidences,
+  measured by pairing each track with another event's clusters, are 0.93% of tracks and lower the efficiency by only
+  0.04 points (95.88%).</div>
+
+  <h3>The full analysis, re-run</h3>
+  <p>The whole chain (maps, validation, loss accounting, telescope-vs-detector blame) was re-run on this run with the
+  corrected alignment. Nothing else changed:</p>
+  <div style="overflow-x:auto">
+  <table class="t num">
+    <tr><th>det2, repositioned long run</th><th>before (sections 7–11)</th><th>after (27 Nov)</th></tr>
+    <tr><td>tracks in the active area</td><td>36,382</td><td><b>40,530</b></td></tr>
+    <tr><td>reconstructed within 20 mm</td><td>95.89%</td><td><b>95.92%</b></td></tr>
+    <tr><td>any pad fired</td><td>96.80%</td><td>96.80%</td></tr>
+    <tr><td>alignment scale / fit RMS</td><td>0.978 / 39.9 mm</td><td>1.000 / 4.7 mm</td></tr>
+    <tr><td>core residual σ (pad size included)</td><td>4.5 / 4.5 mm</td><td>3.6 / 3.4 mm</td></tr>
+    <tr><td>only distant hits</td><td>0.65%</td><td>0.60%</td></tr>
+    <tr><td>&nbsp;&nbsp;of which det2's fault (3 methods)</td><td>0.09–0.19%</td><td>0.09–0.18%</td></tr>
+    <tr><td>misses at pad edges / gaps</td><td>0.14%</td><td>0</td></tr>
+    <tr><td>big pillars</td><td>0.26%</td><td>0.24%</td></tr>
+    <tr><td>validation tests flagging a bias</td><td>0 / 7</td><td>0 / 7</td></tr>
+  </table>
+  </div>
+  <figure class="data">
+    <img src="2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation_files/align_map_final_v2.png" alt="Sliding-window efficiency maps with the corrected alignment">
+    <figcaption>The final maps of section 11 redone with the corrected alignment: the grey holes are now only the dead pads
+    with a 2 mm band, and the covered area follows the detector outline (red) all the way to its edge.</figcaption>
+  </figure>
+
+  <h3>What it changes in the pillar story</h3>
+  <p>Section 8 explained the higher no-hit rate of near-vertical tracks as pillar shadows, because the 3 mm pointing
+  could not resolve a 0.8 mm pillar. At 0.7 mm it can. The test is simple: if pillars cause the angle trend, the trend
+  must vanish for tracks that pass <i>away</i> from every pillar.</p>
+  <figure class="data mid">
+    <img src="2026-11-26-chasing-det2s-lost-muons-a-cosmic-bench-efficiency-investigation_files/align_nohit_vs_angle.png" alt="No-hit rate vs track angle, all tracks and tracks far from any pillar">
+    <figcaption>No-hit rate vs zenith angle for all interior tracks (blue), tracks ≥ 1.4 mm from any small pillar (grey) and
+    tracks within 0.5 mm of one (red). The grey points fall from 4.9% to 0.9% just like the blue ones.</figcaption>
+  </figure>
+  <p>It does not vanish. Tracks right on top of a pillar are only slightly worse, while the trend from ≈5% (vertical) to
+  ≈1% (above 16°) is the same away from pillars, uniform across each pad, independent of the telescope fit quality and of
+  time. Something else makes near-vertical muons leave no signal more often (their pulse-height spectrum also has more
+  small pulses). Its cause is still open; the 2.0% "small pillars" entry of section 11 should be read as
+  <b>"angle-dependent no-hit, cause under study"</b>.</p>
+  <p class="muted small">Analysis: stages 34–38 and the per-run switches <code>fit_trim_mm</code>,
+  <code>edge_guard_mm</code> on branch <code>det2-cluster-align-pillar</code> of <code>P2_basket_analysis</code>; enabled
+  for this run only while it is being validated, the other detectors still use the old alignment.</p>
+</section>
+
+<!-- ============================================================ 13 todo -->
 <section class="sec" id="todo">
-  <p class="kicker">12 · Action items</p>
+  <p class="kicker">13 · Action items</p>
   <h2>What to check on the bench</h2>
   <ul>
     <li><b>Inspect and re-solder the detector-board connectors 3, 2 and 8</b>: 8 groups of shorted pins (solder bridges),
@@ -649,7 +801,7 @@
       <li><b>Crosstalk</b>: a small copy of a signal leaking into a neighbouring channel.</li>
       <li><b>Short</b>: two channels electrically connected; they record identical signals.</li>
       <li><b>Pillar</b>: an insulating spacer holding the mesh; electrons landing on it are lost.</li>
-      <li><b>Pointing resolution</b>: how precisely the telescope predicts the crossing point (≈3 mm here).</li>
+      <li><b>Pointing resolution</b>: how precisely the telescope predicts the crossing point (≈0.7 mm here; 3 mm before the 27 Nov alignment fix).</li>
       <li><b>χ²</b>: the quality of the telescope's straight-line fit; small is good.</li>
     </ul>
   </details>
