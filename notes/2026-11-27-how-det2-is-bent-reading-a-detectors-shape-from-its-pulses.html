@@ -132,7 +132,7 @@
   signal. With hits alone (one time and one amplitude per pad) the two effects look the same. With the full waveforms they can be told apart. Doing that on the cosmic-bench
   data of <b>det2</b> (24 and 25 November, mesh 430 V, drift 730 V) shows a chamber whose drift gap is far from uniform, and it explains where the muons are lost.</p>
   <div class="kpis">
-    <div class="kpi"><div class="big c-drift">3.3 → 7.2 mm</div><div class="lbl">drift gap across the chamber (design 4.0 mm): thin centre, thick ridge along the left side</div></div>
+    <div class="kpi"><div class="big c-drift">3.3 → 7.2 mm</div><div class="lbl">drift gap across the chamber (design 4.0 mm): thin centre, thick ridge along the left side; up to 18 % more if the gas is wet</div></div>
     <div class="kpi"><div class="big">±1.5 mm</div><div class="lbl">in the ridge both faces move apart: window up, board down, by about the same amount</div></div>
     <div class="kpi"><div class="big c-ion">≈ 8 µm rms</div><div class="lbl">amplification-gap variation that would explain the gain map (on 128 µm)</div></div>
     <div class="kpi"><div class="big">3.4 % → 0.9 %</div><div class="lbl">muons lost where the gap is 4.0 mm versus 6.3 mm; the price is 32 ns instead of 21 ns time spread</div></div>
@@ -334,7 +334,7 @@
       <p>The same is visible without averaging. Look at when the earliest and the latest pulses of each zone begin:</p>
       <div style="overflow-x:auto"><table class="t num" id="t-quant"></table></div>
       <p>One step further: the ridge pulse is exactly the nominal pulse smeared by some extra time. Fitting how much gives <b>125 ns</b> for the nominal zone and <b>189 ns</b> for the ridge, with
-      no extra delay (−1 ns). And 125 ns is what a 4.0 mm gap should give at this voltage.</p>
+      no extra delay (−1 ns). And 125 ns is what a 4.0 mm gap gives at this voltage in dry gas.</p>
     </div>
   </div>
 </section>
@@ -408,7 +408,8 @@
     <figure><div class="chart"><div id="c-map"></div><div id="map-legend" class="legend" style="align-items:center"></div></div>
       <figcaption id="map-cap"></figcaption></figure>
     <div>
-      <p><b class="c-drift">Drift gap.</b> Most of the chamber is at 4.0 mm, as designed. The centre is thinner, down to 3.0 mm. Along the left side runs a ridge where the gap reaches 7 mm.</p>
+      <p><b class="c-drift">Drift gap.</b> Most of the chamber is at 4.0 mm, as designed. The centre is thinner, down to 3.0 mm. Along the left side runs a ridge where the gap reaches 7 mm.
+      The ratios are the solid part: the centre is 0.85 times and the ridge 1.6 to 1.8 times the main zone. The millimetres carry a common factor that depends on the gas (see the box in the next section).</p>
       <p>The ridge is about 400 mm long and peaks 60 mm inside the edge of the pad plane. It falls back to normal towards the edge and towards the inside, and it vanishes at both ends of that
       side. The last 23 mm before the edge belong to an unplugged connector and are not seen.</p>
       <figure><div class="chart" id="c-ridge"></div>
@@ -440,11 +441,14 @@
       <div class="legend"><span><i class="dot" style="background:var(--drift)"></i>peak time in the voltage scan</span><span><i class="dot" style="background:var(--alt)"></i>stretch of the amplitude curve</span></div>
       <figcaption>Drift gap of 24 regions of the chamber: pulse shape on 25 November (horizontal) against the two hit-level methods of 24 November (vertical). On the diagonal they agree; the typical difference is 0.3 mm.</figcaption></figure>
   </div>
-  <details><summary>One subtlety: the gas is slower than the textbook at low field</summary>
-    <div class="two"><div><p>Turning a drift time into millimetres needs the drift speed. The dry-gas calculation (Magboltz, Ar/isobutane 95/5) is right above 600 V/cm, but on the bench the electrons are
-    clearly slower below that, down to 26 µm/ns instead of 41 at 250 V/cm. On the ridge the field is only about 480 V/cm, so this matters. The map therefore uses the speed that the chamber
-    itself shows in its drift scan, in the zones where the gap is nominal. With the textbook speed the ridge would come out at 8.2 mm instead of 7.2 mm. Why the gas is slow (water vapour
-    through the foil is the first suspect) is being checked separately.</p></div>
+  <details open><summary>One subtlety: the gas is not the textbook gas, and that sets the millimetre scale</summary>
+    <div class="two"><div><p>Turning a drift time into millimetres needs the drift speed. The dry-gas calculation (Magboltz, Ar/isobutane 95/5) matches det2 above 600 V/cm, but below that the electrons
+    are clearly slower, down to 26 µm/ns instead of 41 at 250 V/cm. On the ridge the field is only about 480 V/cm, so this matters. The map therefore uses the speed that the chamber itself shows in
+    its drift scan, in the zones where the gap is nominal. With the textbook speed the ridge would come out at 8.2 mm instead of 7.2 mm.</p>
+    <p><b>Why is the gas slow?</b> A scan of gas mixtures in Magboltz gives a clear answer: about <b>0.7 % of water vapour</b> reproduces the whole drift scan, from 62 to 1312 V/cm, with one gas and one gap.
+    Dry gas, extra air and extra isobutane do not. Water through the thin foil window is plausible at low gas flow; a hygrometer on the exhaust would confirm it.</p>
+    <p><b>What it means for the map.</b> The same water would also make the gas 18 % faster at the operating field. The drift times are measured; the millimetres are drift time times speed. So all gaps
+    share one scale factor between 1.0 (dry gas: main zone 4.0 mm, ridge 7.2 mm) and 1.18 (0.7 % water: 4.7 mm and 8.5 mm). The shape of the map and all ratios do not change.</p></div>
     <figure><div class="chart" id="c-vd"></div><div class="legend"><span><i style="background:var(--drift)"></i>measured in det2</span><span><i class="dash"></i>dry-gas calculation</span></div></figure></div>
   </details>
 </section>
@@ -591,7 +595,8 @@
       <ul>
         <li>What holds the two faces 3 mm apart along the left side. The run log calls this chamber "bulked with misaligned wall"; the data cannot say whether that is the cause.</li>
         <li>Window or board in the thin centre.</li>
-        <li>Why the gas drifts slowly at low field.</li>
+        <li>The water content of the gas (0.7 % fits the drift scan; not yet measured directly). It fixes the common millimetre scale of the map.</li>
+        <li>Why the pulse height drops at very low drift field. It is not electrons lost on the way: the timing rules that out.</li>
         <li>Why the gain contrast is 1.5 times larger now than in the July X-ray map.</li>
       </ul>
       <p class="muted small">Numbers and code: <code>P2_basket_analysis/cosmic_bench_analysis/AUDIT_det2_deformation_20261127.md</code>, stages 43–49. Earlier chapter of this story:
