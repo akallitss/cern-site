@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ===== hub metadata (read by scripts/build_hub.py) ===================== -->
+<title>Changing the P2 mesh from 18/50 to 18/60: what the simulation says</title>
+<meta name="description" content="Overnight simulation scan (28 Nov 2026): transparency, gain, ion backflow, timing, VMM efficiency and photon background for ten mesh geometries. The more open mesh does not lower the photon background; it costs about 5 V of gain and gains transparency.">
+<meta name="category" content="Simulation">
+<meta name="keywords" content="P2,Micromegas,mesh,Garfield,Geant4,COMSOL">
+<meta name="date" content="2026-11-28">
+<meta name="updated" content="2026-11-28">
+<meta name="visibility" content="unlisted">
+<!-- ======================================================================= -->
+<link rel="stylesheet" href="../../assets/site.css">
+<style>
+  /* note-local styles go here */
+</style>
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="../../">Alexandra Kallitsopoulou</a>
+  <nav class="nav"><a href="../../">Home</a><a href="../../notes/">Notes</a></nav>
+</div></header>
+
+<main class="wrap">
+  <article>
+    <header class="note-header">
+      <h1>Changing the P2 mesh from 18/50 to 18/60: what the simulation says</h1>
+      <p class="muted">Overnight simulation scan (28 Nov 2026): transparency, gain, ion backflow, timing, VMM efficiency and photon background for ten mesh geometries. The more open mesh does not lower the photon background; it costs about 5 V of gain and gains transparency.</p>
+      <div class="meta-row">
+        <span class="pill">Simulation</span>
+        <time datetime="2026-11-28">2026-11-28</time>
+        <span class="faint">P2,Micromegas,mesh,Garfield,Geant4,COMSOL</span>
+      </div>
+    </header>
+
+    <div class="note-body">
+<div class="callout warn"><p><strong>Status:</strong> one night of simulation (27–28 Nov 2026), not yet reviewed.
+Only 18/50 is a measured P2 mesh; every other mesh here is a hypothetical candidate. Every mesh is assumed
+calendered as in the COMSOL model (the P2 mesh thickness has not been measured).</p></div>
+
+<h2>The answer in short</h2>
+<ul>
+<li><strong>The photon background does not go down.</strong> Photon hits per photon, 18/60 over 18/50:
+1.0014 ± 0.0024 (40–100 keV, Ar/iso 95/5, 2·10<sup>8</sup> photons per mesh).</li>
+<li><strong>The gain drops by about 15 % at the same mesh voltage.</strong> About +5 V restores it in the simulation;
+one published measurement suggests the real penalty could be larger.</li>
+<li><strong>Transparency improves</strong> in every gas except Ar/CF4/iso: at the SPS VMM point (Ar/CO2/iso, 750 V/cm)
+from 0.93 to 0.99.</li>
+<li><strong>VMM efficiency:</strong> 2–4 points lower if the voltage is left unchanged, 0.6–1.6 points higher in
+Ar/CO2/iso once the gain is restored.</li>
+<li><strong>Timing is unchanged;</strong> ion backflow rises by about 22 %.</li>
+</ul>
+<p>So in the simulation 18/60 is a small transparency improvement that needs a few volts more, not a
+background reduction.</p>
+
+<h2>Photon background (Geant4)</h2>
+<p>3.3·10<sup>9</sup> photons and 1.4·10<sup>6</sup> electrons, production physics (Heed in the gas, no PIXE),
+normal incidence. A "hit" is a photon that leaves at least one primary electron in the drift gas.</p>
+<table>
+<tr><th>mesh (wire/opening µm)</th><th>steel [mg/cm²]</th><th>hits per photon, 40–100 keV [10⁻³]</th><th>ratio to 18/50</th><th>share of hits starting in the mesh</th></tr>
+<tr><td>18/45</td><td>6.46</td><td>1.794 ± 0.004</td><td>0.994 ± 0.003</td><td>0.48</td></tr>
+<tr><td><strong>18/50 (now)</strong></td><td>5.99</td><td>1.805 ± 0.003</td><td>1</td><td>0.46</td></tr>
+<tr><td><strong>18/60</strong></td><td>5.22</td><td>1.807 ± 0.003</td><td><strong>1.001 ± 0.002</strong></td><td>0.42</td></tr>
+<tr><td>18/70</td><td>4.63</td><td>1.808 ± 0.004</td><td>1.002 ± 0.003</td><td>0.39</td></tr>
+<tr><td>16/60</td><td>4.23</td><td>1.801 ± 0.004</td><td>0.998 ± 0.003</td><td>0.39</td></tr>
+<tr><td>no steel at all</td><td>0</td><td>1.641 ± 0.003</td><td>0.909</td><td>0</td></tr>
+</table>
+<ul>
+<li><strong>Why:</strong> hits that start in the mesh steel fall by 7.4 ± 0.3 % for 18/60, but electrons from the pad
+copper underneath pass through the larger holes and add back the same amount. At 60 keV, per 10⁻³ photons:
+mesh 0.790 → 0.730, pad copper 0.540 → 0.599, gas 0.274 unchanged.</li>
+<li>The ratio is the same for hits with ≥ 1, ≥ 10 and ≥ 30 primaries, in the SPS gas (1.004 ± 0.005), and
+folded with the P2Sim photon spectrum (1.004 ± 0.003).</li>
+<li>Removing the steel completely would only give −9 %.</li>
+<li>The 100 MeV electron signal is unchanged for every mesh (primary-electron distributions: KS p = 0.09–1.00).</li>
+</ul>
+<figure><img src="2026-11-28-p2-mesh-18-50-to-18-60-simulation_files/fig_photons.png" alt="Photon hits per photon against mesh steel mass, and the ratio to 18/50 against photon energy">
+<figcaption>Left: photon hits against mesh steel, for the old slab model (black) and the new wire-resolved model (red).
+Right: ratio to 18/50 against photon energy.</figcaption></figure>
+<div class="callout warn"><p><strong>Side finding, to be checked before it is quoted:</strong> the mesh model used for
+all earlier photon numbers is a uniform slab with no holes, so it stops the pad-copper electrons. With a mesh that
+has real holes the 40–100 keV hit probability is 27 % higher (1.805 against 1.312·10⁻³), and the folded MM0 rate is
+92.3 against 79.1 MHz. The new wire model is itself an approximation (two crossed layers of cylinders, not woven).</p></div>
+
+<h2>Transparency, gain, backflow, timing (COMSOL + Garfield++)</h2>
+<p>54 new field solves and 546 Garfield jobs: ten meshes, six gases, drift fields 150–1800 V/cm, mesh at
+430/450/470 V, 150 µm amplification gap. Numbers below are at mesh −450 V.</p>
+<table>
+<tr><th></th><th>Ar/CO2/iso 625 V/cm</th><th>Ar/CO2/iso 750 V/cm</th><th>Ar/CF4/iso 625 V/cm</th><th>Ar/iso 95/5 625 V/cm</th><th>Ne/iso 95/5 625 V/cm</th></tr>
+<tr><td>transparency, 18/50</td><td>0.9725 ± 0.0012</td><td>0.9316 ± 0.0018</td><td>0.9529 ± 0.0015</td><td>0.9366 ± 0.0017</td><td>0.9382</td></tr>
+<tr><td>transparency, 18/60</td><td>0.9951 ± 0.0005</td><td>0.9919 ± 0.0006</td><td>0.9429 ± 0.0016</td><td>0.9988</td><td>0.9968</td></tr>
+<tr><td>gain 18/60 ÷ 18/50, same voltage</td><td>0.852</td><td>0.854</td><td>0.835</td><td>0.846</td><td>0.871</td></tr>
+<tr><td>signal (transparency × gain), same voltage</td><td>0.872</td><td>0.909</td><td>0.827</td><td>0.903</td><td>0.926</td></tr>
+<tr><td>extra mesh voltage for equal gain</td><td>+5.2 V</td><td></td><td>+5.3 V</td><td>+5.2 V</td><td>+4.8 V</td></tr>
+</table>
+<ul>
+<li><strong>Transparency:</strong> with 18/60 the wire loss is below 0.4 % at both SPS fields in Ar/CO2/iso and the
+plateau reaches about 900 V/cm (0.980). With 18/50 the 750 V/cm point is already on the falling edge.</li>
+<li><strong>Ar/CF4/iso is the exception:</strong> its loss is CF4 attachment, which grows with the opening
+(4.7 % → 5.7 %), so transparency falls by one point.</li>
+<li><strong>Gain:</strong> −1.5 % per µm of opening, the same in every gas (18/70: −28 %, 18/80: −39 %). Gain
+uniformity across the mesh cell does not change (rms of ln G 0.013 → 0.014).</li>
+<li><strong>Ion backflow:</strong> 2.7 % → 3.3 % at 625 V/cm (+22 ± 5 %), 3.2 % → 3.9 % at 750 V/cm.</li>
+<li><strong>Transit time through the mesh to the pads:</strong> rms 0.3–1.0 ns depending on the gas, identical for
+the two meshes within 0.02 ns.</li>
+<li><strong>Field at the wires:</strong> +2.5 % at the same voltage, about +4 % after the +5 V.</li>
+<li><strong>Thinner wire:</strong> 16/52 keeps the gain (−2 %) and still reaches 0.994 transparency in Ar/CO2/iso at
+625 V/cm; 16/60 behaves like 18/60 with 29 % less steel than 18/50.</li>
+</ul>
+<figure><img src="2026-11-28-p2-mesh-18-50-to-18-60-simulation_files/fig_transparency_vs_field.png" alt="Mesh transparency against drift field for ten meshes in six gases">
+<figcaption>Transparency against drift field. Black: 18/50 (now). Red: 18/60. Grey lines: 625 and 750 V/cm.</figcaption></figure>
+<figure><img src="2026-11-28-p2-mesh-18-50-to-18-60-simulation_files/fig_summary_vs_opening.png" alt="Transparency, gain, signal, ion backflow, transit time and gain uniformity against mesh opening">
+<figcaption>All quantities against the opening for 18 µm wire, at 625 V/cm and mesh −450 V.</figcaption></figure>
+
+<h2>VMM efficiency and time resolution</h2>
+<p>A per-pad model (Heed primaries, Magboltz drift, the transparency and gain above, Polya avalanche, VMM shaper and
+threshold as run at SPS, gain spread across the chamber). Its one free number, the absolute gain, is fixed so that
+18/50 reproduces the measured VMM threshold survival at the SPS point (0.89). "Efficiency" here is that threshold
+survival.</p>
+<table>
+<tr><th>gas, drift field</th><th>18/50</th><th>18/60, same voltage</th><th>18/60, gain restored</th><th>time spread σ68 after walk correction, 18/50 → 18/60</th></tr>
+<tr><td>Ar/CO2/iso, 625 V/cm</td><td>0.887</td><td>0.853 (−3.5 ± 0.1 points)</td><td>0.893 (+0.6)</td><td>14.8 → 14.9 ns</td></tr>
+<tr><td>Ar/CO2/iso, 750 V/cm</td><td>0.876</td><td>0.853 (−2.3)</td><td>0.892 (+1.6)</td><td>15.5 → 15.5 ns</td></tr>
+<tr><td>Ar/CF4/iso, 625 V/cm</td><td>0.906</td><td>0.862 (−4.3)</td><td>0.903 (−0.2)</td><td>6.9 → 7.1 ns</td></tr>
+<tr><td>Ar/iso 95/5, 625 V/cm</td><td>0.901</td><td>0.875 (−2.6)</td><td>0.914 (+1.4)</td><td>19.6 → 19.6 ns</td></tr>
+<tr><td>Ar/iso 95/5, 750 V/cm</td><td>0.879</td><td>0.873 (−0.6)</td><td>0.913 (+3.4)</td><td>20.9 → 20.7 ns</td></tr>
+<tr><td>Ar/iso 90/10, 625 V/cm</td><td>0.932</td><td>0.900 (−3.2)</td><td>0.933 (+0.1)</td><td>14.0 → 14.1 ns</td></tr>
+<tr><td>Ne/iso 95/5, 625 V/cm</td><td>0.596</td><td>0.557 (−3.9)</td><td>0.628 (+3.2)</td><td>21.4 → 21.4 ns</td></tr>
+<tr><td>Ne/iso 85/15, 625 V/cm</td><td>0.807</td><td>0.736 (−7.1)</td><td>0.807 (0.0)</td><td>14.3 → 14.5 ns</td></tr>
+</table>
+<ul>
+<li>The Ne rows are low because every gas is run at the SPS gain; read them as relative only.</li>
+<li>Without walk correction the time spread grows by 1–2.5 ns at the same voltage (smaller pulses cross the
+threshold later); with the gain restored it does not.</li>
+<li>18/70 and 18/80 at the same voltage lose 8 and about 15 points.</li>
+</ul>
+
+<h2>How far to trust this</h2>
+<ul>
+<li><strong>Transparency:</strong> the 18/50 baseline reproduces the earlier value (0.9366 ± 0.0017 against
+0.934 ± 0.002), and the 18/45-to-18/60 change matches a published measurement with exchangeable meshes
+(Kuger: 95.5 % → 99.3 % at 600 V/cm in Ar/CO2). But the simulated transparency edge sits 150–200 V/cm lower than
+our SPS data, so the gain from 18/60 at 750 V/cm may be overestimated; 625 V/cm is the safer number.</li>
+<li><strong>Gain:</strong> relative only, and its size is not validated. A published comparison of 63 and 78 µm pitch
+bulk detectors (Bhattacharya et al.) needed about +33 V for equal gain; this simulation gives +8 V for the same
+change. Two detectors can differ that much from the gap alone, but the voltage penalty for 18/60 could be more
+than +5 V.</li>
+<li><strong>Ion backflow:</strong> agrees with the published pitch dependence (+25–30 % for 63 → 78 µm, +24 % here).</li>
+<li><strong>Photon background:</strong> the "no reduction" result holds in two very different mesh models; the
+absolute rate does not. Normal incidence only.</li>
+<li><strong>Efficiency model:</strong> reproduces the SPS VMM mesh-voltage scan near the operating point to 4 %; its
+simulated time spread is 13–21 % narrower than the DREAM data.</li>
+<li><strong>Not simulated:</strong> discharge rate, mesh sag, handling. Published α-particle tests point to somewhat
+more discharges for coarser meshes.</li>
+</ul>
+
+<h2>Where it is</h2>
+<p>Repository <code>P2_Geant_Garfield</code>, folder <code>docs/results/mesh_scan/</code> (<code>garfield/</code>,
+<code>xray/</code>, <code>detector/</code>, <code>literature.md</code>), each with a README naming scripts, commits
+and HTCondor clusters. Raw outputs: <code>/eos/user/a/akallits/p2_out/meshscan_20261128/</code>.</p>
+    </div>
+  </article>
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <span>Alexandra Kallitsopoulou</span>
+  <span><a href="../../notes/">← all notes</a></span>
+</div></footer>
+</body>
+</html>
