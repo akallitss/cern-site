@@ -1,7 +1,27 @@
 {
-  "latest_update": "2026-11-27",
-  "count": 24,
+  "latest_update": "2026-11-28",
+  "count": 25,
   "notes": [
+    {
+      "title": "A more open mesh does not lower the P2 photon background",
+      "description": "Geant4 with the P2Sim photon spectrum (energy and angle): going from an 18/50 to an 18/60 mesh leaves the photon hit rate unchanged (1.004 ± 0.004 in MM0). Less steel means fewer electrons from the mesh, but the bigger holes let more electrons from the copper pads into the drift gas.",
+      "category": "Simulation",
+      "tags": [
+        "P2",
+        "Micromegas",
+        "mesh",
+        "photon background",
+        "Geant4",
+        "P2Sim"
+      ],
+      "date": "2026-11-28",
+      "updated": "2026-11-28",
+      "unlisted": false,
+      "path": "2026-11-28-a-more-open-mesh-does-not-lower-the-p2-photon-background.html",
+      "url": "/notes/2026-11-28-a-more-open-mesh-does-not-lower-the-p2-photon-background.html",
+      "size": 65031,
+      "size_h": "63.5 kB"
+    },
     {
       "title": "How det2 is bent: reading a detector's shape from its pulses",
       "description": "A step-by-step, picture-first explanation of how the cosmic-ray pulses of the P2 Micromegas det2 reveal its shape: a drift gap that is 3.3 mm in the centre and up to 7 mm along one side, an amplification gap that varies by a few microns, and what both do to the signal and to the lost muons.",
